@@ -7,6 +7,7 @@
  * comments to the _chash_usage() function.
  * @author Yannick Warnier <yannick.warnier@beeznest.com>
  * @version 1.1
+ * @license This script is provided under the terms of the GNU/GPLv3+ license
  */
 /**
  * Security check: do not allow any other calling method than command-line
