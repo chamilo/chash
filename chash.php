@@ -62,6 +62,7 @@ function _chash_usage() {
   // -- Commands explanation --
   echo _t('Available commands:')."\n";
   echo _t("  sql_dump\t\tOutputs a dump of the database")."\n";
+  echo _t("  sql_restore\t\tInserts a database dump into the active database")."\n";
   echo _t("  sql_count\t\tOutputs a report about the number of rows in a table")."\n";
   echo _t("  full_backup\t\tGenerates a .tgz from the Chamilo files and database")."\n";
   echo _t("  clean_archives\tCleans the archives directory")."\n";
@@ -212,11 +213,29 @@ function _chash_get_all_databases() {
  * it for.
  */
 /**
- * Returns a dump of the database (caller should use an output redirect of some kind to store to a file)
+ * Returns a dump of the database (caller should use an output redirect of some kind to store 
+ * to a file)
  */
 function chash_command_sql_dump() {
   global $_configuration;
   system('mysqldump -h '.$_configuration['db_host'].' -u '.$_configuration['db_user'].' -p'.$_configuration['db_password'].' '.$_configuration['main_database']);
+  return null;
+}
+/**
+ * Imports an SQL dump of the database (caller should use an output redirect of some kind 
+ * to store to a file)
+ * @param array The params received
+ */
+function chash_command_sql_restore($params) {
+  global $_configuration;
+  if (empty($params)) {
+    echo _t('No parameters provided.')."\n";
+    echo _t('The sql_restore command allows you to restore an SQL dump right into the active database of a given Chamilo installation (which will also erase all previous data in that database, by the way.')."\n";
+    echo _t('To launch th full_backup command, the following parameter is required:')."\n";
+    echo '  --dump'."\t"._t('Allows you to specify the dump\'s full path, e.g. --result=/tmp/dump.sql')."\n";
+    return false;
+  }
+  system('mysql -h '.$_configuration['db_host'].' -u '.$_configuration['db_user'].' -p'.$_configuration['db_password'].' '.$_configuration['main_database'].' < '.$params['dump']);
   return null;
 }
 /**
