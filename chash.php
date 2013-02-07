@@ -1,3 +1,4 @@
+#!/usr/bin/php5
 <?php
 /**
  * Command-line tool to do things more swiftly in Chamilo.
