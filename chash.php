@@ -71,6 +71,7 @@ function _chash_usage()
     echo _t('  Usage: php5 chash.php [command] [options]')."\n\n";
     // -- Commands explanation --
     echo _t('Available commands:')."\n";
+    echo _t("  sql_cli\t\tEnters to the SQL command line")."\n";
     echo _t("  sql_dump\t\tOutputs a dump of the database")."\n";
     echo _t("  sql_restore\t\tInserts a database dump into the active database")."\n";
     echo _t("  sql_count\t\tOutputs a report about the number of rows in a table")."\n";
