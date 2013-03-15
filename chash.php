@@ -166,13 +166,13 @@ function _chash_parse_cli_options()
             } else {
                 //no equal sign. Assuming --option-alone format
                 $option = substr($arg, 2);
-                $value = true;
+                $value  = true;
             }
             $options[$option] = $value;
         } elseif (substr($arg, 0, 1) == '-') {
             //-optionvalue format
-            $option = substr($arg, 1, 1);
-            $value = substr($arg, 2);
+            $option           = substr($arg, 1, 1);
+            $value            = substr($arg, 2);
             $options[$option] = $value;
         } else {
             //single param format
@@ -207,7 +207,7 @@ function _chash_db_connect($conf)
 function _chash_get_all_databases()
 {
     global $_configuration;
-    $dbs = array();
+    $dbs   = array();
     $dbs[] = $_configuration['main_database'];
     if (!in_array($_configuration['statistics_database'], $dbs) && !empty($_configuration['statistics_database'])) {
         $dbs[] = $_configuration['statistics_database'];
@@ -223,7 +223,7 @@ function _chash_get_all_databases()
         $dbs[] = $_configuration['user_personal_database'];
     }
     $dbh = _chash_db_connect($_configuration);
-    $t = $_configuration['main_database'].'.course';
+    $t   = $_configuration['main_database'].'.course';
     $sql = 'SELECT db_name from '.$t;
     $res = mysql_query($sql);
     if (mysql_num_rows($res) > 0) {
@@ -264,7 +264,7 @@ function chash_command_sql_restore($params)
         echo _t(
             'The sql_restore command allows you to restore an SQL dump right into the active database of a given Chamilo installation (which will also erase all previous data in that database, by the way.'
         )."\n";
-        echo _t('To launch th full_backup command, the following parameter is required:')."\n";
+        echo _t('To launch the full_backup command, the following parameter is required:')."\n";
         echo '  --dump'."\t"._t('Allows you to specify the dump\'s full path, e.g. --result=/tmp/dump.sql')."\n";
         return false;
     }
@@ -287,7 +287,7 @@ function chash_command_full_backup($params)
         echo _t(
             'The full_backup command allows you to do a full backup of the files and database of a given Chamilo installation'
         )."\n";
-        echo _t('To launch th full_backup command, the following parameters are available:')."\n";
+        echo _t('To launch the full_backup command, the following parameters are available:')."\n";
         echo '  --result'."\t"._t('Allows you to specify a destination file, e.g. --result=/home/user/backup.tgz')."\n";
         echo '  --tmp'."\t"._t(
             'Allows you to specify in which temporary directory the backup files should be placed (optional, defaults to /tmp)'
@@ -303,29 +303,30 @@ function chash_command_full_backup($params)
     }
     $tmp = '/tmp';
     if (empty($params['tmp'])) {
-        echo "No temporary directory defined. Assuming /tmp/. Please make sure you have enough space left on that device\n";
+        echo "No temporary directory defined. Assuming /tmp/. Please make sure you have *enough space* left on that device\n";
     } else {
         $tmp = $params['tmp'];
     }
     $del_archive = false;
     if (!empty($params['del-archive'])) {
         $del_archive = true;
-        echo "Deleting contents of archive directory\n";
+
+        echo "Contents in the archive directory are going to be deleted\n";
         chash_command_clean_archives();
     }
     $result_file = $params['result'];
-    $f = $_configuration['db_user'];
+    $f           = $_configuration['db_user'];
     //backup the files (this requires root permissions)
     $bkp_dir = $tmp.'/'.$f.'-'.date('Ymdhis');
-    $err = @mkdir($bkp_dir);
-    $tgz = $bkp_dir.'/'.$f.'.tgz';
-    $sql = $bkp_dir.'/'.$f.'-db.sql';
-    $err = @system('tar zcf '.$tgz.' '.$cha_dir);
-    $err = @system(
+    $err     = @mkdir($bkp_dir);
+    $tgz     = $bkp_dir.'/'.$f.'.tgz';
+    $sql     = $bkp_dir.'/'.$f.'-db.sql';
+    $err     = @system('tar zcf '.$tgz.' '.$cha_dir);
+    $err     = @system(
         'mysqldump -h '.$_configuration['db_host'].' -u '.$_configuration['db_user'].' -p'.$_configuration['db_password'].' '.$_configuration['main_database'].' --result-file='.$sql
     );
-    $err = @system('tar zcf '.$result_file.' '.$bkp_dir);
-    $err = @system('rm -rf '.$bkp_dir);
+    $err     = @system('tar zcf '.$result_file.' '.$bkp_dir);
+    $err     = @system('rm -rf '.$bkp_dir);
     //die('rm -rf '.$tgz.' '.$sql);
     return true;
 }
@@ -342,10 +343,10 @@ function chash_command_sql_count($params)
         return null;
     }
     $dbh =& _chash_db_connect($_configuration);
-    $t = mysql_real_escape_string($params['t']);
-    $q = mysql_query('SELECT COUNT(*) FROM '.$t);
-    $r = mysql_fetch_row($q);
-    $n = $r[0];
+    $t   = mysql_real_escape_string($params['t']);
+    $q   = mysql_query('SELECT COUNT(*) FROM '.$t);
+    $r   = mysql_fetch_row($q);
+    $n   = $r[0];
     echo _t('Database/table/number of rows: ').$_configuration['main_database'].'/'.$t.'/'.$n."\n";
     return $n;
 }
@@ -363,7 +364,7 @@ function chash_command_clean_archives()
         )."\n";
         return false;
     }
-    $dir = $_configuration['root_sys'].'/archive';
+    $dir   = $_configuration['root_sys'].'/archive';
     $files = scandir($dir);
     foreach ($files as $file) {
         if (substr($file, 0, 1) == '.') {
@@ -387,10 +388,10 @@ function chash_command_clean_archives()
 function chash_command_sql_cli()
 {
     global $_configuration;
-    $cmd = 'mysql -h '.$_configuration['db_host'].' -u '.$_configuration['db_user'].' -p'.$_configuration['db_password'].' '.$_configuration['main_database'];
-    $process = proc_open($cmd, array(0 => STDIN, 1 => STDOUT, 2 => STDERR), $pipes);
+    $cmd         = 'mysql -h '.$_configuration['db_host'].' -u '.$_configuration['db_user'].' -p'.$_configuration['db_password'].' '.$_configuration['main_database'];
+    $process     = proc_open($cmd, array(0 => STDIN, 1 => STDOUT, 2 => STDERR), $pipes);
     $proc_status = proc_get_status($process);
-    $exit_code = proc_close($process);
+    $exit_code   = proc_close($process);
     return ($proc_status["running"] ? $exit_code : $proc_status["exitcode"]);
 }
 
@@ -400,7 +401,7 @@ function chash_command_sql_cli()
 function chash_command_drop_databases()
 {
     global $_configuration;
-    $cmd = 'mysql -h '.$_configuration['db_host'].' -u '.$_configuration['db_user'].' -p'.$_configuration['db_password'].' -e "DROP DATABASE %s"';
+    $cmd  = 'mysql -h '.$_configuration['db_host'].' -u '.$_configuration['db_user'].' -p'.$_configuration['db_password'].' -e "DROP DATABASE %s"';
     $list = _chash_get_all_databases();
     if (is_array($list)) {
         foreach ($list as $db) {
