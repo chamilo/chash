@@ -8,13 +8,13 @@ To get the most out of Chash, you should move the chash.phar file to your
 /usr/local/bin directory. You can do this getting inside the directory where
 you put chash.phar and doing:
 
-  chmod +x chash.phar
-  mv chash.phar /usr/local/bin/chash
+    chmod +x chash.phar
+    mv chash.phar /usr/local/bin/chash
 
 Then you can launch chash by moving into any Chamilo installation directory and
 typing
 
-  chash
+    chash
 
 It will give you the details of what command you can use to run it properly.
 
@@ -26,19 +26,18 @@ Building the chash.phar file
 
 In order to generate the executable chash.phar file. You have to set first this php setting (in your cli php configuration file)
 
-phar.readonly = Off
+    phar.readonly = Off
 
 Then you can call the php createPhar.php file. A new chash.phar file will be created.
 
 Remember to add execution permissions to the phar file.
 
  Example:
+
     cd chash
     php -d phar.readonly=0 createPhar.php
-
     chmod +x chash.phar
     sudo mv chash.phar /usr/local/bin/chash
-
     Then you can call the chash.phar file in your Chamilo installation
 
     cd /var/www/chamilo
@@ -64,4 +63,3 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Mail: info@chamilo.org
-
