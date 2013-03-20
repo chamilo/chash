@@ -1,4 +1,5 @@
 {
+    "name": "chamilo/chash",
     "autoload": {
         "psr-0": {
             "Chash": "src/"
