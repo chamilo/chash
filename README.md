@@ -43,8 +43,23 @@ Remember to add execution permissions to the phar file.
     cd /var/www/chamilo
     chash
 
+Available commands:
+====================
 
+database
+  database:drop_databases       Drops all databases from the current Chamilo install
+  database:dump                 Outputs a dump of the database
+  database:full_backup          Generates a .tgz from the Chamilo files and database
+  database:restore              Allows you to restore an SQL dump right into the active database of a given Chamilo installation (which will also erase all previous data in that database)
+  database:sql                  Enters to the SQL command line
+  database:sql_count            Count the number of rows in a specific table
 
+files
+  files:clean_archives          Cleans the archives directory
+
+translation
+  translation:export_language   Exports a Chamilo language package
+  translation:import_language   Import a Chamilo language package
 
 Licensing
 =========
