@@ -30,16 +30,22 @@ class SQLCountCommand extends CommonChamiloDatabaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-        $table          = $input->getArgument('table');
+        $table = $input->getArgument('table');
         $_configuration = $this->getHelper('configuration')->getConfiguration();
-        $connection     = $this->getHelper('configuration')->getConnection();
+        $connection = $this->getHelper('configuration')->getConnection();
 
         $t = mysql_real_escape_string($table);
         $q = mysql_query('SELECT COUNT(*) FROM '.$t);
-        $r = mysql_fetch_row($q);
-        $n = $r[0];
-        $output->writeln(
-            '<comment>Database/table/number of rows: </comment><info>'.$_configuration['main_database'].'/'.$t.'/'.$n.'</info>'
-        );
+        if ($q !== false) {
+            $r = mysql_fetch_row($q);
+            $n = $r[0];
+            $output->writeln(
+                '<comment>Database/table/number of rows: </comment><info>'.$_configuration['main_database'].'/'.$t.'/'.$n.'</info>'
+            );
+        } else {
+            $output->writeln(
+                "<comment>Table '$table' does not exists in the database: ".$_configuration['main_database']
+            );
+        }
     }
 }

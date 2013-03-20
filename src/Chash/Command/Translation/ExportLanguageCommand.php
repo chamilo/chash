@@ -16,7 +16,7 @@ class ExportLanguageCommand extends CommonChamiloDatabaseCommand
         parent::configure();
         $this
             ->setName('translation:export_language')
-            ->setDescription('Greet someone')
+            ->setDescription('Exports a Chamilo language package')
             ->addArgument(
                 'language',
                 InputArgument::REQUIRED,
@@ -46,11 +46,26 @@ class ExportLanguageCommand extends CommonChamiloDatabaseCommand
 
             $lang = mysql_real_escape_string($lang);
 
-            $q        = mysql_query("SELECT * FROM language WHERE original_name = '$lang' ");
+            $q        = mysql_query("SELECT * FROM language WHERE english_name = '$lang' ");
             $langInfo = mysql_fetch_array($q, MYSQL_ASSOC);
 
             if (!$langInfo) {
-                $output->writeln("<comment>Language '$lang' is  not registed in the Chamilo Database</comment>");
+
+                $output->writeln("<comment>Language '$lang' is not registered in the Chamilo Database</comment>");
+
+                $q = mysql_query("SELECT * FROM language WHERE parent_id IS NULL or parent_id = 0");
+                $output->writeln("<comment>Available languages are: </comment>");
+                while ($langRow = mysql_fetch_array($q, MYSQL_ASSOC)) {
+                    $output->write($langRow['english_name'].", ");
+                }
+                $output->writeln(' ');
+
+                $q = mysql_query("SELECT * FROM language WHERE parent_id <> 0");
+                $output->writeln("<comment>Available sub languages are: </comment>");
+                while ($langRow = mysql_fetch_array($q, MYSQL_ASSOC)) {
+                    $output->write($langRow['english_name'].", ");
+                }
+                $output->writeln(' ');
                 exit;
             } else {
                 $output->writeln(
@@ -80,10 +95,12 @@ class ExportLanguageCommand extends CommonChamiloDatabaseCommand
 
             if ($langInfo) {
                 $output->writeln("<comment>Creating translation package</comment>");
-                $phar = new \PharData($tmpFolder.'lang.tar');
+                $fileName = $tmpFolder.$langInfo['english_name'].'.tar';
+                $phar     = new \PharData($fileName);
                 $phar->buildFromDirectory($langFolder);
+
                 $phar->setMetadata($langInfo);
-                $output->writeln("<comment>File created:</comment> <info>{$tmpFolder}lang.tar</info>");
+                $output->writeln("<comment>File created:</comment> <info>{$fileName}</info>");
             }
         }
     }

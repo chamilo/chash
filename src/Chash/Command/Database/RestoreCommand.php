@@ -25,7 +25,7 @@ class RestoreCommand extends CommonChamiloDatabaseCommand
                 'Allows you to restore an SQL dump right into the active database of a given Chamilo installation (which will also erase all previous data in that database)'
             )
             ->addArgument(
-                'dump',
+                'file',
                 InputArgument::REQUIRED,
                 'Specify the dump\'s full path, e.g. database:restore /tmp/dump.sql'
             );
@@ -34,16 +34,16 @@ class RestoreCommand extends CommonChamiloDatabaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-        $dumpPath = $input->getArgument('dump');
+        $dumpPath = $input->getArgument('file');
         if (!is_dir($dumpPath) && file_exists($dumpPath)) {
             $_configuration = $this->getHelper('configuration')->getConfiguration();
 
-            $output->writeln('<comment>Starting Chamilo process</comment>');
+            $output->writeln('<comment>Starting restoring database</comment>');
             $action = 'mysql -h '.$_configuration['db_host'].' -u '.$_configuration['db_user'].' -p'.$_configuration['db_password'].' '.$_configuration['main_database'].' < '.$dumpPath;
             system($action);
-            $output->writeln('<info>Chamilo process ended succesfully</info>');
+            $output->writeln('<info>Process ended succesfully</info>');
         } else {
-            $output->writeln('<comment>File is not a valida SQL file: '.$dumpPath.' </comment>');
+            $output->writeln('<comment>File is not a valid SQL file: '.$dumpPath.' </comment>');
         }
     }
 }

@@ -14,9 +14,9 @@ class ConfigurationHelper extends Helper
 
     public function readConfigurationFile($path = null)
     {
-
         if (empty($path)) {
-            $confFile = 'main/inc/conf/configuration.php';
+            $dir      = getcwd();
+            $confFile = $dir.'/main/inc/conf/configuration.php';
             if (file_exists($confFile)) {
                 require $confFile;
                 $this->setConfiguration($_configuration);
@@ -66,10 +66,18 @@ class ConfigurationHelper extends Helper
 
         $dbs[] = $_configuration['main_database'];
 
-        if (!in_array($_configuration['statistics_database'], $dbs) && !empty($_configuration['statistics_database'])) {
+        if (isset($_configuration['statistics_database']) && !in_array(
+            $_configuration['statistics_database'],
+            $dbs
+        ) && !empty($_configuration['statistics_database'])
+        ) {
             $dbs[] = $_configuration['statistics_database'];
         }
-        if (!in_array($_configuration['scorm_database'], $dbs) && !empty($_configuration['scorm_database'])) {
+        if (isset($_configuration['scorm_database']) && !in_array(
+            $_configuration['scorm_database'],
+            $dbs
+        ) && !empty($_configuration['scorm_database'])
+        ) {
             $dbs[] = $_configuration['scorm_database'];
         }
         if (!in_array(

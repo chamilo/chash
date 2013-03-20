@@ -32,15 +32,25 @@ class DropDatabaseCommand extends CommonChamiloDatabaseCommand
         ) {
             return;
         }
+
+        if (!$dialog->askConfirmation(
+            $output,
+            '<question>Really sure? (y/N)</question>',
+            false
+        )
+        ) {
+            return;
+        }
+
         $_configuration = $this->getHelper('configuration')->getConfiguration();
-        $cmd            = 'mysql -h '.$_configuration['db_host'].' -u '.$_configuration['db_user'].' -p'.$_configuration['db_password'].' -e "DROP DATABASE %s"';
-        $list           = $_configuration = $this->getHelper('configuration')->getAllDatabases();
+
+        $cmd  = 'mysql -h '.$_configuration['db_host'].' -u '.$_configuration['db_user'].' -p'.$_configuration['db_password'].' -e "DROP DATABASE %s"';
+        $list = $_configuration = $this->getHelper('configuration')->getAllDatabases();
         if (is_array($list)) {
             $output->writeln('<comment>Starting Chamilo process</comment>');
             foreach ($list as $db) {
                 $c = sprintf($cmd, $db);
-                $output->writeln("Dropping DB $db");
-                $output->writeln("Executing $db");
+                $output->writeln("Dropping DB: $db");
                 $err = @system($c);
             }
             $output->writeln('<comment>End Chamilo process</comment>');

@@ -66,11 +66,13 @@ class FullBackupCommand extends CommonChamiloDatabaseCommand
             //Calling command
             $command = $this->getApplication()->find('files:clean_archives');
 
-            $arguments  = array(
+            $arguments = array(
                 'command' => 'files:clean_archives'
             );
-            $input      = new ArrayInput($arguments);
-            $returnCode = $command->run($input, $output);
+            $input     = new ArrayInput($arguments);
+            $command->run($input, $output);
+        } else {
+            $output->writeln('<comment>Temp archives are not removed</comment>');
         }
 
         $cha_dir = realpath($_configuration['root_sys']);
@@ -86,16 +88,18 @@ class FullBackupCommand extends CommonChamiloDatabaseCommand
         $err     = @system('tar zcf '.$tgz.' '.$cha_dir);
 
         $output->writeln('<comment>Generating mysqldump</comment>');
+
         $err = @system(
             'mysqldump -h '.$_configuration['db_host'].' -u '.$_configuration['db_user'].' -p'.$_configuration['db_password'].' '.$_configuration['main_database'].' --result-file='.$sql
         );
+
         $output->writeln('<comment>Generating tarball </comment>');
 
         $err = @system('tar zcf '.$resultPath.' '.$bkp_dir);
         $err = @system('rm -rf '.$bkp_dir);
 
         $output->writeln(
-            '<comment>End Chamilo backup. File can be found here: '.$resultPath.' '.$bkp_dir.' </comment>'
+            '<comment>End Chamilo backup. File can be found here: '.realpath($resultPath).' </comment>'
         );
 
     }

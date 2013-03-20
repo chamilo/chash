@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Command-line tool to do things more swiftly in Chamilo.
  * To add support for a new command see the Console Component read:
@@ -16,6 +15,7 @@
 /**
  * Security check: do not allow any other calling method than command-line
  */
+
 if (PHP_SAPI != 'cli') {
     die("Chash cannot be called by any other method than the command line.");
 }
@@ -148,4 +148,9 @@ function _chash_find_config_file()
         }
     }
     return $found;
+}
+
+function _t($var)
+{
+    return $var;
 }
