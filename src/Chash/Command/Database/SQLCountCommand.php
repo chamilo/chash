@@ -18,7 +18,7 @@ class SQLCountCommand extends CommonChamiloDatabaseCommand
     {
         parent::configure();
         $this
-            ->setName('database:sql_count')
+            ->setName('db:sql_count')
             ->setDescription('Count the number of rows in a specific table')
             ->addArgument(
                 'table',

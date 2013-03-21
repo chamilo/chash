@@ -15,7 +15,7 @@ class DropDatabaseCommand extends CommonChamiloDatabaseCommand
         parent::configure();
 
         $this
-            ->setName('database:drop_databases')
+            ->setName('db:drop_databases')
             ->setDescription('Drops all databases from the current Chamilo install');
     }
 

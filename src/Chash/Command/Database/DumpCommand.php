@@ -24,7 +24,7 @@ class DumpCommand extends CommonChamiloDatabaseCommand
         parent::configure();
 
         $this
-            ->setName('database:dump')
+            ->setName('db:dump')
             ->setDescription('Outputs a dump of the database');
     }
 

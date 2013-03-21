@@ -21,7 +21,7 @@ class RunSQLCommand extends CommonChamiloDatabaseCommand
         parent::configure();
 
         $this
-            ->setName('database:sql')
+            ->setName('db:sql_cli')
             ->setDescription('Enters to the SQL command line');
         $this->setHelp('Prompts a SQL cli');
 

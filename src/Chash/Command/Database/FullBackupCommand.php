@@ -24,7 +24,7 @@ class FullBackupCommand extends CommonChamiloDatabaseCommand
         );
 
         $this
-            ->setName('database:full_backup')
+            ->setName('db:full_backup')
             ->setDescription('Generates a .tgz from the Chamilo files and database')
             ->addArgument(
                 'result',

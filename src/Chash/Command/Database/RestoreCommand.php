@@ -20,7 +20,7 @@ class RestoreCommand extends CommonChamiloDatabaseCommand
         parent::configure();
 
         $this
-            ->setName('database:restore')
+            ->setName('db:restore')
             ->setDescription(
                 'Allows you to restore an SQL dump right into the active database of a given Chamilo installation (which will also erase all previous data in that database)'
             )
