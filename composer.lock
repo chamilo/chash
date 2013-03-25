@@ -1,5 +1,5 @@
 {
-    "hash": "aeadb0e09b21214d8e36fbe87dd4b975",
+    "hash": "1bea5cc52d392819dc48a5b9caa6a96b",
     "packages": [
         {
             "name": "symfony/console",
@@ -8,12 +8,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console.git",
-                "reference": "aa28bbe2c3c4210f9e9f44df16d71d63c53adf9b"
+                "reference": "ce8d34ee8b1abc7c0f3d0923fdb32a85e7decb98"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/aa28bbe2c3c4210f9e9f44df16d71d63c53adf9b",
-                "reference": "aa28bbe2c3c4210f9e9f44df16d71d63c53adf9b",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/ce8d34ee8b1abc7c0f3d0923fdb32a85e7decb98",
+                "reference": "ce8d34ee8b1abc7c0f3d0923fdb32a85e7decb98",
                 "shasum": ""
             },
             "require": {
@@ -46,7 +46,49 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "http://symfony.com",
-            "time": "2013-03-06 17:50:21"
+            "time": "2013-03-23 07:15:46"
+        },
+        {
+            "name": "symfony/yaml",
+            "version": "2.1.x-dev",
+            "target-dir": "Symfony/Component/Yaml",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/Yaml.git",
+                "reference": "1238ede850fb8c6946a6c44963d38bbf9cad6dd1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/1238ede850fb8c6946a6c44963d38bbf9cad6dd1",
+                "reference": "1238ede850fb8c6946a6c44963d38bbf9cad6dd1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\Yaml": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Yaml Component",
+            "homepage": "http://symfony.com",
+            "time": "2013-03-23 01:54:33"
         }
     ],
     "packages-dev": [

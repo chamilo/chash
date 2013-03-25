@@ -3,6 +3,7 @@
 namespace Chash\Helpers;
 
 use Symfony\Component\Console\Helper\Helper;
+use Symfony\Component\Yaml\Parser;
 
 class ConfigurationHelper extends Helper
 {
@@ -20,6 +21,13 @@ class ConfigurationHelper extends Helper
             if (file_exists($confFile)) {
                 require $confFile;
                 $this->setConfiguration($_configuration);
+                return $_configuration;
+            }
+
+            $configurationYML = $dir.'/main/inc/conf/configuration.yml';
+            if (file_exists($confFile)) {
+                $yaml = new Parser();
+                $_configuration = $yaml->parse(file_get_contents($configurationYML));
                 return $_configuration;
             }
         } else {

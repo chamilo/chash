@@ -62,6 +62,7 @@ Available commands:
         translation:import_language   Import a Chamilo language package
 
 Usage
+====================
 
 Inside a chamilo folder execute db:sql_cli in order to enter to the SQL client of the Chamilo database:
 
