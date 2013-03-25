@@ -24,6 +24,7 @@ class DropDatabaseCommand extends CommonChamiloDatabaseCommand
         parent::execute($input, $output);
 
         $dialog = $this->getHelperSet()->get('dialog');
+
         if (!$dialog->askConfirmation(
             $output,
             '<question>Are you sure you want to drop all database in this portal? (y/N)</question>',

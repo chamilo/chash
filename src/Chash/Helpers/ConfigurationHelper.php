@@ -11,37 +11,54 @@ class ConfigurationHelper extends Helper
 
     public function __construct()
     {
+
     }
 
-    public function getChamiloPath()
+    public function getConfigurationPath($path = null)
     {
+        if (empty($path)) {
+            $chamiloPath = getcwd();
+        } else {
+            $chamiloPath = $path;
+        }
+        $dir = $chamiloPath.'/main/inc/conf/';
+        $confFile = $dir.'configuration.php';
+        $confYML = $dir.'configuration.yml';
 
+        if (file_exists($confFile)) {
+            return $dir;
+        }
+
+        if (file_exists($confYML)) {
+            return $dir;
+        }
+
+        return false;
     }
 
     public function readConfigurationFile($path = null)
     {
-        if (empty($path)) {
-            $dir      = getcwd();
-            $confFile = $dir.'/main/inc/conf/configuration.php';
+        $confPath = $this->getConfigurationPath($path);
+
+
+        if (!empty($confPath)) {
+            $confFile = $confPath.'configuration.php';
             if (file_exists($confFile)) {
                 require $confFile;
                 $this->setConfiguration($_configuration);
+
                 return $_configuration;
             }
 
-            $configurationYML = $dir.'/main/inc/conf/configuration.yml';
-            if (file_exists($configurationYML)) {
+            $confYML = $confPath.'configuration.yml';
+            if (file_exists($confYML)) {
                 $yaml = new Parser();
-                $_configuration = $yaml->parse(file_get_contents($configurationYML));
-                return $_configuration;
-            }
-        } else {
-            if (file_exists($path)) {
-                require $path;
-                $this->setConfiguration($_configuration);
+                $_configuration = $yaml->parse(file_get_contents($confYML));
+
                 return $_configuration;
             }
         }
+
         return false;
     }
 
