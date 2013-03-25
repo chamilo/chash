@@ -35,15 +35,19 @@ foreach ($helpers as $name => $helper) {
     $helperSet->set($helper, $name);
 }
 
-$application->add(new Chash\Command\Database\RunSQLCommand());
-$application->add(new Chash\Command\Database\DumpCommand());
-$application->add(new Chash\Command\Database\RestoreCommand());
-$application->add(new Chash\Command\Database\SQLCountCommand());
-$application->add(new Chash\Command\Database\FullBackupCommand());
-$application->add(new Chash\Command\Database\DropDatabaseCommand());
-$application->add(new Chash\Command\Files\CleanTempFolderCommand());
-$application->add(new Chash\Command\Translation\ExportLanguageCommand());
-$application->add(new Chash\Command\Translation\ImportLanguageCommand());
+$application->addCommands(array(
+    new Chash\Command\Database\RunSQLCommand(),
+    new Chash\Command\Database\DumpCommand(),
+    new Chash\Command\Database\RestoreCommand(),
+    new Chash\Command\Database\SQLCountCommand(),
+    new Chash\Command\Database\FullBackupCommand(),
+    new Chash\Command\Database\DropDatabaseCommand(),
+    new Chash\Command\Files\CleanTempFolderCommand(),
+    new Chash\Command\Files\CleanConfigFiles(),
+    new Chash\Command\Translation\ExportLanguageCommand(),
+    new Chash\Command\Translation\ImportLanguageCommand()
+));
+
 $application->run();
 
 //Interactive shell

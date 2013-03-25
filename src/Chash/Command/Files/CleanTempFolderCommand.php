@@ -48,6 +48,7 @@ class CleanTempFolderCommand extends CommonChamiloDatabaseCommand
             );
             return false;
         }
+
         $dir   = $_configuration['root_sys'].'archive';
         $files = scandir($dir);
         foreach ($files as $file) {

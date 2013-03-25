@@ -13,6 +13,11 @@ class ConfigurationHelper extends Helper
     {
     }
 
+    public function getChamiloPath()
+    {
+
+    }
+
     public function readConfigurationFile($path = null)
     {
         if (empty($path)) {
@@ -43,6 +48,22 @@ class ConfigurationHelper extends Helper
     public function setConfiguration($configuration)
     {
         $this->configuration = $configuration;
+    }
+
+    public function getConfigFiles()
+    {
+        $configFiles = array();
+
+        $_configuration = $this->getConfiguration();
+
+        if (file_exists($_configuration['sys_path'].'main/inc/conf/configuration.php')) {
+            $configFiles[] = $_configuration['sys_path'].'main/inc/conf/configuration.php';
+        }
+
+        if (file_exists($_configuration['sys_path'].'main/inc/conf/configuration.yml')) {
+            $configFiles[] = $_configuration['sys_path'].'main/inc/conf/configuration.yml';
+        }
+        return $configFiles;
     }
 
     /**
