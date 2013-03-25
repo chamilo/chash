@@ -21,7 +21,13 @@ class ConfigurationHelper extends Helper
         } else {
             $chamiloPath = $path;
         }
+
         $dir = $chamiloPath.'/main/inc/conf/';
+
+        if (is_dir($dir)) {
+            return $dir;
+        }
+        /*
         $confFile = $dir.'configuration.php';
         $confYML = $dir.'configuration.yml';
 
@@ -31,8 +37,7 @@ class ConfigurationHelper extends Helper
 
         if (file_exists($confYML)) {
             return $dir;
-        }
-
+        }*/
         return false;
     }
 
