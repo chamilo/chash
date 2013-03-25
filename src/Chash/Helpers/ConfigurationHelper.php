@@ -56,13 +56,16 @@ class ConfigurationHelper extends Helper
 
         $_configuration = $this->getConfiguration();
 
-        if (file_exists($_configuration['sys_path'].'main/inc/conf/configuration.php')) {
-            $configFiles[] = $_configuration['sys_path'].'main/inc/conf/configuration.php';
+        $sysPath = isset($_configuration['sys_path']) ? $_configuration['sys_path'] : null;
+
+        if (file_exists($sysPath.'main/inc/conf/configuration.php')) {
+            $configFiles[] = $sysPath.'main/inc/conf/configuration.php';
         }
 
-        if (file_exists($_configuration['sys_path'].'main/inc/conf/configuration.yml')) {
-            $configFiles[] = $_configuration['sys_path'].'main/inc/conf/configuration.yml';
+        if (file_exists($sysPath.'main/inc/conf/configuration.yml')) {
+            $configFiles[] = $sysPath.'main/inc/conf/configuration.yml';
         }
+
         return $configFiles;
     }
 
