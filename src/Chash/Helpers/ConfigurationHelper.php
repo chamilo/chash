@@ -25,7 +25,7 @@ class ConfigurationHelper extends Helper
             }
 
             $configurationYML = $dir.'/main/inc/conf/configuration.yml';
-            if (file_exists($confFile)) {
+            if (file_exists($configurationYML)) {
                 $yaml = new Parser();
                 $_configuration = $yaml->parse(file_get_contents($configurationYML));
                 return $_configuration;
