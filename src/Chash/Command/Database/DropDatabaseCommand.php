@@ -43,17 +43,22 @@ class DropDatabaseCommand extends CommonChamiloDatabaseCommand
         }
 
         $_configuration = $this->getHelper('configuration')->getConfiguration();
+        $connection = $this->getHelper('configuration')->getConnection();
 
-        $cmd  = 'mysql -h '.$_configuration['db_host'].' -u '.$_configuration['db_user'].' -p'.$_configuration['db_password'].' -e "DROP DATABASE %s"';
-        $list = $_configuration = $this->getHelper('configuration')->getAllDatabases();
-        if (is_array($list)) {
-            $output->writeln('<comment>Starting Chamilo process</comment>');
-            foreach ($list as $db) {
-                $c = sprintf($cmd, $db);
-                $output->writeln("Dropping DB: $db");
-                $err = @system($c);
+        if ($connection) {
+            $cmd  = 'mysql -h '.$_configuration['db_host'].' -u '.$_configuration['db_user'].' -p'.$_configuration['db_password'].' -e "DROP DATABASE %s"';
+            $list = $_configuration = $this->getHelper('configuration')->getAllDatabases();
+            if (is_array($list)) {
+                $output->writeln('<comment>Starting Chamilo process</comment>');
+                foreach ($list as $db) {
+                    $c = sprintf($cmd, $db);
+                    $output->writeln("Dropping DB: $db");
+                    $err = @system($c);
+                }
+                $output->writeln('<comment>End Chamilo process</comment>');
             }
-            $output->writeln('<comment>End Chamilo process</comment>');
+        } else {
+            $output->writeln("<comment>Can't stablished connection with the database</comment>");
         }
     }
 }

@@ -73,13 +73,19 @@ class ConfigurationHelper extends Helper
     public function getConnection()
     {
         $conf = $this->getConfiguration();
-        $dbh  = mysql_connect($conf['db_host'], $conf['db_user'], $conf['db_password']);
-        if (!$dbh) {
-            die('Could not connect to server: '.mysql_error());
-        }
-        $db = mysql_select_db($conf['main_database'], $dbh);
-        if (!$db) {
-            die('Could not connect to database: '.mysql_error());
+        $dbh = false;
+
+        if (isset($conf['db_host']) && isset($conf['db_host']) && isset($conf['db_password'])) {
+            $dbh  = mysql_connect($conf['db_host'], $conf['db_user'], $conf['db_password']);
+            if (!$dbh) {
+                return false;
+                //die('Could not connect to server: '.mysql_error());
+            }
+            $db = mysql_select_db($conf['main_database'], $dbh);
+            if (!$db) {
+                return false;
+                //die('Could not connect to database: '.mysql_error());
+            }
         }
         return $dbh;
     }

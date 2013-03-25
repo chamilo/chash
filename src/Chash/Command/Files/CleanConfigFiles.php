@@ -43,19 +43,23 @@ class CleanConfigFiles extends CommonChamiloDatabaseCommand
 
         $filesToDelete = $this->getHelper('configuration')->getConfigFiles();
 
-        foreach ($filesToDelete as $file) {
-            if (isset($file) && file_exists($file) && is_file($file)) {
-                if (!$dialog->askConfirmation(
-                    $output,
-                    "<question>Are you sure you want to delete: </question> <info>$file</info> (y/N)",
-                    false
-                )
-                ) {
-                    return;
+        if (!empty($filesToDelete)) {
+            foreach ($filesToDelete as $file) {
+                if (isset($file) && file_exists($file) && is_file($file)) {
+                    if (!$dialog->askConfirmation(
+                        $output,
+                        "<question>Are you sure you want to delete: </question> <info>$file</info> (y/N)",
+                        false
+                    )
+                    ) {
+                        return;
+                    }
+                    unlink($file);
+                    $output->writeln("<comment>File deleted: </comment><info>$file</info>");
                 }
-                unlink($file);
-                $output->writeln("<comment>File deleted: </comment><info>$file</info>");
             }
+        } else {
+            $output->writeln("<comment>Nothing to delete</comment>");
         }
     }
 }
