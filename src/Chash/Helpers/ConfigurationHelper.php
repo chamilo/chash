@@ -73,16 +73,20 @@ class ConfigurationHelper extends Helper
     public function getConnection()
     {
         $conf = $this->getConfiguration();
+
         $dbh = false;
 
         if (isset($conf['db_host']) && isset($conf['db_host']) && isset($conf['db_password'])) {
             $dbh  = mysql_connect($conf['db_host'], $conf['db_user'], $conf['db_password']);
+
             if (!$dbh) {
+
                 return false;
                 //die('Could not connect to server: '.mysql_error());
             }
             $db = mysql_select_db($conf['main_database'], $dbh);
             if (!$db) {
+
                 return false;
                 //die('Could not connect to database: '.mysql_error());
             }
@@ -108,6 +112,7 @@ class ConfigurationHelper extends Helper
         ) {
             $dbs[] = $_configuration['statistics_database'];
         }
+
         if (isset($_configuration['scorm_database']) && !in_array(
             $_configuration['scorm_database'],
             $dbs
@@ -115,15 +120,14 @@ class ConfigurationHelper extends Helper
         ) {
             $dbs[] = $_configuration['scorm_database'];
         }
-        if (!in_array(
+
+        if (isset($_configuration['user_personal_database']) && !in_array(
             $_configuration['user_personal_database'],
             $dbs
         ) && !empty($_configuration['user_personal_database'])
         ) {
             $dbs[] = $_configuration['user_personal_database'];
         }
-
-        $connection = $this->getConnection();
 
         $t   = $_configuration['main_database'].'.course';
         $sql = 'SELECT db_name from '.$t;
@@ -140,6 +144,9 @@ class ConfigurationHelper extends Helper
 
     public function getConfiguration()
     {
+        if (empty($this->configuration)) {
+            $this->configuration = $this->readConfigurationFile();
+        }
         return $this->configuration;
     }
 
