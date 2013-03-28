@@ -179,16 +179,22 @@ class ConfigurationHelper extends Helper
             $dbs[] = $_configuration['user_personal_database'];
         }
 
-        $t   = $_configuration['main_database'].'.course';
-        $sql = 'SELECT db_name from '.$t;
-        $res = mysql_query($sql);
-        if (mysql_num_rows($res) > 0) {
-            while ($row = mysql_fetch_array($res)) {
-                if (!empty($row['db_name'])) {
-                    $dbs[] = $row['db_name'];
+        $courseTable = $_configuration['main_database'].'.course';
+
+        $singleDatabase = isset($_configuration['single_database']) ? $_configuration['single_database'] : false;
+
+        if ($singleDatabase == false) {
+            $sql = 'SELECT db_name from '.$courseTable;
+            $res = mysql_query($sql);
+            if (mysql_num_rows($res) > 0) {
+                while ($row = mysql_fetch_array($res)) {
+                    if (!empty($row['db_name'])) {
+                        $dbs[] = $row['db_name'];
+                    }
                 }
             }
         }
+
         return $dbs;
     }
 
