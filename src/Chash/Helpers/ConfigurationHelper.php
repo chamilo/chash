@@ -45,41 +45,41 @@ class ConfigurationHelper extends Helper
         if (is_dir($dir)) {
             return $dir;
         }
-        /*
-        $confFile = $dir.'configuration.php';
-        $confYML = $dir.'configuration.yml';
 
-        if (file_exists($confFile)) {
-            return $dir;
-        }
-
-        if (file_exists($confYML)) {
-            return $dir;
-        }*/
         return false;
     }
 
+    /**
+     * Reads the Chamilo configuration file.
+     * Merges the configuration.php with the configuration.yml if it exists
+     * @param null $path
+     * @return array|bool|mixed
+     */
     public function readConfigurationFile($path = null)
     {
         $confPath = $this->getConfigurationPath($path);
 
-
         if (!empty($confPath)) {
             $confFile = $confPath.'configuration.php';
+
+            $_configuration = array();
+
             if (file_exists($confFile)) {
                 require $confFile;
-                $this->setConfiguration($_configuration);
-
-                return $_configuration;
             }
 
             $confYML = $confPath.'configuration.yml';
             if (file_exists($confYML)) {
                 $yaml = new Parser();
-                $_configuration = $yaml->parse(file_get_contents($confYML));
-
-                return $_configuration;
+                $_configurationYML = $yaml->parse(file_get_contents($confYML));
+                if (isset($_configuration) && !empty($_configuration) && isset($_configurationYML) && !empty($_configurationYML)) {
+                    $_configuration = array_merge($_configuration, $_configurationYML);
+                } else {
+                    $_configuration = $_configurationYML;
+                }
             }
+
+            return $_configuration;
         }
 
         return false;
