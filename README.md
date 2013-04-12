@@ -51,6 +51,7 @@ Available commands:
         db:dump                 Outputs a dump of the database
         db:full_backup          Generates a .tgz from the Chamilo files and database
         db:restore              Allows you to restore an SQL dump right into the active database of a given Chamilo installation (which will also erase all previous data in that database)
+        db:show_conn_info       Shows database connection credentials for the current Chamilo install
         db:sql_cli              Enters to the SQL command line
         db:sql_count            Count the number of rows in a specific table
 
