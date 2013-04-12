@@ -9,7 +9,7 @@ To get the most out of Chash, you should move the chash.phar file to your
 you put chash.phar and doing:
 
     chmod +x chash.phar
-    mv chash.phar /usr/local/bin/chash
+    sudo ln -s /current/path/chash.phar /usr/local/bin/chash
 
 Then you can launch chash by moving into any Chamilo installation directory and
 typing
