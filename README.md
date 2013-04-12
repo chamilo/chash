@@ -9,7 +9,7 @@ To get the most out of Chash, you should move the chash.phar file to your
 you put chash.phar and doing:
 
     chmod +x chash.phar
-    sudo ln -s /current/path/chash.phar /usr/local/bin/chash
+    sudo ln -s /path/to/chash.phar /usr/local/bin/chash
 
 Then you can launch chash by moving into any Chamilo installation directory and
 typing
@@ -37,7 +37,7 @@ Remember to add execution permissions to the phar file.
     cd chash
     php -d phar.readonly=0 createPhar.php
     chmod +x chash.phar
-    sudo mv chash.phar /usr/local/bin/chash
+    sudo ln -s /path/to/chash.phar /usr/local/bin/chash
     Then you can call the chash.phar file in your Chamilo installation
 
     cd /var/www/chamilo
@@ -56,6 +56,7 @@ Available commands:
 
     files
         files:clean_archives          Cleans the archives directory
+        files:clean_config_files      Cleans the config files to help you re-install
 
     translation
         translation:export_language   Exports a Chamilo language package
