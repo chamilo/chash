@@ -42,6 +42,7 @@ $application->addCommands(array(
     new Chash\Command\Database\SQLCountCommand(),
     new Chash\Command\Database\FullBackupCommand(),
     new Chash\Command\Database\DropDatabaseCommand(),
+    new Chash\Command\Database\ShowConnInfoCommand(),
     new Chash\Command\Files\CleanTempFolderCommand(),
     new Chash\Command\Files\CleanConfigFiles(),
     new Chash\Command\Translation\ExportLanguageCommand(),
