@@ -64,10 +64,18 @@ Available commands:
     files
         files:clean_archives          Cleans the archives directory
         files:clean_config_files      Cleans the config files to help you re-install
+        files:show_mail_conf          Returns the current mail config
 
     translation
         translation:export_language   Exports a Chamilo language package
         translation:import_language   Import a Chamilo language package
+        translation:platform_language Gets or sets the platform language
+
+    user
+        user:change_pass              Updates the user password to the one given
+        user:disable_admins           Makes the given user admin on the main portal
+        user:make_admin               Makes the given user admin on the main portal
+        user:reset_login              Outputs login link for given username
 
 Usage
 ====================
