@@ -42,6 +42,11 @@ Remember to add execution permissions to the phar file.
 
     cd /var/www/chamilo
     chash
+    
+If you're using php 5.3 with suhosin the phar will not be executed you can try this:
+
+    php -d suhosin.executor.include.whitelist="phar" chash.phar 
+    
 
 Available commands:
 ====================
