@@ -76,6 +76,7 @@ Available commands:
         user:disable_admins           Makes the given user admin on the main portal
         user:make_admin               Makes the given user admin on the main portal
         user:reset_login              Outputs login link for given username
+        user:set_language             Sets the users language to the one given
 
 Usage
 ====================
