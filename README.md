@@ -46,7 +46,8 @@ Remember to add execution permissions to the phar file.
 If you're using php 5.3 with suhosin the phar will not be executed you can try this:
 
     php -d suhosin.executor.include.whitelist="phar" chash.phar 
-    
+
+or, obviously, you can change this setting in your /etc/php5/cli/conf.d/suhosin.ini file (look for "executor"), although this might increase the vulnerability of your system.
 
 Available commands:
 ====================
