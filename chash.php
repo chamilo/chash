@@ -53,6 +53,7 @@ $application->addCommands(array(
     new Chash\Command\User\DisableAdminsCommand(),
     new Chash\Command\User\MakeAdminCommand(),
     new Chash\Command\User\ResetLoginCommand(),
+    new Chash\Command\User\SetLanguageCommand(),
 ));
 
 $application->run();
