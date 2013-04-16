@@ -1,5 +1,12 @@
 <?php
-
+/**
+ * Definition of command to
+ * change platform language
+ * Does not support multi-url yet
+ */
+/**
+ * Necessary namespaces definitions and usage
+ */
 namespace Chash\Command\Translation;
 
 use Chash\Command\Database\CommonChamiloDatabaseCommand;
@@ -9,6 +16,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Definition of the translation:platform_language command
+ */
 class PlatformLanguageCommand extends CommonChamiloDatabaseCommand
 {
     protected function configure()
