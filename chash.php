@@ -48,6 +48,8 @@ $application->addCommands(array(
     new Chash\Command\Files\MailConfCommand(),
     new Chash\Command\Translation\ExportLanguageCommand(),
     new Chash\Command\Translation\ImportLanguageCommand(),
+    new Chash\Command\Translation\PlatformLanguageCommand(),
+    new Chash\Command\User\ChangePassCommand(),
     new Chash\Command\User\DisableAdminsCommand(),
     new Chash\Command\User\MakeAdminCommand(),
     new Chash\Command\User\ResetLoginCommand(),
