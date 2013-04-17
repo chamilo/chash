@@ -46,6 +46,7 @@ $application->addCommands(array(
     new Chash\Command\Files\CleanTempFolderCommand(),
     new Chash\Command\Files\CleanConfigFiles(),
     new Chash\Command\Files\MailConfCommand(),
+    new Chash\Command\Translation\AddSubLanguageCommand(),
     new Chash\Command\Translation\ExportLanguageCommand(),
     new Chash\Command\Translation\ImportLanguageCommand(),
     new Chash\Command\Translation\PlatformLanguageCommand(),
