@@ -77,7 +77,7 @@ class AddSubLanguageCommand extends CommonChamiloDatabaseCommand
         $lr = mysql_fetch_assoc($lq);
         $is = "INSERT INTO language (original_name, english_name, isocode, dokeos_folder, available, parent_id) VALUES ('{$lr['original_name']}-2','$lang','{$lr['isocode']}','$lang',0,{$lr['id']})";
         $iq = mysql_query($is);
-        if ($lq === false) {
+        if ($iq === false) {
             $output->writeln('Error in query: '.mysql_error());
         } else {
             //permissions gathering, copied from main_api.lib.php::api_get_permissions_for_new_directories()
