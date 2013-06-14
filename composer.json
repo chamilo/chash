@@ -1,7 +1,7 @@
 {
     "name": "chamilo/chash",
     "type": "library",
-    "homepage": "www.chamilo.org",
+    "homepage": "http://www.chamilo.org",
     "support": {
         "forum": "http://www.chamilo.org/forum",
         "irc": "irc://irc.freenode.org/chamilo"
