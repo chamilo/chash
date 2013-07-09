@@ -140,6 +140,28 @@ class ConfigurationHelper extends Helper
         return false;
     }
 
+
+    /**
+     * Returns the $configuration array
+     * <code>
+     * $configuration = $this->getConfiguration('/var/www/chamilo');
+     * // $configuration contains the $_configuration array
+     * </code>
+     * @param string $path
+     *
+     * @return array|bool|mixed
+     */
+    public function getConfiguration($path = null)
+    {
+        if (empty($this->configuration)) {
+            $configurationFile = $this->getConfigurationFilePath($path);
+            if ($configurationFile) {
+                $this->configuration = $this->readConfigurationFile($configurationFile);
+            }
+        }
+        return $this->configuration;
+    }
+
     /**
      *
      * <code>
@@ -399,19 +421,6 @@ class ConfigurationHelper extends Helper
         return $dbs;
     }
 
-    /**
-     * Returns the $configuration array
-     * @param string $path
-     *
-     * @return array|bool|mixed
-     */
-    public function getConfiguration($path = null)
-    {
-        if (empty($this->configuration)) {
-            $this->configuration = $this->readConfigurationFile($path);
-        }
-        return $this->configuration;
-    }
 
     /**
      * @return string

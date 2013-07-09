@@ -17,7 +17,7 @@ class StatusCommand extends CommonCommand
         $this
             ->setName('chamilo:status')
             ->setDescription('Show the information of the current Chamilo installation')
-            ->addOption('path', null, InputOption::VALUE_OPTIONAL, 'The path to the chamilo folder');
+            ->addOption('path', null, InputOption::VALUE_OPTIONAL, 'The path to the Chamilo folder');
     }
 
     /**

@@ -734,7 +734,7 @@ class CommonCommand extends AbstractCommand
             }
 
         } catch (IOException $e) {
-            echo "An error occurred while removing the directory: ".$e->getMessage();
+            echo "\n An error occurred while removing the directory: ".$e->getMessage()."\n ";
         }
 
     }
