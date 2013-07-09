@@ -11,7 +11,7 @@ use Symfony\Component\Console;
 /**
  * Class MigrationCommand
  */
-class SetupCommand extends CommonCommand
+class WipeCommand extends CommonCommand
 {
     protected function configure()
     {
