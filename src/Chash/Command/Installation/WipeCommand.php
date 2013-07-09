@@ -16,9 +16,9 @@ class WipeCommand extends CommonCommand
     protected function configure()
     {
         $this
-            ->setName('chamilo:setup')
+            ->setName('chamilo:wipe')
             ->setDescription('Prepares a portal for a new installation')
-            ->addArgument('path', InputArgument::OPTIONAL, 'The path to the chamilo folder');
+            ->addArgument('path', InputArgument::OPTIONAL, 'The path to the Chamilo folder');
     }
 
 
@@ -35,18 +35,20 @@ class WipeCommand extends CommonCommand
         // Arguments
         $path = $input->getArgument('path');
         $dialog = $this->getHelperSet()->get('dialog');
-        $configurationPath = $this->getConfigurationHelper()->getNewConfigurationPath($path);
 
-        $output->writeln("<comment>This command will clean your Chamilo installation.</comment>");
+        $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($path);
+        $configurationFilePath = $this->getConfigurationHelper()->getConfigurationFilePath($path);
+
+        $output->writeln("<comment>This command will clean your Chamilo installation. Removing the database and courses.</comment>");
 
         if ($configurationPath == false) {
-            $output->writeln("<comment>A Chamilo installation was not detected. You can add a path to the command: </comment><info>chamilo:setup /var/www/chamilo </info>");
+            $output->writeln("<comment>A Chamilo installation was not detected. You can add a path: </comment><info>chamilo:wipe /var/www/chamilo </info>");
             return 0;
         } else {
 
             if (!$dialog->askConfirmation(
                 $output,
-                '<comment>A Chamilo installation was found here:</comment><info> '.$configurationPath.' </info> <question>Are you sure you want to continue?</question>(y/N)',
+                '<comment>A Chamilo configuration file was found here:</comment><info> '.$configurationPath.' </info> <question>Are you sure you want to continue?</question>(y/N)',
                 false
             )
             ) {
@@ -54,36 +56,56 @@ class WipeCommand extends CommonCommand
             }
         }
 
-        $output->writeln("<comment>This command will clean your installation: drop db, removes config files, cache files</comment>");
+        // $this->setConfigurationPath($configurationPath);
 
-        //Drop database chash command
+        $output->writeln("<comment>This command will clean your installation: drop db, removes config files, cache files.</comment>");
+
+        // Drop database Chash command.
         $command = $this->getApplication()->find('db:drop_databases');
 
         $arguments = array(
-            'command' => 'db:drop_databases'
+            'command' => 'files:drop_databases',
+            '--conf' => $configurationFilePath
         );
-        $input = new ArrayInput($arguments);
-        $command->run($input, $output);
 
-        //Clean temp chash command
-        $command = $this->getApplication()->find('files:clean_archives');
+        $inputDrop = new ArrayInput($arguments);
+        $command->run($inputDrop, $output);
+
+        // Clean temp Chash command
+        $command = $this->getApplication()->find('files:clean_temp_folder');
 
         $arguments = array(
-            'command' => 'files:clean_archives'
+            'command' => 'files:clean_temp_folder',
+            '--conf' => $configurationFilePath
         );
         $input = new ArrayInput($arguments);
         $command->run($input, $output);
 
-        //Clean files
+
+        // Cleaning data files
+        $command = $this->getApplication()->find('files:clean_data_files');
+
+        $arguments = array(
+            'command' => 'files:clean_data_files',
+            '--conf' => $configurationFilePath
+        );
+        $input = new ArrayInput($arguments);
+        $command->run($input, $output);
+
+
+        // Cleaning config files (last one)
+
         $command = $this->getApplication()->find('files:clean_config_files');
-
         $arguments = array(
-            'command' => 'files:clean_archives'
+            'command' => 'files:clean_config_files',
+            '--conf' => $configurationFilePath
         );
         $input = new ArrayInput($arguments);
         $command->run($input, $output);
 
-        $output->writeln("<comment>Cleaned.</comment>");
+
+
+
     }
 }
 

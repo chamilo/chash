@@ -17,6 +17,7 @@ use Symfony\Component\Yaml\Dumper;
 class InstallCommand extends CommonCommand
 {
     public $commandLine = true;
+    public $oldConfigLocation = false;
 
     /**
      * @return string
@@ -59,7 +60,16 @@ class InstallCommand extends CommonCommand
         // Getting the new config folder
         $configurationPath = $this->getConfigurationHelper()->getNewConfigurationPath($path);
 
-        $this->setRootSys(realpath($configurationPath.'/../').'/');
+        if ($configurationPath == false) {
+            //  Seems an old installation!
+            $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($path);
+            $this->setRootSys(realpath($configurationPath.'/../../../').'/');
+            $this->oldConfigLocation = true;
+        } else {
+            // Chamilo installations > 1.10
+            $this->oldConfigLocation = false;
+            $this->setRootSys(realpath($configurationPath.'/../').'/');
+        }
 
         $dialog = $this->getHelperSet()->get('dialog');
 
@@ -76,19 +86,23 @@ class InstallCommand extends CommonCommand
         }
 
         if (empty($configurationPath)) {
-            $output->writeln("<error>There's an error while loading the configuration path. Are you sure this is a Chamilo folder?</error>");
+            $output->writeln("<error>There's an error while loading the configuration path. </error>");
+            $output->writeln("<comment>Try setting up a Chamilo path for example: </comment><info>chamilo:install 1.9.0 /var/www/chamilo</info>");
+
             return 0;
         }
 
         if (!is_writable($configurationPath)) {
             $output->writeln("<error>Folder ".$configurationPath." must be writable</error>");
             return 0;
+        } else {
+            $output->writeln("<comment>Configuration file will be saved here: </comment><info>".$configurationPath." </info>");
         }
 
         $sqlFolder = $this->getInstallationPath($version);
 
         if (!is_dir($sqlFolder)) {
-            $output->writeln("<comment>Sorry you can't install that version of Chamilo :(.</comment>");
+            $output->writeln("<comment>Sorry you can't install that version of Chamilo :(</comment>");
             $output->writeln("<comment>Supported versions:</comment> <info>".implode(', ', $this->getAvailableVersions()));
             return 0;
         }
@@ -96,7 +110,7 @@ class InstallCommand extends CommonCommand
         if (file_exists($configurationPath.'configuration.php') || file_exists($configurationPath.'configuration.yml')) {
             if ($this->commandLine) {
                 $output->writeln("<comment>There's a Chamilo portal here:</comment> <info>".$configurationPath."</info>");
-                $output->writeln("<comment>You should run <info>chamilo:setup </info><comment>if you want to start with a fresh install.</comment>");
+                $output->writeln("<comment>You should run <info>chamilo:wipe $path </info><comment>if you want to start with a fresh install.</comment>");
             } else {
                 $output->writeln("<comment>There's a Chamilo portal here:</comment> <info>".$configurationPath." </info>");
             }
@@ -254,8 +268,10 @@ class InstallCommand extends CommonCommand
                     $app['session.test'] = true;
                     $filesystem = $app['chamilo.filesystem'];
 
+                    $portalSettings = $this->getPortalSettings();
+
                     // Creating temp folders
-                    $filesystem->createFolders($app['temp.paths']->folders);
+                    $filesystem->createFolders($app['temp.paths']->folders, null, octdec(trim($portalSettings['permissions_for_new_directories'])));
                     $output->writeln("<comment>Temp folders were created.</comment>");
 
                     $app['installer']->setSettingsAfterInstallation($this->getAdminSettings(), $this->getPortalSettings());
@@ -296,40 +312,11 @@ class InstallCommand extends CommonCommand
         }
     }
 
-    private function setDoctrineSettings()
-    {
-        $config = new \Doctrine\ORM\Configuration();
-        $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache);
-        $reader = new AnnotationReader();
-
-        $driverImpl = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver($reader, array());
-        $config->setMetadataDriverImpl($driverImpl);
-        $config->setProxyDir(__DIR__ . '/Proxies');
-        $config->setProxyNamespace('Proxies');
-
-        $em = \Doctrine\ORM\EntityManager::create($this->getDatabaseSettings(), $config);
-
-        // Fixes some errors
-        $platform = $em->getConnection()->getDatabasePlatform();
-        $platform->registerDoctrineTypeMapping('enum', 'string');
-        $platform->registerDoctrineTypeMapping('set', 'string');
-
-        $helpers = array(
-            'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($em->getConnection()),
-            'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper($em),
-            'configuration' => new \Chash\Helpers\ConfigurationHelper()
-        );
-
-        foreach ($helpers as $name => $helper) {
-            $this->getApplication()->getHelperSet()->set($helper, $name);
-        }
-    }
 
     /**
-     * Installs Chamilo
+     * Installation command
      *
      * @param string $version
-     * @param array $_configuration
      * @param $output
      * @return bool
      */
@@ -358,7 +345,7 @@ class InstallCommand extends CommonCommand
 
                     $command = $this->getApplication()->find('dbal:import');
 
-                    //Importing sql files
+                    // Importing sql files.
                     $arguments = array(
                         'command' => 'dbal:import',
                         'file' =>  $dbList
@@ -375,7 +362,7 @@ class InstallCommand extends CommonCommand
                 //@todo fix this
                 foreach ($sections['course'] as $courseInfo) {
                     $databaseName = $courseInfo['name'];
-                    $output->writeln("Inserting course database in chamilo: <info>$databaseName</info>");
+                    $output->writeln("Inserting course database in Chamilo: <info>$databaseName</info>");
                     $this->createCourse($databaseName);
                 }
             }

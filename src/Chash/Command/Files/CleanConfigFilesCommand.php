@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Clean the archives directory, leaving only index.html, twig and Serializer
  * @return bool True on success, false on error
  */
-class CleanConfigFiles extends CommonChamiloDatabaseCommand
+class CleanConfigFilesCommand extends CommonChamiloDatabaseCommand
 {
     /**
      *
@@ -35,7 +35,7 @@ class CleanConfigFiles extends CommonChamiloDatabaseCommand
     {
         parent::execute($input, $output);
 
-        $output->writeln('<comment>Starting cleaning your Chamilo installation</comment>');
+        $output->writeln('<comment>Cleaning config files</comment>');
 
         $dialog = $this->getHelperSet()->get('dialog');
 
@@ -48,25 +48,7 @@ class CleanConfigFiles extends CommonChamiloDatabaseCommand
             return;
         }
 
-        $filesToDelete = $this->getHelper('configuration')->getConfigFiles();
-
-        if (!empty($filesToDelete)) {
-            foreach ($filesToDelete as $file) {
-                if (isset($file) && file_exists($file) && is_file($file)) {
-                    if (!$dialog->askConfirmation(
-                        $output,
-                        "<question>Are you sure you want to delete: </question> <info>$file</info> (y/N)",
-                        false
-                    )
-                    ) {
-                        return;
-                    }
-                    unlink($file);
-                    $output->writeln("<comment>File deleted: </comment><info>$file</info>");
-                }
-            }
-        } else {
-            $output->writeln("<comment>Nothing to delete</comment>");
-        }
+        $files = $this->getConfigurationHelper()->getConfigFiles();
+        $this->removeFiles($files, $output);
     }
 }

@@ -2,9 +2,12 @@
 
 namespace Chash\Command\Installation;
 
+use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
 use Doctrine\DBAL\Migrations\Tools\Console\Command\AbstractCommand;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Exception\IOException;
 
 class CommonCommand extends AbstractCommand
 {
@@ -12,6 +15,28 @@ class CommonCommand extends AbstractCommand
     public $databaseSettings;
     public $adminSettings;
     public $rootSys;
+    public $configurationPath = null;
+    public $configuration = array();
+
+    public function setConfigurationArray($configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
+    public function getConfigurationArray()
+    {
+        return $this->configuration;
+    }
+
+    public function setConfigurationPath($path)
+    {
+        $this->configurationPath = $path;
+    }
+
+    public function getConfigurationPath()
+    {
+        return $this->configurationPath;
+    }
 
     /**
      * @param array $portalSettings
@@ -76,13 +101,21 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
+     * @return string
+     */
+    public function getInstallationFolder()
+    {
+        return realpath(__DIR__.'/../../Resources/Database').'/';
+    }
+
+    /**
      * Gets the version name folders located in main/install
      *
      * @return array
      */
     public function getAvailableVersions()
     {
-        $installPath = __DIR__.'/../../Resources/Database';
+        $installPath = $this->getInstallationFolder();
         $dir = new \DirectoryIterator($installPath);
         $dirList = array();
         foreach ($dir as $fileInfo) {
@@ -389,7 +422,7 @@ class CommonCommand extends AbstractCommand
      */
     public function getMigrationConfigurationFile()
     {
-        return api_get_path(SYS_PATH).'src/ChamiloLMS/Migrations/migrations.yml';
+        return $this->getRootSys().'src/ChamiloLMS/Migrations/migrations.yml';
     }
 
     /**
@@ -413,7 +446,7 @@ class CommonCommand extends AbstractCommand
         $portalSettings = $this->getPortalSettings();
         $databaseSettings = $this->getDatabaseSettings();
 
-        $configurationPath = $this->getConfigurationHelper()->getNewConfigurationPath($path);
+        $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($path);
 
         // Creates a YML File
 
@@ -429,7 +462,7 @@ class CommonCommand extends AbstractCommand
         $configuration['root_web'] = $portalSettings['institution_url'];
         $configuration['root_sys'] = $this->getRootSys();
 
-        $configuration['security_key']      = md5(uniqid(rand().time()));
+        $configuration['security_key'] = md5(uniqid(rand().time()));
 
         // Hash function method
         $configuration['password_encryption']      = $portalSettings['encrypt_method'];
@@ -443,6 +476,7 @@ class CommonCommand extends AbstractCommand
         $configuration['deny_delete_users']        = false;
         //Prevent all admins from using the "login_as" feature
         $configuration['login_as_forbidden_globally'] = false;
+
         // Version settings
         $configuration['system_version']           = '1.10.0';
 
@@ -457,7 +491,12 @@ class CommonCommand extends AbstractCommand
 
         // Create a configuration.php
 
-        $contents = file_get_contents($this->getRootSys().'config/configuration.dist.php');
+        if (file_exists($this->getRootSys().'config/configuration.dist.php')) {
+            $contents = file_get_contents($this->getRootSys().'config/configuration.dist.php');
+        } else {
+            // Try the old one
+            $contents = file_get_contents($this->getRootSys().'main/inc/conf/configuration.dist.php');
+        }
 
         $configuration['{DATE_GENERATED}'] = date('r');
         $config['{DATABASE_HOST}'] = $configuration['db_host'];
@@ -601,6 +640,103 @@ class CommonCommand extends AbstractCommand
                 )
             )
         );
+    }
+
+    /**
+     * Set Doctrine settings
+     */
+    protected function setDoctrineSettings()
+    {
+        $config = new \Doctrine\ORM\Configuration();
+        $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache);
+        $reader = new AnnotationReader();
+
+        $driverImpl = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver($reader, array());
+        $config->setMetadataDriverImpl($driverImpl);
+        $config->setProxyDir(__DIR__ . '/Proxies');
+        $config->setProxyNamespace('Proxies');
+
+        $em = \Doctrine\ORM\EntityManager::create($this->getDatabaseSettings(), $config);
+
+        // Fixes some errors
+        $platform = $em->getConnection()->getDatabasePlatform();
+        $platform->registerDoctrineTypeMapping('enum', 'string');
+        $platform->registerDoctrineTypeMapping('set', 'string');
+
+        $helpers = array(
+            'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($em->getConnection()),
+            'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper($em),
+            'configuration' => new \Chash\Helpers\ConfigurationHelper()
+        );
+
+        foreach ($helpers as $name => $helper) {
+            $this->getApplication()->getHelperSet()->set($helper, $name);
+        }
+    }
+
+    /**
+     * @param string $path
+     * @param array $databaseList
+     */
+    protected function setConnections($path, $databaseList)
+    {
+        $_configuration = $this->getHelper('configuration')->getConfiguration($path);
+
+        $config = new \Doctrine\ORM\Configuration();
+        $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache);
+        $reader = new AnnotationReader();
+
+        $driverImpl = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver($reader, array());
+        $config->setMetadataDriverImpl($driverImpl);
+        $config->setProxyDir(__DIR__ . '/Proxies');
+        $config->setProxyNamespace('Proxies');
+
+        foreach ($databaseList as $section => &$dbList) {
+            foreach ($dbList as &$dbInfo) {
+                $params = $this->getDatabaseSettings();
+                $em = \Doctrine\ORM\EntityManager::create($params, $config);
+                $evm = new \Doctrine\Common\EventManager;
+
+                if ($section == 'course') {
+                    $tablePrefix = new \Chash\DoctrineExtensions\TablePrefix($_configuration['db_prefix']);
+                    $evm ->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);
+                }
+                $helper = new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($em->getConnection());
+                $this->getApplication()->getHelperSet()->set($helper, $dbInfo['database']);
+
+            }
+        }
+    }
+
+    public function removeFiles($files, \Symfony\Component\Console\Output\OutputInterface $output)
+    {
+
+        $dryRun = $this->getConfigurationHelper()->getDryRun();
+
+        if (empty($files)) {
+            $output->writeln('<comment>No files found.</comment>');
+            return 0;
+        }
+
+        $fs = new Filesystem();
+        try {
+            if ($dryRun) {
+                $output->writeln('<comment>Files to be removed:</comment>');
+                foreach ($files as $file) {
+                    $output->writeln($file->getPathName());
+                }
+            } else {
+                $output->writeln('<comment>Removing files:</comment>');
+                foreach ($files as $file) {
+                    $output->writeln($file->getPathName());
+                }
+                $fs->remove($files);
+            }
+
+        } catch (IOException $e) {
+            echo "An error occurred while removing the directory: ".$e->getMessage();
+        }
+
     }
 
 }
