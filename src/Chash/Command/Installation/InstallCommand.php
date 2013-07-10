@@ -71,7 +71,7 @@ class InstallCommand extends CommonCommand
         // Arguments
         $path = $input->getArgument('path');
         $version = $input->getArgument('version');
-        $silent = $input->getOption('silent');
+        $silent = $input->getOption('silent') == true;
 
         // Setting configuration helper
         $this->getApplication()->getHelperSet()->set(new \Chash\Helpers\ConfigurationHelper(), 'configuration');
@@ -286,15 +286,17 @@ class InstallCommand extends CommonCommand
             $eventManager = $connectionToHost->getSchemaManager();
             $databases = $eventManager->listDatabases();
             if (in_array($databaseSettings['dbname'], $databases)) {
-                $dialog = $this->getHelperSet()->get('dialog');
+                if ($silent == false) {
+                    $dialog = $this->getHelperSet()->get('dialog');
 
-                if (!$dialog->askConfirmation(
-                    $output,
-                    '<comment>The database <info>'.$databaseSettings['dbname'].'</info> exists and is going to be dropped!</comment> <question>Are you sure?</question>(y/N)',
-                    false
-                )
-                ) {
-                    return 0;
+                    if (!$dialog->askConfirmation(
+                        $output,
+                        '<comment>The database <info>'.$databaseSettings['dbname'].'</info> exists and is going to be dropped!</comment> <question>Are you sure?</question>(y/N)',
+                        false
+                    )
+                    ) {
+                        return 0;
+                    }
                 }
             }
         }

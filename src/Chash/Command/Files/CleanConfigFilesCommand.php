@@ -50,5 +50,6 @@ class CleanConfigFilesCommand extends CommonChamiloDatabaseCommand
 
         $files = $this->getConfigurationHelper()->getConfigFiles();
         $this->removeFiles($files, $output);
+
     }
 }

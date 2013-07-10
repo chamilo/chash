@@ -54,12 +54,11 @@ class UpgradeCommand extends CommonCommand
         $version = $input->getArgument('version');
         $path = $input->getOption('path');
         $dryRun = $input->getOption('dry-run');
+        $silent = $input->getOption('silent') == true;
+
         //$force = $input->getOption('force');
 
         $_configuration = $this->getConfigurationHelper()->getConfiguration($path);
-
-        // Getting the new config folder
-        $configurationPath = $this->getConfigurationHelper()->getNewConfigurationPath($path);
 
         $this->setConfigurationArray($_configuration);
         $this->getConfigurationHelper()->setConfiguration($_configuration);
@@ -147,24 +146,26 @@ class UpgradeCommand extends CommonCommand
 
         //@todo Too much questions?
 
-        $dialog = $this->getHelperSet()->get('dialog');
-        if (!$dialog->askConfirmation(
-            $output,
-            '<question>Are you sure you want to upgrade the Chamilo located here?</question> <info>'.$_configuration['root_sys'].'</info> (y/N)',
-            false
-        )
-        ) {
-            return;
-        }
+        if ($silent == false) {
+            $dialog = $this->getHelperSet()->get('dialog');
+            if (!$dialog->askConfirmation(
+                $output,
+                '<question>Are you sure you want to upgrade the Chamilo located here?</question> <info>'.$_configuration['root_sys'].'</info> (y/N)',
+                false
+            )
+            ) {
+                return;
+            }
 
-        $dialog = $this->getHelperSet()->get('dialog');
-        if (!$dialog->askConfirmation(
-            $output,
-            '<question>Are you sure you want to upgrade from version</question> <info>'.$_configuration['system_version'].'</info> <comment>to version </comment><info>'.$version.'</info> (y/N)',
-            false
-        )
-        ) {
-            return;
+            $dialog = $this->getHelperSet()->get('dialog');
+            if (!$dialog->askConfirmation(
+                $output,
+                '<question>Are you sure you want to upgrade from version</question> <info>'.$_configuration['system_version'].'</info> <comment>to version </comment><info>'.$version.'</info> (y/N)',
+                false
+            )
+            ) {
+                return;
+            }
         }
 
         $output->writeln('<comment>Migrating from Chamilo version: </comment><info>'.$_configuration['system_version'].'</info><comment> to version <info>'.$version);
@@ -294,6 +295,7 @@ class UpgradeCommand extends CommonCommand
                 } else {
                     $output->writeln("<comment>Executing update files: <info>'$sqlToInstall'</info>");
                     require $sqlToInstall;
+                    $updateFiles($_configuration, $conn, $courseList, $dryRun, $output);
                 }
             }
         }

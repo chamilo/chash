@@ -1,7 +1,8 @@
 <?php
 /* For licensing terms, see /license.txt */
 
-$update = function($_configuration, $mainConnection, $courseList, $dryRun, $output) {
+$update = function($_configuration, $mainConnection, $courseList, $dryRun, $output)
+{
 
     $portalSettings = $this->getPortalSettings();
 

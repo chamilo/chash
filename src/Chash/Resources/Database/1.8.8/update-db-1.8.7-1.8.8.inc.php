@@ -1,9 +1,9 @@
 <?php
 /* For licensing terms, see /license.txt */
 
-$update = function($_configuration, $mainConnection, $courseList, $dryRun, $output) {
+$update = function($_configuration, $mainConnection, $courseList, $dryRun, $output)
+{
     $portalSettings = $this->getPortalSettings();
-
     $databaseList = $this->generateDatabaseList($courseList);
 
     $courseDatabaseConnectionList = $databaseList['course']; // main  user stats course
