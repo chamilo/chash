@@ -19,21 +19,33 @@ class CommonCommand extends AbstractCommand
     public $configuration = array();
     public $extraDatabaseSettings;
 
-    public function setConfigurationArray($configuration)
+    /**
+     * @param array $configuration
+     */
+    public function setConfigurationArray(array $configuration)
     {
         $this->configuration = $configuration;
     }
 
+    /**
+     * @return array
+     */
     public function getConfigurationArray()
     {
         return $this->configuration;
     }
 
+    /**
+     * @param string $path
+     */
     public function setConfigurationPath($path)
     {
         $this->configurationPath = $path;
     }
 
+    /**
+     * @return null
+     */
     public function getConfigurationPath()
     {
         return $this->configurationPath;
@@ -112,10 +124,25 @@ class CommonCommand extends AbstractCommand
     /**
      * @return string
      */
-
     public function getRootSys()
     {
         return $this->rootSys;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCourseSysPath()
+    {
+        if (is_dir($this->getRootSys().'courses')) {
+            return $this->getRootSys().'courses';
+        }
+
+        if (is_dir($this->getRootSys().'data/courses')) {
+            return $this->getRootSys().'data/courses';
+        }
+
+        return null;
     }
 
     /**
@@ -454,6 +481,24 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
+     * @todo move to configurationhelper
+     * @param string $path
+     */
+    public function setRootSysDependingConfigurationPath($path)
+    {
+        $configurationPath = $this->getConfigurationHelper()->getNewConfigurationPath($path);
+
+        if ($configurationPath == false) {
+            //  Seems an old installation!
+            $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($path);
+            $this->setRootSys(realpath($configurationPath.'/../../../').'/');
+        } else {
+            // Chamilo installations > 1.10
+            $this->setRootSys(realpath($configurationPath.'/../').'/');
+        }
+    }
+
+    /**
      * Writes the configuration file a yml file
      * @param string $version
      * @param string $path
@@ -772,7 +817,22 @@ class CommonCommand extends AbstractCommand
         } catch (IOException $e) {
             echo "\n An error occurred while removing the directory: ".$e->getMessage()."\n ";
         }
+    }
 
+    /**
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param array $params
+     */
+    public function getParamsFromOptions(\Symfony\Component\Console\Input\InputInterface $input, array $params)
+    {
+        $filledParams = array();
+
+        foreach ($params as $key => $value) {
+            $newValue = $input->getOption($key);
+            $filledParams[$key] = $newValue;
+        }
+
+        return $filledParams;
     }
 
 }

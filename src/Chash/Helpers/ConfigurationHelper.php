@@ -24,7 +24,6 @@ class ConfigurationHelper extends Helper
 
     }
 
-
     public function getDryRun()
     {
         return $this->dryRun;
@@ -75,13 +74,12 @@ class ConfigurationHelper extends Helper
         } else {
             $chamiloPath = $path;
         }
-
-        if (is_dir($chamiloPath.'/main/inc/conf/')) {
-            return $dir = realpath($chamiloPath.'/main/inc/conf/').'/';
+        if (is_dir($chamiloPath.'/main/inc/conf')) {
+            return realpath($chamiloPath.'/main/inc/conf/').'/';
         }
 
-        if (is_dir($chamiloPath.'/config/')) {
-            return $dir = realpath($chamiloPath.'/config/').'/';
+        if (is_dir($chamiloPath.'/config')) {
+            return realpath($chamiloPath.'/config/').'/';
         }
 
         return false;
@@ -203,12 +201,15 @@ class ConfigurationHelper extends Helper
     public function readConfigurationFile($configurationFile = null)
     {
         if (!empty($configurationFile)) {
+
             if (file_exists($configurationFile)) {
                 $confInfo = pathinfo($configurationFile);
-                switch($confInfo['extension']) {
+                switch ($confInfo['extension']) {
                     case 'php':
                         require $configurationFile;
-                        return $_configuration;
+                        if (isset($_configuration)) {
+                            return $_configuration;
+                        }
                         break;
                     case 'yml':
                         $yaml = new Parser();

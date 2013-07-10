@@ -60,35 +60,50 @@ class StatusCommand extends CommonCommand
         $data = $conn->executeQuery($query);
         $data = $data->fetch();
         $chamiloVersion = $data['selected_value'];
+        $databaseSetting = 'chamilo_database_version';
 
         if (empty($chamiloVersion)) {
             $query = "SELECT selected_value FROM settings_current WHERE variable = 'dokeos_database_version'";
             $data = $conn->executeQuery($query);
             $data = $data->fetch();
             $chamiloVersion = $data['selected_value'];
+            $databaseSetting = 'dokeos_database_version';
         }
 
-        $output->writeln('<comment>Chamilo installation status:</comment>');
+        $output->writeln('<comment>Chamilo $_configuration info:</comment>');
+        $output->writeln('');
 
+        $output->writeln('<comment>Chamilo $_configuration[root_web]:</comment> <info>'.$_configuration['root_web'].'</info>');
         $output->writeln('<comment>Chamilo $_configuration[root_sys]:</comment> <info>'.$_configuration['root_sys'].'</info>');
-        $output->writeln('<comment>Chamilo $_configuration[db_prefix]:</comment> <info>'.$_configuration['db_prefix'].'</info>');
-        $output->writeln('<comment>Chamilo $_configuration[single_database]:</comment> <info>'.$_configuration['single_database'].'</info>');
 
+        //$output->writeln('<comment>Chamilo $_configuration[db_driver]:</comment> <info>'.$_configuration['db_driver'].'</info>');
         $output->writeln('<comment>Chamilo $_configuration[main_database]:</comment> <info>'.$_configuration['main_database'].'</info>');
+        $output->writeln('<comment>Chamilo $_configuration[db_host]:</comment> <info>'.$_configuration['db_host'].'</info>');
+        $output->writeln('<comment>Chamilo $_configuration[db_user]:</comment> <info>'.$_configuration['db_user'].'</info>');
+        $output->writeln('<comment>Chamilo $_configuration[db_password]:</comment> <info>'.$_configuration['db_password'].'</info>');
+
+        $output->writeln('<comment>Chamilo $_configuration[single_database]:</comment> <info>'.$_configuration['single_database'].'</info>');
         $output->writeln('<comment>Chamilo $_configuration[db_prefix]:</comment> <info>'.$_configuration['db_prefix'].'</info>');
+
         $output->writeln('<comment>Chamilo $_configuration[db_glue]:</comment> <info>'.$_configuration['db_glue'].'</info>');
         $output->writeln('<comment>Chamilo $_configuration[table_prefix]:</comment> <info>'.$_configuration['table_prefix'].'</info>');
+        $output->writeln('');
 
         if (empty($chamiloVersion)) {
-            $output->writeln("<comment>Please check your Chamilo installation carefully the <info>'chamilo_database_version'</info> admin setting is not available.</comment>");
+            $output->writeln("<comment>Please check your Chamilo installation carefully the <info>'chamilo_database_version'</info> admin does not exists.</comment>");
         } else {
-            $output->writeln("<comment>Chamilo setting_current 'chamilo_database_version':</comment> <info>".$chamiloVersion."</info>");
+            $output->writeln('<comment>Chamilo database settings:</comment>');
+            $output->writeln("<comment>Chamilo setting_current['".$databaseSetting."']:</comment> <info>".$chamiloVersion."</info>");
         }
 
-        if (!version_compare(substr($chamiloVersion, 0, 5), substr($_configuration['system_version'],0, 5), '==')) {
+        if (!version_compare(substr($chamiloVersion, 0, 5), substr($_configuration['system_version'],0, 5), '==' )) {
             $output->writeln("<error>Please check carefully your Chamilo installation. </error>");
-            $output->writeln("<comment>The configuration.php file and the 'chamilo_database_version' setting are not synced</comment>");
+            $output->writeln("<comment>The configuration.php file and the 'chamilo_database_version' setting are not synced.</comment>");
+        } else {
+            //$output->writeln("<comment>You're ready for an upgrade.</comment>");
         }
+
+        //$this->getConfigurationHelper()->
     }
 
 }

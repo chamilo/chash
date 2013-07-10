@@ -1,6 +1,6 @@
 <?php
 
-namespace ChamiloLMS\Migrations;
+namespace Chash\Migrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration,
     Doctrine\DBAL\Schema\Schema;

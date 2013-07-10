@@ -20,7 +20,6 @@ class UpgradeCommand extends CommonCommand
     public $queryList;
     public $databaseList;
 
-
     /**
      * Get connection
      * @return\Doctrine\DBAL\Connection
@@ -37,7 +36,8 @@ class UpgradeCommand extends CommonCommand
             ->setDescription('Execute a chamilo migration to a specified version or the latest available version.')
             ->addArgument('version', InputArgument::REQUIRED, 'The version to migrate to.', null)
             ->addOption('path', null, InputOption::VALUE_OPTIONAL, 'The path to the chamilo folder')
-            ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Execute the migration as a dry run.');
+            ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Execute the migration as a dry run.')
+            ->addOption('silent', null, InputOption::VALUE_NONE, 'Execute the migration with out asking questions.');
             //->addOption('force', null, InputOption::VALUE_NONE, 'Force the update. Only for tests');
     }
 
@@ -58,6 +58,14 @@ class UpgradeCommand extends CommonCommand
 
         $_configuration = $this->getConfigurationHelper()->getConfiguration($path);
 
+        // Getting the new config folder
+        $configurationPath = $this->getConfigurationHelper()->getNewConfigurationPath($path);
+
+        $this->setConfigurationArray($_configuration);
+        $this->getConfigurationHelper()->setConfiguration($_configuration);
+
+        $this->setRootSysDependingConfigurationPath($path);
+
         if (empty($_configuration)) {
             $output->writeln("<comment>Chamilo is not installed here! You may add a path as an option:</comment>");
             $output->writeln("<comment>For example: </comment><info>chamilo:upgrade 1.9.0 --path=/var/www/chamilo</info>");
@@ -72,15 +80,17 @@ class UpgradeCommand extends CommonCommand
             return 0;
         }
 
+        $this->setConfigurationPath($configurationPath);
+
         // In order to use Doctrine migrations
 
         // Setting configuration variable in order to get the doctrine version:
-        /*$input->setOption('configuration', $this->getMigrationConfigurationFile());
-        $configuration = $this->getMigrationConfiguration($input, $output);
+        //$input->setOption('configuration', $this->getMigrationConfigurationFile());
+        //$configuration = $this->getMigrationConfiguration($input, $output);
 
         // Doctrine migrations version
-        $doctrineVersion = $configuration->getCurrentVersion();
-        */
+        //$doctrineVersion = $configuration->getCurrentVersion();
+        $doctrineVersion = null;
 
         // Getting supported version number list
         $versionNameList = $this->getVersionNumberList();
@@ -158,12 +168,9 @@ class UpgradeCommand extends CommonCommand
         }
 
         $output->writeln('<comment>Migrating from Chamilo version: </comment><info>'.$_configuration['system_version'].'</info><comment> to version <info>'.$version);
+        $output->writeln('<comment>Starting upgrade for Chamilo, reading configuration file located here: </comment><info>'.$configurationPath.'configuration.php</info>');
 
-        // Starting.
-        $output->writeln('<comment>Starting upgrade for Chamilo, Reading configuration file located here: </comment><info>'.$configurationPath.'configuration.php</info>');
-
-
-         // Getting configuration file
+         // Getting configuration file.
         $_configuration = $this->getHelper('configuration')->getConfiguration($path);
 
         $databaseSettings = array(
@@ -174,8 +181,17 @@ class UpgradeCommand extends CommonCommand
             'password' => $_configuration['db_password'],
         );
 
-        // Setting DB access
+        // Setting DB access.
         $this->setDatabaseSettings($databaseSettings);
+
+        $extraDatabaseSettings = array(
+            'single_database'=> isset($_configuration['single_database']) ? $_configuration['single_database'] : false,
+            'table_prefix'=> isset($_configuration['table_prefix']) ? $_configuration['table_prefix'] : null,
+            'db_glue' => isset($_configuration['db_glue']) ? $_configuration['db_glue'] : null,
+            'db_prefix' => isset($_configuration['db_prefix']) ? $_configuration['db_prefix'] : null,
+        );
+
+        $this->setExtraDatabaseSettings($extraDatabaseSettings);
         $this->setDoctrineSettings();
 
         $conn = $this->getConnection();
@@ -187,6 +203,10 @@ class UpgradeCommand extends CommonCommand
             return 0;
         }
 
+        $query = "SELECT * FROM course";
+        $result = $conn->executeQuery($query);
+        $courseList = $result->fetchAll();
+
         $oldVersion = $currentVersion;
         foreach ($versionList as $versionItem => $versionInfo) {
             if (version_compare($versionItem, $currentVersion, '>') && version_compare($versionItem, $version, '<=')) {
@@ -195,8 +215,8 @@ class UpgradeCommand extends CommonCommand
                 $output->writeln("");
 
                 if (isset($versionInfo['require_update']) && $versionInfo['require_update'] == true) {
-                    //Greater than my current version
-                    $this->startMigration($path, $versionItem, $dryRun, $output);
+                    // Greater than my current version.
+                    $this->startMigration($courseList, $path, $versionItem, $dryRun, $output);
                     $oldVersion = $versionItem;
                     $output->writeln("----------------------------------------------------------------");
                 } else {
@@ -205,38 +225,42 @@ class UpgradeCommand extends CommonCommand
             }
         }
 
-        $this->updateConfiguration($version);
+
+        $this->updateConfiguration($output, $dryRun, array('system_version' => $version));
+
         $output->writeln("<comment>Wow! You just finish to migrate. Too check the current status of your platform. Run </comment><info>chamilo:status</info>");
     }
 
     /**
      * Starts a migration
      *
-     * @param $toVersion
-     * @param $dryRun
-     * @param $output
+     * @param array $courseList
+     * @param string $path
+     * @param string $toVersion
+     * @param bool $dryRun
+     * @param Console\Output\OutputInterface $output
      *
      * @return bool
      */
-    public function startMigration($path, $toVersion, $dryRun, $output)
+    public function startMigration($courseList, $path, $toVersion, $dryRun, Console\Output\OutputInterface $output)
     {
         // Cleaning query list.
         $this->queryList = array();
 
-        // Main connection
+        // Main DB connection.
         $conn = $this->getConnection();
         $_configuration = $this->getHelper('configuration')->getConfiguration($path);
 
         $versionInfo = $this->getAvailableVersionInfo($toVersion);
-        $installPath = $this->getInstallationFolder().'/'.$toVersion.'/';
+        $installPath = $this->getInstallationFolder().$toVersion.'/';
 
         // Filling sqlList array with "pre" db changes.
         if (isset($versionInfo['pre']) && !empty($versionInfo['pre'])) {
             $sqlToInstall = $installPath.$versionInfo['pre'];
             $this->fillQueryList($sqlToInstall, $output, 'pre');
 
-            // Processing sql query list depending of the section.
-            $result = $this->processQueryList($output, $path, $toVersion, $dryRun, 'pre');
+            // Processing sql query list depending of the section (course, main, user).
+            $result = $this->processQueryList($courseList, $output, $path, $toVersion, $dryRun, 'pre');
         }
 
         // Filling sqlList array with "post" db changes.
@@ -244,41 +268,47 @@ class UpgradeCommand extends CommonCommand
             $sqlToInstall = $installPath.$versionInfo['post'];
             $this->fillQueryList($sqlToInstall, $output, 'post');
             // Processing sql query list depending of the section.
-            $result = $this->processQueryList($output, $path, $toVersion, $dryRun, 'post');
+            $result = $this->processQueryList($courseList, $output, $path, $toVersion, $dryRun, 'post');
         }
 
         // Processing "db" changes.
         if (isset($versionInfo['update_db']) && !empty($versionInfo['update_db'])) {
             $sqlToInstall = $installPath.$versionInfo['update_db'];
             if (is_file($sqlToInstall) && file_exists($sqlToInstall)) {
-                $output->writeln("<comment>Executing update db: <info>'$sqlToInstall'</info>");
-                var_dump($sqlToInstall);
+                if ($dryRun) {
+                    $output->writeln("<comment>File to be executed but not fired because of dry-run option: <info>'$sqlToInstall'</info>");
+                } else {
+                    $output->writeln("<comment>Executing update db: <info>'$sqlToInstall'</info>");
+                }
                 require $sqlToInstall;
-                $update($_configuration, $conn, $dryRun, $output, $app);
+                $update($_configuration, $conn, $courseList, $dryRun, $output);
             }
         }
-
-        exit;
 
         // Processing "update file" changes.
         if (isset($versionInfo['update_files']) && !empty($versionInfo['update_files'])) {
             $sqlToInstall = $installPath.$versionInfo['update_files'];
             if (is_file($sqlToInstall) && file_exists($sqlToInstall)) {
-                $output->writeln("<comment>Executing update files: <info>'$sqlToInstall'</info>");
-                require $sqlToInstall;
+                if ($dryRun) {
+                    $output->writeln("<comment>Files to be executed but dry-run is on: <info>'$sqlToInstall'</info>");
+                } else {
+                    $output->writeln("<comment>Executing update files: <info>'$sqlToInstall'</info>");
+                    require $sqlToInstall;
+                }
             }
         }
 
         $output->writeln('');
         $output->writeln("<comment>You have to select yes for the 'Chamilo Migrations'<comment>");
 
-
         if ($result) {
+
             $command = $this->getApplication()->find('migrations:migrate');
             $arguments = array(
                 'command' => 'migrations:migrate',
                 'version' => $versionInfo['hook_to_doctrine_version'],
-                '--configuration' => $this->getMigrationConfigurationFile()
+                '--configuration' => $this->getMigrationConfigurationFile(),
+                '--dry-run' => $dryRun
             );
 
             $output->writeln("<comment>Executing migrations:migrate ".$versionInfo['hook_to_doctrine_version']." --configuration=".$this->getMigrationConfigurationFile()."<comment>");
@@ -286,13 +316,17 @@ class UpgradeCommand extends CommonCommand
             $input = new ArrayInput($arguments);
 
             $command->run($input, $output);
-            $output->writeln("<comment>Migration ended succesfully</comment>");
+            $output->writeln("<comment>Migration ended successfully</comment>");
         }
 
         return false;
     }
 
-    public function getMigrationTypes() {
+    /**
+     * @return array
+     */
+    public function getMigrationTypes()
+    {
         return array(
             'pre',
             'post'
@@ -309,14 +343,16 @@ class UpgradeCommand extends CommonCommand
      * @return bool
      * @throws \Exception
      */
-    public function processQueryList($output, $path, $version, $dryRun, $type)
+    public function processQueryList($courseList, $output, $path, $version, $dryRun, $type)
     {
-        $databases = $this->getDatabaseList($path, $version, $type);
+        $databases = $this->getDatabaseList($courseList, $path, $version, $type);
         $this->setConnections($path, $databases);
+
         foreach ($databases as $section => &$dbList) {
             foreach ($dbList as &$dbInfo) {
+
                 $output->writeln("");
-                $output->writeln("<comment>Loading section:</comment> <info>$section</info> <comment>with database </comment><info>".$dbInfo['database']."</info>");
+                $output->writeln("<comment>Loading section:</comment> <info>$section</info> <comment>using database key </comment><info>".$dbInfo['database']."</info>");
                 $output->writeln("--------------------------");
 
                 if ($dbInfo['status'] == 'complete') {
@@ -324,12 +360,18 @@ class UpgradeCommand extends CommonCommand
                     continue;
                 }
 
-                if (isset($this->queryList[$type]) && isset($this->queryList[$type][$section]) && !empty($this->queryList[$type][$section])) {
+                if (isset($this->queryList[$type]) &&
+                    isset($this->queryList[$type][$section]) &&
+                    !empty($this->queryList[$type][$section])
+                ) {
                     $queryList = $this->queryList[$type][$section];
 
                     try {
                         $lines = 0;
+                        /** @var \Doctrine\DBAL\Connection $conn */
                         $conn = $this->getHelper($dbInfo['database'])->getConnection();
+
+                        $output->writeln("<comment>Executing queries in DB:</comment> <info>".$conn->getDatabase()."</info>");
 
                         $conn->beginTransaction();
 
@@ -347,7 +389,7 @@ class UpgradeCommand extends CommonCommand
                             $conn->commit();
                             $output->writeln(sprintf('%d statements executed!', $lines) . PHP_EOL);
                             $dbInfo['status'] = 'complete';
-                            $this->saveDatabaseList($databases, $version, $type);
+                            $this->saveDatabaseList($path, $databases, $version, $type);
                         }
                     } catch (\Exception $e) {
                         $conn->rollback();
@@ -355,7 +397,7 @@ class UpgradeCommand extends CommonCommand
                         throw $e;
                     }
                 } else {
-                    $output->writeln(sprintf("Nothing to execute for section $section!"));
+                    $output->writeln(sprintf("<comment>Nothing to execute for section $section!</comment>"));
 
                     return false;
                 }
@@ -424,34 +466,30 @@ class UpgradeCommand extends CommonCommand
     /**
      * Generates database array info
      *
-     * @return mixed
+     * @param array $courseList
+     * @return array
      */
-    public function generateDatabaseList()
+    public function generateDatabaseList($courseList)
     {
-        $connection = $this->getConnection();
-
-        $query = "SELECT * FROM  course";
-        $result = $connection->executeQuery($query);
-        $courseList = $result->fetchAll();
-
         $courseDbList = array();
 
-        foreach ($courseList as $course) {
-            if (!empty($course['db_name'])) {
-                $courseDbList[] = array(
-                    'database' => '_chamilo_course_'.$course['db_name'],
-                    'status' => 'waiting'
-                );
+        if (!empty($courseList)) {
+            foreach ($courseList as $course) {
+                if (!empty($course['db_name'])) {
+                    $courseDbList[] = array(
+                        'database' => '_chamilo_course_'.$course['db_name'],
+                        'status' => 'waiting'
+                    );
+                }
             }
-        }
-
-        if (empty($courseDbList)) {
+        } else {
             $courseDbList = array(
                 array(
                     'database'=> 'main_database',
                     'status' => 'waiting'
                 )
             );
+
         }
 
         $databaseSection = array(
@@ -473,7 +511,6 @@ class UpgradeCommand extends CommonCommand
                     'status' => 'waiting'
                 )
             ),
-            //  'scorm' => array('main_database'),
             'course'=> $courseDbList
         );
 
@@ -492,12 +529,13 @@ class UpgradeCommand extends CommonCommand
 
     /**
      *
+     * @param string $path
      * @param string $version
      * @param string $type
      *
      * @return mixed|void
      */
-    public function getDatabaseList($path, $version, $type)
+    public function getDatabaseList($courseList, $path, $version, $type)
     {
         $configurationPath = $this->getHelper('configuration')->getConfigurationPath($path);
         $newConfigurationFile = $configurationPath.'db_migration_status_'.$version.'_'.$type.'.yml';
@@ -508,20 +546,21 @@ class UpgradeCommand extends CommonCommand
             return $yaml->parse(file_get_contents($newConfigurationFile));
         } else {
 
-            return $this->generateDatabaseList();
+            return $this->generateDatabaseList($courseList);
         }
     }
 
     /**
+     * @param string $path
      * @param string $databaseSection
      * @param string $version
      * @param string $type
      *
      * @return bool
      */
-    public function saveDatabaseList($databaseSection, $version, $type)
+    public function saveDatabaseList($path, $databaseSection, $version, $type)
     {
-        $configurationPath = $this->getHelper('configuration')->getConfigurationPath();
+        $configurationPath = $this->getHelper('configuration')->getConfigurationPath($path);
         $dumper = new Dumper();
         $yaml = $dumper->dump($databaseSection, 2); //inline
         $newConfigurationFile = $configurationPath.'db_migration_status_'.$version.'_'.$type.'.yml';
@@ -532,6 +571,7 @@ class UpgradeCommand extends CommonCommand
 
     /**
      *
+     * @param array $courseList
      * @param string $path
      * @param string $section
      * @param string $version
@@ -539,9 +579,9 @@ class UpgradeCommand extends CommonCommand
      *
      * @return mixed
      */
-    public function getDatabasesPerSection($path, $section, $version, $type)
+    public function getDatabasesPerSection($courseList, $path, $section, $version, $type)
     {
-        $databases = $this->getDatabaseList($path, $version, $type);
+        $databases = $this->getDatabaseList($courseList, $path, $version, $type);
         if (isset($databases[$section])) {
             return $databases[$section];
         }
@@ -635,10 +675,10 @@ class UpgradeCommand extends CommonCommand
      */
     public function dropCourseTables()
     {
-        $list = \CourseManager::get_course_tables();
+        $list = $this->getCourseTables();
         foreach ($list as $table) {
             $sql = "DROP TABLE IF EXISTS ".DB_COURSE_PREFIX.$table;
-            \Database::query($sql);
+            //\Database::query($sql);
         }
     }
 
@@ -651,6 +691,8 @@ class UpgradeCommand extends CommonCommand
         $command = $this->getApplication()->find('dbal:import');
         $sqlFolder = $this->getInstallationPath('1.9.0');
 
+        $output->writeln('<comment>Creating course tables (c_*)</comment>');
+
         //Importing sql files
         $arguments = array(
             'command' => 'dbal:import',
@@ -658,6 +700,105 @@ class UpgradeCommand extends CommonCommand
         );
         $input = new ArrayInput($arguments);
         $command->run($input, $output);
+    }
+
+    /**
+     * @return array
+     */
+    private function getCourseTables()
+    {
+        $tables = array();
+
+        $tables[]= 'tool';
+        $tables[]= 'tool_intro';
+        $tables[]= 'group_info';
+        $tables[]= 'group_category';
+        $tables[]= 'group_rel_user';
+        $tables[]= 'group_rel_tutor';
+        $tables[]= 'item_property';
+        $tables[]= 'userinfo_content';
+        $tables[]= 'userinfo_def';
+        $tables[]= 'course_description';
+        $tables[]= 'calendar_event';
+        $tables[]= 'calendar_event_repeat';
+        $tables[]= 'calendar_event_repeat_not';
+        $tables[]= 'calendar_event_attachment';
+        $tables[]= 'announcement';
+        $tables[]= 'announcement_attachment';
+        $tables[]= 'resource';
+        $tables[]= 'student_publication';
+        $tables[]= 'student_publication_assignment';
+        $tables[]= 'document';
+        $tables[]= 'forum_category';
+        $tables[]= 'forum_forum';
+        $tables[]= 'forum_thread';
+        $tables[]= 'forum_post';
+        $tables[]= 'forum_mailcue';
+        $tables[]= 'forum_attachment';
+        $tables[]= 'forum_notification';
+        $tables[]= 'forum_thread_qualify';
+        $tables[]= 'forum_thread_qualify_log';
+        $tables[]= 'link';
+        $tables[]= 'link_category';
+        $tables[]= 'online_connected';
+        $tables[]= 'online_link';
+        $tables[]= 'chat_connected';
+        $tables[]= 'quiz';
+        $tables[]= 'quiz_rel_question';
+        $tables[]= 'quiz_question';
+        $tables[]= 'quiz_answer';
+        $tables[]= 'quiz_question_option';
+        $tables[]= 'quiz_category';
+        $tables[]= 'quiz_question_rel_category';
+        $tables[]= 'dropbox_post';
+        $tables[]= 'dropbox_file';
+        $tables[]= 'dropbox_person';
+        $tables[]= 'dropbox_category';
+        $tables[]= 'dropbox_feedback';
+        $tables[]= 'lp';
+        $tables[]= 'lp_item';
+        $tables[]= 'lp_view';
+        $tables[]= 'lp_item_view';
+        $tables[]= 'lp_iv_interaction';
+        $tables[]= 'lp_iv_objective';
+        $tables[]= 'blog';
+        $tables[]= 'blog_comment';
+        $tables[]= 'blog_post';
+        $tables[]= 'blog_rating';
+        $tables[]= 'blog_rel_user';
+        $tables[]= 'blog_task';
+        $tables[]= 'blog_task_rel_user';
+        $tables[]= 'blog_attachment';
+        $tables[]= 'permission_group';
+        $tables[]= 'permission_user';
+        $tables[]= 'permission_task';
+        $tables[]= 'role';
+        $tables[]= 'role_group';
+        $tables[]= 'role_permissions';
+        $tables[]= 'role_user';
+        $tables[]= 'survey';
+        $tables[]= 'survey_question';
+        $tables[]= 'survey_question_option';
+        $tables[]= 'survey_invitation';
+        $tables[]= 'survey_answer';
+        $tables[]= 'survey_group';
+        $tables[]= 'wiki';
+        $tables[]= 'wiki_conf';
+        $tables[]= 'wiki_discuss';
+        $tables[]= 'wiki_mailcue';
+        $tables[]= 'course_setting';
+        $tables[]= 'glossary';
+        $tables[]= 'notebook';
+        $tables[]= 'attendance';
+        $tables[]= 'attendance_sheet';
+        $tables[]= 'attendance_calendar';
+        $tables[]= 'attendance_result';
+        $tables[]= 'attendance_sheet_log';
+        $tables[]= 'thematic';
+        $tables[]= 'thematic_plan';
+        $tables[]= 'thematic_advance';
+        $tables[]= 'metadata';
+        return $tables;
     }
 }
 

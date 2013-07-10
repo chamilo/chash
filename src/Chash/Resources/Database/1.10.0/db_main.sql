@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS user (
   theme varchar(255) DEFAULT NULL,
   hr_dept_id int unsigned NOT NULL default 0,
   salt VARCHAR(255) DEFAULT NULL,
-  PRIMARY KEY  (user_id),
+  PRIMARY KEY (user_id),
   UNIQUE KEY username (username)
 );
 ALTER TABLE user ADD INDEX (status);
