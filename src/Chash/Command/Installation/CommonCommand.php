@@ -17,6 +17,7 @@ class CommonCommand extends AbstractCommand
     public $rootSys;
     public $configurationPath = null;
     public $configuration = array();
+    public $extraDatabaseSettings;
 
     public function setConfigurationArray($configuration)
     {
@@ -69,6 +70,23 @@ class CommonCommand extends AbstractCommand
     {
         return $this->databaseSettings;
     }
+
+        /**
+     * @param array $databaseSettings
+     */
+    public function setExtraDatabaseSettings(array $databaseSettings)
+    {
+        $this->extraDatabaseSettings = $databaseSettings;
+    }
+
+    /**
+     * @return array
+     */
+    public function getExtraDatabaseSettings()
+    {
+        return $this->extraDatabaseSettings;
+    }
+
 
     /**
      * @param array $adminSettings
@@ -422,7 +440,8 @@ class CommonCommand extends AbstractCommand
      */
     public function getMigrationConfigurationFile()
     {
-        return $this->getRootSys().'src/ChamiloLMS/Migrations/migrations.yml';
+        return realpath(__DIR__.'/../../Migrations/migrations.yml');
+        //return $this->getRootSys().'src/ChamiloLMS/Migrations/migrations.yml';
     }
 
     /**
@@ -451,6 +470,7 @@ class CommonCommand extends AbstractCommand
         // Creates a YML File
 
         $configuration = array();
+
         $configuration['system_version'] = $version;
 
         $configuration['db_host'] = $databaseSettings['host'];
@@ -495,7 +515,8 @@ class CommonCommand extends AbstractCommand
             $contents = file_get_contents($this->getRootSys().'config/configuration.dist.php');
         } else {
             // Try the old one
-            $contents = file_get_contents($this->getRootSys().'main/inc/conf/configuration.dist.php');
+            //$contents = file_get_contents($this->getRootSys().'main/inc/conf/configuration.dist.php');
+            $contents = file_get_contents($this->getRootSys().'main/install/configuration.dist.php');
         }
 
         $configuration['{DATE_GENERATED}'] = date('r');
@@ -521,6 +542,7 @@ class CommonCommand extends AbstractCommand
         }
         $newConfigurationFile = $configurationPath.'configuration.php';
 
+
         return file_put_contents($newConfigurationFile, $contents);
     }
 
@@ -531,30 +553,37 @@ class CommonCommand extends AbstractCommand
      *
      * @return bool
      */
-    public function updateConfiguration($version)
+    public function updateConfiguration($output, $dryRun, $newValues)
     {
         global $userPasswordCrypted, $storeSessionInDb;
 
-        $_configuration = $this->getHelper('configuration')->getConfiguration();
+        $_configuration = $this->getConfigurationArray();
 
-        $configurationPath = $this->getHelper('configuration')->getConfigurationPath();
+        // See http://zf2.readthedocs.org/en/latest/modules/zend.config.introduction.html
 
-        $dumper = new Dumper();
-
-        $_configuration['system_version'] = $version;
-
-        if (!isset($_configuration['password_encryption'])) {
-            $_configuration['password_encryption']      = $userPasswordCrypted;
+        if (!isset($_configuration['password_encryption']) && isset($userPasswordCrypted)) {
+            $newValues['password_encryption'] = $userPasswordCrypted;
         }
 
-        if (!isset($_configuration['session_stored_in_db'])) {
-            $_configuration['session_stored_in_db']     = $storeSessionInDb;
+        if (!empty($newValues)) {
+            $_configuration = array_merge($_configuration, $newValues);
         }
 
-        $yaml = $dumper->dump($_configuration, 2); //inline
-        $newConfigurationFile = $configurationPath.'../../../app/config/configuration.yml';
-        file_put_contents($newConfigurationFile, $yaml);
+        $config = new \Zend\Config\Config($_configuration, true);
+        $writer = new \Zend\Config\Writer\PhpArray();
+        $content = $writer->toString($config);
 
+        $content = str_replace('return', '$_configuration = ', $content);
+        $configurationPath = $this->getConfigurationPath();
+        $newConfigurationFile = $configurationPath.'configuration.php';
+
+        if ($dryRun == false) {
+            file_put_contents($newConfigurationFile, $content);
+            $output->writeln("<comment>File updated: $newConfigurationFile</comment>");
+        } else {
+            $output->writeln("<comment>File to be updated (dry-run is on): $newConfigurationFile</comment>");
+            $output->writeln($content);
+        }
         return file_exists($newConfigurationFile);
     }
 
@@ -694,23 +723,30 @@ class CommonCommand extends AbstractCommand
         foreach ($databaseList as $section => &$dbList) {
             foreach ($dbList as &$dbInfo) {
                 $params = $this->getDatabaseSettings();
-                $em = \Doctrine\ORM\EntityManager::create($params, $config);
                 $evm = new \Doctrine\Common\EventManager;
 
                 if ($section == 'course') {
-                    $tablePrefix = new \Chash\DoctrineExtensions\TablePrefix($_configuration['db_prefix']);
-                    $evm ->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);
-                }
-                $helper = new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($em->getConnection());
-                $this->getApplication()->getHelperSet()->set($helper, $dbInfo['database']);
+                    $tablePrefix = new \Chash\DoctrineExtensions\TablePrefix($_configuration['table_prefix']);
+                    $evm->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);
 
+                    $params['dbname'] = str_replace('_chamilo_course_', '', $dbInfo['database']);
+                    $em = \Doctrine\ORM\EntityManager::create($params, $config, $evm);
+                } else {
+                    $em = \Doctrine\ORM\EntityManager::create($params, $config);
+                }
+
+                $helper = new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($em->getConnection());
+                /*var_dump($section);
+                var_dump($dbInfo['database']);
+                var_dump($em->getConnection()->getDatabase());*/
+                $this->getApplication()->getHelperSet()->set($helper, $dbInfo['database']);
             }
         }
+        //exit;
     }
 
     public function removeFiles($files, \Symfony\Component\Console\Output\OutputInterface $output)
     {
-
         $dryRun = $this->getConfigurationHelper()->getDryRun();
 
         if (empty($files)) {
