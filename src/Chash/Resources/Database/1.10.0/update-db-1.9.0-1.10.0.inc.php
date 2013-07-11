@@ -53,8 +53,9 @@ $update = function($_configuration, \Doctrine\DBAL\Connection $mainConnection, $
 
     //Fixes new changes session_rel_course
     $sql = "SELECT id_session, sc.course_code, c.id FROM $course_table c INNER JOIN $session_rel_course_table sc ON sc.course_code = c.code";
-    $result = iDatabase::query($sql);
-    while ($row = Database::fetch_array($result)) {
+    $result = $mainConnection->executeQuery($sql);
+    $rows = $result->fetchAll();
+    foreach ($rows as $row) {
         $sql = "UPDATE $session_rel_course_table SET c_id = {$row['id']}
                 WHERE course_code = '{$row['course_code']}' AND id_session = {$row['id_session']} ";
         $mainConnection->executeQuery($sql);
@@ -62,8 +63,9 @@ $update = function($_configuration, \Doctrine\DBAL\Connection $mainConnection, $
 
     //Fixes new changes in session_rel_course_rel_user
     $sql = "SELECT id_session, sc.course_code, c.id FROM $course_table c INNER JOIN $session_rel_course_rel_user_table sc ON sc.course_code = c.code";
-    $result = iDatabase::query($sql);
-    while ($row = Database::fetch_array($result)) {
+    $result = $mainConnection->executeQuery($sql);
+    $rows = $result->fetchAll();
+    foreach ($rows as $row) {
         $sql = "UPDATE $session_rel_course_rel_user_table SET c_id = {$row['id']}
                 WHERE course_code = '{$row['course_code']}' AND id_session = {$row['id_session']} ";
         $mainConnection->executeQuery($sql);
