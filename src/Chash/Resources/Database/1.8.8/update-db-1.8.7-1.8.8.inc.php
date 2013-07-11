@@ -5,7 +5,6 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
 {
     $portalSettings = $this->getPortalSettings();
     $databaseList = $this->generateDatabaseList($courseList);
-
     $courseDatabaseConnectionList = $databaseList['course']; // main  user stats course
 
     $singleDbForm = isset($_configuration['single_database']) ? $_configuration['single_database'] : false;
@@ -40,6 +39,7 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
                 foreach ($courseDatabaseConnectionList as $database) {
                     if ($database['database'] == '_chamilo_course_'.$row_course['db_name']) {
                         /** @var \Doctrine\DBAL\Connection $courseConnection */
+
                         $courseConnection = $this->getHelper($database['database'])->getConnection();
                     }
                 }

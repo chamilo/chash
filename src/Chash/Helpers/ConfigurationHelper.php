@@ -208,6 +208,9 @@ class ConfigurationHelper extends Helper
                     case 'php':
                         require $configurationFile;
                         if (isset($_configuration)) {
+                            if (isset($userPasswordCrypted)) {
+                                $_configuration['password_encryption'] = $userPasswordCrypted;
+                            }
                             return $_configuration;
                         }
                         break;
@@ -264,6 +267,7 @@ class ConfigurationHelper extends Helper
                     $finder->files()->name($config);
                 }
             }
+            $finder->files->name('db_migration_status_*');
         }
 
         if (is_dir($sysPath.'config')) {
@@ -273,6 +277,7 @@ class ConfigurationHelper extends Helper
                     $finder->files()->name($config);
                 }
             }
+            $finder->files->name('db_migration_status_*');
         }
 
         /*

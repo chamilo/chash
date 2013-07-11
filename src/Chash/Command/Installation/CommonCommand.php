@@ -601,20 +601,16 @@ class CommonCommand extends AbstractCommand
      */
     public function updateConfiguration($output, $dryRun, $newValues)
     {
-        global $userPasswordCrypted, $storeSessionInDb;
+        $this->getConfigurationPath();
 
         $_configuration = $this->getConfigurationArray();
 
-        // See http://zf2.readthedocs.org/en/latest/modules/zend.config.introduction.html
-
-        if (!isset($_configuration['password_encryption']) && isset($userPasswordCrypted)) {
-            $newValues['password_encryption'] = $userPasswordCrypted;
-        }
-
+        // Merging changes
         if (!empty($newValues)) {
             $_configuration = array_merge($_configuration, $newValues);
         }
 
+        // See http://zf2.readthedocs.org/en/latest/modules/zend.config.introduction.html
         $config = new \Zend\Config\Config($_configuration, true);
         $writer = new \Zend\Config\Writer\PhpArray();
         $content = $writer->toString($config);
@@ -769,26 +765,27 @@ class CommonCommand extends AbstractCommand
         foreach ($databaseList as $section => &$dbList) {
             foreach ($dbList as &$dbInfo) {
                 $params = $this->getDatabaseSettings();
-                $evm = new \Doctrine\Common\EventManager;
 
-                if ($section == 'course') {
-                    $tablePrefix = new \Chash\DoctrineExtensions\TablePrefix($_configuration['table_prefix']);
-                    $evm->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);
+                if ($_configuration['single_database'] == false) {
 
-                    $params['dbname'] = str_replace('_chamilo_course_', '', $dbInfo['database']);
-                    $em = \Doctrine\ORM\EntityManager::create($params, $config, $evm);
+                    if ($section == 'course') {
+                        $evm = new \Doctrine\Common\EventManager;
+                        $tablePrefix = new \Chash\DoctrineExtensions\TablePrefix($_configuration['table_prefix']);
+                        $evm->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);
+
+                        $params['dbname'] = str_replace('_chamilo_course_', '', $dbInfo['database']);
+                        $em = \Doctrine\ORM\EntityManager::create($params, $config, $evm);
+                    } else {
+                        $em = \Doctrine\ORM\EntityManager::create($params, $config);
+                    }
                 } else {
                     $em = \Doctrine\ORM\EntityManager::create($params, $config);
                 }
 
                 $helper = new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($em->getConnection());
-                /*var_dump($section);
-                var_dump($dbInfo['database']);
-                var_dump($em->getConnection()->getDatabase());*/
                 $this->getApplication()->getHelperSet()->set($helper, $dbInfo['database']);
             }
         }
-        //exit;
     }
 
     public function removeFiles($files, \Symfony\Component\Console\Output\OutputInterface $output)

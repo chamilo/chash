@@ -6,6 +6,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
 
@@ -248,7 +249,12 @@ class UpgradeCommand extends CommonCommand
             }
         }
 
-
+        //if ($dryRun == false) {
+            $fileSystem = new Filesystem();
+            $output->writeln("<comment>Copying files from </comment><info>$chamiloLocationPath</info><comment> to </comment><info>".$this->getRootSys()."</info>");
+            $fileSystem->mirror($chamiloLocationPath, $this->getRootSys(), null, array('override' => true));
+            $output->writeln("<comment>Copy end<comment>");
+        //}
         $this->updateConfiguration($output, $dryRun, array('system_version' => $version));
 
         $output->writeln("<comment>Wow! You just finish to migrate. Too check the current status of your platform. Run </comment><info>chamilo:status</info>");
@@ -272,6 +278,7 @@ class UpgradeCommand extends CommonCommand
 
         // Main DB connection.
         $conn = $this->getConnection();
+
         $_configuration = $this->getHelper('configuration')->getConfiguration($path);
 
         $versionInfo = $this->getAvailableVersionInfo($toVersion);
@@ -392,9 +399,10 @@ class UpgradeCommand extends CommonCommand
 
                     try {
                         $lines = 0;
-                        /** @var \Doctrine\DBAL\Connection $conn */
-                        $conn = $this->getHelper($dbInfo['database'])->getConnection();
 
+                        /** @var \Doctrine\DBAL\Connection $conn */
+
+                        $conn = $this->getHelper($dbInfo['database'])->getConnection();
                         $output->writeln("<comment>Executing queries in DB:</comment> <info>".$conn->getDatabase()."</info>");
 
                         $conn->beginTransaction();
@@ -416,7 +424,9 @@ class UpgradeCommand extends CommonCommand
                             $this->saveDatabaseList($path, $databases, $version, $type);
                         }
                     } catch (\Exception $e) {
-                        $conn->rollback();
+                        if (!$dryRun) {
+                            $conn->rollback();
+                        }
                         $output->write(sprintf('<error>Migration failed. Error %s</error>', $e->getMessage()));
                         throw $e;
                     }
