@@ -148,23 +148,25 @@ class UpgradeCommand extends CommonCommand
         //$updateInstallation = '/home/jmontoya/Downloads/chamilo-lms-CHAMILO_1_9_6_STABLE.zip';
         //$updateInstallation = 'https://github.com/chamilo/chamilo-lms/archive/CHAMILO_1_9_6_STABLE.zip';
 
-        $chamiloLocationPath = $this->getPackage($output, $version, $updateInstallation, $defaultTempFolder);
+        //if ($dryRun == false) {
 
-        if (empty($chamiloLocationPath)) {
-            return;
-        }
+            $chamiloLocationPath = $this->getPackage($output, $version, $updateInstallation, $defaultTempFolder);
 
+            if (empty($chamiloLocationPath)) {
+                return;
+            }
+        //}
 
+        $output->writeln("<comment>----------------------------------------</comment>");
         $output->writeln("<comment>Welcome to the Chamilo upgrade process!</comment>");
+        $output->writeln("<comment>----------------------------------------</comment>");
 
-        if (empty($chamiloLocationPath)) {
-            $output->writeln("<comment>You have to manually update the Chamilo php files because you didn't use the option:</comment><info> --update-installation </info>");
-        } else {
+        if ($dryRun == false) {
             $output->writeln("<comment>When the installation process finished the files located here:</comment> <info>$chamiloLocationPath</info>");
-            $output->writeln("<comment>will be copied in your portal.</comment>");
+            $output->writeln("<comment>will be copied in your portal here: </comment> <info>".$this->getRootSys()."</info>");
+        } else {
+            $output->writeln("<comment>When the installation process finished PHP files are not going to be updated (--dry-run is on).</comment>");
         }
-
-        //@todo Too much questions?
 
         if ($silent == false) {
             $dialog = $this->getHelperSet()->get('dialog');

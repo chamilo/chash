@@ -880,7 +880,7 @@ class CommonCommand extends AbstractCommand
                     $output->writeln($systemOutput);
                     //$result = file_put_contents($updateInstallationLocalName, file_get_contents($updateInstallation));
                 } else {
-                    $output->writeln("<comment>Getting file from the temp folder:</comment> <info>$updateInstallationLocalName</info>");
+                    $output->writeln("<comment>Seems that the chamilo v".$version." has been already downloaded. File location:</comment> <info>$updateInstallationLocalName</info>");
                 }
 
                 $updateInstallation = $updateInstallationLocalName;
@@ -900,6 +900,13 @@ class CommonCommand extends AbstractCommand
 
                 if (!is_dir($folderPath)) {
                     mkdir($folderPath);
+                } else {
+                    // Load from cache
+                    $chamiloPath = $folderPath.'/chamilo-lms-CHAMILO_'.$versionTag.'_STABLE/main/inc/global.inc.php';
+                    if (file_exists($chamiloPath)) {
+                        $output->writeln("<comment>Files have been already extracted here: </comment><info>".$folderPath.'/chamilo-lms-CHAMILO_'.$versionTag.'_STABLE/'."</info>");
+                        return $folderPath.'/chamilo-lms-CHAMILO_'.$versionTag.'_STABLE/';
+                    }
                 }
 
                 $location = null;
@@ -932,7 +939,7 @@ class CommonCommand extends AbstractCommand
                 $chamiloLocationPath = $location;
 
                 if (empty($chamiloLocationPath)) {
-                    $output->writeln("<error>Chamilo folder structure not found.</error>");
+                    $output->writeln("<error>Chamilo folder structure not found in package.</error>");
                     return 0;
                 }
 
