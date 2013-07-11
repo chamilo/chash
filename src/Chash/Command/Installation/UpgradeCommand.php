@@ -291,7 +291,7 @@ class UpgradeCommand extends CommonCommand
             $this->fillQueryList($sqlToInstall, $output, 'pre');
 
             // Processing sql query list depending of the section (course, main, user).
-            $result = $this->processQueryList($courseList, $output, $path, $toVersion, $dryRun, 'pre');
+            $this->processQueryList($courseList, $output, $path, $toVersion, $dryRun, 'pre');
         }
 
         // Filling sqlList array with "post" db changes.
@@ -299,7 +299,7 @@ class UpgradeCommand extends CommonCommand
             $sqlToInstall = $installPath.$versionInfo['post'];
             $this->fillQueryList($sqlToInstall, $output, 'post');
             // Processing sql query list depending of the section.
-            $result = $this->processQueryList($courseList, $output, $path, $toVersion, $dryRun, 'post');
+            $this->processQueryList($courseList, $output, $path, $toVersion, $dryRun, 'post');
         }
 
         // Processing "db" changes.
@@ -330,10 +330,10 @@ class UpgradeCommand extends CommonCommand
             }
         }
 
-        $output->writeln('');
-        $output->writeln("<comment>You have to select yes for the 'Chamilo Migrations'<comment>");
+        if (1) {
 
-        if ($result) {
+            $output->writeln('');
+            $output->writeln("<comment>You have to select yes for the 'Chamilo Migrations'<comment>");
 
             $command = $this->getApplication()->find('migrations:migrate');
             $arguments = array(
@@ -349,6 +349,29 @@ class UpgradeCommand extends CommonCommand
 
             $command->run($input, $output);
             $output->writeln("<comment>Migration ended successfully</comment>");
+
+            // Generating temp folders:
+            $command = $this->getApplication()->find('files:generate_temp_folders');
+            $arguments = array(
+                'command' => 'files:generate_temp_folders',
+                '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
+                '--dry-run' => $dryRun
+            );
+
+            $input = new ArrayInput($arguments);
+            $command->run($input, $output);
+
+            // Fixing permissions
+            $command = $this->getApplication()->find('files:set_permissions_after_install');
+            $arguments = array(
+                'command' => 'files:set_permissions_after_install',
+                '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
+                '--dry-run' => $dryRun
+            );
+
+            $input = new ArrayInput($arguments);
+            $command->run($input, $output);
+
         }
 
         return false;

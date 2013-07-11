@@ -62,6 +62,9 @@ $application->addCommands(
         new Chash\Command\Files\CleanTempFolderCommand(),
         new Chash\Command\Files\CleanConfigFilesCommand(),
         new Chash\Command\Files\MailConfCommand(),
+        new Chash\Command\Files\SetPermissionsAfterInstallCommand(),
+        new Chash\Command\Files\GenerateTempFileStructureCommand(),
+
 
         new Chash\Command\Installation\InstallCommand(),
         new Chash\Command\Installation\WipeCommand(),

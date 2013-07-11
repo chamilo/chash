@@ -992,6 +992,4 @@ class CommonCommand extends AbstractCommand
         return $prefix;
     }
 
-
-
 }

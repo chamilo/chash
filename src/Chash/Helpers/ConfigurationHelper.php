@@ -296,6 +296,7 @@ class ConfigurationHelper extends Helper
         return $finder;
     }
 
+
      /**
      * @return array
      */
@@ -337,9 +338,89 @@ class ConfigurationHelper extends Helper
         return $finder;
     }
 
+    public function getDataFolders()
+    {
+        $finder = new Finder();
+        $sysPath = $this->getSysPath();
+        $finder->directories()->in($sysPath);
+        $finder->path('courses');
+        $finder->path('data/courses');
+        return $finder;
+
+    }
+
+    public function getConfigFolders()
+    {
+        $finder = new Finder();
+        $sysPath = $this->getSysPath();
+        $finder->directories()->in($sysPath);
+        $finder->path('main/inc/conf');
+        $finder->path('data/config');
+        return $finder;
+    }
+
+    public function getTempFolders()
+    {
+        $finder = new Finder();
+        $sysPath = $this->getSysPath();
+        $finder->directories()->in($sysPath);
+        $finder->path('archive');
+        $finder->path('data/temp');
+        return $finder;
+    }
+
     public function setSysPath($sysPath)
     {
         $this->sysPath = $sysPath;
+    }
+
+    public function getTempFolderList()
+    {
+        // Copied from the resources/prod.php file in Chamilo
+
+        $app['temp.paths'] = new \stdClass();
+
+        //$app['temp.paths']->folders[] = $app['sys_data_path'];
+
+        // Monolog.
+        //$app['temp.paths']->folders[] = $app['sys_log_path'];
+        $app['temp.path'] = $this->getSysPath().'archive/';
+        // Twig cache.
+        $app['temp.paths']->folders[] = $app['twig.cache.path'] = $app['temp.path'].'twig';
+
+        // Http cache
+        $app['temp.paths']->folders[] = $app['http_cache.cache_dir'] = $app['temp.path'].'http';
+
+        // Doctrine ORM.
+        $app['temp.paths']->folders[] = $app['db.orm.proxies_dir'] = $app['temp.path'].'Proxies';
+
+        // Symfony2 Web profiler.
+        $app['temp.paths']->folders[] = $app['profiler.cache_dir'] = $app['temp.path'].'profiler';
+
+        // HTMLPurifier.
+        $app['temp.paths']->folders[] = $app['htmlpurifier.serializer'] = $app['temp.path'].'serializer';
+
+        // PCLZIP temp dir.
+        //define('PCLZIP_TEMPORARY_DIR', $app['temp.path'].'pclzip');
+        $app['temp.paths']->folders[] = $app['temp.path'].'pclzip';
+
+        // MPDF temp libs.
+        //define("_MPDF_TEMP_PATH", $app['temp.path'].'mpdf');
+        //define("_JPGRAPH_PATH", $app['temp.path'].'mpdf');
+        //define("_MPDF_TTFONTDATAPATH", $app['temp.path'].'mpdf');
+
+        $app['temp.paths']->folders[] = $app['temp.path'].'mpdf';
+
+        // QR code.
+        //define('QR_LOG_DIR', $app['temp.path'].'qr');
+        //define('QR_CACHE_DIR', $app['temp.path'].'qr');
+
+        $app['temp.paths']->folders[] = $app['temp.path'].'qr';
+
+        // Chamilo Temp class @todo fix this
+        $app['temp.paths']->folders[] = $app['temp.path'].'temp';
+
+        return $app['temp.paths']->folders;
     }
 
     public function getSysPath()
@@ -435,4 +516,6 @@ class ConfigurationHelper extends Helper
     {
         return 'configuration';
     }
+
+
 }
