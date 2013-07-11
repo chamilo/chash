@@ -7,9 +7,6 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
     $databaseList = $this->generateDatabaseList($courseList);
     $courseDatabaseConnectionList = $databaseList['course']; // main  user stats course
 
-    $singleDbForm = isset($_configuration['single_database']) ? $_configuration['single_database'] : false;
-    $prefix = $_configuration['table_prefix'];
-
     /** @var \Doctrine\DBAL\Connection $userConnection */
     $userConnection = $this->getHelper($databaseList['user'][0]['database'])->getConnection();
     /** @var \Doctrine\DBAL\Connection $mainConnection */
@@ -23,23 +20,19 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
         if (!empty($courseList)) {
             foreach ($courseList as $row_course) {
 
-                $output->writeln('Updating course db: ' . $row_course['db_name']);
+                $prefix = $this->getTablePrefix($_configuration, $row_course['db_name']);
 
-                $table_lp_item_view = $row_course['db_name'].".lp_item_view";
-                $table_lp_view = $row_course['db_name'].".lp_view";
-                $table_lp_item = $row_course['db_name'].".lp_item";
 
-                if ($singleDbForm) {
-                    $table_lp_item_view = "$prefix{$row_course['db_name']}_lp_item_view";
-                    $table_lp_view = "$prefix{$row_course['db_name']}_lp_view";
-                    $table_lp_item = "$prefix{$row_course['db_name']}_lp_item";
-                }
+                $output->writeln('Updating course db: '.$row_course['db_name']);
+
+                $table_lp_item_view = $prefix."lp_item_view";
+                $table_lp_view = $prefix."lp_view";
+                $table_lp_item = $prefix."lp_item";
 
                 $courseConnection = null;
                 foreach ($courseDatabaseConnectionList as $database) {
                     if ($database['database'] == '_chamilo_course_'.$row_course['db_name']) {
                         /** @var \Doctrine\DBAL\Connection $courseConnection */
-
                         $courseConnection = $this->getHelper($database['database'])->getConnection();
                     }
                 }
@@ -51,7 +44,9 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
                 // Filling the track_e_exercices.orig_lp_item_view_id field  in order to have better traceability in exercises included in a LP see #3188
 
                 $query = "SELECT DISTINCT path as exercise_id, lp_item_id, lp_view_id, user_id, v.lp_id
-                          FROM $table_lp_item_view iv INNER JOIN  $table_lp_view v  ON v.id = iv.lp_view_id INNER JOIN $table_lp_item i ON  i.id = lp_item_id
+                          FROM $table_lp_item_view iv INNER JOIN  $table_lp_view v
+                          ON v.id = iv.lp_view_id INNER JOIN $table_lp_item i
+                          ON  i.id = lp_item_id
                           WHERE item_type = 'quiz'";
 
                 $result = $courseConnection->executeQuery($query);
@@ -74,7 +69,9 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
                         }
 
                         $sql = "SELECT iv.id, iv.view_count
-                                  FROM $table_lp_item_view iv INNER JOIN  $table_lp_view v  ON v.id = iv.lp_view_id INNER JOIN $table_lp_item i ON  i.id = lp_item_id
+                                  FROM $table_lp_item_view iv INNER JOIN  $table_lp_view v
+                                  ON v.id = iv.lp_view_id INNER JOIN $table_lp_item i
+                                  ON  i.id = lp_item_id
                                   WHERE item_type = 'quiz' AND user_id =  {$row['user_id']} AND path = {$row['exercise_id']} ";
                         $sub_result = $courseConnection->executeQuery($sql);
                         $sub_rows = $sub_result->fetchAll();
@@ -177,5 +174,3 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
     }
 
 };
-
-

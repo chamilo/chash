@@ -20,5 +20,12 @@ $updateFiles = function($_configuration, $mainConnection, $courseList, $dryRun, 
             copy($conf_dir.'events.conf.dist.php', $conf_dir.'events.conf.php');
         }
     }
+
+    if (!file_exists($conf_dir.'add_course.conf.php')) {
+        if (file_exists($conf_dir.'add_course.conf.dist.php')) {
+            copy($conf_dir.'add_course.conf.dist.php', $conf_dir.'add_course.conf.php');
+        }
+    }
+
 };
 

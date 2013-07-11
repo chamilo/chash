@@ -267,7 +267,7 @@ class ConfigurationHelper extends Helper
                     $finder->files()->name($config);
                 }
             }
-            $finder->files->name('db_migration_status_*');
+            $finder->files()->name('db_migration_status_*');
         }
 
         if (is_dir($sysPath.'config')) {
@@ -277,7 +277,7 @@ class ConfigurationHelper extends Helper
                     $finder->files()->name($config);
                 }
             }
-            $finder->files->name('db_migration_status_*');
+            $finder->files()->name('db_migration_status_*');
         }
 
         /*

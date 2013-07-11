@@ -218,6 +218,7 @@ class UpgradeCommand extends CommonCommand
         $this->setExtraDatabaseSettings($extraDatabaseSettings);
         $this->setDoctrineSettings();
 
+
         $conn = $this->getConnection();
 
         if ($conn) {
@@ -253,7 +254,7 @@ class UpgradeCommand extends CommonCommand
             $fileSystem = new Filesystem();
             $output->writeln("<comment>Copying files from </comment><info>$chamiloLocationPath</info><comment> to </comment><info>".$this->getRootSys()."</info>");
             $fileSystem->mirror($chamiloLocationPath, $this->getRootSys(), null, array('override' => true));
-            $output->writeln("<comment>Copy end<comment>");
+            $output->writeln("<comment>Copy finished.<comment>");
         //}
         $this->updateConfiguration($output, $dryRun, array('system_version' => $version));
 
@@ -376,7 +377,7 @@ class UpgradeCommand extends CommonCommand
      */
     public function processQueryList($courseList, $output, $path, $version, $dryRun, $type)
     {
-        $databases = $this->getDatabaseList($courseList, $path, $version, $type);
+        $databases = $this->getDatabaseList($output, $courseList, $path, $version, $type);
         $this->setConnections($path, $databases);
 
         foreach ($databases as $section => &$dbList) {
@@ -387,7 +388,7 @@ class UpgradeCommand extends CommonCommand
                 $output->writeln("--------------------------");
 
                 if ($dbInfo['status'] == 'complete') {
-                    $output->writeln("<comment>Database already updated</comment>");
+                    $output->writeln("<comment>Database already updated.</comment>");
                     continue;
                 }
 
@@ -401,13 +402,17 @@ class UpgradeCommand extends CommonCommand
                         $lines = 0;
 
                         /** @var \Doctrine\DBAL\Connection $conn */
-
                         $conn = $this->getHelper($dbInfo['database'])->getConnection();
                         $output->writeln("<comment>Executing queries in DB:</comment> <info>".$conn->getDatabase()."</info>");
-
                         $conn->beginTransaction();
 
                         foreach ($queryList as $query) {
+                            // Add a prefix.
+
+                            if ($section == 'course') {
+                                $query = str_replace('{prefix}', $dbInfo['prefix'], $query);
+                            }
+
                             if ($dryRun) {
                                 $output->writeln($query);
                             } else {
@@ -425,7 +430,7 @@ class UpgradeCommand extends CommonCommand
                         }
                     } catch (\Exception $e) {
                         if (!$dryRun) {
-                            $conn->rollback();
+                           $conn->rollback();
                         }
                         $output->write(sprintf('<error>Migration failed. Error %s</error>', $e->getMessage()));
                         throw $e;
@@ -507,11 +512,14 @@ class UpgradeCommand extends CommonCommand
     {
         $courseDbList = array();
 
+        $_configuration = $this->getConfigurationArray();
+
         if (!empty($courseList)) {
             foreach ($courseList as $course) {
                 if (!empty($course['db_name'])) {
                     $courseDbList[] = array(
                         'database' => '_chamilo_course_'.$course['db_name'],
+                        'prefix' => $this->getTablePrefix($_configuration, $course['db_name']),
                         'status' => 'waiting'
                     );
                 }
@@ -520,7 +528,8 @@ class UpgradeCommand extends CommonCommand
             $courseDbList = array(
                 array(
                     'database'=> 'main_database',
-                    'status' => 'waiting'
+                    'status' => 'waiting',
+                    'prefix' => null
                 )
             );
 
@@ -569,13 +578,14 @@ class UpgradeCommand extends CommonCommand
      *
      * @return mixed|void
      */
-    public function getDatabaseList($courseList, $path, $version, $type)
+    public function getDatabaseList($output, $courseList, $path, $version, $type)
     {
         $configurationPath = $this->getHelper('configuration')->getConfigurationPath($path);
         $newConfigurationFile = $configurationPath.'db_migration_status_'.$version.'_'.$type.'.yml';
 
         if (file_exists($newConfigurationFile)) {
             $yaml = new Parser();
+            $output->writeln("<comment>Loading database list status from file:</comment> <info>$newConfigurationFile</info>");
 
             return $yaml->parse(file_get_contents($newConfigurationFile));
         } else {
@@ -613,9 +623,9 @@ class UpgradeCommand extends CommonCommand
      *
      * @return mixed
      */
-    public function getDatabasesPerSection($courseList, $path, $section, $version, $type)
+    public function getDatabasesPerSection($output, $courseList, $path, $section, $version, $type)
     {
-        $databases = $this->getDatabaseList($courseList, $path, $version, $type);
+        $databases = $this->getDatabaseList($output, $courseList, $path, $version, $type);
         if (isset($databases[$section])) {
             return $databases[$section];
         }
@@ -719,13 +729,20 @@ class UpgradeCommand extends CommonCommand
     /**
      * Creates the course tables with the prefix c_
      * @param $output
+     * @param string $dryRun
      */
-    public function createCourseTables($output)
+    public function createCourseTables($output, $dryRun)
     {
-        $command = $this->getApplication()->find('dbal:import');
-        $sqlFolder = $this->getInstallationPath('1.9.0');
+
+        if ($dryRun) {
+            $output->writeln("<comment>Creating c_* tables but dry-run is on. 0 tables created.</comment>");
+            return 0;
+        }
 
         $output->writeln('<comment>Creating course tables (c_*)</comment>');
+
+        $command = $this->getApplication()->find('dbal:import');
+        $sqlFolder = $this->getInstallationPath('1.9.0');
 
         //Importing sql files
         $arguments = array(

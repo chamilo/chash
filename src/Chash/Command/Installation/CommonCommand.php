@@ -469,7 +469,6 @@ class CommonCommand extends AbstractCommand
     public function getMigrationConfigurationFile()
     {
         return realpath(__DIR__.'/../../Migrations/migrations.yml');
-        //return $this->getRootSys().'src/ChamiloLMS/Migrations/migrations.yml';
     }
 
     /**
@@ -510,14 +509,11 @@ class CommonCommand extends AbstractCommand
     {
         $portalSettings = $this->getPortalSettings();
         $databaseSettings = $this->getDatabaseSettings();
-
         $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($path);
 
         // Creates a YML File
 
         $configuration = array();
-
-        $configuration['system_version'] = $version;
 
         $configuration['db_host'] = $databaseSettings['host'];
         $configuration['db_user'] = $databaseSettings['user'];
@@ -544,18 +540,7 @@ class CommonCommand extends AbstractCommand
         $configuration['login_as_forbidden_globally'] = false;
 
         // Version settings
-        $configuration['system_version']           = '1.10.0';
-
-        /*
-        $dumper = new Dumper();
-        $yaml = $dumper->dump($configuration, 2);
-
-        $newConfigurationFile = $configurationPath.'configuration.yml';
-        file_put_contents($newConfigurationFile, $yaml);
-
-        return file_exists($newConfigurationFile);*/
-
-        // Create a configuration.php
+        $configuration['system_version']           = $version;
 
         if (file_exists($this->getRootSys().'config/configuration.dist.php')) {
             $contents = file_get_contents($this->getRootSys().'config/configuration.dist.php');
@@ -565,22 +550,31 @@ class CommonCommand extends AbstractCommand
             $contents = file_get_contents($this->getRootSys().'main/install/configuration.dist.php');
         }
 
-        $configuration['{DATE_GENERATED}'] = date('r');
+        $config['{DATE_GENERATED}'] = date('r');
         $config['{DATABASE_HOST}'] = $configuration['db_host'];
         $config['{DATABASE_USER}'] = $configuration['db_user'];
         $config['{DATABASE_PASSWORD}'] = $configuration['db_password'];
         $config['{DATABASE_MAIN}'] = $configuration['main_database'];
         $config['{DATABASE_DRIVER}'] = $configuration['driver'];
 
+        $config['{COURSE_TABLE_PREFIX}'] = "";
+        $config['{DATABASE_GLUE}'] = "";
+        $config['{DATABASE_PREFIX}'] = "";
+        $config['{DATABASE_STATS}'] = $configuration['main_database'];
+        $config['{DATABASE_SCORM}'] = $configuration['main_database'];
+        $config['{DATABASE_PERSONAL}'] = $configuration['main_database'];
+        $config['TRACKING_ENABLED'] = "''";
+        $config['SINGLE_DATABASE'] = "false";
+
         $config['{ROOT_WEB}'] = $portalSettings['institution_url'];
         $config['{ROOT_SYS}'] = $this->getRootSys();
 
-        //$config['{URL_APPEND_PATH}'] = $urlAppendPath;
+        $config['{URL_APPEND_PATH}'] = "";
         $config['{SECURITY_KEY}'] = $configuration['security_key'];
         $config['{ENCRYPT_PASSWORD}'] = $configuration['password_encryption'];
 
         $config['SESSION_LIFETIME'] = 3600;
-        $config['{NEW_VERSION}'] = $this->getLatestVersion();
+        $config['{NEW_VERSION}'] = $version;
         $config['NEW_VERSION_STABLE'] = 'true';
 
         foreach ($config as $key => $value) {
@@ -588,10 +582,8 @@ class CommonCommand extends AbstractCommand
         }
         $newConfigurationFile = $configurationPath.'configuration.php';
 
-
         return file_put_contents($newConfigurationFile, $contents);
     }
-
 
     /**
      * Updates the configuration.yml file
@@ -608,6 +600,24 @@ class CommonCommand extends AbstractCommand
         // Merging changes
         if (!empty($newValues)) {
             $_configuration = array_merge($_configuration, $newValues);
+        }
+
+        $paramsToRemove = array(
+            'tracking_enabled',
+            'single_database',
+            'table_prefix',
+            'db_glue',
+            'db_prefix',
+            //'url_append',
+            'statistics_database',
+            'user_personal_database',
+            'scorm_database'
+        );
+
+        foreach ($_configuration as $key => $value) {
+            if (in_array($key, $paramsToRemove)) {
+                unset($_configuration[$key]);
+            }
         }
 
         // See http://zf2.readthedocs.org/en/latest/modules/zend.config.introduction.html
@@ -766,28 +776,36 @@ class CommonCommand extends AbstractCommand
             foreach ($dbList as &$dbInfo) {
                 $params = $this->getDatabaseSettings();
 
-                if ($_configuration['single_database'] == false) {
+                if (isset($_configuration['single_database']) && $_configuration['single_database']) {
+                    $em = \Doctrine\ORM\EntityManager::create($params, $config);
+                } else {
 
                     if ($section == 'course') {
-                        $evm = new \Doctrine\Common\EventManager;
+                        /*$evm = new \Doctrine\Common\EventManager;
                         $tablePrefix = new \Chash\DoctrineExtensions\TablePrefix($_configuration['table_prefix']);
-                        $evm->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);
+                        $evm->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);*/
 
-                        $params['dbname'] = str_replace('_chamilo_course_', '', $dbInfo['database']);
-                        $em = \Doctrine\ORM\EntityManager::create($params, $config, $evm);
+                        if (strpos($dbInfo['database'], '_chamilo_course_') == false) {
+                            //$params['dbname'] = $params['dbname'];
+                        } else {
+                            $params['dbname'] = str_replace('_chamilo_course_', '', $dbInfo['database']);
+                        }
+                        $em = \Doctrine\ORM\EntityManager::create($params, $config);
                     } else {
                         $em = \Doctrine\ORM\EntityManager::create($params, $config);
                     }
-                } else {
-                    $em = \Doctrine\ORM\EntityManager::create($params, $config);
                 }
-
                 $helper = new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($em->getConnection());
                 $this->getApplication()->getHelperSet()->set($helper, $dbInfo['database']);
             }
         }
     }
 
+    /**
+     * @param $files
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @return int
+     */
     public function removeFiles($files, \Symfony\Component\Console\Output\OutputInterface $output)
     {
         $dryRun = $this->getConfigurationHelper()->getDryRun();
@@ -834,7 +852,13 @@ class CommonCommand extends AbstractCommand
         return $filledParams;
     }
 
-
+    /**
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param string $version
+     * @param string $updateInstallation
+     * @param string $defaultTempFolder
+     * @return int|null|String
+     */
     public function getPackage(\Symfony\Component\Console\Output\OutputInterface $output, $version, $updateInstallation, $defaultTempFolder)
     {
 
@@ -920,7 +944,7 @@ class CommonCommand extends AbstractCommand
                                 //$output->writeln($folderPath.'/'.$location.'main/inc/lib/global.inc.php');
                                 if (file_exists($folderPath.'/'.$location.'global.inc.php')) {
                                     $location = realpath($folderPath.'/'.$location.'../../').'/';
-                                    $output->writeln('<comment>Chamilo file detected:</comment>: <info>'.$location.'main/inc/lib/global.inc.php</info>');
+                                    $output->writeln('<comment>Chamilo file detected:</comment> <info>'.$location.'main/inc/lib/global.inc.php</info>');
                                     break;
                                 }
                             }
@@ -947,5 +971,27 @@ class CommonCommand extends AbstractCommand
             }
         }
     }
+
+    /**
+     * @param array $_configuration
+     * @param string $courseDatabase
+     * @return null|string
+     */
+    public function getTablePrefix($_configuration, $courseDatabase = null)
+    {
+        $singleDatabase = isset($_configuration['single_database']) ? $_configuration['single_database'] : false;
+        $tablePrefix = isset($_configuration['table_prefix']) ? $_configuration['table_prefix'] : null;
+        $db_prefix = isset($_configuration['db_prefix']) ? $_configuration['db_prefix'] : null;
+
+        if ($singleDatabase) {
+            $prefix = $tablePrefix.$db_prefix.'_'.$courseDatabase.'_';
+        } else {
+            $prefix = $tablePrefix;
+        }
+
+        return $prefix;
+    }
+
+
 
 }

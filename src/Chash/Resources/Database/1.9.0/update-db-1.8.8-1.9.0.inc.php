@@ -11,9 +11,6 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
     $databaseList = $this->generateDatabaseList($courseList);
     $courseDatabaseConnectionList = $databaseList['course']; // main  user stats course
 
-    $singleDbForm = isset($_configuration['single_database']) ? $_configuration['single_database'] : false;
-    $prefix = $_configuration['table_prefix'];
-
     /** @var \Doctrine\DBAL\Connection $userConnection */
     $userConnection = $this->getHelper($databaseList['user'][0]['database'])->getConnection();
     /** @var \Doctrine\DBAL\Connection $mainConnection */
@@ -198,22 +195,7 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
         //$output->writeln("Dropping c_* tables ...");
         //$this->dropCourseTables();
 
-        if ($dryRun) {
-            $output->writeln("<comment>Creating c_* tables but dry-run is on. 0 tables created.</comment>");
-            //return 0;
-        } else {
-            $output->writeln("<comment>Creating c_* tables ...</comment>");
-        }
-
-        $this->createCourseTables($output);
-
-        $prefix = '';
-
-        if ($singleDbForm) {
-            $prefix =  $_configuration['table_prefix'];
-        }
-
-        $output->writeln("<comment>Database prefix $prefix</comment>");
+        $this->createCourseTables($output, $dryRun);
 
         if (!empty($courseList)) {
 
@@ -223,6 +205,8 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
             $progress->start($output, count($courseList));
 
             foreach ($courseList as $row_course) {
+
+                $prefix = $this->getTablePrefix($_configuration, $row_course['db_name']);
 
                 // Course tables to be migrated.
                 $table_list = array(
@@ -331,31 +315,13 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
                 }
 
                 foreach ($table_list as $table) {
-                    $just_table_name = $table;
-                    $old_table = $row_course['db_name'].".".$table;
-
-                    if ($singleDbForm) {
-                        $old_table = "$prefix{$row_course['db_name']}_".$table;
-                        $just_table_name = "$prefix{$row_course['db_name']}_".$table;
-                    }
+                    $old_table = $prefix.$table;
 
                     $course_id = $row_course['id'];
                     $new_table = DB_COURSE_PREFIX.$table;
 
-                    //Use the old database (if this is the case)
-
-                    if (!$singleDbForm) {
-                        // otherwise just use the main one
-                        //iDatabase::select_db($row_course['db_name']);
-                    } else {
-                        //iDatabase::select_db($dbNameForm);
-                    }
-
-                    // Count of rows.
-                    //$sql 	= "SHOW TABLES LIKE '$just_table_name'";
-                    //$result = iDatabase::query($sql);
                     $sm = $courseConnection->getSchemaManager();
-                    $tableExists = $sm->tablesExist($just_table_name);
+                    $tableExists = $sm->tablesExist($old_table);
 
                     if ($tableExists) {
                         $sql 	= "SELECT count(*) as count FROM $old_table";
@@ -365,7 +331,7 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
                         if ($result) {
                             $row = $result->fetch();
                             $old_count = $row['count'];
-                            //$output->writeln("Count(*) in table $old_table: $old_count");
+                            // $output->writeln("Count(*) in table $old_table: $old_count");
                         } else {
                             $output->writeln("Count(*) in table $old_table failed");
                         }
@@ -419,8 +385,8 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
 
             /* Fixes the work subfolder and work with no parent issues */
 
-            $work_table = $_configuration['main_database'].".c_student_publication";
-            $item_table = $_configuration['main_database'].".c_item_property";
+            $work_table = "c_student_publication";
+            $item_table = "c_item_property";
 
             $sys_course_path = $this->getCourseSysPath();
 
