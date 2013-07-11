@@ -37,6 +37,8 @@ class UpgradeCommand extends CommonCommand
             ->addArgument('version', InputArgument::REQUIRED, 'The version to migrate to.', null)
             ->addOption('path', null, InputOption::VALUE_OPTIONAL, 'The path to the chamilo folder')
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Execute the migration as a dry run.')
+            ->addOption('update-installation', null, InputOption::VALUE_OPTIONAL, 'Updates the portal with the current zip file. http:// or /var/www/file.zip')
+            ->addOption('temp-folder', null, InputOption::VALUE_OPTIONAL, 'The temp folder.', '/tmp')
             ->addOption('silent', null, InputOption::VALUE_NONE, 'Execute the migration with out asking questions.');
             //->addOption('force', null, InputOption::VALUE_NONE, 'Force the update. Only for tests');
     }
@@ -56,7 +58,8 @@ class UpgradeCommand extends CommonCommand
         $dryRun = $input->getOption('dry-run');
         $silent = $input->getOption('silent') == true;
 
-        //$force = $input->getOption('force');
+        $defaultTempFolder = $input->getOption('temp-folder');
+        $updateInstallation = $input->getOption('update-installation');
 
         $_configuration = $this->getConfigurationHelper()->getConfiguration($path);
 
@@ -73,7 +76,7 @@ class UpgradeCommand extends CommonCommand
 
         $configurationPath = $this->getHelper('configuration')->getConfigurationPath($path);
 
-        //Checking configuration file
+        // Checking configuration file.
         if (!is_writable($configurationPath)) {
             $output->writeln("<comment>Folder ".$configurationPath." must have writable permissions</comment>");
             return 0;
@@ -142,7 +145,24 @@ class UpgradeCommand extends CommonCommand
             }
         }
 
+        //$updateInstallation = '/home/jmontoya/Downloads/chamilo-lms-CHAMILO_1_9_6_STABLE.zip';
+        //$updateInstallation = 'https://github.com/chamilo/chamilo-lms/archive/CHAMILO_1_9_6_STABLE.zip';
+
+        $chamiloLocationPath = $this->getPackage($output, $version, $updateInstallation, $defaultTempFolder);
+
+        if (empty($chamiloLocationPath)) {
+            return;
+        }
+
+
         $output->writeln("<comment>Welcome to the Chamilo upgrade process!</comment>");
+
+        if (empty($chamiloLocationPath)) {
+            $output->writeln("<comment>You have to manually update the Chamilo php files because you didn't use the option:</comment><info> --update-installation </info>");
+        } else {
+            $output->writeln("<comment>When the installation process finished the files located here:</comment> <info>$chamiloLocationPath</info>");
+            $output->writeln("<comment>will be copied in your portal.</comment>");
+        }
 
         //@todo Too much questions?
 

@@ -8,6 +8,7 @@ use Symfony\Component\Yaml\Parser;
 use Doctrine\DBAL\Migrations\Tools\Console\Command\AbstractCommand;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOException;
+use Alchemy\Zippy\Zippy;
 
 class CommonCommand extends AbstractCommand
 {
@@ -822,6 +823,7 @@ class CommonCommand extends AbstractCommand
     /**
      * @param \Symfony\Component\Console\Input\InputInterface $input
      * @param array $params
+     * @return array
      */
     public function getParamsFromOptions(\Symfony\Component\Console\Input\InputInterface $input, array $params)
     {
@@ -833,6 +835,113 @@ class CommonCommand extends AbstractCommand
         }
 
         return $filledParams;
+    }
+
+
+    public function getPackage(\Symfony\Component\Console\Output\OutputInterface $output, $version, $updateInstallation, $defaultTempFolder)
+    {
+
+        // Download the chamilo package from from github:
+        if (empty($updateInstallation)) {
+            $versionTag = str_replace('.', '_', $version);
+            $updateInstallation = "https://github.com/chamilo/chamilo-lms/archive/CHAMILO_".$versionTag."_STABLE.zip";
+        }
+
+        $updateInstallationOriginal = $updateInstallation;
+
+        if (!empty($updateInstallation)) {
+
+            // Check temp folder
+            if (!is_writable($defaultTempFolder)) {
+                $output->writeln("<comment>We don't have permissions to write in the temp folder: $defaultTempFolder</comment>");
+                return 0;
+            }
+
+            // Download file?
+            if (strpos($updateInstallation, 'http') === false) {
+                if (!file_exists($updateInstallation)) {
+                    $output->writeln("<comment>File does not exists: $updateInstallation</comment>");
+                    return 0;
+                }
+            } else {
+                $urlInfo = parse_url($updateInstallation);
+
+                $updateInstallationLocalName = $defaultTempFolder.'/'.basename($urlInfo['path']);
+                if (!file_exists($updateInstallationLocalName)) {
+
+                    $output->writeln("<comment>Executing</comment><info>wget -O $updateInstallationLocalName '$updateInstallation'</info>");
+                    $output->writeln('');
+
+                    $execute = "wget -O ".$updateInstallationLocalName." '$updateInstallation'\n";
+
+                    $systemOutput = shell_exec($execute);
+
+                    $systemOutput = str_replace("\n", "\n\t", $systemOutput);
+                    $output->writeln($systemOutput);
+                    //$result = file_put_contents($updateInstallationLocalName, file_get_contents($updateInstallation));
+                } else {
+                    $output->writeln("<comment>Getting file from the temp folder:</comment> <info>$updateInstallationLocalName</info>");
+                }
+
+                $updateInstallation = $updateInstallationLocalName;
+
+                if (!file_exists($updateInstallationLocalName)) {
+                    $output->writeln("<error>Can't download the file!</error>");
+                    $output->writeln("<comment>Check if you can download this file in your browser first:</comment> <info>$updateInstallation</info>");
+                    return 0;
+                }
+            }
+
+            if (file_exists($updateInstallation)) {
+                $zippy = Zippy::load();
+                $archive = $zippy->open($updateInstallation);
+
+                $folderPath = $defaultTempFolder.'/chamilo-v'.$version.'-'.date('y-m-d');
+
+                if (!is_dir($folderPath)) {
+                    mkdir($folderPath);
+                }
+
+                $location = null;
+                if (is_dir($folderPath)) {
+                    $output->writeln("<comment>Extracting files here:</comment> <info>$folderPath</info>");
+
+                    try {
+                        $archive->extract($folderPath);
+                        /** @var \Alchemy\Zippy\Archive\Member $member */
+                        foreach ($archive as $member) {
+                            if ($member->isDir()) {
+                                $location = $member->getLocation();
+
+                                //$output->writeln($folderPath.'/'.$location.'main/inc/lib/global.inc.php');
+                                if (file_exists($folderPath.'/'.$location.'global.inc.php')) {
+                                    $location = realpath($folderPath.'/'.$location.'../../').'/';
+                                    $output->writeln('<comment>Chamilo file detected:</comment>: <info>'.$location.'main/inc/lib/global.inc.php</info>');
+                                    break;
+                                }
+                            }
+                        }
+                    } catch (\Alchemy\Zippy\Exception\RunTimeException $e) {
+                        $output->writeln("<comment>It seems that this file doesn't contain a Chamilo package:</comment> <info>$updateInstallationOriginal</info>");
+                        $output->writeln("Error:");
+                        $output->writeln($e->getMessage());
+                        return 0;
+                    }
+                }
+
+                $chamiloLocationPath = $location;
+
+                if (empty($chamiloLocationPath)) {
+                    $output->writeln("<error>Chamilo folder structure not found.</error>");
+                    return 0;
+                }
+
+                return $chamiloLocationPath;
+            } else {
+                $output->writeln("<comment>File doesn't exists.</comment>");
+                return 0;
+            }
+        }
     }
 
 }
