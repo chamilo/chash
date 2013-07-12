@@ -35,8 +35,7 @@ class CleanTempFolderCommand extends CommonChamiloDatabaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-
-        $output->writeln('<comment>Cleaning temp folders </comment>');
+        $this->writeCommandHeader($output, "Cleaning temp files.");
 
         $dialog = $this->getHelperSet()->get('dialog');
 

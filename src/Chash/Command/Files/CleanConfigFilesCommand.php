@@ -34,8 +34,7 @@ class CleanConfigFilesCommand extends CommonChamiloDatabaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-
-        $output->writeln('<comment>Cleaning config files</comment>');
+        $this->writeCommandHeader($output, "Cleaning config files.");
 
         $dialog = $this->getHelperSet()->get('dialog');
 

@@ -32,8 +32,7 @@ class GenerateTempFileStructureCommand extends CommonChamiloDatabaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-
-        $output->writeln('<comment>Generating folders</comment>');
+        $this->writeCommandHeader($output, 'Generating temp folders.');
 
         /*$dialog = $this->getHelperSet()->get('dialog');
 

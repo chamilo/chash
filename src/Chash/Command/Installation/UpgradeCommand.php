@@ -149,14 +149,12 @@ class UpgradeCommand extends CommonCommand
         //$updateInstallation = '/home/jmontoya/Downloads/chamilo-lms-CHAMILO_1_9_6_STABLE.zip';
         //$updateInstallation = 'https://github.com/chamilo/chamilo-lms/archive/CHAMILO_1_9_6_STABLE.zip';
 
-        //if ($dryRun == false) {
-
+        if ($dryRun == false) {
             $chamiloLocationPath = $this->getPackage($output, $version, $updateInstallation, $tempFolder);
-
             if (empty($chamiloLocationPath)) {
                 return;
             }
-        //}
+        }
 
         $output->writeln("<comment>----------------------------------------</comment>");
         $output->writeln("<comment>Welcome to the Chamilo upgrade process!</comment>");
@@ -218,7 +216,6 @@ class UpgradeCommand extends CommonCommand
         $this->setExtraDatabaseSettings($extraDatabaseSettings);
         $this->setDoctrineSettings();
 
-
         $conn = $this->getConnection();
 
         if ($conn) {
@@ -251,9 +248,12 @@ class UpgradeCommand extends CommonCommand
         }
 
         if ($dryRun == false) {
-            $this->copyPackageIntoSystem($output, $chamiloLocationPath);
+            $this->copyPackageIntoSystem($output, $chamiloLocationPath, null);
         }
+
         $this->updateConfiguration($output, $dryRun, array('system_version' => $version));
+
+        //
 
         $output->writeln("<comment>Wow! You just finish to migrate. Too check the current status of your platform. Run </comment><info>chamilo:status</info>");
     }
@@ -341,13 +341,11 @@ class UpgradeCommand extends CommonCommand
             );
 
             $output->writeln("<comment>Executing migrations:migrate ".$versionInfo['hook_to_doctrine_version']." --configuration=".$this->getMigrationConfigurationFile()."<comment>");
-
             $input = new ArrayInput($arguments);
-
             $command->run($input, $output);
             $output->writeln("<comment>Migration ended successfully</comment>");
 
-            // Generating temp folders:
+            // Generating temp folders.
             $command = $this->getApplication()->find('files:generate_temp_folders');
             $arguments = array(
                 'command' => 'files:generate_temp_folders',
@@ -358,7 +356,7 @@ class UpgradeCommand extends CommonCommand
             $input = new ArrayInput($arguments);
             $command->run($input, $output);
 
-            // Fixing permissions
+            // Fixing permissions.
             $command = $this->getApplication()->find('files:set_permissions_after_install');
             $arguments = array(
                 'command' => 'files:set_permissions_after_install',

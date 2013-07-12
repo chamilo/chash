@@ -39,6 +39,8 @@ class WipeCommand extends CommonCommand
         $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($path);
         $configurationFilePath = $this->getConfigurationHelper()->getConfigurationFilePath($path);
 
+        $this->writeCommandHeader($output, 'Wipe command.');
+
         $output->writeln("<comment>This command will clean your Chamilo installation. Removing the database and courses.</comment>");
 
         if ($configurationPath == false) {

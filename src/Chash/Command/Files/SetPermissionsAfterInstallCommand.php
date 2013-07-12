@@ -32,8 +32,7 @@ class SetPermissionsAfterInstallCommand extends CommonChamiloDatabaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-
-        $output->writeln('<comment>Setting permissions</comment>');
+        $this->writeCommandHeader($output, 'Setting permissions.');
 
         /*$dialog = $this->getHelperSet()->get('dialog');
 

@@ -35,8 +35,7 @@ class CleanDataFilesCommand extends CommonChamiloDatabaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-
-        $output->writeln('<comment>Cleaning data files. <comment>');
+        $this->writeHeader('Cleaning data folders.', $output);
 
         $dialog = $this->getHelperSet()->get('dialog');
 

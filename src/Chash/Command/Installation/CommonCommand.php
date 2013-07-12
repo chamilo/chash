@@ -499,7 +499,7 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Writes the configuration file a yml file
+     * Writes the configuration file for the first time (install command)
      * @param string $version
      * @param string $path
      * @return bool
@@ -582,7 +582,12 @@ class CommonCommand extends AbstractCommand
         }
         $newConfigurationFile = $configurationPath.'configuration.php';
 
-        return file_put_contents($newConfigurationFile, $contents);
+        $result = file_put_contents($newConfigurationFile, $contents);
+
+
+        return $result;
+
+
     }
 
     /**
@@ -861,7 +866,7 @@ class CommonCommand extends AbstractCommand
      */
     public function getPackage(\Symfony\Component\Console\Output\OutputInterface $output, $version, $updateInstallation, $defaultTempFolder)
     {
-
+        $fs = new Filesystem();
         // Download the chamilo package from from github:
         if (empty($updateInstallation)) {
             $versionTag = str_replace('.', '_', $version);
@@ -890,7 +895,7 @@ class CommonCommand extends AbstractCommand
                 $updateInstallationLocalName = $defaultTempFolder.'/'.basename($urlInfo['path']);
                 if (!file_exists($updateInstallationLocalName)) {
 
-                    $output->writeln("<comment>Executing</comment><info>wget -O $updateInstallationLocalName '$updateInstallation'</info>");
+                    $output->writeln("<comment>Executing</comment> <info>wget -O $updateInstallationLocalName '$updateInstallation'</info>");
                     $output->writeln('');
 
                     $execute = "wget -O ".$updateInstallationLocalName." '$updateInstallation'\n";
@@ -920,7 +925,7 @@ class CommonCommand extends AbstractCommand
                 $folderPath = $defaultTempFolder.'/chamilo-v'.$version.'-'.date('y-m-d');
 
                 if (!is_dir($folderPath)) {
-                    mkdir($folderPath);
+                    $fs->mkdir($folderPath);
                 } else {
                     // Load from cache
                     $chamiloPath = $folderPath.'/chamilo-lms-CHAMILO_'.$versionTag.'_STABLE/main/inc/global.inc.php';
@@ -995,13 +1000,131 @@ class CommonCommand extends AbstractCommand
     /**
      * @param $output
      * @param string $chamiloLocationPath
+     * @param string $destinationPath
      */
-    public function copyPackageIntoSystem($output, $chamiloLocationPath)
+    public function copyPackageIntoSystem($output, $chamiloLocationPath, $destinationPath)
     {
         $fileSystem = new Filesystem();
-        $output->writeln("<comment>Copying files from </comment><info>$chamiloLocationPath</info><comment> to </comment><info>".$this->getRootSys()."</info>");
-        $fileSystem->mirror($chamiloLocationPath, $this->getRootSys(), null, array('override' => true));
-        $output->writeln("<comment>Copy finished.<comment>");
+
+        if (empty($destinationPath)) {
+            $destinationPath = $this->getRootSys();
+        }
+
+        $output->writeln("<comment>Copying files from </comment><info>$chamiloLocationPath</info><comment> to </comment><info>".$destinationPath."</info>");
+
+        if (empty($destinationPath)) {
+            $output->writeln("<error>The root path was not set.<error>");
+            return 0;
+        } else {
+            $fileSystem->mirror($chamiloLocationPath, $destinationPath, null, array('override' => true));
+            $output->writeln("<comment>Copy finished.<comment>");
+            return 1;
+        }
     }
 
+    /**
+     * @param $output
+     * @param string $title
+     */
+    public function writeCommandHeader($output, $title)
+    {
+        $output->writeln('<comment>------------------------</comment>');
+        $output->writeln('<comment>'.$title.'</comment>');
+        $output->writeln('<comment>------------------------</comment>');
+    }
+
+    /**
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     */
+    public function generateConfFiles(\Symfony\Component\Console\Output\OutputInterface $output)
+    {
+        $configList = array(
+            'portfolio.conf.dist.php',
+            'events.conf.dist.php',
+            'add_course.conf.dist.php',
+            'mail.conf.dist.php',
+            'auth.conf.dist.php',
+            'profile.conf.dist.php',
+        );
+
+        $confDir = $this->getConfigurationPath();
+
+        $fs = new Filesystem();
+
+        foreach ($configList as $file) {
+            if (file_exists($confDir.$file)) {
+                $newConfFile = str_replace('dist.', '', $confDir.$file);
+                if (!file_exists($newConfFile)) {
+                    $fs->copy($confDir.$file, $newConfFile);
+                    $output->writeln("<comment>File generated:</comment> <info>$newConfFile</info>");
+                }
+            }
+        }
+    }
+
+    /**
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param \Doctrine\DBAL\Connection $connection
+     */
+    public function setPortalSettingsInChamilo(\Symfony\Component\Console\Output\OutputInterface $output, \Doctrine\DBAL\Connection $connection)
+    {
+        $adminSettings = $this->getAdminSettings();
+
+        $connection->update('settings_current', array('selected_value' => $adminSettings['email']), array('variable' => 'emailAdministrator'));
+        $connection->update('settings_current', array('selected_value' => $adminSettings['lastname']), array('variable' => 'administratorSurname'));
+        $connection->update('settings_current', array('selected_value' => $adminSettings['firstname']), array('variable' => 'administratorName'));
+        $connection->update('settings_current', array('selected_value' => $adminSettings['language']), array('variable' => 'platformLanguage'));
+
+        $settings = $this->getPortalSettings();
+
+        $connection->update('settings_current', array('selected_value' => 1), array('variable' => 'allow_registration'));
+        $connection->update('settings_current', array('selected_value' => 1), array('variable' => 'allow_registration_as_teacher'));
+
+        $connection->update('settings_current', array('selected_value' => $settings['permissions_for_new_directories']), array('variable' => 'permissions_for_new_directories'));
+        $connection->update('settings_current', array('selected_value' => $settings['permissions_for_new_files']), array('variable' => 'permissions_for_new_files'));
+        $connection->update('settings_current', array('selected_value' => $settings['institution']), array('variable' => 'Institution'));
+        $connection->update('settings_current', array('selected_value' => $settings['institution_url']), array('variable' => 'InstitutionUrl'));
+        $connection->update('settings_current', array('selected_value' => $settings['sitename']), array('variable' => 'siteName'));
+    }
+
+    /**
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param \Doctrine\DBAL\Connection $connection
+     */
+    public function setAdminSettingsInChamilo(\Symfony\Component\Console\Output\OutputInterface $output, \Doctrine\DBAL\Connection $connection)
+    {
+        $settings = $this->getAdminSettings();
+
+        $settings['password'] = $this->getEncryptedPassword($settings['password']);
+
+        $connection->update('user', array('auth_source' => 'platform'), array('user_id' => '1'));
+
+        $connection->update('user', array('username' => $settings['username']), array('user_id' => '1'));
+        $connection->update('user', array('firstname' => $settings['firstname']), array('user_id' => '1'));
+        $connection->update('user', array('lastname' => $settings['lastname']), array('user_id' => '1'));
+        $connection->update('user', array('phone' => $settings['phone']), array('user_id' => '1'));
+
+        $connection->update('user', array('password' => $settings['password']), array('user_id' => '1'));
+        $connection->update('user', array('email' => $settings['email']), array('user_id' => '1'));
+        $connection->update('user', array('language' => $settings['language']), array('user_id' => '1'));
+
+        // Already updated by the script
+        //$connection->insert('admin', array('user_id' => 1));
+
+        $connection->update('user', array('language' => $settings['language']), array('user_id' => '2'));
+    }
+
+    public function getEncryptedPassword($password, $salt = null)
+    {
+        $encryptionMethod = $this->getConfigurationArray();
+        switch ($encryptionMethod) {
+            case 'sha1':
+                return empty($salt) ? sha1($password) : sha1($password.$salt);
+            case 'none':
+                return $password;
+            case 'md5':
+            default:
+                return empty($salt) ? md5($password)  : md5($password.$salt);
+        }
+    }
 }
