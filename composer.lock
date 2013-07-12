@@ -602,12 +602,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/doctrine2.git",
-                "reference": "78fc1296145dc798fdfa8e5657b6b91d58f8c184"
+                "reference": "0aed9595c3ceec81dcf44a4eefc24bb49051868e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/78fc1296145dc798fdfa8e5657b6b91d58f8c184",
-                "reference": "78fc1296145dc798fdfa8e5657b6b91d58f8c184",
+                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/0aed9595c3ceec81dcf44a4eefc24bb49051868e",
+                "reference": "0aed9595c3ceec81dcf44a4eefc24bb49051868e",
                 "shasum": ""
             },
             "require": {
@@ -669,7 +669,7 @@
                 "database",
                 "orm"
             ],
-            "time": "2013-07-07 19:37:55"
+            "time": "2013-07-11 11:56:13"
         },
         {
             "name": "guzzle/guzzle",
@@ -677,12 +677,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "633e70669815865988b68fd40244d90d7d024788"
+                "reference": "1f33485b6e5f11fb1fc72a2090f961fe9508a300"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/633e70669815865988b68fd40244d90d7d024788",
-                "reference": "633e70669815865988b68fd40244d90d7d024788",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/1f33485b6e5f11fb1fc72a2090f961fe9508a300",
+                "reference": "1f33485b6e5f11fb1fc72a2090f961fe9508a300",
                 "shasum": ""
             },
             "require": {
@@ -761,7 +761,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2013-07-10 19:37:17"
+            "time": "2013-07-11 23:30:45"
         },
         {
             "name": "pimple/pimple",
@@ -816,12 +816,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console.git",
-                "reference": "3b58c937fc7e0dbdadd2642f21c462a0e663f0b6"
+                "reference": "c374f12670a4e6b6b72ef2a2d58b75534d94609c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/3b58c937fc7e0dbdadd2642f21c462a0e663f0b6",
-                "reference": "3b58c937fc7e0dbdadd2642f21c462a0e663f0b6",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/c374f12670a4e6b6b72ef2a2d58b75534d94609c",
+                "reference": "c374f12670a4e6b6b72ef2a2d58b75534d94609c",
                 "shasum": ""
             },
             "require": {
@@ -860,7 +860,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "http://symfony.com",
-            "time": "2013-07-08 13:37:01"
+            "time": "2013-07-11 19:37:15"
         },
         {
             "name": "symfony/event-dispatcher",
@@ -1064,12 +1064,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "82100c7732c95452702d11433aad50988700d36c"
+                "reference": "7a6c10b37cb4335dcca038da760f29915a374b81"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/82100c7732c95452702d11433aad50988700d36c",
-                "reference": "82100c7732c95452702d11433aad50988700d36c",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/7a6c10b37cb4335dcca038da760f29915a374b81",
+                "reference": "7a6c10b37cb4335dcca038da760f29915a374b81",
                 "shasum": ""
             },
             "require": {
@@ -1102,7 +1102,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2013-05-16 07:54:39"
+            "time": "2013-07-11 19:37:15"
         },
         {
             "name": "zendframework/zend-config",
