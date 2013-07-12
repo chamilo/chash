@@ -28,6 +28,10 @@ In order to generate the executable chash.phar file. You have to set first this 
 
     phar.readonly = Off
 
+You need to download the third parties libraries via composer:
+
+    composer update --no-dev --prefer-dist
+
 Then you can call the php createPhar.php file. A new chash.phar file will be created.
 
 Remember to add execution permissions to the phar file.
