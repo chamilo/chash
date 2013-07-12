@@ -39,7 +39,7 @@ You need to have curl (in order to download packages)
 Example:
 
     cd chash
-    composer update
+    composer update --no-dev
     php -d phar.readonly=0 createPhar.php
     chmod +x chash.phar
     sudo ln -s /path/to/chash.phar /usr/local/bin/chash

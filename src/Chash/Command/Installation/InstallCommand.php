@@ -78,7 +78,7 @@ class InstallCommand extends CommonCommand
         $sqlFolder = $this->getInstallationPath($version);
 
         if (!is_dir($sqlFolder)) {
-            $output->writeln("<comment>Sorry you can't install that version of Chamilo :(</comment>");
+            $output->writeln("<comment>Sorry you can't install version '$version' of Chamilo :(</comment>");
             $output->writeln("<comment>Supported versions:</comment> <info>".implode(', ', $this->getAvailableVersions()));
             return 0;
         }
@@ -134,6 +134,7 @@ class InstallCommand extends CommonCommand
             $output->writeln("<error>There's an error while loading the configuration path. Are you sure this is a Chamilo path?</error>");
             $output->writeln("<comment>Try setting up a Chamilo path for example: </comment><info>chamilo:install 1.9.0 /var/www/chamilo</info>");
 
+            $output->writeln("<comment>You can also *download* a Chamilo package adding the --download-package option</comment><info>chamilo:install 1.9.0 /var/www/chamilo</info>");
             return 0;
         }
 
