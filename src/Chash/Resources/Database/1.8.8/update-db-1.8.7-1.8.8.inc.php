@@ -155,10 +155,17 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
             $result = $mainConnection->executeQuery($sql);
             $rows = $result->fetchAll();
             foreach ($rows as $row) {
-                //Adding course to default URL just in case
-                $sql = "INSERT INTO access_url_rel_course SET course_code = '".$row['code']."', access_url_id = '1' ";
-                $mainConnection->executeQuery($sql);
-                $output->writeln($sql);
+
+                // Adding course to default URL just in case.
+                // Check if already exists
+                $sql = "SELECT course_code FROM access_url_rel_course WHERE course_code = '".$row['code']."' AND access_url_id = 1";
+                $result = $mainConnection->executeQuery($sql);
+
+                if ($result->rowCount() == 0) {
+                    $sql = "INSERT INTO access_url_rel_course SET course_code = '".$row['code']."', access_url_id = '1' ";
+                    $mainConnection->executeQuery($sql);
+                    $output->writeln($sql);
+                }
             }
         }
 

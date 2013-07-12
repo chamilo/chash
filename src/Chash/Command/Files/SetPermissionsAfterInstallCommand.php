@@ -55,7 +55,7 @@ class SetPermissionsAfterInstallCommand extends CommonChamiloDatabaseCommand
 
         // All files
         $files = $this->getConfigurationHelper()->getSysFolders();
-        $this->setPermissions($output, $files, null, $linuxUser, $linuxGroup, false);
+        $this->setPermissions($output, $files, 0777, $linuxUser, $linuxGroup, false);
 
         $files = $this->getConfigurationHelper()->getSysFiles();
         $this->setPermissions($output, $files, null, $linuxUser, $linuxGroup, false);

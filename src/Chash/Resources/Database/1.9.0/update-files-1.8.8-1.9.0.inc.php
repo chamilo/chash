@@ -4,6 +4,5 @@
 
 $updateFiles = function($_configuration, $mainConnection, $courseList, $dryRun, $output)
 {
-    $this->generateConfFiles();
+    $this->generateConfFiles($output);
 };
-

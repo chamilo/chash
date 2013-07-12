@@ -393,89 +393,91 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
             $today = time();
             $user_id = 1;
 
-            foreach ($courseList as $course) {
-                $courseId = $course['id']; //int id
+            if ($dryRun == false) {
 
-                //1. Searching for works with no parents
-                $sql 	= "SELECT * FROM $work_table WHERE parent_id = 0 AND filetype ='file' AND c_id = $courseId ";
-                $result = $mainConnection->executeQuery($sql);
-                $work_list = $result->fetchAll();
+                foreach ($courseList as $course) {
+                    $courseId = $course['id']; //int id
 
-                $course_dir 		= $sys_course_path.$course['directory'];
-                $base_work_dir 		= $course_dir.'/work';
+                    //1. Searching for works with no parents
+                    $sql 	= "SELECT * FROM $work_table WHERE parent_id = 0 AND filetype ='file' AND c_id = $courseId ";
+                    $result = $mainConnection->executeQuery($sql);
+                    $work_list = $result->fetchAll();
 
-                //2. Looping if there are works with no parents
-                if (!empty($work_list)) {
-                    $work_dir_created = array();
+                    $course_dir 		= $sys_course_path.$course['directory'];
+                    $base_work_dir 		= $course_dir.'/work';
 
-                    foreach ($work_list as $work) {
-                        $session_id = intval($work['session_id']);
-                        $group_id   = intval($work['post_group_id']);
-                        $work_key   = $session_id.$group_id;
+                    //2. Looping if there are works with no parents
+                    if (!empty($work_list)) {
+                        $work_dir_created = array();
 
-                        $dir_name = "default_tasks_".$group_id."_".$session_id;
+                        foreach ($work_list as $work) {
+                            $session_id = intval($work['session_id']);
+                            $group_id   = intval($work['post_group_id']);
+                            $work_key   = $session_id.$group_id;
 
-                        // Only create the folder once
-                        if (!isset($work_dir_created[$work_key])) {
-                            //2.1 Creating a new work folder
-                            $sql = "INSERT INTO $work_table SET
-                                    c_id                = '$courseId',
-                                    url         		= 'work/".$dir_name."',
-                                    title               = 'Tasks',
-                                    description 		= '',
-                                    author      		= '',
-                                    active              = '1',
-                                    accepted			= '1',
-                                    filetype            = 'folder',
-                                    post_group_id       = '$group_id',
-                                    sent_date           = '".$today."',
-                                    parent_id           = '0',
-                                    qualificator_id     = '',
-                                    user_id 			= '".$user_id."'";
-                            $mainConnection->executeQuery($sql);
-                            $id  = $mainConnection->lastInsertId();
+                            $dir_name = "default_tasks_".$group_id."_".$session_id;
 
-                            //2.2 Adding the folder in item property
-                            if ($id) {
-                                $sql = "INSERT INTO $item_table (c_id, tool, ref, insert_date, insert_user_id, lastedit_date, lastedit_type, lastedit_user_id, to_group_id, visibility, id_session)
-                                        VALUES ('$courseId', 'work','$id','$today', '$user_id', '$today', 'DirectoryCreated','$user_id', '$group_id', '1', '$session_id')";
-
+                            // Only create the folder once
+                            if (!isset($work_dir_created[$work_key])) {
+                                //2.1 Creating a new work folder
+                                $sql = "INSERT INTO $work_table SET
+                                        c_id                = '$courseId',
+                                        url         		= 'work/".$dir_name."',
+                                        title               = 'Tasks',
+                                        description 		= '',
+                                        author      		= '',
+                                        active              = '1',
+                                        accepted			= '1',
+                                        filetype            = 'folder',
+                                        post_group_id       = '$group_id',
+                                        sent_date           = '".$today."',
+                                        parent_id           = '0',
+                                        qualificator_id     = '',
+                                        user_id 			= '".$user_id."'";
                                 $mainConnection->executeQuery($sql);
-                                $work_dir_created[$work_key] = $id;
-                                create_unexisting_work_directory($base_work_dir, $dir_name, $portalSettings);
+                                $id  = $mainConnection->lastInsertId();
+
+                                //2.2 Adding the folder in item property
+                                if ($id) {
+                                    $sql = "INSERT INTO $item_table (c_id, tool, ref, insert_date, insert_user_id, lastedit_date, lastedit_type, lastedit_user_id, to_group_id, visibility, id_session)
+                                            VALUES ('$courseId', 'work','$id','$today', '$user_id', '$today', 'DirectoryCreated','$user_id', '$group_id', '1', '$session_id')";
+
+                                    $mainConnection->executeQuery($sql);
+                                    $work_dir_created[$work_key] = $id;
+                                    create_unexisting_work_directory($base_work_dir, $dir_name, $portalSettings);
+                                    $final_dir = $base_work_dir.'/'.$dir_name;
+                                }
+                            } else {
                                 $final_dir = $base_work_dir.'/'.$dir_name;
                             }
-                        } else {
-                            $final_dir = $base_work_dir.'/'.$dir_name;
-                        }
 
-                        // 2.3 Updating the url
-                        if (!empty($work_dir_created[$work_key])) {
-                            $parent_id = $work_dir_created[$work_key];
-                            $new_url = "work/".$dir_name.'/'.basename($work['url']);
-                            $new_url = Database::escape_string($new_url);
-                            $sql = "UPDATE $work_table SET url = '$new_url', parent_id = $parent_id, contains_file = '1' WHERE id = {$work['id']} AND c_id = $courseId";
-                            $mainConnection->executeQuery($sql);
-                            if (is_dir($final_dir)) {
-                                rename($course_dir.'/'.$work['url'], $course_dir.'/'.$new_url);
+                            // 2.3 Updating the url
+                            if (!empty($work_dir_created[$work_key])) {
+                                $parent_id = $work_dir_created[$work_key];
+                                $new_url = "work/".$dir_name.'/'.basename($work['url']);
+                                $new_url = Database::escape_string($new_url);
+                                $sql = "UPDATE $work_table SET url = '$new_url', parent_id = $parent_id, contains_file = '1' WHERE id = {$work['id']} AND c_id = $courseId";
+                                $mainConnection->executeQuery($sql);
+                                if (is_dir($final_dir)) {
+                                    rename($course_dir.'/'.$work['url'], $course_dir.'/'.$new_url);
+                                }
                             }
                         }
                     }
-                }
 
-                // 3.0 Moving subfolders to the root.
-                $sql 	= "SELECT * FROM $work_table WHERE parent_id <> 0 AND filetype ='folder' AND c_id = $courseId";
-                $result = $mainConnection->executeQuery($sql);
-                $work_list = $result->fetchAll();
+                    // 3.0 Moving subfolders to the root.
+                    $sql 	= "SELECT * FROM $work_table WHERE parent_id <> 0 AND filetype ='folder' AND c_id = $courseId";
+                    $result = $mainConnection->executeQuery($sql);
+                    $work_list = $result->fetchAll();
 
-                if (!empty($work_list)) {
-                    foreach ($work_list as $work_folder) {
-                        $folder_id = $work_folder['id'];
-                        check_work($mainConnection, $folder_id, $work_folder['url'], $work_table, $base_work_dir, $courseId);
+                    if (!empty($work_list)) {
+                        foreach ($work_list as $work_folder) {
+                            $folder_id = $work_folder['id'];
+                            check_work($mainConnection, $folder_id, $work_folder['url'], $work_table, $base_work_dir, $courseId);
+                        }
                     }
                 }
             }
-
             $output->writeln("<comment>End work fix</comment>");
             if ($dryRun) {
                 $output->writeln('<info>Queries were not executed. Because dry-run is on<info>');

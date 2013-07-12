@@ -563,7 +563,7 @@ class CommonCommand extends AbstractCommand
         $config['{DATABASE_STATS}'] = $configuration['main_database'];
         $config['{DATABASE_SCORM}'] = $configuration['main_database'];
         $config['{DATABASE_PERSONAL}'] = $configuration['main_database'];
-        $config['TRACKING_ENABLED'] = "''";
+        $config['TRACKING_ENABLED'] = "'true'";
         $config['SINGLE_DATABASE'] = "false";
 
         $config['{ROOT_WEB}'] = $portalSettings['institution_url'];
@@ -609,15 +609,16 @@ class CommonCommand extends AbstractCommand
 
         $paramsToRemove = array(
             'tracking_enabled',
-            'single_database',
-            'table_prefix',
-            'db_glue',
+            //'single_database', // still needed fro version 1.9.8
+            //'table_prefix',
+            //'db_glue',
             'db_prefix',
             //'url_append',
             'statistics_database',
             'user_personal_database',
             'scorm_database'
         );
+
 
         foreach ($_configuration as $key => $value) {
             if (in_array($key, $paramsToRemove)) {
@@ -761,10 +762,11 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
+     * @param string $version
      * @param string $path
      * @param array $databaseList
      */
-    protected function setConnections($path, $databaseList)
+    protected function setConnections($version, $path, $databaseList)
     {
         $_configuration = $this->getHelper('configuration')->getConfiguration($path);
 
@@ -781,7 +783,7 @@ class CommonCommand extends AbstractCommand
             foreach ($dbList as &$dbInfo) {
                 $params = $this->getDatabaseSettings();
 
-                if (isset($_configuration['single_database']) && $_configuration['single_database']) {
+                if (isset($_configuration['single_database']) && $_configuration['single_database'] == true) {
                     $em = \Doctrine\ORM\EntityManager::create($params, $config);
                 } else {
 
@@ -790,10 +792,12 @@ class CommonCommand extends AbstractCommand
                         $tablePrefix = new \Chash\DoctrineExtensions\TablePrefix($_configuration['table_prefix']);
                         $evm->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);*/
 
-                        if (strpos($dbInfo['database'], '_chamilo_course_') == false) {
-                            //$params['dbname'] = $params['dbname'];
-                        } else {
-                            $params['dbname'] = str_replace('_chamilo_course_', '', $dbInfo['database']);
+                        if (version_compare($version, '1.10.0', '<=')) {
+                            if (strpos($dbInfo['database'], '_chamilo_course_') === false) {
+                                //$params['dbname'] = $params['dbname'];
+                            } else {
+                                $params['dbname'] = str_replace('_chamilo_course_', '', $dbInfo['database']);
+                            }
                         }
                         $em = \Doctrine\ORM\EntityManager::create($params, $config);
                     } else {
@@ -823,7 +827,7 @@ class CommonCommand extends AbstractCommand
         $fs = new Filesystem();
         try {
             if ($dryRun) {
-                $output->writeln('<comment>Files to be removed:</comment>');
+                $output->writeln('<comment>Files to be removed (--dry-run is on).</comment>');
                 foreach ($files as $file) {
                     $output->writeln($file->getPathName());
                 }
@@ -989,7 +993,8 @@ class CommonCommand extends AbstractCommand
         $db_prefix = isset($_configuration['db_prefix']) ? $_configuration['db_prefix'] : null;
 
         if ($singleDatabase) {
-            $prefix = $tablePrefix.$db_prefix.'_'.$courseDatabase.'_';
+            // the $courseDatabase already contains the $db_prefix;
+            $prefix = $tablePrefix.$courseDatabase.'_';
         } else {
             $prefix = $tablePrefix;
         }
@@ -1028,9 +1033,9 @@ class CommonCommand extends AbstractCommand
      */
     public function writeCommandHeader($output, $title)
     {
-        $output->writeln('<comment>------------------------</comment>');
+        $output->writeln('<comment>-----------------------------------------------</comment>');
         $output->writeln('<comment>'.$title.'</comment>');
-        $output->writeln('<comment>------------------------</comment>');
+        $output->writeln('<comment>-----------------------------------------------</comment>');
     }
 
     /**

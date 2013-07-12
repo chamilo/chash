@@ -54,19 +54,18 @@ class UpgradeCommand extends CommonCommand
      */
     protected function execute(Console\Input\InputInterface $input, Console\Output\OutputInterface $output)
     {
+        // Arguments and options
         $version = $input->getArgument('version');
         $path = $input->getOption('path');
         $dryRun = $input->getOption('dry-run');
         $silent = $input->getOption('silent') == true;
-
         $tempFolder = $input->getOption('temp-folder');
         $updateInstallation = $input->getOption('update-installation');
 
+        // Setting the configuration path and configuration array
         $_configuration = $this->getConfigurationHelper()->getConfiguration($path);
-
         $this->setConfigurationArray($_configuration);
         $this->getConfigurationHelper()->setConfiguration($_configuration);
-
         $this->setRootSysDependingConfigurationPath($path);
 
         if (empty($_configuration)) {
@@ -93,6 +92,7 @@ class UpgradeCommand extends CommonCommand
 
         // Doctrine migrations version
         //$doctrineVersion = $configuration->getCurrentVersion();
+
         $doctrineVersion = null;
 
         // Getting supported version number list
@@ -102,7 +102,7 @@ class UpgradeCommand extends CommonCommand
 
         // Checking version.
         if (!in_array($version, $versionNameList)) {
-            $output->writeln("<comment>Version '$version' is not available</comment>");
+            $output->writeln("<comment>Version '$version' is not available.</comment>");
             $output->writeln("<comment>Available versions: </comment><info>".implode(', ', $versionNameList)."</info>");
             return 0;
         }
@@ -112,19 +112,19 @@ class UpgradeCommand extends CommonCommand
         // Checking system_version.
 
         if (!isset($_configuration['system_version']) || empty($_configuration['system_version'])) {
-            $output->writeln("<comment>You have something wrong in your Chamilo configuration file. Check it with chamilo:status.</comment>");
+            $output->writeln("<comment>You have something wrong in your Chamilo installation. Check it with the chamilo:status command</comment>");
             return 0;
         }
 
         if (version_compare($_configuration['system_version'], $minVersion, '<')) {
-            $output->writeln("<comment>Your Chamilo version is not supported! The minimun version is: </comment><info>$minVersion</info> <comment>You want to update from <info>".$_configuration['system_version']."</info> <comment>to</comment> <info>$minVersion</info>");
+            $output->writeln("<comment>Your Chamilo version is not supported! The minimun version is: </comment><info>$minVersion</info> <comment>You want to upgrade from <info>".$_configuration['system_version']."</info> <comment>to</comment> <info>$minVersion</info>");
             return 0;
         }
 
         if (version_compare($version, $_configuration['system_version'], '>')) {
             $currentVersion = $_configuration['system_version'];
         } else {
-            $output->writeln("<comment>Please provide a version greater than </comment><info>".$_configuration['system_version']."</info> <comment>your selected version: </comment><info>$version</info>");
+            $output->writeln("<comment>Please provide a version greater than </comment><info>".$_configuration['system_version']."</info> <comment>you selected version: </comment><info>$version</info>");
             $output->writeln("<comment>You can also check your installation health with </comment><info>chamilo:status");
             return 0;
         }
@@ -156,13 +156,10 @@ class UpgradeCommand extends CommonCommand
             }
         }
 
-        $output->writeln("<comment>----------------------------------------</comment>");
-        $output->writeln("<comment>Welcome to the Chamilo upgrade process!</comment>");
-        $output->writeln("<comment>----------------------------------------</comment>");
+        $this->writeCommandHeader($output, 'Welcome to the Chamilo upgrade process!');
 
         if ($dryRun == false) {
-            $output->writeln("<comment>When the installation process finished the files located here:</comment> <info>$chamiloLocationPath</info>");
-            $output->writeln("<comment>will be copied in your portal here: </comment> <info>".$this->getRootSys()."</info>");
+            $output->writeln("<comment>When the installation process finished the files located here:</comment> <info>$chamiloLocationPath</info> <comment>will be copied in your portal here: </comment> <info>".$this->getRootSys()."</info>");
         } else {
             $output->writeln("<comment>When the installation process finished PHP files are not going to be updated (--dry-run is on).</comment>");
         }
@@ -396,7 +393,7 @@ class UpgradeCommand extends CommonCommand
     public function processQueryList($courseList, $output, $path, $version, $dryRun, $type)
     {
         $databases = $this->getDatabaseList($output, $courseList, $path, $version, $type);
-        $this->setConnections($path, $databases);
+        $this->setConnections($version, $path, $databases);
 
         foreach ($databases as $section => &$dbList) {
             foreach ($dbList as &$dbInfo) {
@@ -428,7 +425,11 @@ class UpgradeCommand extends CommonCommand
                             // Add a prefix.
 
                             if ($section == 'course') {
+                                var_dump($dbInfo);
+
                                 $query = str_replace('{prefix}', $dbInfo['prefix'], $query);
+                                var_dump($query);
+                                var_dump($conn->getParams());
                             }
 
                             if ($dryRun) {
@@ -600,6 +601,8 @@ class UpgradeCommand extends CommonCommand
     {
         $configurationPath = $this->getHelper('configuration')->getConfigurationPath($path);
         $newConfigurationFile = $configurationPath.'db_migration_status_'.$version.'_'.$type.'.yml';
+
+        return $this->generateDatabaseList($courseList);
 
         if (file_exists($newConfigurationFile)) {
             $yaml = new Parser();
