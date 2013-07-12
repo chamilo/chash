@@ -59,7 +59,7 @@ class UpgradeCommand extends CommonCommand
         $dryRun = $input->getOption('dry-run');
         $silent = $input->getOption('silent') == true;
 
-        $defaultTempFolder = $input->getOption('temp-folder');
+        $tempFolder = $input->getOption('temp-folder');
         $updateInstallation = $input->getOption('update-installation');
 
         $_configuration = $this->getConfigurationHelper()->getConfiguration($path);
@@ -151,7 +151,7 @@ class UpgradeCommand extends CommonCommand
 
         //if ($dryRun == false) {
 
-            $chamiloLocationPath = $this->getPackage($output, $version, $updateInstallation, $defaultTempFolder);
+            $chamiloLocationPath = $this->getPackage($output, $version, $updateInstallation, $tempFolder);
 
             if (empty($chamiloLocationPath)) {
                 return;
@@ -250,12 +250,9 @@ class UpgradeCommand extends CommonCommand
             }
         }
 
-        //if ($dryRun == false) {
-            $fileSystem = new Filesystem();
-            $output->writeln("<comment>Copying files from </comment><info>$chamiloLocationPath</info><comment> to </comment><info>".$this->getRootSys()."</info>");
-            $fileSystem->mirror($chamiloLocationPath, $this->getRootSys(), null, array('override' => true));
-            $output->writeln("<comment>Copy finished.<comment>");
-        //}
+        if ($dryRun == false) {
+            $this->copyPackageIntoSystem($output, $chamiloLocationPath);
+        }
         $this->updateConfiguration($output, $dryRun, array('system_version' => $version));
 
         $output->writeln("<comment>Wow! You just finish to migrate. Too check the current status of your platform. Run </comment><info>chamilo:status</info>");

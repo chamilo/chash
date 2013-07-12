@@ -34,7 +34,8 @@ class InstallCommand extends CommonCommand
             ->setDescription('Execute a Chamilo installation to a specified version')
             ->addArgument('version', InputArgument::REQUIRED, 'The version to migrate to.', null)
             ->addArgument('path', InputArgument::OPTIONAL, 'The path to the chamilo folder')
-            ->addArgument('download-package', InputArgument::OPTIONAL, 'Downloads the chamilo package')
+            ->addOption('download-package', InputArgument::OPTIONAL, 'Downloads the chamilo package')
+            ->addOption('temp-folder', null, InputOption::VALUE_OPTIONAL, 'The temp folder.', '/tmp')
             ->addOption('silent', null, InputOption::VALUE_NONE, 'Execute the migration with out asking questions.');
 
         $params = $this->getPortalSettingsParams();
@@ -74,7 +75,16 @@ class InstallCommand extends CommonCommand
         $version = $input->getArgument('version');
 
         $silent = $input->getOption('silent') == true;
-        //$download = $input->getOption('download-package');
+        $download = $input->getOption('download-package');
+        $tempFolder = $input->getOption('temp-folder');
+
+        if ($download) {
+            $chamiloLocationPath = $this->getPackage($output, $version, null, $tempFolder);
+            if (empty($chamiloLocationPath)) {
+                return 0;
+            }
+            $this->copyPackageIntoSystem($output, $chamiloLocationPath);
+        }
 
         // Setting configuration helper
         $this->getApplication()->getHelperSet()->set(new \Chash\Helpers\ConfigurationHelper(), 'configuration');

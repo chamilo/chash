@@ -992,4 +992,16 @@ class CommonCommand extends AbstractCommand
         return $prefix;
     }
 
+    /**
+     * @param $output
+     * @param string $chamiloLocationPath
+     */
+    public function copyPackageIntoSystem($output, $chamiloLocationPath)
+    {
+        $fileSystem = new Filesystem();
+        $output->writeln("<comment>Copying files from </comment><info>$chamiloLocationPath</info><comment> to </comment><info>".$this->getRootSys()."</info>");
+        $fileSystem->mirror($chamiloLocationPath, $this->getRootSys(), null, array('override' => true));
+        $output->writeln("<comment>Copy finished.<comment>");
+    }
+
 }
