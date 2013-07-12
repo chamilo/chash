@@ -1053,7 +1053,7 @@ class CommonCommand extends AbstractCommand
 
         foreach ($configList as $file) {
             if (file_exists($confDir.$file)) {
-                $newConfFile = str_replace('dist.', '', $confDir.$file);
+                $newConfFile = $confDir.str_replace('dist.', '', $file);
                 if (!file_exists($newConfFile)) {
                     $fs->copy($confDir.$file, $newConfFile);
                     $output->writeln("<comment>File generated:</comment> <info>$newConfFile</info>");

@@ -21,7 +21,9 @@ class SetPermissionsAfterInstallCommand extends CommonChamiloDatabaseCommand
         parent::configure();
         $this
             ->setName('files:set_permissions_after_install')
-            ->setDescription('Set permissions');
+            ->setDescription('Set permissions')
+            ->addOption('linux-user', null, InputOption::VALUE_OPTIONAL, 'user', 'www-data')
+            ->addOption('linux-group', null, InputOption::VALUE_OPTIONAL, 'group', 'www-data');
     }
 
     /**
@@ -33,6 +35,10 @@ class SetPermissionsAfterInstallCommand extends CommonChamiloDatabaseCommand
     {
         parent::execute($input, $output);
         $this->writeCommandHeader($output, 'Setting permissions.');
+
+        $linuxUser = $input->getOption('linux-user');
+        $linuxGroup = $input->getOption('linux-group');
+
 
         /*$dialog = $this->getHelperSet()->get('dialog');
 
@@ -47,19 +53,26 @@ class SetPermissionsAfterInstallCommand extends CommonChamiloDatabaseCommand
 
         // $configuration = $this->getConfigurationArray();
 
+        // All files
+        $files = $this->getConfigurationHelper()->getSysFolders();
+        $this->setPermissions($output, $files, null, $linuxUser, $linuxGroup, false);
+
+        $files = $this->getConfigurationHelper()->getSysFiles();
+        $this->setPermissions($output, $files, null, $linuxUser, $linuxGroup, false);
+
         // Data folders
         $files = $this->getConfigurationHelper()->getDataFolders();
-        $this->setPermissions($output, $files, 0777);
+        $this->setPermissions($output, $files, 0777, $linuxUser, $linuxGroup);
 
         // Config folders
         $files = $this->getConfigurationHelper()->getConfigFolders();
-        $this->setPermissions($output, $files, 0555);
+        $this->setPermissions($output, $files, 0555, $linuxUser, $linuxGroup);
         $files = $this->getConfigurationHelper()->getConfigFiles();
-        $this->setPermissions($output, $files, 0555);
+        $this->setPermissions($output, $files, 0555, $linuxUser, $linuxGroup);
 
         // Temp folders
         $files = $this->getConfigurationHelper()->getTempFolders();
-        $this->setPermissions($output, $files, 0777);
+        $this->setPermissions($output, $files, 0777, $linuxUser, $linuxGroup);
     }
 
     /**
@@ -67,7 +80,7 @@ class SetPermissionsAfterInstallCommand extends CommonChamiloDatabaseCommand
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      * @return int
      */
-    public function setPermissions(\Symfony\Component\Console\Output\OutputInterface $output, $files, $permission)
+    public function setPermissions(\Symfony\Component\Console\Output\OutputInterface $output, $files, $permission, $user, $group, $listFiles = true)
     {
         $dryRun = $this->getConfigurationHelper()->getDryRun();
 
@@ -79,16 +92,44 @@ class SetPermissionsAfterInstallCommand extends CommonChamiloDatabaseCommand
         $fs = new Filesystem();
         try {
             if ($dryRun) {
-                $output->writeln("<comment>Files to be changed to ".decoct($permission).":</comment>");
-                foreach ($files as $file) {
-                    $output->writeln($file->getPathName());
+
+                $output->writeln("<comment>Files to be changed to permission ".decoct($permission).":</comment>");
+                $output->writeln("<comment>user: ".$user.":</comment>");
+                $output->writeln("<comment>group ".$group.":</comment>");
+                if ($listFiles) {
+                    foreach ($files as $file) {
+                        $output->writeln($file->getPathName());
+                    }
                 }
             } else {
-                $output->writeln("<comment>Changing permissions to  ".decoct($permission).":</comment>");
-                foreach ($files as $file) {
-                    $output->writeln($file->getPathName());
+
+                if (!empty($permission)) {
+                    $output->writeln("<comment>Modifying files permission: ".decoct($permission).":</comment>");
                 }
-                $fs->chmod($files, $permission, 0000, true);
+                if (!empty($user)) {
+                    $output->writeln("<comment>user: ".$user.":</comment>");
+                }
+                if (!empty($group)) {
+                    $output->writeln("<comment>group: ".$group.":</comment>");
+                }
+
+                if ($listFiles) {
+                    foreach ($files as $file) {
+                        $output->writeln($file->getPathName());
+                    }
+                }
+                if (!empty($permission)) {
+                    $fs->chmod($files, $permission, 0000, true);
+                }
+
+                if (!empty($user)) {
+                    $fs->chown($files, $user, true);
+                }
+
+                if (!empty($group)) {
+                    $fs->chgrp($files, $group, true);
+                }
+
             }
 
         } catch (IOException $e) {

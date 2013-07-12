@@ -338,6 +338,23 @@ class ConfigurationHelper extends Helper
         return $finder;
     }
 
+    public function getSysFolders()
+    {
+        $finder = new Finder();
+        $sysPath = $this->getSysPath();
+        $finder->directories()->in($sysPath);
+        return $finder;
+    }
+
+    public function getSysFiles()
+    {
+        $finder = new Finder();
+        $sysPath = $this->getSysPath();
+        $finder->files()->in($sysPath);
+        return $finder;
+    }
+
+
     public function getDataFolders()
     {
         $finder = new Finder();

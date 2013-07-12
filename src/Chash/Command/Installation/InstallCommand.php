@@ -36,6 +36,8 @@ class InstallCommand extends CommonCommand
             ->addArgument('path', InputArgument::OPTIONAL, 'The path to the chamilo folder')
             ->addOption('download-package', null, InputOption::VALUE_NONE, 'Downloads the chamilo package')
             ->addOption('temp-folder', null, InputOption::VALUE_OPTIONAL, 'The temp folder.', '/tmp')
+            ->addOption('linux-user', null, InputOption::VALUE_OPTIONAL, 'user', 'www-data')
+            ->addOption('linux-group', null, InputOption::VALUE_OPTIONAL, 'group', 'www-data')
             ->addOption('silent', null, InputOption::VALUE_NONE, 'Execute the migration with out asking questions.');
 
         $params = $this->getPortalSettingsParams();
@@ -74,6 +76,12 @@ class InstallCommand extends CommonCommand
         $path = $input->getArgument('path');
         $version = $input->getArgument('version');
 
+        $silent = $input->getOption('silent') == true;
+        $download = $input->getOption('download-package');
+        $tempFolder = $input->getOption('temp-folder');
+
+        $linuxUser = $input->getOption('linux-user');
+        $linuxGroup = $input->getOption('linux-group');
 
         $sqlFolder = $this->getInstallationPath($version);
 
@@ -83,9 +91,6 @@ class InstallCommand extends CommonCommand
             return 0;
         }
 
-        $silent = $input->getOption('silent') == true;
-        $download = $input->getOption('download-package');
-        $tempFolder = $input->getOption('temp-folder');
 
         if ($download) {
             $chamiloLocationPath = $this->getPackage($output, $version, null, $tempFolder);
@@ -385,6 +390,8 @@ class InstallCommand extends CommonCommand
                     $arguments = array(
                         'command' => 'files:set_permissions_after_install',
                         '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
+                        '--linux-user' => $linuxUser,
+                        '--linux-group' => $linuxGroup
                         //'--dry-run' => $dryRun
                     );
 
