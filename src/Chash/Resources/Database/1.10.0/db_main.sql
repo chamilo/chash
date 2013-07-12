@@ -80,6 +80,7 @@ INSERT INTO roles (name, role) VALUES('Student', 'ROLE_STUDENT');
 INSERT INTO roles (name, role) VALUES('Anonymous', 'ROLE_ANONYMOUS');
 INSERT INTO roles (name, role) VALUES('RRHH', 'ROLE_RRHH');
 INSERT INTO roles (name, role) VALUES('Question Manager', 'ROLE_QUESTION_MANAGER');
+INSERT INTO roles (name, role) VALUES('Session Manager', 'ROLE_SESSION_MANAGER');
 
 --
 -- Table structure for table admin
