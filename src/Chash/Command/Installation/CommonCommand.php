@@ -1119,9 +1119,18 @@ class CommonCommand extends AbstractCommand
         $connection->update('user', array('language' => $settings['language']), array('user_id' => '2'));
     }
 
+    /**
+     * Generates password.
+     *
+     * @param string $password
+     * @param string $salt
+     * @return string
+     */
     public function getEncryptedPassword($password, $salt = null)
     {
-        $encryptionMethod = $this->getConfigurationArray();
+        $configuration = $this->getConfigurationArray();
+        $encryptionMethod = $configuration['password_encryption'];
+
         switch ($encryptionMethod) {
             case 'sha1':
                 return empty($salt) ? sha1($password) : sha1($password.$salt);
