@@ -584,7 +584,6 @@ class CommonCommand extends AbstractCommand
 
         $result = file_put_contents($newConfigurationFile, $contents);
 
-
         return $result;
 
 

@@ -371,6 +371,12 @@ class InstallCommand extends CommonCommand
                         }
                     }*/
 
+                    // Read configuration file
+
+                    $configurationFile = $this->getConfigurationHelper()->getConfigurationFilePath($this->getRootSys());
+                    $configuration = $this->getConfigurationHelper()->readConfigurationFile($configurationFile);
+                    $this->setConfigurationArray($configuration);
+
                     $this->setPortalSettingsInChamilo($output, $this->getHelper('db')->getConnection());
                     $this->setAdminSettingsInChamilo($output, $this->getHelper('db')->getConnection());
 
