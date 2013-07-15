@@ -395,13 +395,20 @@ class ConfigurationHelper extends Helper
     {
         // Copied from the resources/prod.php file in Chamilo
 
+        $sysPath = $this->getSysPath();
+
+        $tempPath = 'archive/';
+        if (is_dir($sysPath.'config')) {
+            $tempPath = 'data/temp/';
+        }
+
         $app['temp.paths'] = new \stdClass();
 
         //$app['temp.paths']->folders[] = $app['sys_data_path'];
 
         // Monolog.
         //$app['temp.paths']->folders[] = $app['sys_log_path'];
-        $app['temp.path'] = $this->getSysPath().'archive/';
+        $app['temp.path'] = $this->getSysPath().$tempPath;
         // Twig cache.
         $app['temp.paths']->folders[] = $app['twig.cache.path'] = $app['temp.path'].'twig';
 

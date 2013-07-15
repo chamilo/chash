@@ -677,12 +677,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "1f33485b6e5f11fb1fc72a2090f961fe9508a300"
+                "reference": "07c025bc95546b83f0515b7851a88a0bdf888376"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/1f33485b6e5f11fb1fc72a2090f961fe9508a300",
-                "reference": "1f33485b6e5f11fb1fc72a2090f961fe9508a300",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/07c025bc95546b83f0515b7851a88a0bdf888376",
+                "reference": "07c025bc95546b83f0515b7851a88a0bdf888376",
                 "shasum": ""
             },
             "require": {
@@ -761,7 +761,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2013-07-11 23:30:45"
+            "time": "2013-07-14 23:41:45"
         },
         {
             "name": "pimple/pimple",

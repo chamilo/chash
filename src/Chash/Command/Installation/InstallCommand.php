@@ -386,18 +386,22 @@ class InstallCommand extends CommonCommand
                     $command->run($input, $output);
 
                     // Fixing permissions.
-                    $command = $this->getApplication()->find('files:set_permissions_after_install');
-                    $arguments = array(
-                        'command' => 'files:set_permissions_after_install',
-                        '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
-                        '--linux-user' => $linuxUser,
-                        '--linux-group' => $linuxGroup
-                        //'--dry-run' => $dryRun
-                    );
 
-                    $input = new ArrayInput($arguments);
-                    $command->run($input, $output);
+                    if (PHP_SAPI == 'cli') {
+                        $command = $this->getApplication()->find('files:set_permissions_after_install');
+                        $arguments = array(
+                            'command' => 'files:set_permissions_after_install',
+                            '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
+                            '--linux-user' => $linuxUser,
+                            '--linux-group' => $linuxGroup
+                            //'--dry-run' => $dryRun
+                        );
 
+                        $input = new ArrayInput($arguments);
+                        $command->run($input, $output);
+                    }
+
+                    // Generating config files (auth, profile, etc)
                     $this->generateConfFiles($output);
 
                     $output->writeln("<comment>Chamilo was successfully installed here: ".$this->getRootSys()." </comment>");
