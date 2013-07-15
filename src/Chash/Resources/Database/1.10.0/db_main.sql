@@ -71,9 +71,6 @@ CREATE TABLE users_roles (
   PRIMARY KEY(user_id, role_id)
 );
 
--- Admin
-INSERT INTO users_roles VALUES (1, 1);
-
 
 INSERT INTO roles (id, name, role) VALUES('1', 'Teacher', 'ROLE_TEACHER');
 INSERT INTO roles (id, name, role) VALUES('4', 'RRHH', 'ROLE_RRHH');
@@ -82,6 +79,9 @@ INSERT INTO roles (id ,name, role) VALUES('5', 'Student', 'ROLE_STUDENT');
 INSERT INTO roles (id, name, role) VALUES('6', 'Anonymous', 'ROLE_ANONYMOUS');
 INSERT INTO roles (id, name, role) VALUES('11', 'Admin', 'ROLE_ADMIN');
 INSERT INTO roles (id, name, role) VALUES('17', 'Question Manager', 'ROLE_QUESTION_MANAGER');
+
+-- Admin
+INSERT INTO users_roles VALUES (1, 11);
 
 
 --
