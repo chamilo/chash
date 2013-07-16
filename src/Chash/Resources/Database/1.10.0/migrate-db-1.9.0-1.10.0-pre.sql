@@ -306,8 +306,8 @@ INSERT INTO roles (id, name, role) VALUES('6', 'Anonymous', 'ROLE_ANONYMOUS');
 INSERT INTO roles (id, name, role) VALUES('11', 'Admin', 'ROLE_ADMIN');
 INSERT INTO roles (id, name, role) VALUES('17', 'Question Manager', 'ROLE_QUESTION_MANAGER');
 
-
 ALTER TABLE c_quiz ADD COLUMN question_selection_type INT DEFAULT 1;
+ALTER TABLE c_quiz ADD COLUMN hide_question_title INT DEFAULT 0;
 
 -- Admin
 INSERT INTO users_roles VALUES (1, 11);
@@ -316,4 +316,4 @@ CREATE TABLE question_score_name (id int NOT NULL AUTO_INCREMENT,  score varchar
 CREATE TABLE question_score (  id int NOT NULL AUTO_INCREMENT,  name varchar(255) DEFAULT NULL,  PRIMARY KEY (id)) DEFAULT CHARSET=utf8;
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.029' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.030' WHERE variable = 'chamilo_database_version';
