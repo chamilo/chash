@@ -320,5 +320,11 @@ ALTER TABLE course_field_options ADD COLUMN priority INT default NULL;
 ALTER TABLE user_field_options ADD COLUMN priority INT default NULL;
 ALTER TABLE session_field_options ADD COLUMN priority INT default NULL;
 
+
+ALTER TABLE question_field_options ADD COLUMN priority_message varchar(255) default NULL;
+ALTER TABLE course_field_options ADD COLUMN priority_message varchar(255) default NULL;
+ALTER TABLE user_field_options ADD COLUMN priority_message varchar(255) default NULL;
+ALTER TABLE session_field_options ADD COLUMN priority_message varchar(255) default NULL;
+
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.030' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.031' WHERE variable = 'chamilo_database_version';

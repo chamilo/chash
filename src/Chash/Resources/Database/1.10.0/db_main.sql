@@ -261,6 +261,7 @@ CREATE TABLE IF NOT EXISTS course_field_options (
     option_display_text varchar(255),
     option_order int,
     priority int default NULL,
+    priority_message varchar(255) default NULL,
     tms	DATETIME NOT NULL default '0000-00-00 00:00:00',
     PRIMARY KEY (id)
 );
@@ -596,6 +597,7 @@ CREATE TABLE IF NOT EXISTS session_field_options(
     option_display_text varchar(255),
     option_order int,
     priority int default NULL,
+    priority_message varchar(255) default NULL,
     tms	DATETIME NOT NULL default '0000-00-00 00:00:00',
     PRIMARY KEY (id)
 );
@@ -1515,6 +1517,7 @@ CREATE TABLE IF NOT EXISTS user_field_options (
     option_display_text varchar(64),
     option_order int,
     priority int default NULL,
+    priority_message varchar(255) default NULL,
     tms	DATETIME NOT NULL default '0000-00-00 00:00:00',
     PRIMARY KEY (id)
 );
@@ -3505,6 +3508,7 @@ CREATE TABLE IF NOT EXISTS question_field_options(
     option_display_text varchar(255),
     option_order int,
     priority int default NULL,
+    priority_message varchar(255) default NULL,
     tms	DATETIME NOT NULL default '0000-00-00 00:00:00',
     PRIMARY KEY (id)
 );
@@ -3602,4 +3606,4 @@ CREATE TABLE curriculum_rel_user (
 
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.030' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.031' WHERE variable = 'chamilo_database_version';
