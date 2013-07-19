@@ -315,5 +315,10 @@ INSERT INTO users_roles VALUES (1, 11);
 CREATE TABLE question_score_name (id int NOT NULL AUTO_INCREMENT,  score varchar(255) DEFAULT NULL,  name varchar(255) DEFAULT NULL,  description TEXT DEFAULT NULL,  question_score_id INT NOT NULL,  PRIMARY KEY (id)) DEFAULT CHARSET=utf8;
 CREATE TABLE question_score (  id int NOT NULL AUTO_INCREMENT,  name varchar(255) DEFAULT NULL,  PRIMARY KEY (id)) DEFAULT CHARSET=utf8;
 
+ALTER TABLE question_field_options ADD COLUMN priority INT default NULL;
+ALTER TABLE course_field_options ADD COLUMN priority INT default NULL;
+ALTER TABLE user_field_options ADD COLUMN priority INT default NULL;
+ALTER TABLE session_field_options ADD COLUMN priority INT default NULL;
+
 -- Do not move this
 UPDATE settings_current SET selected_value = '1.10.0.030' WHERE variable = 'chamilo_database_version';

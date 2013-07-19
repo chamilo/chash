@@ -260,6 +260,7 @@ CREATE TABLE IF NOT EXISTS course_field_options (
     option_value text,
     option_display_text varchar(255),
     option_order int,
+    priority int default NULL,
     tms	DATETIME NOT NULL default '0000-00-00 00:00:00',
     PRIMARY KEY (id)
 );
@@ -594,6 +595,7 @@ CREATE TABLE IF NOT EXISTS session_field_options(
     option_value text,
     option_display_text varchar(255),
     option_order int,
+    priority int default NULL,
     tms	DATETIME NOT NULL default '0000-00-00 00:00:00',
     PRIMARY KEY (id)
 );
@@ -1512,6 +1514,7 @@ CREATE TABLE IF NOT EXISTS user_field_options (
     option_value	text,
     option_display_text varchar(64),
     option_order int,
+    priority int default NULL,
     tms	DATETIME NOT NULL default '0000-00-00 00:00:00',
     PRIMARY KEY (id)
 );
@@ -3501,6 +3504,7 @@ CREATE TABLE IF NOT EXISTS question_field_options(
     option_value text,
     option_display_text varchar(255),
     option_order int,
+    priority int default NULL,
     tms	DATETIME NOT NULL default '0000-00-00 00:00:00',
     PRIMARY KEY (id)
 );
