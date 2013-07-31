@@ -23,17 +23,18 @@ DROP TABLE IF EXISTS c_announcement;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_announcement (
+  iid int unsigned NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  id int(10) unsigned NOT NULL,
   title text,
   content mediumtext,
   end_date date DEFAULT NULL,
   display_order mediumint(9) NOT NULL DEFAULT '0',
   email_sent tinyint(4) DEFAULT '0',
   session_id int(11) DEFAULT '0',
-  PRIMARY KEY (c_id,id),
+  PRIMARY KEY (iid),
   KEY session_id (session_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,15 +45,16 @@ DROP TABLE IF EXISTS c_announcement_attachment;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_announcement_attachment (
+  iid int unsigned NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(11) NOT NULL AUTO_INCREMENT,
+  id int(11) unsigned NOT NULL,
   path varchar(255) NOT NULL,
   comment text,
   size int(11) NOT NULL DEFAULT '0',
   announcement_id int(11) NOT NULL,
   filename varchar(255) NOT NULL,
-  PRIMARY KEY (c_id,id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (iid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1309,7 +1311,6 @@ CREATE TABLE c_quiz (
   model_type INT default 1,
   question_selection_type INT default 1,
   hide_question_title INT default 0,
-
   PRIMARY KEY (iid)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

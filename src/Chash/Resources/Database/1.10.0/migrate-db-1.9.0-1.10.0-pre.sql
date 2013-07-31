@@ -326,5 +326,15 @@ ALTER TABLE course_field_options ADD COLUMN priority_message varchar(255) defaul
 ALTER TABLE user_field_options ADD COLUMN priority_message varchar(255) default NULL;
 ALTER TABLE session_field_options ADD COLUMN priority_message varchar(255) default NULL;
 
+-- update tables to add iid field
+ALTER TABLE c_announcement CHANGE id id int unsigned not null;
+ALTER TABLE c_announcement DROP PRIMARY KEY;
+ALTER TABLE c_announcement add COLUMN iid int unsigned not null AUTO_INCREMENT PRIMARY KEY FIRST;
+ALTER TABLE c_announcement ENGINE = InnoDB;
+ALTER TABLE c_announcement_attachment CHANGE id id int unsigned not null;
+ALTER TABLE c_announcement_attachment DROP PRIMARY KEY;
+ALTER TABLE c_announcement_attachment add COLUMN iid int unsigned not null AUTO_INCREMENT PRIMARY KEY FIRST;
+ALTER TABLE c_announcement_attachment ENGINE = InnoDB;
+
 -- Do not move this
 UPDATE settings_current SET selected_value = '1.10.0.031' WHERE variable = 'chamilo_database_version';
