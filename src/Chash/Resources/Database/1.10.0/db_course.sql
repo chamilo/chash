@@ -24,14 +24,14 @@ DROP TABLE IF EXISTS c_announcement;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_announcement (
   iid int unsigned NOT NULL AUTO_INCREMENT,
-  c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL,
+  c_id int NOT NULL,
+  id int unsigned NOT NULL,
   title text,
   content mediumtext,
   end_date date DEFAULT NULL,
-  display_order mediumint(9) NOT NULL DEFAULT '0',
-  email_sent tinyint(4) DEFAULT '0',
-  session_id int(11) DEFAULT '0',
+  display_order mediumint NOT NULL DEFAULT '0',
+  email_sent tinyint DEFAULT '0',
+  session_id int DEFAULT '0',
   PRIMARY KEY (iid),
   KEY session_id (session_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -46,12 +46,12 @@ DROP TABLE IF EXISTS c_announcement_attachment;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_announcement_attachment (
   iid int unsigned NOT NULL AUTO_INCREMENT,
-  c_id int(11) NOT NULL,
-  id int(11) unsigned NOT NULL,
+  c_id int NOT NULL,
+  id int unsigned NOT NULL,
   path varchar(255) NOT NULL,
   comment text,
-  size int(11) NOT NULL DEFAULT '0',
-  announcement_id int(11) NOT NULL,
+  size int NOT NULL DEFAULT '0',
+  announcement_id int NOT NULL,
   filename varchar(255) NOT NULL,
   PRIMARY KEY (iid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
