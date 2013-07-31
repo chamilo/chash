@@ -330,29 +330,36 @@ ALTER TABLE session_field_options ADD COLUMN priority_message varchar(255) defau
 ALTER TABLE c_announcement CHANGE id id int unsigned not null;
 ALTER TABLE c_announcement DROP PRIMARY KEY;
 ALTER TABLE c_announcement add COLUMN iid int unsigned not null AUTO_INCREMENT PRIMARY KEY FIRST;
+ALTER TABLE c_announcement add UNIQUE KEY(c_id,id);
 ALTER TABLE c_announcement ENGINE = InnoDB;
 ALTER TABLE c_announcement_attachment CHANGE id id int unsigned not null;
 ALTER TABLE c_announcement_attachment DROP PRIMARY KEY;
 ALTER TABLE c_announcement_attachment add COLUMN iid int unsigned not null AUTO_INCREMENT PRIMARY KEY FIRST;
+ALTER TABLE c_announcement_attachment add UNIQUE KEY(c_id,id);
 ALTER TABLE c_announcement_attachment ENGINE = InnoDB;
 ALTER TABLE c_attendance CHANGE id id int unsigned not null;
 ALTER TABLE c_attendance DROP PRIMARY KEY;
 ALTER TABLE c_attendance add COLUMN iid int unsigned not null AUTO_INCREMENT PRIMARY KEY FIRST;
+ALTER TABLE c_attendance add UNIQUE KEY(c_id,id);
 ALTER TABLE c_attendance ENGINE = InnoDB;
 ALTER TABLE c_attendance_calendar CHANGE id id int unsigned not null;
 ALTER TABLE c_attendance_calendar DROP PRIMARY KEY;
 ALTER TABLE c_attendance_calendar add COLUMN iid int unsigned not null AUTO_INCREMENT PRIMARY KEY FIRST;
+ALTER TABLE c_attendance_calendar add UNIQUE KEY(c_id,id);
 ALTER TABLE c_attendance_calendar ENGINE = InnoDB;
 ALTER TABLE c_attendance_result CHANGE id id int unsigned not null;
 ALTER TABLE c_attendance_result DROP PRIMARY KEY;
 ALTER TABLE c_attendance_result add COLUMN iid int unsigned not null AUTO_INCREMENT PRIMARY KEY FIRST;
+ALTER TABLE c_attendance_result add UNIQUE KEY(c_id,id);
 ALTER TABLE c_attendance_result ENGINE = InnoDB;
 ALTER TABLE c_attendance_sheet DROP PRIMARY KEY;
 ALTER TABLE c_attendance_sheet add COLUMN iid int unsigned not null AUTO_INCREMENT PRIMARY KEY FIRST;
+ALTER TABLE c_attendance_sheet add UNIQUE KEY(c_id,user_id,attendance_calendar_id);
 ALTER TABLE c_attendance_sheet ENGINE = InnoDB;
 ALTER TABLE c_attendance_sheet_log CHANGE id id int unsigned not null;
 ALTER TABLE c_attendance_sheet_log DROP PRIMARY KEY;
 ALTER TABLE c_attendance_sheet_log add COLUMN iid int unsigned not null AUTO_INCREMENT PRIMARY KEY FIRST;
+ALTER TABLE c_attendance_sheet_log add UNIQUE KEY(c_id,id);
 ALTER TABLE c_attendance_sheet_log ENGINE = InnoDB;
 
 
