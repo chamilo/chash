@@ -335,6 +335,26 @@ ALTER TABLE c_announcement_attachment CHANGE id id int unsigned not null;
 ALTER TABLE c_announcement_attachment DROP PRIMARY KEY;
 ALTER TABLE c_announcement_attachment add COLUMN iid int unsigned not null AUTO_INCREMENT PRIMARY KEY FIRST;
 ALTER TABLE c_announcement_attachment ENGINE = InnoDB;
+ALTER TABLE c_attendance CHANGE id id int unsigned not null;
+ALTER TABLE c_attendance DROP PRIMARY KEY;
+ALTER TABLE c_attendance add COLUMN iid int unsigned not null AUTO_INCREMENT PRIMARY KEY FIRST;
+ALTER TABLE c_attendance ENGINE = InnoDB;
+ALTER TABLE c_attendance_calendar CHANGE id id int unsigned not null;
+ALTER TABLE c_attendance_calendar DROP PRIMARY KEY;
+ALTER TABLE c_attendance_calendar add COLUMN iid int unsigned not null AUTO_INCREMENT PRIMARY KEY FIRST;
+ALTER TABLE c_attendance_calendar ENGINE = InnoDB;
+ALTER TABLE c_attendance_result CHANGE id id int unsigned not null;
+ALTER TABLE c_attendance_result DROP PRIMARY KEY;
+ALTER TABLE c_attendance_result add COLUMN iid int unsigned not null AUTO_INCREMENT PRIMARY KEY FIRST;
+ALTER TABLE c_attendance_result ENGINE = InnoDB;
+ALTER TABLE c_attendance_sheet DROP PRIMARY KEY;
+ALTER TABLE c_attendance_sheet add COLUMN iid int unsigned not null AUTO_INCREMENT PRIMARY KEY FIRST;
+ALTER TABLE c_attendance_sheet ENGINE = InnoDB;
+ALTER TABLE c_attendance_sheet_log CHANGE id id int unsigned not null;
+ALTER TABLE c_attendance_sheet_log DROP PRIMARY KEY;
+ALTER TABLE c_attendance_sheet_log add COLUMN iid int unsigned not null AUTO_INCREMENT PRIMARY KEY FIRST;
+ALTER TABLE c_attendance_sheet_log ENGINE = InnoDB;
+
 
 -- Do not move this
 UPDATE settings_current SET selected_value = '1.10.0.031' WHERE variable = 'chamilo_database_version';
