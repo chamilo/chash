@@ -33,6 +33,7 @@ CREATE TABLE c_announcement (
   email_sent tinyint(4) DEFAULT '0',
   session_id int(11) DEFAULT '0',
   PRIMARY KEY (iid),
+  UNIQUE KEY (c_id,id),
   KEY session_id (session_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -53,7 +54,8 @@ CREATE TABLE c_announcement_attachment (
   size int(11) NOT NULL DEFAULT '0',
   announcement_id int(11) NOT NULL,
   filename varchar(255) NOT NULL,
-  PRIMARY KEY (iid)
+  PRIMARY KEY (iid),
+  UNIQUE KEY (c_id,id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -77,6 +79,7 @@ CREATE TABLE c_attendance (
   session_id int NOT NULL DEFAULT '0',
   locked int NOT NULL DEFAULT '0',
   PRIMARY KEY (iid),
+  UNIQUE KEY (c_id,id),
   KEY session_id (session_id),
   KEY active (active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -97,6 +100,7 @@ CREATE TABLE c_attendance_calendar (
   date_time datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   done_attendance tinyint NOT NULL DEFAULT '0',
   PRIMARY KEY (iid),
+  UNIQUE KEY (c_id,id),
   KEY attendance_id (attendance_id),
   KEY done_attendance (done_attendance)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -117,6 +121,7 @@ CREATE TABLE c_attendance_result (
   attendance_id int NOT NULL,
   score int NOT NULL DEFAULT '0',
   PRIMARY KEY (iid),
+  UNIQUE KEY (c_id,id),
   KEY attendance_id (attendance_id),
   KEY user_id (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -136,6 +141,7 @@ CREATE TABLE c_attendance_sheet (
   attendance_calendar_id int NOT NULL,
   presence tinyint NOT NULL DEFAULT '0',
   PRIMARY KEY (iid),
+  UNIQUE KEY (c_id,user_id,attendance_calendar_id),
   KEY presence (presence)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -156,7 +162,8 @@ CREATE TABLE c_attendance_sheet_log (
   lastedit_type varchar(200) NOT NULL,
   lastedit_user_id int NOT NULL DEFAULT '0',
   calendar_date_value datetime DEFAULT NULL,
-  PRIMARY KEY (iid)
+  PRIMARY KEY (iid),
+  UNIQUE KEY (c_id,id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
