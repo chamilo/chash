@@ -959,6 +959,7 @@ VALUES
 ('login_as_allowed', NULL, 'radio', 'Security', 'true', 'AdminLoginAsAllowedTitle', 'AdminLoginAsAllowedComment', 1, 0, 1),
 ('admins_can_set_users_pass', NULL, 'radio', 'security', 'true', 'AdminsCanChangeUsersPassTitle', 'AdminsCanChangeUsersPassComment', 1, 0, 1),
 ('template', NULL, 'text', 'stylesheets', 'default', 'DefaultTemplateTitle', 'DefaultTemplateComment', NULL, NULL, 1),
+('breadcrumb_navigation_display', NULL, 'radio', 'Platform','true','BreadcrumbNavigationDisplayTitle', 'BreadcrumbNavigationDisplayComment', NULL, NULL, 1),
 ('chamilo_database_version', NULL, 'textfield', NULL, '1.10.0.001', 'DatabaseVersion', '', NULL, NULL, 0); -- base value, updated at end of file. Don't change here
 
 UNLOCK TABLES;
@@ -1312,7 +1313,9 @@ VALUES
 ('login_as_allowed','true','Yes'),
 ('login_as_allowed','false','No'),
 ('admins_can_set_users_pass','true','Yes'),
-('admins_can_set_users_pass','false','No');
+('admins_can_set_users_pass','false','No'),
+('breadcrumb_navigation_display', 'true', 'Show'),
+('breadcrumb_navigation_display', 'false', 'Hide');
 
 UNLOCK TABLES;
 
