@@ -366,7 +366,9 @@ INSERT INTO settings_current (variable, subkey, type, category, selected_value, 
 INSERT INTO settings_options (variable, value, display_text) VALUES ('breadcrumb_navigation_display', 'true', 'Show');
 INSERT INTO settings_options (variable, value, display_text) VALUES ('breadcrumb_navigation_display', 'false', 'Hide');
 
+INSERT INTO settings_current(variable, subkey, type, category, selected_value, title, comment, scope, subkeytext, access_url_changeable)  VALUES ('showonline','session','checkbox','Platform','true','ShowOnlineTitle','ShowOnlineComment',NULL,'ShowOnlineSession', 0);
+
 ALTER TABLE c_quiz_category ADD COLUMN visibility INT default 1;
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.032' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.033' WHERE variable = 'chamilo_database_version';
