@@ -20,8 +20,8 @@
         "doctrine/dbal": "~2.3",
         "doctrine/orm": "~2.3",
         "doctrine/migrations": "dev-master",
-        "zendframework/zend-config": "2.3.*@dev",
-        "zendframework/zend-stdlib" : "2.3.*@dev",
+        "zendframework/zend-config": "2.2.*@dev",
+        "zendframework/zend-stdlib": "2.2.*@dev",
         "alchemy/zippy": "0.1.*@dev"
     },
     "require-dev": {
