@@ -430,6 +430,7 @@ class UpgradeCommand extends CommonCommand
                         /** @var \Doctrine\DBAL\Connection $conn */
                         $conn = $this->getHelper($dbInfo['database'])->getConnection();
                         $output->writeln("<comment>Executing queries in DB:</comment> <info>".$conn->getDatabase()."</info>");
+
                         $conn->beginTransaction();
 
                         foreach ($queryList as $query) {
@@ -447,6 +448,7 @@ class UpgradeCommand extends CommonCommand
                             } else {
                                 $output->writeln('     <comment>-></comment> ' . $query);
                                 $conn->executeQuery($query);
+                                //$conn->exec($query);
                             }
                             $lines++;
                         }
@@ -458,9 +460,7 @@ class UpgradeCommand extends CommonCommand
                             $this->saveDatabaseList($path, $databases, $version, $type);
                         }
                     } catch (\Exception $e) {
-                        if (!$dryRun) {
-                            $conn->rollback();
-                        }
+                        $conn->rollback();
                         $output->write(sprintf('<error>Migration failed. Error %s</error>', $e->getMessage()));
                         throw $e;
                     }
