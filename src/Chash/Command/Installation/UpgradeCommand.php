@@ -405,6 +405,7 @@ class UpgradeCommand extends CommonCommand
         $databases = $this->getDatabaseList($output, $courseList, $path, $version, $type);
         $this->setConnections($version, $path, $databases);
 
+
         foreach ($databases as $section => &$dbList) {
             foreach ($dbList as &$dbInfo) {
 
@@ -458,7 +459,7 @@ class UpgradeCommand extends CommonCommand
                         }
                     } catch (\Exception $e) {
                         if (!$dryRun) {
-                           $conn->rollback();
+                            $conn->rollback();
                         }
                         $output->write(sprintf('<error>Migration failed. Error %s</error>', $e->getMessage()));
                         throw $e;
