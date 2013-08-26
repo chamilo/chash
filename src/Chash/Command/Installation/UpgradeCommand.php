@@ -72,15 +72,16 @@ class UpgradeCommand extends CommonCommand
 
         // Setting the configuration path and configuration array
         $_configuration = $this->getConfigurationHelper()->getConfiguration($path);
-        $this->setConfigurationArray($_configuration);
-        $this->getConfigurationHelper()->setConfiguration($_configuration);
-        $this->setRootSysDependingConfigurationPath($path);
 
         if (empty($_configuration)) {
             $output->writeln("<comment>Chamilo is not installed here! You may add a path as an option:</comment>");
             $output->writeln("<comment>For example: </comment><info>chamilo:upgrade 1.9.0 --path=/var/www/chamilo</info>");
             return 0;
         }
+
+        $this->setConfigurationArray($_configuration);
+        $this->getConfigurationHelper()->setConfiguration($_configuration);
+        $this->setRootSysDependingConfigurationPath($path);
 
         $configurationPath = $this->getHelper('configuration')->getConfigurationPath($path);
 
