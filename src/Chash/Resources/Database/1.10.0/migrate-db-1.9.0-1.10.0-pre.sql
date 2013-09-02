@@ -383,5 +383,8 @@ ALTER TABLE c_quiz_category ADD COLUMN visibility INT default 1;
 ALTER TABLE c_quiz_question ADD INDEX idx_c_q_qst_cpt (c_id, parent_id, type);
 ALTER TABLE c_quiz_question_rel_category ADD INDEX idx_c_q_qst_r_cat_qc(question_id, c_id);
 
+CREATE TABLE IF NOT EXISTS c_student_publication_rel_document (id  INT PRIMARY KEY NOT NULL AUTO_INCREMENT,    work_id INT NOT NULL,    document_id INT NOT NULL,    c_id INT NOT NULL);
+CREATE TABLE IF NOT EXISTS c_student_publication_rel_user (id  INT PRIMARY KEY NOT NULL AUTO_INCREMENT,    work_id INT NOT NULL,    user_id INT NOT NULL,    c_id INT NOT NULL);
+
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.036' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.037' WHERE variable = 'chamilo_database_version';
