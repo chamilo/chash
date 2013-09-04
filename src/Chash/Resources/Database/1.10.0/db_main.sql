@@ -3100,8 +3100,8 @@ CREATE TABLE branch_sync(
 
 INSERT INTO branch_sync (id, access_url_id, branch_name, branch_ip) VALUES (1, 1, 'Local', '127.0.0.1');
 
-DROP TABLE IF EXISTS branch_transaction_log;
-CREATE TABLE branch_transaction_log(
+DROP TABLE IF EXISTS branch_sync_log;
+CREATE TABLE branch_sync_log(
   id bigint unsigned not null AUTO_INCREMENT PRIMARY KEY,
   transaction_id bigint unsigned not null default 0,
   import_time datetime,
@@ -3137,8 +3137,6 @@ CREATE TABLE IF NOT EXISTS branch_transaction_data (
 
 
 -- Stats database
-
-
 
 DROP TABLE IF EXISTS track_c_browsers;
 CREATE TABLE track_c_browsers (
