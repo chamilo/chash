@@ -55,7 +55,6 @@ class InstallCommand extends CommonCommand
         foreach ($params as $key => $value) {
             $this->addOption($key, null, InputOption::VALUE_OPTIONAL);
         }
-
     }
 
     /**
