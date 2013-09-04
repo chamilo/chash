@@ -68,7 +68,6 @@ $application->addCommands(
         new Chash\Command\Files\SetPermissionsAfterInstallCommand(),
         new Chash\Command\Files\GenerateTempFileStructureCommand(),
 
-
         new Chash\Command\Installation\InstallCommand(),
         new Chash\Command\Installation\WipeCommand(),
         new Chash\Command\Installation\StatusCommand(),
