@@ -38,6 +38,7 @@ ALTER TABLE session ADD COLUMN access_start_date datetime default '0000-00-00 00
 ALTER TABLE session ADD COLUMN access_end_date datetime default '0000-00-00 00:00:00';
 ALTER TABLE session ADD COLUMN coach_access_start_date datetime default '0000-00-00 00:00:00';
 ALTER TABLE session ADD COLUMN coach_access_end_date datetime default '0000-00-00 00:00:00';
+ALTER TABLE session MODIFY COLUMN session_category_id int default NULL;
 
 ALTER TABLE grade_components ADD COLUMN prefix VARCHAR(255) DEFAULT NULL;
 ALTER TABLE grade_components ADD COLUMN exclusions INT DEFAULT 0;
@@ -391,4 +392,4 @@ CREATE TABLE IF NOT EXISTS c_student_publication_rel_document (id  INT PRIMARY K
 CREATE TABLE IF NOT EXISTS c_student_publication_rel_user (id  INT PRIMARY KEY NOT NULL AUTO_INCREMENT,    work_id INT NOT NULL,    user_id INT NOT NULL,    c_id INT NOT NULL);
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.037' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.038' WHERE variable = 'chamilo_database_version';
