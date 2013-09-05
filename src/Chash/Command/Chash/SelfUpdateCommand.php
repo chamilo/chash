@@ -17,8 +17,6 @@ use Alchemy\Zippy\Zippy;
  */
 class SelfUpdateCommand extends AbstractCommand
 {
-    public $migrationFile = null;
-
     protected function configure()
     {
         $this
@@ -59,7 +57,7 @@ class SelfUpdateCommand extends AbstractCommand
         $rfs = new RemoteFilesystem(new NullIO());
 
         // Chamilo version
-        $latest = trim($rfs->getContents('version.chamilo.org', $protocol . '://version.chamilo.org/version.php', false));
+        //$latest = trim($rfs->getContents('version.chamilo.org', $protocol . '://version.chamilo.org/version.php', false));
         //https://github.com/chamilo/chash/archive/master.zip
         $tempFile = $tempFolder.'/chash-master.zip';
         $rfs->copy('github.com', 'https://github.com/chamilo/chash/archive/master.zip', $tempFile);
@@ -85,10 +83,5 @@ class SelfUpdateCommand extends AbstractCommand
         $fs = new \Symfony\Component\Filesystem\Filesystem();
         $fs->mirror($folderPath.'/chash-master', $destinationFolder, null, array('override' => true));
         $output->writeln('Copying '.$folderPath.'/chash-master to '.$destinationFolder);
-    }
-
-    public function getMigrationFile()
-    {
-        return $this->migrationFile;
     }
 }
