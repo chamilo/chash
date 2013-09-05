@@ -12,9 +12,8 @@ use Composer\Downloader\FilesystemException;
 use Composer\IO\NullIO;
 use Alchemy\Zippy\Zippy;
 
-
 /**
- * Class StatusCommand
+ * Class SelfUpdateCommand
  */
 class SelfUpdateCommand extends AbstractCommand
 {
@@ -83,8 +82,8 @@ class SelfUpdateCommand extends AbstractCommand
             $output->writeln($e->getMessage());
             return 0;
         }
-
-        //copy($folderPath.'/chash-master', $destinationFolder);
+        $fs = new \Symfony\Component\Filesystem\Filesystem();
+        $fs->mirror($folderPath.'/chash-master', $destinationFolder, null, array('override' => true));
         $output->writeln('Copying '.$folderPath.'/chash-master to '.$destinationFolder);
     }
 
