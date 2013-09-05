@@ -52,6 +52,7 @@ $application->addCommands(
         // Chash commands
 
         new Chash\Command\Chash\SetupCommand(),
+        new Chash\Command\Chash\SelfUpdateCommand(),
 
         new Chash\Command\Database\RunSQLCommand(),
         new Chash\Command\Database\DumpCommand(),
