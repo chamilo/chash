@@ -214,7 +214,7 @@ class UpgradeCommand extends CommonCommand
                 $output->writeln("<comment>Downloading package ...</comment>");
                 $chamiloLocationPath = $this->getPackage($output, $originalVersion, $updateInstallation, $tempFolder);
                 if (empty($chamiloLocationPath)) {
-                    $output->writeln("<comment>Can't zip download package for version: $originalVersion</comment>");
+                    $output->writeln("<comment>Chash was not able to unzip the downloaded package for version: $originalVersion</comment>");
                     return 0;
                 }
             }
