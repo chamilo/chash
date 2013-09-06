@@ -11,6 +11,8 @@ Installation
     cd chash
     composer install
 
+Note: If you don't have Composer installed, check http://getcomposer.org/download/
+
 Usage
 ====================
 
