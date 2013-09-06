@@ -88,6 +88,14 @@ class UpgradeCommand extends CommonCommand
             $output->writeln("<error>Set the --migration-yml-path and --migration-class-path manually.</error>");
             return 0;
         }
+        // Checking Resources/Database dir
+        $migrationFileFolder = $this->getInstallationFolder();
+        if (!is_dir($migrationFileFolder)) {
+            $output->writeln("<comment>The migration directory was not detected: </comment><info>$migrationFileFolder</info>");
+            return 0;
+        } else {
+            $output->writeln("<comment>Reading migrations from directory: </comment><info>$migrationFileFolder</info>");
+        }
 
         $this->setMigrationConfigurationFile($command->getMigrationFile());
 
@@ -183,7 +191,7 @@ class UpgradeCommand extends CommonCommand
 
         if (empty($versionInfo)) {
             $output->writeln("<comment>The version is not supported: $version</comment>");
-            return false;
+            return 0;
         }
 
         if (isset($versionInfo['hook_to_doctrine_version']) && isset($doctrineVersion)) {
@@ -363,6 +371,8 @@ class UpgradeCommand extends CommonCommand
 
         $versionInfo = $this->getAvailableVersionInfo($toVersion);
         $installPath = $this->getInstallationFolder().$toVersion.'/';
+
+        $output->writeln("<comment>Reading installation directory for version $toVersion: <info>'$installPath'</info>");
 
         // Filling sqlList array with "pre" db changes.
         if (isset($versionInfo['pre']) && !empty($versionInfo['pre'])) {
