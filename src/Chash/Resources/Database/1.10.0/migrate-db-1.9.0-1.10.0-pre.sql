@@ -120,7 +120,7 @@ ALTER TABLE c_survey_invitation ADD COLUMN group_id INT NOT NULL DEFAULT 0;
 ALTER TABLE c_lp ADD COLUMN category_id INT unsigned NOT NULL default 0;
 ALTER TABLE c_lp ADD COLUMN max_attempts INT NOT NULL default 0;
 ALTER TABLE c_lp ADD COLUMN subscribe_users INT NOT NULL default 0;
-ALTER TABLE user MODIFY COLUMN hr_dept_id int unsigned NOT NULL default 0;
+ALTER TABLE user MODIFY COLUMN hr_dept_id int unsigned default 0;
 ALTER TABLE session MODIFY COLUMN id INT unsigned NOT NULL auto_increment;
 ALTER TABLE session MODIFY COLUMN nbr_courses int unsigned NOT NULL default 0;
 ALTER TABLE session MODIFY COLUMN nbr_users int unsigned NOT NULL default 0;
@@ -300,6 +300,15 @@ ALTER TABLE session ADD COLUMN description TEXT;
 ALTER TABLE c_quiz_category ADD COLUMN visibility INT default 1;
 ALTER TABLE c_quiz_question ADD INDEX idx_c_q_qst_cpt (c_id, parent_id, type);
 ALTER TABLE c_quiz_question_rel_category ADD INDEX idx_c_q_qst_r_cat_qc(question_id, c_id);
+ALTER TABLE c_quiz ADD COLUMN question_selection_type INT DEFAULT 1;
+ALTER TABLE c_quiz ADD COLUMN hide_question_title INT DEFAULT 0;
+ALTER TABLE c_quiz ADD COLUMN global_category_id INT DEFAULT NULL;
+
+ALTER TABLE user MODIFY COLUMN chatcall_user_id int unsigned default 0;
+ALTER TABLE user MODIFY COLUMN chatcall_date datetime default NULL;
+ALTER TABLE user MODIFY COLUMN chatcall_text varchar(50) default NULL;
+ALTER TABLE user MODIFY COLUMN expiration_date datetime default NULL;
+
 
 INSERT INTO roles (id, name, role) VALUES('1', 'Teacher', 'ROLE_TEACHER');
 INSERT INTO roles (id, name, role) VALUES('4', 'RRHH', 'ROLE_RRHH');
@@ -308,10 +317,6 @@ INSERT INTO roles (id ,name, role) VALUES('5', 'Student', 'ROLE_STUDENT');
 INSERT INTO roles (id, name, role) VALUES('6', 'Anonymous', 'ROLE_ANONYMOUS');
 INSERT INTO roles (id, name, role) VALUES('11', 'Admin', 'ROLE_ADMIN');
 INSERT INTO roles (id, name, role) VALUES('17', 'Question Manager', 'ROLE_QUESTION_MANAGER');
-
-ALTER TABLE c_quiz ADD COLUMN question_selection_type INT DEFAULT 1;
-ALTER TABLE c_quiz ADD COLUMN hide_question_title INT DEFAULT 0;
-ALTER TABLE c_quiz ADD COLUMN global_category_id INT DEFAULT NULL;
 
 -- Admin
 INSERT INTO users_roles VALUES (1, 11);
@@ -355,4 +360,4 @@ INSERT INTO branch_transaction_status VALUES (1, 'To be executed'), (2, 'Execute
 UPDATE course_field SET field_type = 3 WHERE field_variable = 'special_course';
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.039' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.040' WHERE variable = 'chamilo_database_version';

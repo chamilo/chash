@@ -32,16 +32,16 @@ CREATE TABLE IF NOT EXISTS user (
   openarea text,
   teach text,
   productions varchar(250) default NULL,
-  chatcall_user_id int unsigned NOT NULL default '0',
-  chatcall_date datetime NOT NULL default '0000-00-00 00:00:00',
-  chatcall_text varchar(50) NOT NULL default '',
+  chatcall_user_id int unsigned default 0,
+  chatcall_date datetime default NULL,
+  chatcall_text varchar(50) default NULL,
   language varchar(40) default NULL,
   registration_date datetime NOT NULL default '0000-00-00 00:00:00',
-  expiration_date datetime NOT NULL default '0000-00-00 00:00:00',
+  expiration_date datetime default NULL,
   active tinyint unsigned NOT NULL default 1,
   openid varchar(255) DEFAULT NULL,
   theme varchar(255) DEFAULT NULL,
-  hr_dept_id int unsigned NOT NULL default 0,
+  hr_dept_id int unsigned default 0,
   salt VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY (user_id),
   UNIQUE KEY username (username)
@@ -3626,4 +3626,4 @@ CREATE TABLE curriculum_rel_user (
 
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.039' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.040' WHERE variable = 'chamilo_database_version';
