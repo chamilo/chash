@@ -295,6 +295,7 @@ ALTER TABLE c_attendance_sheet_log DROP PRIMARY KEY;
 ALTER TABLE c_attendance_sheet_log add COLUMN iid int unsigned not null AUTO_INCREMENT PRIMARY KEY FIRST;
 ALTER TABLE c_attendance_sheet_log add UNIQUE KEY(c_id,id);
 ALTER TABLE c_attendance_sheet_log ENGINE = InnoDB;
+ALTER TABLE session ADD COLUMN description TEXT;
 
 ALTER TABLE c_quiz_category ADD COLUMN visibility INT default 1;
 ALTER TABLE c_quiz_question ADD INDEX idx_c_q_qst_cpt (c_id, parent_id, type);

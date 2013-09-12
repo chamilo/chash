@@ -504,6 +504,7 @@ CREATE TABLE IF NOT EXISTS session (
   id INT unsigned NOT NULL auto_increment,
   id_coach int unsigned NOT NULL default '0',
   name char(150) NOT NULL default '',
+  description text,
   nbr_courses int unsigned NOT NULL default '0',
   nbr_users int unsigned NOT NULL default '0',
   nbr_classes int unsigned NOT NULL default '0',
