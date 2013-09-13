@@ -296,6 +296,7 @@ ALTER TABLE c_attendance_sheet_log add COLUMN iid int unsigned not null AUTO_INC
 ALTER TABLE c_attendance_sheet_log add UNIQUE KEY(c_id,id);
 ALTER TABLE c_attendance_sheet_log ENGINE = InnoDB;
 ALTER TABLE session ADD COLUMN description TEXT;
+ALTER TABLE session ADD COLUMN show_description int default NULL;
 
 ALTER TABLE c_quiz_category ADD COLUMN visibility INT default 1;
 ALTER TABLE c_quiz_question ADD INDEX idx_c_q_qst_cpt (c_id, parent_id, type);
@@ -360,4 +361,4 @@ INSERT INTO branch_transaction_status VALUES (1, 'To be executed'), (2, 'Execute
 UPDATE course_field SET field_type = 3 WHERE field_variable = 'special_course';
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.040' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.041' WHERE variable = 'chamilo_database_version';

@@ -505,6 +505,7 @@ CREATE TABLE IF NOT EXISTS session (
   id_coach int unsigned NOT NULL default '0',
   name char(150) NOT NULL default '',
   description text,
+  show_description int default NULL,
   nbr_courses int unsigned NOT NULL default '0',
   nbr_users int unsigned NOT NULL default '0',
   nbr_classes int unsigned NOT NULL default '0',
@@ -3626,4 +3627,4 @@ CREATE TABLE curriculum_rel_user (
 
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.040' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.041' WHERE variable = 'chamilo_database_version';
