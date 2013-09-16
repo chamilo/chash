@@ -965,6 +965,7 @@ VALUES
 ('admins_can_set_users_pass', NULL, 'radio', 'security', 'true', 'AdminsCanChangeUsersPassTitle', 'AdminsCanChangeUsersPassComment', 1, 0, 1),
 ('template', NULL, 'text', 'stylesheets', 'default', 'DefaultTemplateTitle', 'DefaultTemplateComment', NULL, NULL, 1),
 ('breadcrumb_navigation_display', NULL, 'radio', 'Platform','true','BreadcrumbNavigationDisplayTitle', 'BreadcrumbNavigationDisplayComment', NULL, NULL, 1),
+('default_calendar_view', NULL, 'radio', 'Platform','month','DefaultCalendarViewTitle', 'DefaultCalendarViewComment', NULL, NULL, 1)
 ('chamilo_database_version', NULL, 'textfield', NULL, '1.10.0.001', 'DatabaseVersion', '', NULL, NULL, 0); -- base value, updated at end of file. Don't change here
 
 UNLOCK TABLES;
@@ -1324,7 +1325,11 @@ VALUES
 ('admins_can_set_users_pass','true','Yes'),
 ('admins_can_set_users_pass','false','No'),
 ('breadcrumb_navigation_display', 'true', 'Show'),
-('breadcrumb_navigation_display', 'false', 'Hide');
+('breadcrumb_navigation_display', 'false', 'Hide'),
+('default_calendar_view', 'month', 'Month'),
+('default_calendar_view', 'basicWeek', 'BasicWeek'),
+('default_calendar_view', 'agendaWeek', 'Week'),
+('default_calendar_view', 'agendaDay', 'Day');
 
 UNLOCK TABLES;
 
@@ -3627,4 +3632,4 @@ CREATE TABLE curriculum_rel_user (
 
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.041' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.042' WHERE variable = 'chamilo_database_version';
