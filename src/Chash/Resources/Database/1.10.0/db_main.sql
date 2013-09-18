@@ -79,10 +79,10 @@ INSERT INTO roles (id ,name, role) VALUES('5', 'Student', 'ROLE_STUDENT');
 INSERT INTO roles (id, name, role) VALUES('6', 'Anonymous', 'ROLE_ANONYMOUS');
 INSERT INTO roles (id, name, role) VALUES('11', 'Admin', 'ROLE_ADMIN');
 INSERT INTO roles (id, name, role) VALUES('17', 'Question Manager', 'ROLE_QUESTION_MANAGER');
+INSERT INTO roles (id, name, role) VALUES('18', 'Global admin', 'ROLE_GLOBAL_ADMIN');
 
 -- Admin
-INSERT INTO users_roles VALUES (1, 11);
-
+INSERT INTO users_roles VALUES (1, 18);
 
 --
 -- Table structure for table admin
@@ -3632,4 +3632,4 @@ CREATE TABLE curriculum_rel_user (
 
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.042' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.043' WHERE variable = 'chamilo_database_version';
