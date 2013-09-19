@@ -323,50 +323,51 @@ INSERT INTO roles (id, name, role) VALUES('18', 'Global admin', 'ROLE_GLOBAL_ADM
 -- Admin
 INSERT INTO users_roles VALUES (1, 11);
 
-INSERT INTO settings_current (variable, subkey, type, category, selected_value, title, comment, scope, subkeytext, access_url_changeable) VALUES ('session_tutor_reports_visibility', NULL, 'radio', 'Session', 'true', 'SessionTutorsCanSeeExpiredSessionsResultsTitle', 'SessionTutorsCanSeeExpiredSessionsResultsComment', NULL, NULL, 1);
-INSERT INTO settings_options (variable, value, display_text) VALUES ('session_tutor_reports_visibility', 'true', 'Yes');
-INSERT INTO settings_options (variable, value, display_text) VALUES ('session_tutor_reports_visibility', 'false', 'No');
-INSERT INTO settings_current (variable, subkey, type, category, selected_value, title, comment, scope, subkeytext, access_url_changeable) VALUES ('gradebook_show_percentage_in_reports', NULL,'radio','Gradebook','true','GradebookShowPercentageInReportsTitle','GradebookShowPercentageInReportsComment', NULL, NULL, 0);
-INSERT INTO settings_options (variable, value, display_text) VALUES ('gradebook_show_percentage_in_reports', 'true', 'Yes');
-INSERT INTO settings_options (variable, value, display_text) VALUES ('gradebook_show_percentage_in_reports', 'false', 'No');
-INSERT INTO settings_current(variable, type, subkey, category, selected_value, title, comment, access_url, access_url_changeable, access_url_locked) VALUES ('login_as_allowed', NULL, 'radio', 'security', 'true','AdminLoginAsAllowedTitle', 'AdminLoginAsAllowedComment', 1, 0, 1);
-INSERT INTO settings_options(variable, value, display_text) VALUES ('login_as_allowed','true','Yes'),('login_as_allowed','false','No');
-INSERT INTO settings_current(variable, type, subkey, category, selected_value, title, comment, access_url, access_url_changeable, access_url_locked) VALUES ('admins_can_set_users_pass', NULL, 'radio', 'security', 'true', 'AdminsCanChangeUsersPassTitle', 'AdminsCanChangeUsersPassComment', 1, 0, 1);
-INSERT INTO settings_options(variable, value, display_text) VALUES('admins_can_set_users_pass','true','Yes'),('admins_can_set_users_pass','false','No');
-INSERT INTO settings_options(variable, value) VALUES ('last_transaction_id','0');
-INSERT INTO settings_current (variable, subkey, type, category, selected_value, title, comment, scope, subkeytext, access_url_changeable) VALUES ('session_page_enabled', NULL, 'radio', 'Session', 'true', 'SessionPageEnabledTitle', 'SessionPageEnabledComment', NULL, NULL, 1);
-INSERT INTO settings_options (variable, value, display_text) VALUES ('session_page_enabled', 'true', 'Yes');
-INSERT INTO settings_options (variable, value, display_text) VALUES ('session_page_enabled', 'false', 'No');
-INSERT INTO settings_current (variable, subkey, type, category, selected_value, title, comment, scope, subkeytext, access_url_changeable) VALUES ('settings_latest_update', NULL, NULL, NULL, '', '','', NULL, NULL, 0);
-INSERT INTO settings_current (variable, subkey, type, category, selected_value, title, comment, scope, subkeytext, access_url_changeable) VALUES ('user_name_order', NULL, 'textfield', 'Platform', '', 'UserNameOrderTitle', 'UserNameOrderComment', NULL, NULL, 1);
-INSERT INTO settings_current (variable, subkey, type, category, selected_value, title, comment, scope, subkeytext, access_url_changeable) VALUES ('allow_teachers_to_create_sessions', NULL,'radio','Session','false','AllowTeachersToCreateSessionsTitle','AllowTeachersToCreateSessionsComment', NULL, NULL, 0);
-INSERT INTO settings_options (variable, value, display_text) VALUES ('allow_teachers_to_create_sessions', 'true', 'Yes');
-INSERT INTO settings_options (variable, value, display_text) VALUES ('allow_teachers_to_create_sessions', 'false', 'No');
-INSERT INTO settings_current (variable, subkey, type, category, selected_value, title, comment, scope, subkeytext, access_url_changeable) VALUES ('template', NULL, 'text', 'stylesheets', 'default', 'DefaultTemplateTitle', 'DefaultTemplateComment', NULL, NULL, 1);
+INSERT INTO settings_current (variable, subkey, type, category, selected_value, title, comment, scope, subkeytext, access_url_changeable) VALUES
+('session_tutor_reports_visibility', NULL, 'radio', 'Session', 'true', 'SessionTutorsCanSeeExpiredSessionsResultsTitle', 'SessionTutorsCanSeeExpiredSessionsResultsComment', NULL, NULL, 1),
+('gradebook_show_percentage_in_reports', NULL,'radio','Gradebook','true','GradebookShowPercentageInReportsTitle','GradebookShowPercentageInReportsComment', NULL, NULL, 0),
+('login_as_allowed', NULL, 'radio', 'security', 'true','AdminLoginAsAllowedTitle', 'AdminLoginAsAllowedComment', 1, 0, 1),
+('admins_can_set_users_pass', NULL, 'radio', 'security', 'true', 'AdminsCanChangeUsersPassTitle', 'AdminsCanChangeUsersPassComment', 1, 0, 1),
+('session_page_enabled', NULL, 'radio', 'Session', 'true', 'SessionPageEnabledTitle', 'SessionPageEnabledComment', NULL, NULL, 1),
+('settings_latest_update', NULL, NULL, NULL, '', '','', NULL, NULL, 0),
+('user_name_order', NULL, 'textfield', 'Platform', '', 'UserNameOrderTitle', 'UserNameOrderComment', NULL, NULL, 1),
+('user_name_sort_by', NULL, 'textfield', 'Platform', '', 'UserNameSortByTitle', 'UserNameSortByComment', NULL, NULL, 1),
+('allow_teachers_to_create_sessions', NULL,'radio','Session','false','AllowTeachersToCreateSessionsTitle','AllowTeachersToCreateSessionsComment', NULL, NULL, 0),
+('template', NULL, 'text', 'stylesheets', 'default', 'DefaultTemplateTitle', 'DefaultTemplateComment', NULL, NULL, 1),
+('breadcrumb_navigation_display', NULL, 'radio', 'Platform','true','BreadcrumbNavigationDisplayTitle', 'BreadcrumbNavigationDisplayComment', NULL, NULL, 1),
+('use_virtual_keyboard', NULL, 'radio', 'Platform', 'false','ShowVirtualKeyboardTitle','ShowVirtualKeyboardComment', NULL, NULL, 1),
+('default_calendar_view', NULL, 'radio', 'Platform','month','DefaultCalendarViewTitle', 'DefaultCalendarViewComment', NULL, NULL, 1),
+('disable_copy_paste', NULL, 'radio', 'Platform', 'false','DisableCopyPasteTitle','DisableCopyPasteComment', NULL, NULL, 1),
+('showonline','session','checkbox','Platform','true','ShowOnlineTitle','ShowOnlineComment',NULL,'ShowOnlineSession', 0);
 
-INSERT INTO settings_current (variable, subkey, type, category, selected_value, title, comment, scope, subkeytext, access_url_changeable) VALUES ('breadcrumb_navigation_display', NULL, 'radio', 'Platform','true','BreadcrumbNavigationDisplayTitle', 'BreadcrumbNavigationDisplayComment', NULL, NULL, 1);
-INSERT INTO settings_options (variable, value, display_text) VALUES ('breadcrumb_navigation_display', 'true', 'Show');
-INSERT INTO settings_options (variable, value, display_text) VALUES ('breadcrumb_navigation_display', 'false', 'Hide');
-
-INSERT INTO settings_current (variable, subkey, type, category, selected_value, title, comment, scope, subkeytext, access_url_changeable) VALUES ('use_virtual_keyboard', NULL, 'radio', 'Platform', 'false','ShowVirtualKeyboardTitle','ShowVirtualKeyboardComment', NULL, NULL, 1);
-INSERT INTO settings_options (variable, value, display_text) VALUES ('use_virtual_keyboard', 'true', 'Show');
-INSERT INTO settings_options (variable, value, display_text) VALUES ('use_virtual_keyboard', 'false', 'Hide');
-
-INSERT INTO settings_current (variable, subkey, type, category, selected_value, title, comment, scope, subkeytext, access_url_changeable) VALUES ('disable_copy_paste', NULL, 'radio', 'Platform', 'false','DisableCopyPasteTitle','DisableCopyPasteComment', NULL, NULL, 1);
-INSERT INTO settings_options (variable, value, display_text) VALUES ('disable_copy_paste', 'true', 'Show');
-INSERT INTO settings_options (variable, value, display_text) VALUES ('disable_copy_paste', 'false', 'Hide');
-INSERT INTO settings_current (variable, subkey, type, category, selected_value, title, comment, scope, subkeytext, access_url_changeable) VALUES ('showonline','session','checkbox','Platform','true','ShowOnlineTitle','ShowOnlineComment',NULL,'ShowOnlineSession', 0);
-
-INSERT INTO settings_current (variable, subkey, type, category, selected_value, title, comment, scope, subkeytext, access_url_changeable) VALUES ('default_calendar_view', NULL, 'radio', 'Platform','month','DefaultCalendarViewTitle', 'DefaultCalendarViewComment', NULL, NULL, 1);
-INSERT INTO settings_options (variable, value, display_text) VALUES ('default_calendar_view', 'month', 'Month');
-INSERT INTO settings_options (variable, value, display_text) VALUES ('default_calendar_view', 'basicWeek', 'BasicWeek');
-INSERT INTO settings_options (variable, value, display_text) VALUES ('default_calendar_view', 'agendaWeek', 'Week');
-INSERT INTO settings_options (variable, value, display_text) VALUES ('default_calendar_view', 'agendaDay', 'Day');
-
+INSERT INTO settings_options (variable, value, display_text) VALUES
+('session_tutor_reports_visibility', 'true', 'Yes'),
+('session_tutor_reports_visibility', 'false', 'No'),
+('gradebook_show_percentage_in_reports', 'true', 'Yes'),
+('gradebook_show_percentage_in_reports', 'false', 'No'),
+('login_as_allowed','true','Yes'),
+('login_as_allowed','false','No'),
+('admins_can_set_users_pass','true','Yes'),
+('admins_can_set_users_pass','false','No'),
+('last_transaction_id', '0', ''),
+('session_page_enabled', 'true', 'Yes'),
+('session_page_enabled', 'false', 'No'),
+('allow_teachers_to_create_sessions', 'true', 'Yes'),
+('allow_teachers_to_create_sessions', 'false', 'No'),
+('breadcrumb_navigation_display', 'true', 'Show'),
+('breadcrumb_navigation_display', 'false', 'Hide'),
+('use_virtual_keyboard', 'true', 'Show'),
+('use_virtual_keyboard', 'false', 'Hide'),
+('disable_copy_paste', 'true', 'Show'),
+('disable_copy_paste', 'false', 'Hide'),
+('default_calendar_view', 'month', 'Month'),
+('default_calendar_view', 'basicWeek', 'BasicWeek'),
+('default_calendar_view', 'agendaWeek', 'Week'),
+('default_calendar_view', 'agendaDay', 'Day');
 
 INSERT INTO branch_transaction_status VALUES (1, 'To be executed'), (2, 'Executed successfully'), (3, 'Execution deprecated'), (4, 'Execution failed');
 
 UPDATE course_field SET field_type = 3 WHERE field_variable = 'special_course';
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.043' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.044' WHERE variable = 'chamilo_database_version';
