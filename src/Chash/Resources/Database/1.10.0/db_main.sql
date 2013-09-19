@@ -3142,50 +3142,6 @@ CREATE TABLE IF NOT EXISTS branch_transaction_data (
     data text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
 );
 
-
--- Stats database
-
-DROP TABLE IF EXISTS track_c_browsers;
-CREATE TABLE track_c_browsers (
-  id int NOT NULL auto_increment,
-  browser varchar(255) NOT NULL default '',
-  counter int NOT NULL default 0,
-  PRIMARY KEY  (id)
-);
-
-DROP TABLE IF EXISTS track_c_countries;
-CREATE TABLE track_c_countries (
-  id int NOT NULL auto_increment,
-  code varchar(40) NOT NULL default '',
-  country varchar(50) NOT NULL default '',
-  counter int NOT NULL default 0,
-  PRIMARY KEY  (id)
-);
-
-DROP TABLE IF EXISTS track_c_os;
-CREATE TABLE track_c_os (
-  id int NOT NULL auto_increment,
-  os varchar(255) NOT NULL default '',
-  counter int NOT NULL default 0,
-  PRIMARY KEY  (id)
-);
-
-DROP TABLE IF EXISTS track_c_providers;
-CREATE TABLE track_c_providers (
-  id int NOT NULL auto_increment,
-  provider varchar(255) NOT NULL default '',
-  counter int NOT NULL default 0,
-  PRIMARY KEY  (id)
-);
-
-DROP TABLE IF EXISTS track_c_referers;
-CREATE TABLE track_c_referers (
-  id int NOT NULL auto_increment,
-  referer varchar(255) NOT NULL default '',
-  counter int NOT NULL default 0,
-  PRIMARY KEY (id)
-);
-
 DROP TABLE IF EXISTS track_e_access;
 CREATE TABLE track_e_access (
   access_id int NOT NULL auto_increment,
@@ -3345,15 +3301,6 @@ CREATE TABLE track_e_online (
   access_url_id INT NOT NULL DEFAULT 1,
   PRIMARY KEY  (login_id),
   KEY login_user_id (login_user_id)
-);
-DROP TABLE IF EXISTS track_e_open;
-CREATE TABLE track_e_open (
-  open_id int NOT NULL auto_increment,
-  open_remote_host tinytext NOT NULL,
-  open_agent tinytext NOT NULL,
-  open_referer tinytext NOT NULL,
-  open_date datetime NOT NULL default '0000-00-00 00:00:00',
-  PRIMARY KEY  (open_id)
 );
 
 DROP TABLE IF EXISTS track_e_uploads;
