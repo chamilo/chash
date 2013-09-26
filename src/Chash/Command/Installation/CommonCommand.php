@@ -1175,10 +1175,15 @@ class CommonCommand extends AbstractCommand
                 continue;
             }
             $configFile = str_replace('dist.', '', $file);
-            $output->writeln("<comment> Moving file from: </comment>".$confDir.$configFile);
-            $output->writeln("<comment> to: </comment>".$configurationPath.$configFile);
-            if (!file_exists($configurationPath.$configFile)) {
-                $fs->copy($confDir.$configFile, $configurationPath.$configFile);
+
+            if (file_exists($confDir.$configFile)) {
+                $output->writeln("<comment> Moving file from: </comment>".$confDir.$configFile);
+                $output->writeln("<comment> to: </comment>".$configurationPath.$configFile);
+                if (!file_exists($configurationPath.$configFile)) {
+                    $fs->copy($confDir.$configFile, $configurationPath.$configFile);
+                }
+            } else {
+                $output->writeln("<comment> File not found: </comment>".$confDir.$configFile);
             }
         }
 
