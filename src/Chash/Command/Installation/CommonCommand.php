@@ -1166,6 +1166,7 @@ class CommonCommand extends AbstractCommand
         $confDir = $this->getConfigurationPath();
 
         $configurationPath = $this->getConfigurationHelper()->convertOldConfigurationPathToNewPath($confDir);
+
         $fs = new Filesystem();
         $configList = $this->getConfigFiles();
         $configList[] = 'configuration.dist.php';
@@ -1188,9 +1189,12 @@ class CommonCommand extends AbstractCommand
         }
 
         $backupConfPath = str_replace('inc/conf', 'inc/conf_old', $confDir);
-        $output->writeln('<comment>Renaming conf folder: </comment>'.$confDir.' to '.$backupConfPath.'');
-
-        $fs->rename($confDir, $backupConfPath);
+        if ($confDir != $backupConfPath) {
+            $output->writeln('<comment>Renaming conf folder: </comment>'.$confDir.' to '.$backupConfPath.'');
+            $fs->rename($confDir, $backupConfPath);
+        } else {
+            $output->writeln('<comment>No need to rename the conf folder: </comment>'.$confDir.' = '.$backupConfPath.'');
+        }
         $this->setConfigurationPath($configurationPath);
     }
 
