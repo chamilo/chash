@@ -11,8 +11,9 @@ $update = function($_configuration, \Doctrine\DBAL\Connection $mainConnection, $
     $session_rel_course_table = "$dbNameForm.session_rel_course";
     $session_rel_course_rel_user_table = "$dbNameForm.session_rel_course_rel_user";
     $course_table = "$dbNameForm.course";
+    $courseRelUserTable = "$dbNameForm.course_rel_user";
 
-    //Fixes new changes in sessions
+    // Fixes new changes in sessions
     $sql = "SELECT id, date_start, date_end, nb_days_access_before_beginning, nb_days_access_after_end FROM $session_table ";
     $result = $mainConnection->executeQuery($sql);
     $sessions = $result->fetchAll();
@@ -51,23 +52,21 @@ $update = function($_configuration, \Doctrine\DBAL\Connection $mainConnection, $
         }
     }
 
-    // Fixes new changes session_rel_course
-    $sql = "SELECT id_session, sc.course_code, c.id FROM $course_table c INNER JOIN $session_rel_course_table sc ON sc.course_code = c.code";
+    // Fixes new changes course_rel_course
+    $sql = "SELECT id, code FROM $course_table";
     $result = $mainConnection->executeQuery($sql);
     $rows = $result->fetchAll();
     foreach ($rows as $row) {
-        $sql = "UPDATE $session_rel_course_table SET c_id = {$row['id']}
-                WHERE course_code = '{$row['course_code']}' AND id_session = {$row['id_session']} ";
+        $sql = "UPDATE $courseRelUserTable SET c_id = {$row['id']}
+                WHERE  course_code = '{$row['code']}'";
         $mainConnection->executeQuery($sql);
-    }
 
-    //Fixes new changes in session_rel_course_rel_user
-    $sql = "SELECT id_session, sc.course_code, c.id FROM $course_table c INNER JOIN $session_rel_course_rel_user_table sc ON sc.course_code = c.code";
-    $result = $mainConnection->executeQuery($sql);
-    $rows = $result->fetchAll();
-    foreach ($rows as $row) {
         $sql = "UPDATE $session_rel_course_rel_user_table SET c_id = {$row['id']}
-                WHERE course_code = '{$row['course_code']}' AND id_session = {$row['id_session']} ";
+                WHERE  course_code = '{$row['code']}'";
+        $mainConnection->executeQuery($sql);
+
+        $sql = "UPDATE $session_rel_course_table SET c_id = {$row['id']}
+                WHERE course_code = '{$row['code']}' ";
         $mainConnection->executeQuery($sql);
     }
 
@@ -99,7 +98,7 @@ $update = function($_configuration, \Doctrine\DBAL\Connection $mainConnection, $
         $order++;
     }
 
-    //Fixing special course
+    // Fixing special course
     $output->writeln('Fixing special course');
     $sql = "SELECT id FROM $dbNameForm.course_field WHERE field_variable = 'special_course'";
     $result = $mainConnection->executeQuery($sql);
