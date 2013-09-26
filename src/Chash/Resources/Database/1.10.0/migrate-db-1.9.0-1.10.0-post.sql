@@ -31,13 +31,12 @@ DROP TABLE IF EXISTS track_c_countries;
 DROP TABLE IF EXISTS track_c_browsers;
 DROP TABLE IF EXISTS track_e_open;
 
-ALTER TABLE track_e_lastaccess DROP COLUMN access_cours_code;
-ALTER TABLE track_e_access    DROP COLUMN access_cours_code ;
-ALTER TABLE track_e_course_access DROP COLUMN  course_code;
-ALTER TABLE track_e_downloads DROP COLUMN  down_cours_id;
+--ALTER TABLE track_e_lastaccess DROP COLUMN access_cours_code;
+--ALTER TABLE track_e_access    DROP COLUMN access_cours_code ;
+--ALTER TABLE track_e_course_access DROP COLUMN course_code;
+--ALTER TABLE track_e_downloads DROP COLUMN  down_cours_id;
+--ALTER TABLE track_e_links DROP COLUMN links_cours_id;
 
-ALTER TABLE track_e_links DROP COLUMN  links_cours_id;
-
-ALTER TABLE session DROP COLUMN date_start;
-ALTER TABLE session DROP COLUMN date_end;
+--ALTER TABLE session DROP COLUMN date_start;
+--ALTER TABLE session DROP COLUMN date_end;
 
