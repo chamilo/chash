@@ -81,7 +81,7 @@ class SetPermissionsAfterInstallCommand extends CommonChamiloDatabaseCommand
         $fs = new Filesystem();
         try {
             if ($dryRun) {
-                $output->writeln("<comment>Files to be changed to permission ".decoct($permission)."</comment>");
+                $output->writeln("<comment>Modifying files permission to: ".decoct($permission)."</comment>");
                 $output->writeln("<comment>user: ".$user."</comment>");
                 $output->writeln("<comment>group: ".$group."</comment>");
                 if ($listFiles) {
@@ -107,6 +107,8 @@ class SetPermissionsAfterInstallCommand extends CommonChamiloDatabaseCommand
                     foreach ($files as $file) {
                         $output->writeln($file->getPathName());
                     }
+                } else {
+                    $output->writeln("<comment>Skipping file list (too long)... </comment>");
                 }
 
                 if (!empty($permission)) {

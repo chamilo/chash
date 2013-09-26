@@ -528,7 +528,6 @@ class UpgradeCommand extends CommonCommand
                             $lines = 0;
 
                             /** @var \Doctrine\DBAL\Connection $conn */
-                            var_dump($dbInfo['database']);
                             $conn = $this->getHelper($dbInfo['database'])->getConnection();
                             $output->writeln("<comment>Executing queries in DB:</comment> <info>".$conn->getDatabase()."</info>");
 
