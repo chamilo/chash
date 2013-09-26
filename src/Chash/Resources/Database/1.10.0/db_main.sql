@@ -381,8 +381,8 @@ CREATE TABLE IF NOT EXISTS course_rel_user (
   legal_agreement INTEGER DEFAULT 0,
   PRIMARY KEY(id)
 );
-ALTER TABLE course_rel_user ADD INDEX (user_id);
-ALTER TABLE course_rel_user ADD INDEX (c_id, user_id);
+ALTER TABLE course_rel_user ADD INDEX course_rel_user_user_id (user_id);
+ALTER TABLE course_rel_user ADD INDEX course_rel_user_c_id_user_id (c_id, user_id);
 
 --
 -- Dumping data for table course_rel_user
@@ -2850,8 +2850,8 @@ CREATE TABLE IF NOT EXISTS usergroup_rel_tag(
     PRIMARY KEY (id)
 );
 
-ALTER TABLE usergroup_rel_tag ADD INDEX ( usergroup_id );
-ALTER TABLE usergroup_rel_tag ADD INDEX ( tag_id );
+ALTER TABLE usergroup_rel_tag ADD INDEX usergroup_rel_tag_usergroup_id( usergroup_id );
+ALTER TABLE usergroup_rel_tag ADD INDEX usergroup_rel_tag_tag_id ( tag_id );
 
 DROP TABLE IF EXISTS usergroup_rel_usergroup;
 CREATE TABLE IF NOT EXISTS usergroup_rel_usergroup (
@@ -2862,9 +2862,9 @@ CREATE TABLE IF NOT EXISTS usergroup_rel_usergroup (
 	PRIMARY KEY (id)
 );
 
-ALTER TABLE usergroup_rel_usergroup ADD INDEX ( group_id );
-ALTER TABLE usergroup_rel_usergroup ADD INDEX ( subgroup_id );
-ALTER TABLE usergroup_rel_usergroup ADD INDEX ( relation_type );
+ALTER TABLE usergroup_rel_usergroup ADD INDEX usergroup_rel_usergroup_group_id (group_id );
+ALTER TABLE usergroup_rel_usergroup ADD INDEX usergroup_rel_usergroup_subgroup_id ( subgroup_id );
+ALTER TABLE usergroup_rel_usergroup ADD INDEX usergroup_rel_usergroup_relation_type ( relation_type );
 
 --
 -- Structure for Mail notifications

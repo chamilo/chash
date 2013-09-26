@@ -51,7 +51,7 @@ $update = function($_configuration, \Doctrine\DBAL\Connection $mainConnection, $
         }
     }
 
-    //Fixes new changes session_rel_course
+    // Fixes new changes session_rel_course
     $sql = "SELECT id_session, sc.course_code, c.id FROM $course_table c INNER JOIN $session_rel_course_table sc ON sc.course_code = c.code";
     $result = $mainConnection->executeQuery($sql);
     $rows = $result->fetchAll();
@@ -71,7 +71,7 @@ $update = function($_configuration, \Doctrine\DBAL\Connection $mainConnection, $
         $mainConnection->executeQuery($sql);
     }
 
-    //Updating c_quiz_order
+    // Updating c_quiz_order
     $teq = "$dbNameForm.c_quiz";
     $sql = "SELECT c_id, session_id, id FROM $teq ORDER BY c_id, session_id, id";
     $result = $mainConnection->executeQuery($sql);

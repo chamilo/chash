@@ -10,9 +10,6 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
 
-// Constant needed in order to call migrate-db-* and update-files-*
-define('SYSTEM_INSTALLATION', 1);
-
 /**
  * Class UpgradeCommand
  */
@@ -31,6 +28,9 @@ class UpgradeCommand extends CommonCommand
         return $this->getHelper('db')->getConnection();
     }
 
+    /**
+     *
+     */
     protected function configure()
     {
         $this
@@ -62,7 +62,7 @@ class UpgradeCommand extends CommonCommand
             $this->commandLine = false;
         }
 
-        // Setting up Chash:
+        // Setting up Chash
         $command = $this->getApplication()->find('chash:setup');
         $migrationPath = $input->getOption('migration-yml-path');
         $migrationDir = $input->getOption('migration-class-path');
@@ -88,6 +88,7 @@ class UpgradeCommand extends CommonCommand
             $output->writeln("<error>Set the --migration-yml-path and --migration-class-path manually.</error>");
             return 0;
         }
+
         // Checking Resources/Database dir
         $migrationFileFolder = $this->getInstallationFolder();
         if (!is_dir($migrationFileFolder)) {
@@ -138,9 +139,7 @@ class UpgradeCommand extends CommonCommand
 
         // Doctrine migrations version
         //$doctrineVersion = $configuration->getCurrentVersion();
-
-
-         // Moves files from main/inc/conf to config/
+        // Moves files from main/inc/conf to config/
 
         $doctrineVersion = null;
 
@@ -280,7 +279,6 @@ class UpgradeCommand extends CommonCommand
 
         $this->setExtraDatabaseSettings($extraDatabaseSettings);
         $this->setDoctrineSettings();
-
         $conn = $this->getConnection();
 
         if ($conn) {
@@ -383,47 +381,7 @@ class UpgradeCommand extends CommonCommand
             $this->processQueryList($courseList, $output, $path, $toVersion, $dryRun, 'pre');
         }
 
-        // Processing "db" changes.
-        if (isset($versionInfo['update_db']) && !empty($versionInfo['update_db'])) {
-            $sqlToInstall = $installPath.$versionInfo['update_db'];
-            if (is_file($sqlToInstall) && file_exists($sqlToInstall)) {
-                if ($dryRun) {
-                    $output->writeln("<comment>File to be executed but not fired because of dry-run option: <info>'$sqlToInstall'</info>");
-                } else {
-                    $output->writeln("<comment>Executing update db: <info>'$sqlToInstall'</info>");
-                }
-                require $sqlToInstall;
-                if (!empty($update)) {
-                    $update($_configuration, $conn, $courseList, $dryRun, $output);
-                }
-            }
-        }
-
-        // Processing "update file" changes.
-        if (isset($versionInfo['update_files']) && !empty($versionInfo['update_files'])) {
-            $sqlToInstall = $installPath.$versionInfo['update_files'];
-            if (is_file($sqlToInstall) && file_exists($sqlToInstall)) {
-                if ($dryRun) {
-                    $output->writeln("<comment>Files to be executed but dry-run is on: <info>'$sqlToInstall'</info>");
-                } else {
-                    $output->writeln("<comment>Executing update files: <info>'$sqlToInstall'</info>");
-                    require $sqlToInstall;
-                    if (!empty($updateFiles)) {
-                        $updateFiles($_configuration, $conn, $courseList, $dryRun, $output);
-                    }
-                }
-            }
-        }
-
-        // Filling sqlList array with "post" db changes.
-        if (isset($versionInfo['post']) && !empty($versionInfo['post'])) {
-            $sqlToInstall = $installPath.$versionInfo['post'];
-            $this->fillQueryList($sqlToInstall, $output, 'post');
-            // Processing sql query list depending of the section.
-            $this->processQueryList($courseList, $output, $path, $toVersion, $dryRun, 'post');
-        }
-
-        if (1) {
+        try {
             // Doctrine migrations:
 
             $output->writeln('');
@@ -445,6 +403,74 @@ class UpgradeCommand extends CommonCommand
             $command->run($input, $output);
 
             $output->writeln("<comment>Migration ended successfully</comment>");
+
+        } catch (\Exception $e) {
+            // Reverting changes
+
+            /*$output->writeln("<comment>Reverting changes ... <comment>");
+
+            $command = $this->getApplication()->find('migrations:execute');
+            $arguments = array(
+                'command' => 'migrations:execute',
+                'version' => $versionInfo['hook_to_doctrine_version'],
+                '--down' => true,
+                '--configuration' => $this->getMigrationConfigurationFile(),
+                '--dry-run' => $dryRun
+            );
+
+            $output->writeln("<comment>Executing migrations:migrate ".($versionInfo['hook_to_doctrine_version'] - 1)."<comment>");
+            $input = new ArrayInput($arguments);
+            if ($this->commandLine == false) {
+                $input->setInteractive(false);
+            }
+            $command->run($input, $output);
+            */
+            $output->write(sprintf('<error>Migration failed. Error %s</error>', $e->getMessage()));
+
+            throw $e;
+        }
+
+        // Processing "db" changes.
+        if (isset($versionInfo['update_db']) && !empty($versionInfo['update_db'])) {
+            $sqlToInstall = $installPath.$versionInfo['update_db'];
+            if (is_file($sqlToInstall) && file_exists($sqlToInstall)) {
+                if ($dryRun) {
+                    $output->writeln("<comment>File to be executed but not fired because of dry-run option: <info>'$sqlToInstall'</info>");
+                } else {
+                    $output->writeln("<comment>Executing update db: <info>'$sqlToInstall'</info>");
+                }
+                require $sqlToInstall;
+
+                if (!empty($update)) {
+                    $update($_configuration, $conn, $courseList, $dryRun, $output);
+                }
+            }
+        }
+
+        // Processing "update file" changes.
+        if (isset($versionInfo['update_files']) && !empty($versionInfo['update_files'])) {
+            $sqlToInstall = $installPath.$versionInfo['update_files'];
+            if (is_file($sqlToInstall) && file_exists($sqlToInstall)) {
+                if ($dryRun) {
+                    $output->writeln("<comment>Files to be executed but dry-run is on: <info>'$sqlToInstall'</info>");
+                } else {
+                    $output->writeln("<comment>Executing update files: <info>'$sqlToInstall'</info>");
+
+                    require $sqlToInstall;
+
+                    if (!empty($updateFiles)) {
+                        $updateFiles($_configuration, $conn, $courseList, $dryRun, $output);
+                    }
+                }
+            }
+        }
+
+        // Filling sqlList array with "post" db changes.
+        if (isset($versionInfo['post']) && !empty($versionInfo['post'])) {
+            $sqlToInstall = $installPath.$versionInfo['post'];
+            $this->fillQueryList($sqlToInstall, $output, 'post');
+            // Processing sql query list depending of the section.
+            $this->processQueryList($courseList, $output, $path, $toVersion, $dryRun, 'post');
         }
 
         return false;
@@ -494,7 +520,7 @@ class UpgradeCommand extends CommonCommand
                     !empty($this->queryList[$type][$section])
                 ) {
                     $queryList = $this->queryList[$type][$section];
-                    //$output->writeln("<comment>Loading query list: $type - $section </comment>");
+                    $output->writeln("<comment>Loading query list: '$type' - '$section'</comment>");
 
                     if (!empty($queryList)) {
 
@@ -502,6 +528,7 @@ class UpgradeCommand extends CommonCommand
                             $lines = 0;
 
                             /** @var \Doctrine\DBAL\Connection $conn */
+                            var_dump($dbInfo['database']);
                             $conn = $this->getHelper($dbInfo['database'])->getConnection();
                             $output->writeln("<comment>Executing queries in DB:</comment> <info>".$conn->getDatabase()."</info>");
 
@@ -617,9 +644,7 @@ class UpgradeCommand extends CommonCommand
     public function generateDatabaseList($courseList)
     {
         $courseDbList = array();
-
         $_configuration = $this->getConfigurationArray();
-
         if (!empty($courseList)) {
             foreach ($courseList as $course) {
                 if (!empty($course['db_name'])) {
@@ -638,7 +663,6 @@ class UpgradeCommand extends CommonCommand
                     'prefix' => null
                 )
             );
-
         }
 
         $databaseSection = array(
@@ -686,11 +710,10 @@ class UpgradeCommand extends CommonCommand
      */
     public function getDatabaseList($output, $courseList, $path, $version, $type)
     {
-        $configurationPath = $this->getHelper('configuration')->getConfigurationPath($path);
-        $newConfigurationFile = $configurationPath.'db_migration_status_'.$version.'_'.$type.'.yml';
-
         return $this->generateDatabaseList($courseList);
 
+        $configurationPath = $this->getHelper('configuration')->getConfigurationPath($path);
+        $newConfigurationFile = $configurationPath.'db_migration_status_'.$version.'_'.$type.'.yml';
         if (file_exists($newConfigurationFile)) {
             $yaml = new Parser();
             $output->writeln("<comment>Loading database list status from file:</comment> <info>$newConfigurationFile</info>");
@@ -791,7 +814,7 @@ class UpgradeCommand extends CommonCommand
         //prepare the resulting array
         $section_contents = array();
         $record = false;
-        foreach ($file_contents as $index => $line) {
+        foreach ($file_contents as $line) {
             if (substr($line, 0, 2) == '--') {
                 //This is a comment. Check if section name, otherwise ignore
                 $result = array();
