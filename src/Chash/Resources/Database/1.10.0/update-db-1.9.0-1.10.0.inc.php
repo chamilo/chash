@@ -13,18 +13,31 @@ $update = function($_configuration, \Doctrine\DBAL\Connection $mainConnection, $
     $course_table = "$dbNameForm.course";
     $courseRelUserTable = "$dbNameForm.course_rel_user";
 
+    $accessUrlRelUserTable = "$dbNameForm.access_url_rel_user";
+    $accessUrlRelCourseTable = "$dbNameForm.access_url_rel_course";
+    $accessUrlRelSessionTable = "$dbNameForm.access_url_rel_session";
+
     // Fixes new changes in sessions
-    $sql = "SELECT id, date_start, date_end, nb_days_access_before_beginning, nb_days_access_after_end FROM $session_table ";
+    $sql = "SELECT id, date_start, date_end, nb_days_access_before_beginning, nb_days_access_after_end FROM $session_table";
     $result = $mainConnection->executeQuery($sql);
     $sessions = $result->fetchAll();
 
     foreach ($sessions as $session) {
         $session_id = $session['id'];
 
-        //Fixing date_start
+        // Check if the session is registered in the access_url_rel_session table
+        $sql = "SELECT session_id FROM $accessUrlRelSessionTable WHERE session_id = $session_id";
+        $result = $mainConnection->executeQuery($sql);
+        if ($result->rowCount() == 0) {
+            $sql = "INSERT INTO $accessUrlRelSessionTable (session_id, access_url_id) VALUES ('$session_id', '1')";
+            $mainConnection->executeQuery($sql);
+        }
+
+        // Fixing date_start
         if (isset($session['date_start']) && !empty($session['date_start']) && $session['date_start'] != '0000-00-00') {
             $datetime = $session['date_start'].' 00:00:00';
-            $update_sql = "UPDATE $session_table SET display_start_date = '$datetime' , access_start_date = '$datetime' WHERE id = $session_id";
+            $update_sql = "UPDATE $session_table SET display_start_date = '$datetime', access_start_date = '$datetime'
+                           WHERE id = $session_id";
             $mainConnection->executeQuery($update_sql);
 
             //Fixing nb_days_access_before_beginning
@@ -36,10 +49,11 @@ $update = function($_configuration, \Doctrine\DBAL\Connection $mainConnection, $
             }
         }
 
-        //Fixing end_date
+        // Fixing end_date
         if (isset($session['date_end']) && !empty($session['date_end']) && $session['date_end'] != '0000-00-00') {
             $datetime = $session['date_end'].' 00:00:00';
-            $update_sql = "UPDATE $session_table SET display_end_date = '$datetime', access_end_date = '$datetime' WHERE id = $session_id";
+            $update_sql = "UPDATE $session_table SET display_end_date = '$datetime', access_end_date = '$datetime'
+                           WHERE id = $session_id";
             $mainConnection->executeQuery($update_sql);
 
             //Fixing nb_days_access_before_beginning
@@ -57,17 +71,32 @@ $update = function($_configuration, \Doctrine\DBAL\Connection $mainConnection, $
     $result = $mainConnection->executeQuery($sql);
     $rows = $result->fetchAll();
     foreach ($rows as $row) {
-        $sql = "UPDATE $courseRelUserTable SET c_id = {$row['id']}
-                WHERE  course_code = '{$row['code']}'";
+        $courseId = $row['id'];
+        $courseCode = $row['code'];
+
+        $sql = "UPDATE $courseRelUserTable SET c_id = '$courseId'
+                WHERE  course_code = '$courseCode'";
         $mainConnection->executeQuery($sql);
 
-        $sql = "UPDATE $session_rel_course_rel_user_table SET c_id = {$row['id']}
-                WHERE  course_code = '{$row['code']}'";
+        $sql = "UPDATE $session_rel_course_rel_user_table SET c_id = '$courseId'
+                WHERE  course_code = '$courseCode'";
         $mainConnection->executeQuery($sql);
 
-        $sql = "UPDATE $session_rel_course_table SET c_id = {$row['id']}
-                WHERE course_code = '{$row['code']}' ";
+        $sql = "UPDATE $session_rel_course_table SET c_id = '$courseId'
+                WHERE course_code = '$courseCode' ";
         $mainConnection->executeQuery($sql);
+
+        $sql = "UPDATE $accessUrlRelCourseTable SET c_id = '$courseId'
+                WHERE course_code = '$courseCode' ";
+        $mainConnection->executeQuery($sql);
+
+        // Check if the course is registered in the access_url_rel_course table
+        $sql = "SELECT c_id FROM $accessUrlRelCourseTable WHERE c_id = $courseId";
+        $result = $mainConnection->executeQuery($sql);
+        if ($result->rowCount() == 0) {
+            $sql = "INSERT INTO $accessUrlRelCourseTable (access_url_id, course_code, c_id) VALUES ('1', '$courseCode', '$courseId')";
+            $mainConnection->executeQuery($sql);
+        }
     }
 
     // Updating c_quiz_order
