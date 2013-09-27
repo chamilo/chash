@@ -1,7 +1,7 @@
 <?php
 /* For licensing terms, see /license.txt */
 
-$update = function($_configuration, \Doctrine\DBAL\Connection $mainConnection, $courseList, $dryRun, $output) {
+$update = function($_configuration, \Doctrine\DBAL\Connection $mainConnection, $courseList, $dryRun, $output, $upgrade) {
 
     $mainConnection->beginTransaction();
 

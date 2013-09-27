@@ -442,7 +442,7 @@ class UpgradeCommand extends CommonCommand
                 require $sqlToInstall;
 
                 if (!empty($update)) {
-                    $update($_configuration, $conn, $courseList, $dryRun, $output);
+                    $update($_configuration, $conn, $courseList, $dryRun, $output, $this);
                 }
             }
         }
@@ -459,7 +459,7 @@ class UpgradeCommand extends CommonCommand
                     require $sqlToInstall;
 
                     if (!empty($updateFiles)) {
-                        $updateFiles($_configuration, $conn, $courseList, $dryRun, $output);
+                        $updateFiles($_configuration, $conn, $courseList, $dryRun, $output, $this);
                     }
                 }
             }
