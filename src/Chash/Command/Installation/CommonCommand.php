@@ -598,7 +598,7 @@ class CommonCommand extends AbstractCommand
         // Session lifetime
         $configuration['session_lifetime']         = 3600;
         // Activation for multi-url access
-        $_configuration['multiple_access_urls']   = false;
+        $configuration['multiple_access_urls']   = false;
         //Deny the elimination of users
         $configuration['deny_delete_users']        = false;
         //Prevent all admins from using the "login_as" feature
