@@ -259,6 +259,7 @@ class UpgradeCommand extends CommonCommand
          // Getting configuration file.
         $_configuration = $this->getHelper('configuration')->getConfiguration($path);
 
+        // Upgrade always from a mysql driver
         $databaseSettings = array(
             'driver' => 'pdo_mysql',
             'host' => $_configuration['db_host'],
@@ -288,6 +289,7 @@ class UpgradeCommand extends CommonCommand
             return 0;
         }
 
+        // Get course list
         $query = "SELECT * FROM course";
         $result = $conn->executeQuery($query);
         $courseList = $result->fetchAll();
@@ -310,6 +312,7 @@ class UpgradeCommand extends CommonCommand
             }
         }
 
+        // Update chamilo files
         if ($dryRun == false) {
             $this->copyPackageIntoSystem($output, $chamiloLocationPath, null);
             if ($version == '1.10.0') {
@@ -341,7 +344,9 @@ class UpgradeCommand extends CommonCommand
         $input = new ArrayInput($arguments);
         $command->run($input, $output);
 
-        $this->updateConfiguration($output, $dryRun, array('system_version' => $version));
+        // Update configuration file new system_version
+        $newParams = array('system_version' => $version);
+        $this->updateConfiguration($output, $dryRun, $newParams);
 
         $output->writeln("<comment>Hurrah!!! You just finish to migrate. Too check the current status of your platform. Run </comment><info>chamilo:status</info>");
     }
