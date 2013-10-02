@@ -55,10 +55,6 @@ class SetupCommand extends AbstractCommand
             'migrations_directory' => $migrationClassPath
         );
 
-        // does not work because it need a callable function yml_emit
-        /*$config = new \Zend\Config\Config($migrations, true);
-        $writer = new \Zend\Config\Writer\Yaml();
-        $writer->toFile($srcPath.'/Chash/Migrations/migrations.ypl', $config);*/
         $dumper = new Dumper();
         $yaml = $dumper->dump($migrations, 1);
         $file = $srcPath.'/migrations.yml';
