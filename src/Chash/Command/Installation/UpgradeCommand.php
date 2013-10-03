@@ -6,7 +6,6 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
 
@@ -41,8 +40,6 @@ class UpgradeCommand extends CommonCommand
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Execute the migration as a dry run.')
             ->addOption('update-installation', null, InputOption::VALUE_OPTIONAL, 'Updates the portal with the current zip file. http:// or /var/www/file.zip')
             ->addOption('temp-folder', null, InputOption::VALUE_OPTIONAL, 'The temp folder.', '/tmp')
-            ->addOption('migration-yml-path', null, InputOption::VALUE_OPTIONAL, 'The temp folder.')
-            ->addOption('migration-class-path', null, InputOption::VALUE_OPTIONAL, 'The temp folder.')
             ->addOption('download-package', null, InputOption::VALUE_OPTIONAL, 'Downloads the chamilo package', 'true')
             ->addOption('silent', null, InputOption::VALUE_NONE, 'Execute the migration with out asking questions.')
             ->addOption('linux-user', null, InputOption::VALUE_OPTIONAL, 'user', 'www-data')
@@ -66,22 +63,14 @@ class UpgradeCommand extends CommonCommand
 
         // Setting up Chash
         $command = $this->getApplication()->find('chash:setup');
-        $migrationPath = $input->getOption('migration-yml-path');
-        $migrationDir = $input->getOption('migration-class-path');
+
+        // User options
         $linuxUser = $input->getOption('linux-user');
         $linuxGroup = $input->getOption('linux-group');
 
         $arguments = array(
             'command' => 'chash:setup'
         );
-
-        if (!empty($migrationPath)) {
-            $arguments['--migration-yml-path'] = $migrationPath;
-        }
-
-        if (!empty($migrationDir)) {
-            $arguments['--migration-class-path'] = $migrationDir;
-        }
 
         $inputSetup = new ArrayInput($arguments);
         $command->run($inputSetup, $output);
