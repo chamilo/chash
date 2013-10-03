@@ -1581,6 +1581,7 @@ CREATE TABLE c_student_publication (
   id int(10) unsigned NOT NULL AUTO_INCREMENT,
   url varchar(255) DEFAULT NULL,
   title varchar(255) DEFAULT NULL,
+  filename varchar(255) DEFAULT NULL,
   description text,
   author varchar(255) DEFAULT NULL,
   active tinyint(4) DEFAULT NULL,
