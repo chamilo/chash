@@ -42,6 +42,9 @@ CREATE TABLE IF NOT EXISTS branch_transaction (id bigint unsigned not null AUTO_
 -- ALTER TABLE c_lp_item ADD INDEX idx_c_lp_item_cid_lp_id (c_id, lp_id);
 -- ALTER TABLE c_lp_item_view ADD INDEX idx_c_lp_item_view_cid_lp_view_id_lp_item_id(c_id, lp_view_id, lp_item_id);
 
+ALTER TABLE c_student_publication ADD COLUMN filename varchar(255) DEFAULT NULL;
+ALTER TABLE course ADD COLUMN add_teachers_to_sessions_courses tinyint NOT NULL default 0;
+
 ALTER TABLE c_tool_intro MODIFY COLUMN intro_text MEDIUMTEXT NOT NULL;
 ALTER TABLE user MODIFY COLUMN hr_dept_id int unsigned default 0;
 ALTER TABLE session MODIFY COLUMN nbr_courses int unsigned NOT NULL default 0;
@@ -50,7 +53,6 @@ ALTER TABLE session MODIFY COLUMN nbr_classes int unsigned NOT NULL default 0;
 ALTER TABLE session_rel_course MODIFY COLUMN nbr_users int unsigned NOT NULL default 0;
 ALTER TABLE track_e_exercices MODIFY COLUMN session_id int unsigned NOT NULL default 0;
 ALTER TABLE track_e_exercices MODIFY COLUMN exe_exo_id int unsigned NOT NULL default 0;
-ALTER TABLE c_student_publication ADD COLUMN filename varchar(255) DEFAULT NULL;
 
 TRUNCATE  roles;
 INSERT INTO roles (id, name, role) VALUES('1', 'Teacher', 'ROLE_TEACHER');
@@ -153,4 +155,4 @@ INSERT INTO branch_transaction_status VALUES (1, 'To be executed'), (2, 'Execute
 UPDATE course_field SET field_type = 3 WHERE field_variable = 'special_course';
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.045' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.046' WHERE variable = 'chamilo_database_version';
