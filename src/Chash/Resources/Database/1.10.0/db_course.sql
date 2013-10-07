@@ -2032,3 +2032,13 @@ CREATE TABLE c_student_publication_rel_user (
     user_id INT NOT NULL,
     c_id INT NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS c_student_publication_comment;
+CREATE TABLE c_student_publication_comment (
+  id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  work_id INT NOT NULL,
+  c_id INT NOT NULL,
+  comment text,
+  user_id int NOT NULL,
+  sent_at datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

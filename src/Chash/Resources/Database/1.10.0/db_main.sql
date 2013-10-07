@@ -3581,4 +3581,4 @@ CREATE TABLE curriculum_rel_user (
 
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.046' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.047' WHERE variable = 'chamilo_database_version';
