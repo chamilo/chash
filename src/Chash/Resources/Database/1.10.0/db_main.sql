@@ -968,8 +968,7 @@ VALUES
 ('template', NULL, 'text', 'stylesheets', 'default', 'DefaultTemplateTitle', 'DefaultTemplateComment', NULL, NULL, 1),
 ('breadcrumb_navigation_display', NULL, 'radio', 'Platform','true','BreadcrumbNavigationDisplayTitle', 'BreadcrumbNavigationDisplayComment', NULL, NULL, 1),
 ('default_calendar_view', NULL, 'radio', 'Platform','month','DefaultCalendarViewTitle', 'DefaultCalendarViewComment', NULL, NULL, 1),
-('documents_default_visibility','documents','radio','Tools','visible','DocumentDefaultVisibilityTitle','DocumentDefaultVisibilityComment',NULL, NULL, 1),
-('documents_default_visibility_defined_in_course','documents','checkbox','Tools','false','DocumentsDefaultVisibilityDefinedInCourseTitle','DocumentsDefaultVisibilityDefinedInCourseComment',NULL, NULL, 1),
+('documents_default_visibility_defined_in_course', NULL,'checkbox','Tools','false','DocumentsDefaultVisibilityDefinedInCourseTitle','DocumentsDefaultVisibilityDefinedInCourseComment',NULL, NULL, 1),
 ('chamilo_database_version', NULL, 'textfield', NULL, '1.10.0.001', 'DatabaseVersion', '', NULL, NULL, 0); -- base value, updated at end of file. Don't change here
 
 UNLOCK TABLES;
@@ -1334,8 +1333,6 @@ VALUES
 ('default_calendar_view', 'basicWeek', 'BasicWeek'),
 ('default_calendar_view', 'agendaWeek', 'Week'),
 ('default_calendar_view', 'agendaDay', 'Day'),
-('documents_default_visibility', 'visible', 'Visible'),
-('documents_default_visibility', 'invisible', 'Invisible'),
 ('documents_default_visibility_defined_in_course', 'true', 'Yes'),
 ('documents_default_visibility_defined_in_course', 'false', 'No');
 
@@ -3587,4 +3584,4 @@ CREATE TABLE curriculum_rel_user (
 
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.048' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.049' WHERE variable = 'chamilo_database_version';
