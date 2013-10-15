@@ -39,16 +39,18 @@ class CleanTempFolderCommand extends CommonChamiloDatabaseCommand
 
         $dialog = $this->getHelperSet()->get('dialog');
 
-        if (!$dialog->askConfirmation(
-            $output,
-            '<question>Are you sure you want to clean the Chamilo temp files? (y/N)</question>',
-            false
-        )
-        ) {
-            return;
+        if (PHP_SAPI == 'cli') {
+            if (!$dialog->askConfirmation(
+                $output,
+                '<question>Are you sure you want to clean the Chamilo temp files? (y/N)</question>',
+                false
+            )
+            ) {
+                return;
+            }
         }
 
-        $files = $this->getConfigurationHelper()->getTempFiles();
+        $files = $this->getConfigurationHelper()->getTempFolders();
         $this->removeFiles($files, $output);
     }
 

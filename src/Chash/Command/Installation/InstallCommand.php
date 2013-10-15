@@ -337,7 +337,7 @@ class InstallCommand extends CommonCommand
                     $this->setAdminSettingsInChamilo($output, $this->getHelper('db')->getConnection());
 
                     // Cleaning temp folders.
-                    $command = $this->getApplication()->find('files:CleanTempFolderCommand');
+                    $command = $this->getApplication()->find('files:clean_temp_folder');
                     $arguments = array(
                         'command' => 'files:clean_temp_folder',
                         '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
