@@ -24,7 +24,7 @@ class CleanTempFolderCommand extends CommonChamiloDatabaseCommand
         parent::configure();
         $this
             ->setName('files:clean_temp_folder')
-            ->setDescription('Cleans the temp directory');
+            ->setDescription('Cleans the temp directory.');
     }
 
     /**
