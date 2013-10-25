@@ -1658,6 +1658,13 @@ CREATE TABLE IF NOT EXISTS access_url_rel_usergroup (
   PRIMARY KEY (access_url_id, usergroup_id)
 );
 
+DROP TABLE IF EXISTS access_url_rel_course_category;
+CREATE TABLE IF NOT EXISTS access_url_rel_course_category (
+  access_url_id int unsigned NOT NULL,
+  course_category_id int unsigned NOT NULL,
+  PRIMARY KEY (access_url_id, course_category_id)
+);
+
 --
 -- Table structure for table sys_calendar
 --
@@ -3591,4 +3598,4 @@ CREATE TABLE curriculum_rel_user (
 
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.050' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.051' WHERE variable = 'chamilo_database_version';
