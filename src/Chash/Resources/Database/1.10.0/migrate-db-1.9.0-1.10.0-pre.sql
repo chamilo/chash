@@ -16,7 +16,7 @@
 -- Optimize tracking query very often queried on busy campuses
 
 DROP TABLE IF EXISTS php_session;
-CREATE TABLE IF NOT EXISTS php_session( session_id varchar(255) NOT NULL, session_value text NOT NULL, session_time int NOT NULL, PRIMARY KEY (session_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS php_session(session_id varchar(255) NOT NULL, session_value LONGTEXT NOT NULL, session_time int NOT NULL, PRIMARY KEY (session_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS session_field_options (id int unsigned NOT NULL auto_increment, field_id int NOT NULL, option_value text, option_display_text varchar(255), option_order int, tms DATETIME NOT NULL default '0000-00-00 00:00:00', PRIMARY KEY (id));
 CREATE TABLE IF NOT EXISTS course_field_options (id int NOT NULL auto_increment, field_id int NOT NULL, option_value text, option_display_text varchar(255), option_order int, tms DATETIME NOT NULL default '0000-00-00 00:00:00', PRIMARY KEY (id));
@@ -165,4 +165,4 @@ INSERT INTO branch_transaction_status VALUES (1, 'To be executed'), (2, 'Execute
 UPDATE course_field SET field_type = 3 WHERE field_variable = 'special_course';
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.051' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.052' WHERE variable = 'chamilo_database_version';

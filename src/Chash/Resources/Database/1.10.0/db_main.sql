@@ -490,7 +490,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS php_session;
 CREATE TABLE IF NOT EXISTS php_session (
   session_id varchar(255) NOT NULL,
-  session_value text NOT NULL,
+  session_value LONGTEXT NOT NULL,
   session_time int NOT NULL,
   PRIMARY KEY (session_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -3596,4 +3596,4 @@ CREATE TABLE curriculum_rel_user (
 
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.051' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.052' WHERE variable = 'chamilo_database_version';
