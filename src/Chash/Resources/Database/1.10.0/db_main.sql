@@ -489,13 +489,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS php_session;
 CREATE TABLE IF NOT EXISTS php_session (
-  session_id varchar(32) NOT NULL default '',
-  session_name varchar(10) NOT NULL default '',
-  session_time int NOT NULL default '0',
-  session_start int NOT NULL default '0',
-  session_value mediumtext NOT NULL,
+  session_id varchar(255) NOT NULL,
+  session_value text NOT NULL,
+  session_time int NOT NULL,
   PRIMARY KEY (session_id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Table structure for table session

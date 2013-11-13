@@ -593,8 +593,6 @@ class CommonCommand extends AbstractCommand
 
         // Hash function method
         $configuration['password_encryption']      = $portalSettings['encrypt_method'];
-        // You may have to restart your web server if you change this
-        $configuration['session_stored_in_db']     = false;
         // Session lifetime
         $configuration['session_lifetime']         = 3600;
         // Activation for multi-url access
