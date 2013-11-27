@@ -12,6 +12,10 @@ use Alchemy\Zippy\Zippy;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputInterface;
 
+/**
+ * Class CommonCommand
+ * @package Chash\Command\Installation
+ */
 class CommonCommand extends AbstractCommand
 {
     public $portalSettings;
@@ -48,7 +52,7 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * @return null
+     * @return string
      */
     public function getConfigurationPath()
     {
@@ -133,6 +137,9 @@ class CommonCommand extends AbstractCommand
         $this->adminSettings = $adminSettings;
     }
 
+    /**
+     * @return array
+     */
     public function getAdminSettings()
     {
         return $this->adminSettings;
@@ -655,8 +662,8 @@ class CommonCommand extends AbstractCommand
      * Updates the configuration.yml file
      *
      * @param OutputInterface $output
-     * @param $dryRun
-     * @param $newValues
+     * @param bool $dryRun
+     * @param array $newValues
      * @return bool
      */
     public function updateConfiguration(OutputInterface $output, $dryRun, $newValues)
@@ -1053,7 +1060,7 @@ class CommonCommand extends AbstractCommand
 
                 return $chamiloLocationPath;
             } else {
-                $output->writeln("<comment>File doesn't exists.</comment>");
+                $output->writeln("<comment>File doesn't exist.</comment>");
                 return 0;
             }
         }
@@ -1068,7 +1075,7 @@ class CommonCommand extends AbstractCommand
     {
         $singleDatabase = isset($_configuration['single_database']) ? $_configuration['single_database'] : false;
         $tablePrefix = isset($_configuration['table_prefix']) ? $_configuration['table_prefix'] : null;
-        $db_prefix = isset($_configuration['db_prefix']) ? $_configuration['db_prefix'] : null;
+        //$db_prefix = isset($_configuration['db_prefix']) ? $_configuration['db_prefix'] : null;
 
         if ($singleDatabase) {
             // the $courseDatabase already contains the $db_prefix;
@@ -1084,6 +1091,7 @@ class CommonCommand extends AbstractCommand
      * @param OutputInterface $output
      * @param string $chamiloLocationPath
      * @param string $destinationPath
+     * @return int
      */
     public function copyPackageIntoSystem(OutputInterface $output, $chamiloLocationPath, $destinationPath)
     {
@@ -1111,10 +1119,10 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * @param $output
+     * @param OutputInterface $output
      * @param string $title
      */
-    public function writeCommandHeader($output, $title)
+    public function writeCommandHeader(OutputInterface $output, $title)
     {
         $output->writeln('<comment>-----------------------------------------------</comment>');
         $output->writeln('<comment>'.$title.'</comment>');
