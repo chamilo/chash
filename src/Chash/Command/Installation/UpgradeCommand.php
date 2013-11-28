@@ -35,14 +35,14 @@ class UpgradeCommand extends CommonCommand
     {
         $this
             ->setName('chamilo:upgrade')
-            ->setDescription('Execute a chamilo migration to a specified version or the latest available version.')
-            ->addArgument('version', InputArgument::REQUIRED, 'The version to migrate to.', null)
+            ->setDescription('Execute a chamilo migration to a specified version or the latest available version')
+            ->addArgument('version', InputArgument::REQUIRED, 'The version to migrate to', null)
             ->addOption('path', null, InputOption::VALUE_OPTIONAL, 'The path to the chamilo folder')
-            ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Execute the migration as a dry run.')
+            ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Execute the migration as a dry run')
             ->addOption('update-installation', null, InputOption::VALUE_OPTIONAL, 'Updates the portal with the current zip file. http:// or /var/www/file.zip')
-            ->addOption('temp-folder', null, InputOption::VALUE_OPTIONAL, 'The temp folder.', '/tmp')
-            ->addOption('download-package', null, InputOption::VALUE_OPTIONAL, 'Downloads the chamilo package', 'true')
-            ->addOption('silent', null, InputOption::VALUE_NONE, 'Execute the migration with out asking questions.')
+            ->addOption('temp-folder', null, InputOption::VALUE_OPTIONAL, 'The temp folder', '/tmp')
+            ->addOption('download-package', null, InputOption::VALUE_OPTIONAL, 'Download the chamilo package', 'true')
+            ->addOption('silent', null, InputOption::VALUE_NONE, 'Execute the migration without asking questions')
             ->addOption('linux-user', null, InputOption::VALUE_OPTIONAL, 'user', 'www-data')
             ->addOption('linux-group', null, InputOption::VALUE_OPTIONAL, 'group', 'www-data');
             //->addOption('force', null, InputOption::VALUE_NONE, 'Force the update. Only for tests');
@@ -121,7 +121,7 @@ class UpgradeCommand extends CommonCommand
 
         // Checking configuration file.
         if (!is_writable($configurationPath)) {
-            $output->writeln("<comment>Folder ".$configurationPath." must have writable permissions</comment>");
+            $output->writeln("<comment>Folder ".$configurationPath." must have writeable permissions</comment>");
             return 0;
         }
         $this->setConfigurationPath($configurationPath);
@@ -131,7 +131,7 @@ class UpgradeCommand extends CommonCommand
         if (isset($_configuration['password_encryption'])) {
             $output->writeln("<comment> \$_configuration[password_encryption] value found: </comment><info>".$_configuration['password_encryption']."</info>");
         } else {
-            $output->writeln("<error>\$_configuration['password_encryption'] not found. The key 'password_encryption' or the variable '\$userPasswordCrypted' must exists in the configuration.php file </error>");
+            $output->writeln("<error>\$_configuration['password_encryption'] not found. The key 'password_encryption' or the variable '\$userPasswordCrypted' must exist in the configuration.php file </error>");
             return 0;
         }
 
@@ -166,7 +166,7 @@ class UpgradeCommand extends CommonCommand
         // Checking system_version.
 
         if (!isset($_configuration['system_version']) || empty($_configuration['system_version'])) {
-            $output->writeln("<comment>You have something wrong in your Chamilo installation. Check it with the chamilo:status command</comment>");
+            $output->writeln("<comment>There is something wrong in your Chamilo installation. Check it with the chamilo:status command</comment>");
             return 0;
         }
 
@@ -193,7 +193,7 @@ class UpgradeCommand extends CommonCommand
         $versionInfo = $this->getAvailableVersionInfo($version);
 
         if (empty($versionInfo)) {
-            $output->writeln("<comment>The version is not supported: $version</comment>");
+            $output->writeln("<comment>The current version ($version) is not supported</comment>");
             return 0;
         }
 
@@ -227,12 +227,12 @@ class UpgradeCommand extends CommonCommand
 
         if ($dryRun == false) {
             if ($downloadPackage) {
-                $output->writeln("<comment>When the installation process finished the files located here:<comment>");
+                $output->writeln("<comment>When the installation process finishes, the files located here:<comment>");
                 $output->writeln("<info>$chamiloLocationPath</info>");
-                $output->writeln("<comment>will be copied in your portal here: </comment><info>".$this->getRootSys()."</info>");
+                $output->writeln("<comment>will be copied to your portal here: </comment><info>".$this->getRootSys()."</info>");
             }
         } else {
-            $output->writeln("<comment>When the installation process finished PHP files are not going to be updated (--dry-run is on).</comment>");
+            $output->writeln("<comment>When the installation process finishes, PHP files are not going to be updated (--dry-run is on).</comment>");
         }
 
         if ($silent == false) {
@@ -249,7 +249,7 @@ class UpgradeCommand extends CommonCommand
             $dialog = $this->getHelperSet()->get('dialog');
             if (!$dialog->askConfirmation(
                 $output,
-                '<question>Are you sure you want to upgrade from version</question> <info>'.$_configuration['system_version'].'</info> <comment>to version </comment><info>'.$version.'</info> (y/N)',
+                '<question>Are you sure you want to upgrade from version</question> <info>'.$_configuration['system_version'].'</info> <comment>to version</comment> <info>'.$version.'</info> (y/N)',
                 false
             )
             ) {
@@ -302,7 +302,7 @@ class UpgradeCommand extends CommonCommand
         foreach ($versionList as $versionItem => $versionInfo) {
             if (version_compare($versionItem, $currentVersion, '>') && version_compare($versionItem, $version, '<=')) {
                 $output->writeln("----------------------------------------------------------------");
-                $output->writeln("<comment>Starting migration from version: </comment><info>$oldVersion</info><comment> to </comment><info>$versionItem ");
+                $output->writeln("<comment>Starting migration from version: </comment><info>$oldVersion</info><comment> to version </comment><info>$versionItem ");
                 $output->writeln("");
 
                 if (isset($versionInfo['require_update']) && $versionInfo['require_update'] == true) {
@@ -353,10 +353,10 @@ class UpgradeCommand extends CommonCommand
         $newParams = array('system_version' => $version);
         $this->updateConfiguration($output, $dryRun, $newParams);
 
-        $output->writeln("<comment>Hurrah!!! You just finish to migrate. Too check the current status of your platform. Run </comment><info>chamilo:status</info>");
+        $output->writeln("<comment>Hurray!!! You just finished this migration. To check the current status of your platform, run </comment><info>chamilo:status</info>");
         $endTime = time();
-        $totalTimeInSeconds = round(($endTime - $startTime)/60, 2);
-        $output->writeln("<comment>The script took $totalTimeInSeconds minutes.</comment>");
+        $totalTimeInMinutes = round(($endTime - $startTime)/60, 2);
+        $output->writeln("<comment>The script took $totalTimeInMinutes minutes to execute.</comment>");
     }
 
     /**
@@ -520,7 +520,7 @@ class UpgradeCommand extends CommonCommand
             foreach ($dbList as &$dbInfo) {
 
                 $output->writeln("");
-                $output->writeln("<comment>Loading section:</comment> <info>$section</info> <comment>using database key </comment><info>".$dbInfo['database']."</info>");
+                $output->writeln("<comment>Loading section:</comment> <info>$section</info> <comment>using database key</comment> <info>".$dbInfo['database']."</info>");
                 $output->writeln("--------------------------");
 
                 if ($dbInfo['status'] == 'complete') {
@@ -533,7 +533,7 @@ class UpgradeCommand extends CommonCommand
                     !empty($this->queryList[$type][$section])
                 ) {
                     $queryList = $this->queryList[$type][$section];
-                    $output->writeln("<comment>Loading query list: '$type' - '$section'</comment>");
+                    $output->writeln("<comment>Loading queries list: '$type' - '$section'</comment>");
 
                     if (!empty($queryList)) {
 
@@ -728,7 +728,7 @@ class UpgradeCommand extends CommonCommand
         $newConfigurationFile = $configurationPath.'db_migration_status_'.$version.'_'.$type.'.yml';
         if (file_exists($newConfigurationFile)) {
             $yaml = new Parser();
-            $output->writeln("<comment>Loading database list status from file:</comment> <info>$newConfigurationFile</info>");
+            $output->writeln("<comment>Loading databases list status from file:</comment> <info>$newConfigurationFile</info>");
 
             return $yaml->parse(file_get_contents($newConfigurationFile));
         } else {
@@ -865,7 +865,7 @@ class UpgradeCommand extends CommonCommand
     {
 
         if ($dryRun) {
-            $output->writeln("<comment>Creating c_* tables but dry-run is on. 0 tables created.</comment>");
+            $output->writeln("<comment>Creating c_* tables but dry-run is on. 0 table created.</comment>");
             return 0;
         }
 
