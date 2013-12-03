@@ -383,7 +383,7 @@ class UpgradeCommand extends CommonCommand
         $versionInfo = $this->getAvailableVersionInfo($toVersion);
         $installPath = $this->getInstallationFolder().$toVersion.'/';
 
-        $output->writeln("<comment>Reading installation directory for version $toVersion: <info>'$installPath'</info>");
+        $output->writeln("<comment>Reading installation directory for version $toVersion: <info>'$installPath'</info></comment>");
 
         // Filling sqlList array with "pre" db changes.
         if (isset($versionInfo['pre']) && !empty($versionInfo['pre'])) {
