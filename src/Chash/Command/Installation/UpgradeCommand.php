@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class UpgradeCommand
@@ -59,6 +60,7 @@ class UpgradeCommand extends CommonCommand
     protected function execute(Console\Input\InputInterface $input, Console\Output\OutputInterface $output)
     {
         $startTime = time();
+
         if (PHP_SAPI != 'cli') {
             $this->commandLine = false;
         }
@@ -76,7 +78,6 @@ class UpgradeCommand extends CommonCommand
 
         $inputSetup = new ArrayInput($arguments);
         $command->run($inputSetup, $output);
-
         $migrationFile = $command->getMigrationFile();
 
         if (empty($migrationFile) || !file_exists($migrationFile)) {
@@ -84,13 +85,15 @@ class UpgradeCommand extends CommonCommand
             return 0;
         }
 
-        // Checking Resources/Database dir
-        $migrationFileFolder = $this->getInstallationFolder();
-        if (!is_dir($migrationFileFolder)) {
-            $output->writeln("<comment>The migration directory was not detected: </comment><info>$migrationFileFolder</info>");
+        // Checking Resources/Database dir. Getting the Resources/Database/1.8.7/db_main.sql.
+        $testFolder = $this->getInstallationFolder().'1.8.7/db_main.sql';
+        $installationFolder = $this->getInstallationFolder();
+
+        if (!file_exists($testFolder)) {
+            $output->writeln("<error>The migration directory was not detected: </error><info>$installationFolder</info>");
             return 0;
         } else {
-            $output->writeln("<comment>Reading migrations from directory: </comment><info>$migrationFileFolder</info>");
+            $output->writeln("<comment>Reading migrations from directory: </comment><info>$installationFolder</info>");
         }
 
         $this->setMigrationConfigurationFile($command->getMigrationFile());
@@ -369,6 +372,7 @@ class UpgradeCommand extends CommonCommand
      * @param Console\Output\OutputInterface $output
      *
      * @return bool
+     * @throws \Exception
      */
     public function startMigration($courseList, $path, $toVersion, $dryRun, Console\Output\OutputInterface $output)
     {
@@ -447,16 +451,20 @@ class UpgradeCommand extends CommonCommand
         if (isset($versionInfo['update_db']) && !empty($versionInfo['update_db'])) {
             $sqlToInstall = $installPath.$versionInfo['update_db'];
             if (is_file($sqlToInstall) && file_exists($sqlToInstall)) {
+
                 if ($dryRun) {
                     $output->writeln("<comment>File to be executed but not fired because of dry-run option: <info>'$sqlToInstall'</info>");
                 } else {
                     $output->writeln("<comment>Executing update db: <info>'$sqlToInstall'</info>");
                 }
+
                 require $sqlToInstall;
 
                 if (!empty($update)) {
                     $update($_configuration, $conn, $courseList, $dryRun, $output, $this);
                 }
+            } else {
+                $output->writeln(sprintf("File doesn't exist: '<info>%s</info>'", $sqlToInstall));
             }
         }
 
@@ -475,6 +483,8 @@ class UpgradeCommand extends CommonCommand
                         $updateFiles($_configuration, $conn, $courseList, $dryRun, $output, $this);
                     }
                 }
+            } else {
+                $output->writeln(sprintf("File doesn't exist: '<info>%s</info>'", $sqlToInstall));
             }
         }
 
@@ -504,10 +514,12 @@ class UpgradeCommand extends CommonCommand
      *
      * Process the queryList array and executes queries to the correct section (main, user, course, etc)
      *
-     * @param array course list
+     * @param array $courseList
      * @param $output
+     * @param $path
      * @param $version
      * @param $dryRun
+     * @param $type
      * @return bool
      * @throws \Exception
      */
@@ -586,7 +598,6 @@ class UpgradeCommand extends CommonCommand
                     return false;
                 }
             }
-
         }
         $this->queryList = array();
 
@@ -603,16 +614,12 @@ class UpgradeCommand extends CommonCommand
      */
     public function fillQueryList($sqlFilePath, $output, $type)
     {
-        if (is_file($sqlFilePath) && file_exists($sqlFilePath)) {
-            $output->writeln(sprintf("Processing file type: $type '<info>%s</info>'... ", $sqlFilePath));
-            $sections = $this->getSections();
+        $output->writeln(sprintf("Processing file type: $type '<info>%s</info>'... ", $sqlFilePath));
+        $sections = $this->getSections();
 
-            foreach ($sections as $section) {
-                $sqlList = $this->getSQLContents($sqlFilePath, $section);
-                $this->setQueryList($sqlList, $section, $type);
-            }
-        } else {
-            $output->writeln(sprintf("File doesn't exist: '<info>%s</info>'... ", $sqlFilePath));
+        foreach ($sections as $section) {
+            $sqlList = $this->getSQLContents($sqlFilePath, $section, $output);
+            $this->setQueryList($sqlList, $section, $type);
         }
     }
 
@@ -713,7 +720,8 @@ class UpgradeCommand extends CommonCommand
     }
 
     /**
-     *
+     * @param $output
+     * @param array $courseList
      * @param string $path
      * @param string $version
      * @param string $type
@@ -757,7 +765,7 @@ class UpgradeCommand extends CommonCommand
     }
 
     /**
-     *
+     * @param $output
      * @param array $courseList
      * @param string $path
      * @param string $section
@@ -779,54 +787,33 @@ class UpgradeCommand extends CommonCommand
      *
      * @param string $file
      * @param string $section
-     * @param bool $printErrors
+     * @param bool $output
      *
      * @return array|bool
      */
-    public function getSQLContents($file, $section, $printErrors = true)
+    public function getSQLContents($file, $section, $output)
     {
-        //check given parameters
-        if (empty($file)) {
-            $error = "Missing name of file to parse in get_sql_file_contents()";
-            if ($printErrors) {
-                echo $error;
-            }
-
+        if (empty($file) || file_exists($file) == false) {
+            $output->writeln(sprintf("File doesn't exist: '<info>%s</info>'... ", $file));
             return false;
         }
+
         if (!in_array($section, array('main', 'user', 'stats', 'scorm', 'course'))) {
-            $error = "Section '$section' is not authorized in getSQLContents()";
-            if ($printErrors) {
-                echo $error;
-            }
-
+            $output->writeln(sprintf("Section is <info>%s</info> not authorized in getSQLContents()", $section));
             return false;
         }
-        $filepath = $file;
-        if (!is_file($filepath) or !is_readable($filepath)) {
-            $error = "File $filepath not found or not readable in getSQLContents()";
-            if ($printErrors) {
-                echo $error;
-            }
 
-            return false;
-        }
-        //read the file in an array
         // Empty lines should not be executed as SQL statements, because errors occur, see Task #2167.
-        $file_contents = file($filepath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        if (!is_array($file_contents) or count($file_contents) < 1) {
-            $error = "File $filepath looks empty in getSQLContents()";
-            if ($printErrors) {
-                echo $error;
-            }
-
+        $fileContents = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if (!is_array($fileContents) or count($fileContents) < 1) {
+            $output->writeln(sprintf("File '<info>%s</info>' looks empty in getSQLContents()", $file));
             return false;
         }
 
-        //prepare the resulting array
-        $section_contents = array();
+        // Prepare the resulting array
+        $sectionContents = array();
         $record = false;
-        foreach ($file_contents as $line) {
+        foreach ($fileContents as $line) {
             if (substr($line, 0, 2) == '--') {
                 //This is a comment. Check if section name, otherwise ignore
                 $result = array();
@@ -845,15 +832,13 @@ class UpgradeCommand extends CommonCommand
             } else {
                 if ($record) {
                     if (!empty($line)) {
-                        $section_contents[] = $line;
+                        $sectionContents[] = $line;
                     }
                 }
             }
         }
 
-        // Now we have our section's SQL statements group ready, return
-
-        return $section_contents;
+        return $sectionContents;
     }
 
     /**

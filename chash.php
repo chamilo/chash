@@ -6,16 +6,12 @@
  * https://speakerdeck.com/hhamon/symfony-extending-the-console-component
  * http://symfony.com/doc/2.0/components/console/introduction.html
  *
- * @author Yannick Warnier <yannick.warnier@beeznest.com>
  * @author Julio Montoya <gugli100@gmail.com>
- * @version 2.0
+ * @author Yannick Warnier <yannick.warnier@beeznest.com>
  * @license This script is provided under the terms of the GNU/GPLv3+ license
  */
 
-/**
- * Security check: do not allow any other calling method than command-line
- */
-
+/* Security check: do not allow any other calling method than command-line */
 if (PHP_SAPI != 'cli') {
     die("Chash cannot be called by any other method than the command line.");
 }
@@ -90,8 +86,3 @@ $application->addCommands(
     )
 );
 $application->run();
-
-//Interactive shell
-//$shell = new Console\Shell($application);
-//$shell->run();
-

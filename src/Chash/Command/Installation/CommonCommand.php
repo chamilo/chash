@@ -182,7 +182,9 @@ class CommonCommand extends AbstractCommand
      */
     public function getInstallationFolder()
     {
-        return realpath(__DIR__.'/../../Resources/Database').'/';
+
+        $chashFolder = dirname(dirname(dirname(__FILE__)));
+        return $chashFolder.'/Resources/Database/';
     }
 
     /**
@@ -507,9 +509,9 @@ class CommonCommand extends AbstractCommand
             ),
             '1.11.0'  => array(
                 'require_update' => true,
-                'pre' => 'pre.sql',
+                /*'pre' => 'pre.sql',
                 'post' => 'post.sql',
-                'update_db' => 'update.php',
+                'update_db' => 'update.php',*/
                 'update_files' => null,
                 'hook_to_doctrine_version' => '11'
             ),
