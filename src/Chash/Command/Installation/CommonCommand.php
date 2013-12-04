@@ -188,6 +188,21 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
+     * Gets the installation version path
+     *
+     * @param string $version
+     *
+     * @return string
+     */
+    public function getInstallationPath($version)
+    {
+        if ($version == 'master') {
+            $version = $this->getLatestVersion();
+        }
+        return $this->getInstallationFolder().$version.'/';
+    }
+
+    /**
      * Gets the version name folders located in main/install
      *
      * @return array
@@ -376,21 +391,6 @@ class CommonCommand extends AbstractCommand
                 'type' => 'password'
             )
         );
-    }
-
-    /**
-     * Gets the installation version path
-     *
-     * @param string $version
-     *
-     * @return string
-     */
-    public function getInstallationPath($version)
-    {
-        if ($version == 'master') {
-            $version = $this->getLatestVersion();
-        }
-        return __DIR__.'/../../Resources/Database/'.$version.'/';
     }
 
     /**
