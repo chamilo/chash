@@ -45,7 +45,9 @@ class UpgradeCommand extends CommonCommand
             ->addOption('download-package', null, InputOption::VALUE_OPTIONAL, 'Download the chamilo package', 'true')
             ->addOption('silent', null, InputOption::VALUE_NONE, 'Execute the migration without asking questions')
             ->addOption('linux-user', null, InputOption::VALUE_OPTIONAL, 'user', 'www-data')
-            ->addOption('linux-group', null, InputOption::VALUE_OPTIONAL, 'group', 'www-data');
+            ->addOption('linux-group', null, InputOption::VALUE_OPTIONAL, 'group', 'www-data')
+            ->addOption('custom-package', null, InputOption::VALUE_OPTIONAL, 'Custom zip package location.', '')
+        ;
             //->addOption('force', null, InputOption::VALUE_NONE, 'Force the update. Only for tests');
     }
 
@@ -105,6 +107,12 @@ class UpgradeCommand extends CommonCommand
         $silent = $input->getOption('silent') == true;
         $tempFolder = $input->getOption('temp-folder');
         $downloadPackage = $input->getOption('download-package') == 'true' ? true : false;
+
+        $customPackage = $input->getOption('custom-package');
+        if (!empty($customPackage)) {
+            $downloadPackage = false;
+        }
+
         $updateInstallation = $input->getOption('update-installation');
 
         // Setting the configuration path and configuration array
@@ -127,6 +135,7 @@ class UpgradeCommand extends CommonCommand
             $output->writeln("<comment>Folder ".$configurationPath." must have writeable permissions</comment>");
             return 0;
         }
+
         $this->setConfigurationPath($configurationPath);
 
         // $_configuration['password_encryption'] must exists
@@ -222,6 +231,10 @@ class UpgradeCommand extends CommonCommand
                 if (empty($chamiloLocationPath)) {
                     $output->writeln("<comment>Chash was not able to unzip the downloaded package for version: $originalVersion</comment>");
                     return 0;
+                }
+            } else {
+                if (!empty($customPackage)) {
+                    $chamiloLocationPath = $customPackage;
                 }
             }
         }
@@ -319,7 +332,7 @@ class UpgradeCommand extends CommonCommand
             }
         }
 
-        // Update chamilo files
+        // Update chamilo files.
         if ($dryRun == false) {
             $this->copyPackageIntoSystem($output, $chamiloLocationPath, null);
             if ($version == '1.10.0') {
