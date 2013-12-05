@@ -35,7 +35,7 @@ $application->addCommands(
     array(
         // DBAL Commands.
         new \Doctrine\DBAL\Tools\Console\Command\RunSqlCommand(),
-        new \Doctrine\DBAL\Tools\Console\Command\ImportCommand(),
+        //new \Doctrine\DBAL\Tools\Console\Command\ImportCommand(),
 
         // Migrations Commands.
         new \Doctrine\DBAL\Migrations\Tools\Console\Command\DiffCommand(),
@@ -51,6 +51,7 @@ $application->addCommands(
         new Chash\Command\Chash\SelfUpdateCommand(),
 
         new Chash\Command\Database\RunSQLCommand(),
+        new Chash\Command\Database\ImportCommand(),
         new Chash\Command\Database\DumpCommand(),
         new Chash\Command\Database\RestoreCommand(),
         new Chash\Command\Database\SQLCountCommand(),
