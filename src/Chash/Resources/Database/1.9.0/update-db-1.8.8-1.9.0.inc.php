@@ -315,7 +315,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                     $old_table = $prefix.$table;
 
                     $course_id = $row_course['id'];
-                    $new_table = DB_COURSE_PREFIX.$table;
+                    $newTable = DB_COURSE_PREFIX.$table;
 
                     $sm = $courseConnection->getSchemaManager();
                     $tableExists = $sm->tablesExist($old_table);
@@ -357,8 +357,24 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                                                 $row['post_id'] = 0;
                                             }
                                             break;
+                                        case 'wiki_conf':
+                                            /*
+                                                Bug in wiki_conf check if there's already a key courseId/pageId
+                                                if so then just skip inserting the same page_ids.
+                                            */
+                                            $pageId = $row['page_id'];
+                                            $sql = "SELECT COUNT(page_id) as count FROM $newTable
+                                                    WHERE page_id = $pageId AND c_id = $course_id";
+                                            $result = $mainConnection->executeQuery($sql);
+                                            $rowResult = $result->fetch();
+                                            if ($rowResult['count'] > 1) {
+                                                $output->writeln("Skipping content of the c_wiki_conf:");
+                                                $output->writeln(print_r($row, 1));
+                                                continue;
+                                            }
+                                            break;
                                     }
-                                    $mainConnection->insert($new_table, $row);
+                                    $mainConnection->insert($newTable, $row);
                                     $id = $mainConnection->lastInsertId();
                                 }
 
@@ -370,13 +386,13 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                             }
 
                             if ($dryRun) {
-                                // $output->writeln("$count/$oldCount rows to be inserted in $new_table");
+                                // $output->writeln("$count/$oldCount rows to be inserted in $newTable");
                             } else {
-                                //$output->writeln("$count/$oldCount rows inserted in $new_table");
+                                //$output->writeln("$count/$oldCount rows inserted in $newTable");
                             }
 
                             if ($oldCount != $count) {
-                                $output->writeln("<error>Count of new and old table doesn't match: $oldCount - $new_table</error>");
+                                $output->writeln("<error>Count of new and old table doesn't match: $oldCount - $newTable</error>");
                             }
                         }
                     } else {
@@ -388,7 +404,6 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
 
             $progress->finish();
             $output->writeln("<comment>End course migration.</comment>");
-
 
             /* Start work fix */
             $output->writeln("<comment>Starting work fix:</comment>");
