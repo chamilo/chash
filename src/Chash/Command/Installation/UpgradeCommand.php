@@ -528,7 +528,7 @@ class UpgradeCommand extends CommonCommand
      * Process the queryList array and executes queries to the correct section (main, user, course, etc)
      *
      * @param array $courseList
-     * @param $output
+     * @param Console\Output\OutputInterface $output
      * @param $path
      * @param $version
      * @param $dryRun
@@ -622,7 +622,7 @@ class UpgradeCommand extends CommonCommand
      * Reads a sql file and adds queries  in the queryList array.
      *
      * @param string $sqlFilePath
-     * @param $output
+     * @param Console\Output\OutputInterface $output
      * @param string type
      */
     public function fillQueryList($sqlFilePath, $output, $type)
@@ -725,7 +725,7 @@ class UpgradeCommand extends CommonCommand
 
     /**
      * Sets the database list
-     * @param $list
+     * @param array $list
      */
     public function setDatabaseList($list)
     {
@@ -733,7 +733,7 @@ class UpgradeCommand extends CommonCommand
     }
 
     /**
-     * @param $output
+     * @param Console\Output\OutputInterface $output
      * @param array $courseList
      * @param string $path
      * @param string $version
@@ -778,7 +778,7 @@ class UpgradeCommand extends CommonCommand
     }
 
     /**
-     * @param $output
+     * @param Console\Output\OutputInterface $output
      * @param array $courseList
      * @param string $path
      * @param string $section
@@ -800,7 +800,7 @@ class UpgradeCommand extends CommonCommand
      *
      * @param string $file
      * @param string $section
-     * @param bool $output
+     * @param Console\Output\OutputInterface $output
      *
      * @return array|bool
      */
@@ -856,12 +856,11 @@ class UpgradeCommand extends CommonCommand
 
     /**
      * Creates the course tables with the prefix c_
-     * @param $output
+     * @param Console\Output\OutputInterface $output
      * @param string $dryRun
      */
     public function createCourseTables($output, $dryRun)
     {
-
         if ($dryRun) {
             $output->writeln("<comment>Creating c_* tables but dry-run is on. 0 table created.</comment>");
             return 0;
