@@ -367,10 +367,10 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                                                     WHERE page_id = $pageId AND c_id = $course_id";
                                             $result = $mainConnection->executeQuery($sql);
                                             $rowResult = $result->fetch();
-                                            if ($rowResult['count'] > 1) {
+                                            if ($rowResult['count'] >= 1) {
                                                 $output->writeln("Skipping content of the c_wiki_conf:");
                                                 $output->writeln(print_r($row, 1));
-                                                continue;
+                                                continue 2;
                                             }
                                             break;
                                     }
@@ -428,6 +428,8 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
 
                     $course_dir 		= $sysCoursePath.'/'.$course['directory'];
                     $base_work_dir 		= $course_dir.'/work';
+
+                    $output->writeln("<comment>Using 'base_work_dir': $base_work_dir.</comment>");
 
                     //2. Looping if there are works with no parents
                     if (!empty($work_list)) {
