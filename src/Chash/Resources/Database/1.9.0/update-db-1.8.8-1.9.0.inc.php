@@ -356,6 +356,9 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                                             if (empty($row['post_id'])) {
                                                 $row['post_id'] = 0;
                                             }
+                                            if (empty($row['forum_id'])) {
+                                                $row['forum_id'] = 0;
+                                            }
                                             break;
                                         case 'wiki_conf':
                                             /*

@@ -858,6 +858,7 @@ class UpgradeCommand extends CommonCommand
      * Creates the course tables with the prefix c_
      * @param Console\Output\OutputInterface $output
      * @param string $dryRun
+     * @return int
      */
     public function createCourseTables($output, $dryRun)
     {
