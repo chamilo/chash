@@ -47,6 +47,7 @@ class UpgradeCommand extends CommonCommand
             ->addOption('linux-user', null, InputOption::VALUE_OPTIONAL, 'user', 'www-data')
             ->addOption('linux-group', null, InputOption::VALUE_OPTIONAL, 'group', 'www-data')
             ->addOption('custom-package', null, InputOption::VALUE_OPTIONAL, 'Custom zip package location.', '')
+            ->addOption('remove-unused-table', null, InputOption::VALUE_NONE, 'Remove unused tables.')
         ;
             //->addOption('force', null, InputOption::VALUE_NONE, 'Force the update. Only for tests');
     }
@@ -66,6 +67,8 @@ class UpgradeCommand extends CommonCommand
         if (PHP_SAPI != 'cli') {
             $this->commandLine = false;
         }
+
+        $removeUnusedTables = $input->getOption('remove-unused-table');
 
         // Setting up Chash
         $command = $this->getApplication()->find('chash:setup');
@@ -247,6 +250,10 @@ class UpgradeCommand extends CommonCommand
                 $output->writeln("<info>$chamiloLocationPath</info>");
                 $output->writeln("<comment>will be copied to your portal here: </comment><info>".$this->getRootSys()."</info>");
             }
+            if ($removeUnusedTables) {
+                $output->writeln("<comment>Unused tables will be removed.<comment>");
+            }
+
         } else {
             $output->writeln("<comment>When the installation process finishes, PHP files are not going to be updated (--dry-run is on).</comment>");
         }
@@ -323,7 +330,7 @@ class UpgradeCommand extends CommonCommand
 
                 if (isset($versionInfo['require_update']) && $versionInfo['require_update'] == true) {
                     // Greater than my current version.
-                    $this->startMigration($courseList, $path, $versionItem, $dryRun, $output);
+                    $this->startMigration($courseList, $path, $versionItem, $dryRun, $output, $removeUnusedTables);
                     $oldVersion = $versionItem;
                     $output->writeln("----------------------------------------------------------------");
                 } else {
@@ -387,7 +394,7 @@ class UpgradeCommand extends CommonCommand
      * @return bool
      * @throws \Exception
      */
-    public function startMigration($courseList, $path, $toVersion, $dryRun, Console\Output\OutputInterface $output)
+    public function startMigration($courseList, $path, $toVersion, $dryRun, Console\Output\OutputInterface $output, $removeUnusedTables = false)
     {
         // Cleaning query list.
         $this->queryList = array();
@@ -474,7 +481,7 @@ class UpgradeCommand extends CommonCommand
                 require $sqlToInstall;
 
                 if (!empty($update)) {
-                    $update($_configuration, $conn, $courseList, $dryRun, $output, $this);
+                    $update($_configuration, $conn, $courseList, $dryRun, $output, $this, $removeUnusedTables);
                 }
             } else {
                 $output->writeln(sprintf("File doesn't exist: '<info>%s</info>'", $sqlToInstall));

@@ -1,7 +1,7 @@
 <?php
 /* For licensing terms, see /license.txt */
 
-$update = function ($_configuration, $mainConnection, $courseList, $dryRun, $output, $upgrade) {
+$update = function ($_configuration, $mainConnection, $courseList, $dryRun, $output, $upgrade, $removeUnusedTables) {
 
     $sysCoursePath = $upgrade->getCourseSysPath();
     $portalSettings = $upgrade->getPortalSettings();
@@ -404,9 +404,26 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                 }
                 $progress->advance();
             }
-
             $progress->finish();
             $output->writeln("<comment>End course migration.</comment>");
+
+
+            // Drop prefix tables
+            if ($removeUnusedTables && $dryRun == false) {
+                $output->writeln("<comment>Removing unused tables:</comment>");
+
+                $onyPrefix = $upgrade->getTablePrefix($_configuration);
+                $sql = "SHOW TABLES LIKE '".$onyPrefix."%'";
+                $result = $courseConnection->executeQuery($sql);
+                while ($row = $result->fetch()) {
+                    $table = current($row);
+                    if (!empty($table)) {
+                        $sql = "DROP TABLE $table";
+                        $output->writeln("<comment>$sql</comment>");
+                        $courseConnection->executeQuery($sql);
+                    }
+                }
+            }
 
             /* Start work fix */
             $output->writeln("<comment>Starting work fix:</comment>");
