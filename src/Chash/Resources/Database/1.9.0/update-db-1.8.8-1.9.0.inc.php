@@ -407,20 +407,22 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
             $progress->finish();
             $output->writeln("<comment>End course migration.</comment>");
 
-
             // Drop prefix tables
             if ($removeUnusedTables && $dryRun == false) {
                 $output->writeln("<comment>Removing unused tables:</comment>");
 
-                $onyPrefix = $upgrade->getTablePrefix($_configuration);
-                $sql = "SHOW TABLES LIKE '".$onyPrefix."%'";
-                $result = $courseConnection->executeQuery($sql);
-                while ($row = $result->fetch()) {
-                    $table = current($row);
-                    if (!empty($table)) {
-                        $sql = "DROP TABLE $table";
-                        $output->writeln("<comment>$sql</comment>");
-                        $courseConnection->executeQuery($sql);
+                $onlyPrefix = $upgrade->getTablePrefix($_configuration);
+                if (!empty($onlyPrefix)) {
+                    $sql = "SHOW TABLES LIKE '".$onlyPrefix."%'";
+
+                    $result = $courseConnection->executeQuery($sql);
+                    while ($row = $result->fetch()) {
+                        $table = current($row);
+                        if (!empty($table)) {
+                            $sql = "DROP TABLE $table";
+                            $output->writeln("<comment>$sql</comment>");
+                            $courseConnection->executeQuery($sql);
+                        }
                     }
                 }
             }

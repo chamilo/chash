@@ -250,10 +250,21 @@ class UpgradeCommand extends CommonCommand
                 $output->writeln("<info>$chamiloLocationPath</info>");
                 $output->writeln("<comment>will be copied to your portal here: </comment><info>".$this->getRootSys()."</info>");
             }
-            if ($removeUnusedTables) {
-                $output->writeln("<comment>Unused tables will be removed.<comment>");
-            }
 
+            if ($removeUnusedTables) {
+                if (version_compare($currentVersion, '1.9.0', '<')) {
+                    $onlyPrefix = $this->getTablePrefix($_configuration);
+                    if (!empty($onlyPrefix)) {
+                        $output->writeln("<comment>--remove-unused-table option is on. Unused tables will be removed.<comment>");
+                        $tablesToDelete = "SHOW TABLES LIKE '".$onlyPrefix."%';";
+                        $output->writeln("<comment>All tables that match this query will be deleted:</comment> <info>$tablesToDelete</info>");
+                    } else {
+                        $output->writeln("<comment>--remove-unused-table option is on. But any table will be removed.<comment>");
+                    }
+                } else {
+                    $output->writeln("<comment>--remove-unused-table option is on. This does not affect this $originalVersion version.<comment>");
+                }
+            }
         } else {
             $output->writeln("<comment>When the installation process finishes, PHP files are not going to be updated (--dry-run is on).</comment>");
         }
