@@ -3597,6 +3597,53 @@ CREATE TABLE curriculum_rel_user (
     score int unsigned not null default 0 -- the temporary total score given to the user for the information he completed
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS tool;
+CREATE TABLE tool (
+    id int unsigned not null primary key AUTO_INCREMENT,
+    name varchar(255),
+    image varchar(255),
+    description TEXT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO tool (name) VALUES('agenda');
+INSERT INTO tool (name) VALUES('announcements');
+INSERT INTO tool (name) VALUES('gradebook');
+INSERT INTO tool (name) VALUES('exercise');
+INSERT INTO tool (name) VALUES('document');
+INSERT INTO tool (name) VALUES('link');
+INSERT INTO tool (name) VALUES('forum');
+INSERT INTO tool (name) VALUES('glossary');
+
+DROP TABLE IF EXISTS session_path;
+CREATE TABLE session_path (
+    id int unsigned not null primary key AUTO_INCREMENT,
+    name varchar(255),
+    description TEXT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS session_tree;
+CREATE TABLE session_tree (
+    id int unsigned not null primary key AUTO_INCREMENT,
+    session_path_id int unsigned not null,
+    session_id int unsigned,
+    course_id int unsigned,
+    tool_id int unsigned,
+    type varchar(255),
+    lft int,
+    lvl int,
+    rgt int,
+    root int,
+    parent_id int
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS user_session_path;
+CREATE TABLE user_session_path (
+    id int unsigned not null primary key AUTO_INCREMENT,
+    session_path_id int unsigned,
+    user_id int unsigned,
+    status varchar(100),
+    percentage int unsigned
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Do not move this
 UPDATE settings_current SET selected_value = '1.10.0.053' WHERE variable = 'chamilo_database_version';
