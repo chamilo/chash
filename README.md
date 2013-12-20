@@ -161,4 +161,4 @@ Mail: info@chamilo.org
 Misc
 ====
 
-[![Build Status](https://api.travis-ci.org/chamilo/chash.png)](https://api.travis-ci.org/chamilo/chash)
+[![Build Status](https://api.travis-ci.org/chamilo/chash.png)](https://travis-ci.org/chamilo/chash)
