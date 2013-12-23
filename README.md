@@ -157,3 +157,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Mail: info@chamilo.org
+
+Misc
+====
+
+[![Build Status](https://api.travis-ci.org/chamilo/chash.png)](https://travis-ci.org/chamilo/chash)
