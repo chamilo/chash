@@ -674,13 +674,13 @@ DROP TABLE IF EXISTS c_forum_notification;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_forum_notification (
-  c_id int(11) NOT NULL,
-  id int(11) NOT NULL AUTO_INCREMENT,
-  user_id int(11) NOT NULL DEFAULT '0',
-  forum_id int(11) NOT NULL DEFAULT '0',
-  thread_id int(11) NOT NULL DEFAULT '0',
-  post_id int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (id,c_id,user_id,forum_id,thread_id,post_id),
+  c_id int NOT NULL,
+  id int NOT NULL AUTO_INCREMENT,
+  user_id int NOT NULL DEFAULT 0,
+  forum_id int NOT NULL DEFAULT 0,
+  thread_id int NOT NULL DEFAULT 0,
+  post_id int NOT NULL DEFAULT 0,
+  PRIMARY KEY (id, c_id, user_id, forum_id, thread_id, post_id),
   KEY user_id (user_id),
   KEY forum_id (forum_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -841,8 +841,9 @@ DROP TABLE IF EXISTS c_group_info;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_group_info (
-  c_id int(11) NOT NULL,
+  iid int(10) unsigned NOT NULL AUTO_INCREMENT,
   id int(11) NOT NULL,
+  c_id int(11) NOT NULL,
   name varchar(100) DEFAULT NULL,
   category_id int(10) unsigned NOT NULL DEFAULT '0',
   description text,
@@ -858,9 +859,7 @@ CREATE TABLE c_group_info (
   self_registration_allowed tinyint(3) unsigned NOT NULL DEFAULT '0',
   self_unregistration_allowed tinyint(3) unsigned NOT NULL DEFAULT '0',
   session_id int(11) NOT NULL,
-  iid int(10) unsigned NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (iid),
-  KEY session_id (session_id)
+  PRIMARY KEY (iid)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -922,7 +921,7 @@ CREATE TABLE c_item_property (
   id_session int(11) DEFAULT NULL,
   id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (id),
-  KEY idx_item_property_toolref (tool,ref)
+  KEY idx_item_property_toolref (tool, ref)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
