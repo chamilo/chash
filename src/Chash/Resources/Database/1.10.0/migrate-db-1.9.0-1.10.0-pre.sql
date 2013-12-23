@@ -62,8 +62,48 @@ ALTER TABLE track_e_exercices MODIFY COLUMN exe_exo_id int unsigned NOT NULL def
 
 ALTER TABLE track_e_default MODIFY COLUMN default_event_type VARCHAR(255);
 ALTER TABLE track_e_default MODIFY COLUMN default_value_type VARCHAR(255);
-
 ALTER TABLE usergroup ADD COLUMN allow_members_leave_group int NOT NULL DEFAULT 1;
+
+ALTER TABLE c_quiz_answer MODIFY COLUMN answer longtext NOT NULL;
+ALTER TABLE c_quiz_answer MODIFY COLUMN comment longtext;
+ALTER TABLE c_announcement MODIFY COLUMN content longtext;
+ALTER TABLE c_attendance MODIFY COLUMN description longtext;
+ALTER TABLE c_calendar_event MODIFY COLUMN content longtext;
+ALTER TABLE c_blog_comment MODIFY COLUMN comment longtext NOT NULL;
+ALTER TABLE c_course_description MODIFY COLUMN content longtext;
+ALTER TABLE c_forum_forum MODIFY COLUMN forum_comment longtext;
+ALTER TABLE c_forum_post MODIFY COLUMN post_text longtext;
+ALTER TABLE c_glossary MODIFY COLUMN description longtext NOT NULL;
+ALTER TABLE c_group_category MODIFY COLUMN description longtext NOT NULL;
+ALTER TABLE c_group_info MODIFY COLUMN description longtext;
+ALTER TABLE c_lp MODIFY COLUMN description longtext;
+ALTER TABLE c_notebook MODIFY COLUMN description longtext NOT NULL;
+ALTER TABLE c_quiz MODIFY COLUMN description longtext;
+ALTER TABLE c_quiz MODIFY COLUMN text_when_finished longtext;
+ALTER TABLE c_quiz_question MODIFY COLUMN question longtext NOT NULL;
+ALTER TABLE c_quiz_question MODIFY COLUMN description longtext;
+ALTER TABLE c_quiz_category MODIFY COLUMN description longtext NOT NULL;
+ALTER TABLE c_student_publication MODIFY COLUMN description longtext;
+ALTER TABLE c_survey MODIFY COLUMN intro longtext;
+ALTER TABLE c_survey_question MODIFY COLUMN survey_question_comment longtext NOT NULL;
+ALTER TABLE c_survey_question MODIFY COLUMN survey_question longtext NOT NULL;
+ALTER TABLE c_thematic MODIFY COLUMN content longtext;
+ALTER TABLE c_thematic_advance MODIFY COLUMN content longtext;
+ALTER TABLE c_thematic_plan MODIFY COLUMN description longtext;
+ALTER TABLE c_tool_intro MODIFY COLUMN intro_text longtext NOT NULL;
+ALTER TABLE c_wiki MODIFY COLUMN content longtext NOT NULL;
+ALTER TABLE c_student_publication_comment MODIFY COLUMN comment longtext;
+
+ALTER TABLE sys_announcement MODIFY COLUMN content longtext NOT NULL;
+ALTER TABLE shared_survey MODIFY COLUMN intro longtext;
+ALTER TABLE shared_survey_question MODIFY COLUMN survey_question longtext NOT NULL;
+ALTER TABLE shared_survey_question_option MODIFY COLUMN option_text longtext NOT NULL;
+ALTER TABLE sys_calendar MODIFY COLUMN content longtext;
+ALTER TABLE system_template MODIFY COLUMN content longtext NOT NULL;
+ALTER TABLE message MODIFY COLUMN content longtext NOT NULL;
+ALTER TABLE track_e_attempt MODIFY COLUMN answer longtext NOT NULL;
+ALTER TABLE track_e_attempt_recording MODIFY COLUMN teacher_comment longtext NOT NULL;
+ALTER TABLE personal_agenda MODIFY COLUMN `text` longtext;
 
 TRUNCATE roles;
 INSERT INTO roles (id, name, role) VALUES('1', 'Teacher', 'ROLE_TEACHER');
@@ -173,4 +213,4 @@ INSERT INTO branch_transaction_status VALUES (1, 'To be executed'), (2, 'Execute
 UPDATE course_field SET field_type = 3 WHERE field_variable = 'special_course';
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.054' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.055' WHERE variable = 'chamilo_database_version';
