@@ -2829,6 +2829,7 @@ CREATE TABLE IF NOT EXISTS usergroup (
     picture varchar(255) NOT NULL,
     url varchar(255) NOT NULL,
     visibility int NOT NULL,
+    allow_members_leave_group int NOT NULL DEFAULT 1,
     updated_on varchar(255) NOT NULL,
     created_on varchar(255) NOT NULL,
     PRIMARY KEY (id)
@@ -3196,8 +3197,8 @@ CREATE TABLE track_e_default (
   default_user_id int unsigned NOT NULL default 0,
   default_cours_code varchar(40) NOT NULL default '',
   default_date datetime NOT NULL default '0000-00-00 00:00:00',
-  default_event_type varchar(20) NOT NULL default '',
-  default_value_type varchar(20) NOT NULL default '',
+  default_event_type varchar(255) NOT NULL default '',
+  default_value_type varchar(255) NOT NULL default '',
   default_value text NOT NULL,
   c_id int unsigned default NULL,
   session_id int unsigned default 0,
@@ -3646,4 +3647,4 @@ CREATE TABLE user_session_path (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.053' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.054' WHERE variable = 'chamilo_database_version';

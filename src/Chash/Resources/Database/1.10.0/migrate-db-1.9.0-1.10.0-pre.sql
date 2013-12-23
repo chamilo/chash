@@ -60,7 +60,12 @@ ALTER TABLE session_rel_course MODIFY COLUMN nbr_users int unsigned NOT NULL def
 ALTER TABLE track_e_exercices MODIFY COLUMN session_id int unsigned NOT NULL default 0;
 ALTER TABLE track_e_exercices MODIFY COLUMN exe_exo_id int unsigned NOT NULL default 0;
 
-TRUNCATE  roles;
+ALTER TABLE track_e_default MODIFY COLUMN default_event_type VARCHAR(255);
+ALTER TABLE track_e_default MODIFY COLUMN default_value_type VARCHAR(255);
+
+ALTER TABLE usergroup ADD COLUMN allow_members_leave_group int NOT NULL DEFAULT 1;
+
+TRUNCATE roles;
 INSERT INTO roles (id, name, role) VALUES('1', 'Teacher', 'ROLE_TEACHER');
 INSERT INTO roles (id, name, role) VALUES('4', 'RRHH', 'ROLE_RRHH');
 INSERT INTO roles (id, name, role) VALUES('3', 'Session Manager', 'ROLE_SESSION_MANAGER');
@@ -71,7 +76,7 @@ INSERT INTO roles (id, name, role) VALUES('17', 'Question Manager', 'ROLE_QUESTI
 INSERT INTO roles (id, name, role) VALUES('18', 'Global admin', 'ROLE_GLOBAL_ADMIN');
 
 -- Admin
-TRUNCATE  users_roles;
+TRUNCATE users_roles;
 INSERT INTO users_roles VALUES (1, 11);
 
 DELETE FROM settings_current WHERE variable = 'session_tutor_reports_visibility';
@@ -168,4 +173,4 @@ INSERT INTO branch_transaction_status VALUES (1, 'To be executed'), (2, 'Execute
 UPDATE course_field SET field_type = 3 WHERE field_variable = 'special_course';
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.053' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.054' WHERE variable = 'chamilo_database_version';
