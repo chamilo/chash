@@ -1847,6 +1847,8 @@ CREATE TABLE c_tool (
   target enum('_self','_blank') NOT NULL DEFAULT '_self',
   category varchar(20) NOT NULL DEFAULT 'authoring',
   session_id int(11) DEFAULT '0',
+  custom_icon varchar(255) DEFAULT NULL,
+  description varchar(255) DEFAULT NULL,
   PRIMARY KEY (c_id,id),
   KEY session_id (session_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
