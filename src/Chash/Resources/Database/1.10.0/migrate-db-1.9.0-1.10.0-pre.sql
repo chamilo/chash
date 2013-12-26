@@ -105,6 +105,9 @@ ALTER TABLE track_e_attempt MODIFY COLUMN answer longtext NOT NULL;
 ALTER TABLE track_e_attempt_recording MODIFY COLUMN teacher_comment longtext NOT NULL;
 ALTER TABLE personal_agenda MODIFY COLUMN `text` longtext;
 
+ALTER TABLE c_tool ADD COLUMN custom_icon varchar(255) DEFAULT NULL;
+ALTER TABLE c_tool ADD COLUMN description text DEFAULT NULL;
+
 TRUNCATE roles;
 INSERT INTO roles (id, name, role) VALUES('1', 'Teacher', 'ROLE_TEACHER');
 INSERT INTO roles (id, name, role) VALUES('4', 'RRHH', 'ROLE_RRHH');
@@ -213,4 +216,4 @@ INSERT INTO branch_transaction_status VALUES (1, 'To be executed'), (2, 'Execute
 UPDATE course_field SET field_type = 3 WHERE field_variable = 'special_course';
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.055' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.056' WHERE variable = 'chamilo_database_version';
