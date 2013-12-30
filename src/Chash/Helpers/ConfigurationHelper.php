@@ -335,6 +335,27 @@ class ConfigurationHelper extends Helper
 
         return $finder;
     }
+    /**
+     * Gets the documents and folders marked DELETED
+     * @return array
+     */
+    public function getDeletedDocuments()
+    {
+        $finder = new Finder();
+        $sysPath = $this->getSysPath();
+
+        if (is_dir($sysPath.'courses')) {
+            $finder->files()->in($sysPath.'courses/')->name('*DELETED*');
+            $finder->directories()->in($sysPath.'courses/')->name('*DELETED*');
+        }
+
+        if (is_dir($sysPath.'data/courses')) {
+            $finder->files()->in($sysPath.'data/courses/')->name('*DELETED*');
+            $finder->directories()->in($sysPath.'data/courses/')->name('*DELETED*');
+        }
+
+        return $finder;
+    }
 
     /**
      * @return Finder

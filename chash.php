@@ -60,6 +60,7 @@ $application->addCommands(
         new Chash\Command\Database\ShowConnInfoCommand(),
 
         new Chash\Command\Files\CleanDataFilesCommand(),
+        new Chash\Command\Files\CleanDeletedDocumentsCommand(),
         new Chash\Command\Files\CleanTempFolderCommand(),
         new Chash\Command\Files\CleanConfigFilesCommand(),
         new Chash\Command\Files\MailConfCommand(),
