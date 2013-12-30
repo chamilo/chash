@@ -47,6 +47,7 @@ class ConfigurationHelper extends Helper
     public function chamiloVersions()
     {
         $versionList = array(
+            '1.8.6.2',
             '1.8.7',
             '1.8.8',
             '1.8.8.2',
