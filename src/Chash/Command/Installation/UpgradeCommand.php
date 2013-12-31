@@ -5,6 +5,8 @@ namespace Chash\Command\Installation;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
@@ -54,12 +56,12 @@ class UpgradeCommand extends CommonCommand
     /**
      * Executes a command via CLI
      *
-     * @param   Console\Input\InputInterface $input
-     * @param   Console\Output\OutputInterface $output
+     * @param   InputInterface $input
+     * @param   OutputInterface $output
      *
      * @return int|null|void
      */
-    protected function execute(Console\Input\InputInterface $input, Console\Output\OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $startTime = time();
 
@@ -399,9 +401,9 @@ class UpgradeCommand extends CommonCommand
      * @param string $path
      * @param string $toVersion
      * @param bool $dryRun
-     * @param Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      * @param bool $removeUnusedTables
-     * @param Console\Input\InputInterface $mainInput
+     * @param InputInterface $mainInput
      *
      * @return bool
      * @throws \Exception
@@ -411,9 +413,9 @@ class UpgradeCommand extends CommonCommand
         $path,
         $toVersion,
         $dryRun,
-        Console\Output\OutputInterface $output,
+        OutputInterface $output,
         $removeUnusedTables = false,
-        Console\Input\InputInterface $mainInput
+        InputInterface $mainInput
     ) {
         // Cleaning query list.
         $this->queryList = array();
@@ -558,7 +560,7 @@ class UpgradeCommand extends CommonCommand
      * Process the queryList array and executes queries to the correct section (main, user, course, etc)
      *
      * @param array $courseList
-     * @param Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      * @param $path
      * @param $version
      * @param $dryRun
@@ -652,7 +654,7 @@ class UpgradeCommand extends CommonCommand
      * Reads a sql file and adds queries  in the queryList array.
      *
      * @param string $sqlFilePath
-     * @param Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      * @param string type
      */
     public function fillQueryList($sqlFilePath, $output, $type)
@@ -763,7 +765,7 @@ class UpgradeCommand extends CommonCommand
     }
 
     /**
-     * @param Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      * @param array $courseList
      * @param string $path
      * @param string $version
@@ -808,7 +810,7 @@ class UpgradeCommand extends CommonCommand
     }
 
     /**
-     * @param Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      * @param array $courseList
      * @param string $path
      * @param string $section
@@ -830,7 +832,7 @@ class UpgradeCommand extends CommonCommand
      *
      * @param string $file
      * @param string $section
-     * @param Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      *
      * @return array|bool
      */
@@ -886,7 +888,7 @@ class UpgradeCommand extends CommonCommand
 
     /**
      * Creates the course tables with the prefix c_
-     * @param Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      * @param string $dryRun
      * @return int
      */
