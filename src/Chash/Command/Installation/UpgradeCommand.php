@@ -43,7 +43,6 @@ class UpgradeCommand extends CommonCommand
             ->addOption('update-installation', null, InputOption::VALUE_OPTIONAL, 'Updates the portal with the current zip file. http:// or /var/www/file.zip')
             ->addOption('temp-folder', null, InputOption::VALUE_OPTIONAL, 'The temp folder', '/tmp')
             ->addOption('download-package', null, InputOption::VALUE_OPTIONAL, 'Download the chamilo package', 'true')
-            ->addOption('silent', null, InputOption::VALUE_NONE, 'Execute the migration without asking questions')
             ->addOption('linux-user', null, InputOption::VALUE_OPTIONAL, 'user', 'www-data')
             ->addOption('linux-group', null, InputOption::VALUE_OPTIONAL, 'group', 'www-data')
             ->addOption('custom-package', null, InputOption::VALUE_OPTIONAL, 'Custom zip package location.', '')
@@ -107,7 +106,7 @@ class UpgradeCommand extends CommonCommand
         $version = $originalVersion = $input->getArgument('version');
         $path = $input->getOption('path');
         $dryRun = $input->getOption('dry-run');
-        $silent = $input->getOption('silent') == true;
+        $silent = !$input->isInteractive();
         $tempFolder = $input->getOption('temp-folder');
         $downloadPackage = $input->getOption('download-package') == 'true' ? true : false;
 
@@ -341,7 +340,7 @@ class UpgradeCommand extends CommonCommand
 
                 if (isset($versionInfo['require_update']) && $versionInfo['require_update'] == true) {
                     // Greater than my current version.
-                    $this->startMigration($courseList, $path, $versionItem, $dryRun, $output, $removeUnusedTables);
+                    $this->startMigration($courseList, $path, $versionItem, $dryRun, $output, $removeUnusedTables, $input);
                     $oldVersion = $versionItem;
                     $output->writeln("----------------------------------------------------------------");
                 } else {
@@ -401,12 +400,21 @@ class UpgradeCommand extends CommonCommand
      * @param string $toVersion
      * @param bool $dryRun
      * @param Console\Output\OutputInterface $output
+     * @param bool $removeUnusedTables
+     * @param Console\Input\InputInterface $mainInput
      *
      * @return bool
      * @throws \Exception
      */
-    public function startMigration($courseList, $path, $toVersion, $dryRun, Console\Output\OutputInterface $output, $removeUnusedTables = false)
-    {
+    public function startMigration(
+        $courseList,
+        $path,
+        $toVersion,
+        $dryRun,
+        Console\Output\OutputInterface $output,
+        $removeUnusedTables = false,
+        Console\Input\InputInterface $mainInput
+    ) {
         // Cleaning query list.
         $this->queryList = array();
 
@@ -445,9 +453,13 @@ class UpgradeCommand extends CommonCommand
 
             $output->writeln("<comment>Executing migrations:migrate ".$versionInfo['hook_to_doctrine_version']." --configuration=".$this->getMigrationConfigurationFile()."<comment>");
             $input = new ArrayInput($arguments);
+
             if ($this->commandLine == false) {
                 $input->setInteractive(false);
+            } else {
+                $input->setInteractive($mainInput->isInteractive());
             }
+
             $command->run($input, $output);
 
             $output->writeln("<comment>Migration ended successfully</comment>");
