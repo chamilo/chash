@@ -154,7 +154,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
         $statsConnection->
         */
 
-        //Moving user database to the main database
+        // Moving user database to the main database.
         $users_tables = array(
             "personal_agenda",
             "personal_agenda_repeat",
@@ -162,7 +162,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
             "user_course_category"
         );
 
-        // No rename we asumme that stats are in the main db
+        // No rename we assume that stats are in the main db.
 
         /*
         if ($dbNameForm != $dbUserForm) {
@@ -466,7 +466,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
 
                             // Only create the folder once
                             if (!isset($work_dir_created[$work_key])) {
-                                //2.1 Creating a new work folder
+                                // 2.1 Creating a new work folder:
                                 $sql = "INSERT INTO $work_table SET
                                         c_id                = '$courseId',
                                         url         		= 'work/".$dir_name."',
@@ -516,14 +516,22 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                     }
 
                     // 3.0 Moving subfolders to the root.
-                    $sql 	= "SELECT * FROM $work_table WHERE parent_id <> 0 AND filetype ='folder' AND c_id = $courseId";
+                    $sql = "SELECT * FROM $work_table
+                               WHERE parent_id <> 0 AND filetype ='folder' AND c_id = $courseId";
                     $result = $mainConnection->executeQuery($sql);
                     $work_list = $result->fetchAll();
 
                     if (!empty($work_list)) {
                         foreach ($work_list as $work_folder) {
                             $folder_id = $work_folder['id'];
-                            check_work($mainConnection, $folder_id, $work_folder['url'], $work_table, $base_work_dir, $courseId);
+                            check_work(
+                                $mainConnection,
+                                $folder_id,
+                                $work_folder['url'],
+                                $work_table,
+                                $base_work_dir,
+                                $courseId
+                            );
                         }
                     }
                 }
@@ -590,6 +598,12 @@ function check_work($mainConnection, $folder_id, $work_url, $work_table, $base_w
     }
 }
 
+/**
+ * @param string $base_work_dir
+ * @param string $desired_dir_name
+ * @param array $portalSettings
+ * @return bool|string
+ */
 function create_unexisting_work_directory($base_work_dir, $desired_dir_name, $portalSettings)
 {
     $nb = '';
