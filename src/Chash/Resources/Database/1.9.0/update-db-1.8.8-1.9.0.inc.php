@@ -13,8 +13,10 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
 
     /** @var \Doctrine\DBAL\Connection $userConnection */
     $userConnection = $upgrade->getHelper($databaseList['user'][0]['database'])->getConnection();
+
     /** @var \Doctrine\DBAL\Connection $mainConnection */
     $mainConnection = $upgrade->getHelper($databaseList['main'][0]['database'])->getConnection();
+
     /** @var \Doctrine\DBAL\Connection $statsConnection */
     $statsConnection = $upgrade->getHelper($databaseList['stats'][0]['database'])->getConnection();
 
@@ -115,9 +117,9 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
             }
         }
 
-        //Moving Stats DB to the main DB
+        // Moving Stats DB to the main DB.
 
-        $stats_table = array(
+        $statsTable = array(
             "track_c_browsers",
             "track_c_countries",
             "track_c_os",
@@ -143,37 +145,39 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
             "track_stored_values_stack",
         );
 
-        // No rename we assume that stats are in the main db
-        /*
-        foreach ($stats_table as $stat_table) {
-            $sql = "ALTER TABLE $dbStatsForm.$stat_table RENAME $dbNameForm.$stat_table";
-            Database::query($sql);
-            $output->writeln($sql);
+        if (isset($_configuration['statistics_database'])) {
+            $statSchemaManager = $statsConnection->getSchemaManager();
+            if ($_configuration['main_database'] != $_configuration['statistics_database']) {
+                foreach ($statsTable as $table) {
+                    if ($statSchemaManager->tablesExist($table)) {
+                        $newTable = $_configuration['main_database'].'.'.$table;
+                        $statSchemaManager->renameTable($table, $newTable);
+                        $output->writeln("<comment>Renaming  $table to: </comment>".$newTable);
+                    }
+                }
+            }
         }
-        iDatabase::select_db($dbNameForm);
-        $statsConnection->
-        */
 
         // Moving user database to the main database.
-        $users_tables = array(
+        $usersTables = array(
             "personal_agenda",
             "personal_agenda_repeat",
             "personal_agenda_repeat_not",
             "user_course_category"
         );
 
-        // No rename we assume that stats are in the main db.
-
-        /*
-        if ($dbNameForm != $dbUserForm) {
-            iDatabase::select_db($dbUserForm);
-            foreach ($users_tables as $table) {
-                $sql = "ALTER TABLE $dbUserForm.$table RENAME $dbNameForm.$table";
-                iDatabase::query($sql);
-                $output->writeln($sql);
+        $userSchemaManager = $userConnection->getSchemaManager();
+        if (isset($_configuration['user_personal_database'])) {
+            if ($_configuration['main_database'] != $_configuration['user_personal_database']) {
+                foreach ($usersTables as $table) {
+                    if ($userSchemaManager->tablesExist($table)) {
+                        $newTable = $_configuration['main_database'].'.'.$table;
+                        $userSchemaManager->renameTable($table, $newTable);
+                        $output->writeln("<comment>Renaming  $table to: </comment>".$newTable);
+                    }
+                }
             }
-            iDatabase::select_db($dbNameForm);
-        }*/
+        }
 
         // Adding admin user in the access_url_rel_user table.
         $sql = "SELECT user_id FROM admin WHERE user_id = 1";

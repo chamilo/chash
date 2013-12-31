@@ -880,6 +880,16 @@ class CommonCommand extends AbstractCommand
                         }
                         $em = \Doctrine\ORM\EntityManager::create($params, $config);
                     } else {
+                        $databaseName = $params['dbname'];
+                        switch ($dbInfo['database']) {
+                            case 'statistics_database':
+                                $databaseName = isset($_configuration['statistics_database']) ? $_configuration['statistics_database'] : $databaseName;
+                                break;
+                            case 'user_personal_database':
+                                $databaseName = isset($_configuration['user_personal_database']) ? $_configuration['user_personal_database'] : $databaseName;
+                                break;
+                        }
+                        $params['dbname'] = $databaseName;
                         $em = \Doctrine\ORM\EntityManager::create($params, $config);
                     }
                 }

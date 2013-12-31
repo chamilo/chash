@@ -716,13 +716,13 @@ class UpgradeCommand extends CommonCommand
         }
 
         $databaseSection = array(
-            'main'  => array(
+            'main' => array(
                 array(
                     'database' => 'main_database',
                     'status' => 'waiting'
                 )
             ),
-            'user'  => array(
+            'user' => array(
                 array(
                     'database' => 'user_personal_database',
                     'status' => 'waiting'

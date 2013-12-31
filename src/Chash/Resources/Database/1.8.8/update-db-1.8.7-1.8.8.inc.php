@@ -38,7 +38,7 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
                     $output->writeln("<info>We can't established a DB connection for this course: ".$row_course['db_name']);
                 }
 
-                // Filling the track_e_exercices.orig_lp_item_view_id field  in order to have better
+                /* Filling the track_e_exercices.orig_lp_item_view_id field  in order to have better
                 traceability in exercises included in a LP see #3188 */
 
                 $query = "SELECT DISTINCT path as exercise_id, lp_item_id, lp_view_id, user_id, v.lp_id
