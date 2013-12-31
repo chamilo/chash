@@ -908,7 +908,7 @@ class CommonCommand extends AbstractCommand
     {
         $dryRun = $this->getConfigurationHelper()->getDryRun();
 
-        if (empty($files)) {
+        if (count($files) < 1) {
             $output->writeln('<comment>No files found.</comment>');
             return 0;
         }
