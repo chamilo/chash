@@ -345,13 +345,11 @@ class ConfigurationHelper extends Helper
         $sysPath = $this->getSysPath();
 
         if (is_dir($sysPath.'courses')) {
-            $finder->files()->in($sysPath.'courses/')->name('*DELETED*');
-            $finder->directories()->in($sysPath.'courses/')->name('*DELETED*');
+            $finder->in($sysPath.'courses/')->name('*DELETED*');
         }
 
         if (is_dir($sysPath.'data/courses')) {
-            $finder->files()->in($sysPath.'data/courses/')->name('*DELETED*');
-            $finder->directories()->in($sysPath.'data/courses/')->name('*DELETED*');
+            $finder->in($sysPath.'data/courses/')->name('*DELETED*');
         }
 
         return $finder;

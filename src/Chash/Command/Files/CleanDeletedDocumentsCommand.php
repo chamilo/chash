@@ -24,7 +24,19 @@ class CleanDeletedDocumentsCommand extends CommonChamiloDatabaseCommand
         parent::configure();
         $this
             ->setName('files:clean_deleted_documents')
-            ->setDescription('Cleans the documents that were deleted but left as _DELETED_');
+            ->setDescription('Cleans the documents that were deleted but left as _DELETED_')
+            ->addOption(
+                'size',
+                null,
+                InputOption::VALUE_NONE,
+                'Show the total size of space that will be freed. Requires more processing'
+            )
+            ->addOption(
+                'list',
+                null,
+                InputOption::VALUE_NONE,
+                'Show the complete list of files to be deleted before asking for confirmation'
+            );
     }
 
     /**
@@ -36,21 +48,37 @@ class CleanDeletedDocumentsCommand extends CommonChamiloDatabaseCommand
     {
         parent::execute($input, $output);
 
-        $this->writeCommandHeader($output, 'Cleaning deleted documents.');
-
-        $dialog = $this->getHelperSet()->get('dialog');
-
-        if (!$dialog->askConfirmation(
-            $output,
-            '<question>Are you sure you want to clean the Chamilo deleted documents? (y/N)</question>',
-            false
-        )
-        ) {
-            return;
-        }
-
         $files = $this->getConfigurationHelper()->getDeletedDocuments();
-        print_r($files);
+        if ($input->isInteractive()) {
+            $this->writeCommandHeader($output, 'Cleaning deleted documents.');
+            $list = $input->getOption('list'); //1 if the option was set
+            if ($list) {
+                if (count($files) > 0) {
+                    foreach ($files as $file) {
+                        $output->writeln($file->getRealpath());
+                    }
+                } else {
+                    $output->writeln('No file to be deleted in courses/ directory');
+                }
+            }
+            $stats = $input->getOption('size'); //1 if the option was set
+            if ($stats) {
+                $size = 0;
+                foreach ($files as $file) {
+                    $size += $file->getSize();
+                }
+                $output->writeln('Total size used by deleted documents: '.round(((float)$size/1024)/1024,2).'MB');
+            }
+            $dialog = $this->getHelperSet()->get('dialog');
+            if (!$dialog->askConfirmation(
+                $output,
+                '<question>Are you sure you want to clean the Chamilo deleted documents? (y/N)</question>',
+                false
+            )
+            ) {
+                return;
+            }
+        }
         $this->removeFiles($files, $output);
     }
 }
