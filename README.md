@@ -125,11 +125,13 @@ Available commands:
       tl                                    Gets all languages as a list
       tpl                                   Gets or sets the platform language
       usl                                   Sets the users language to the one given
+
     chamilo
       chamilo:install                       Execute a Chamilo installation to a specified version.
       chamilo:status                        Show the information of the current Chamilo installation
       chamilo:upgrade                       Execute a chamilo migration to a specified version or the latest available version
       chamilo:wipe                          Prepares a portal for a new installation
+
     chash
       chash:self-update                     Updates chash to the latest version
       chash:setup                           Setups the migration.yml
