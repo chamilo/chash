@@ -59,6 +59,7 @@ class CleanDeletedDocumentsCommand extends CommonChamiloDatabaseCommand
                     }
                 } else {
                     $output->writeln('No file to be deleted in courses/ directory');
+                    return;
                 }
             }
             $stats = $input->getOption('size'); //1 if the option was set
