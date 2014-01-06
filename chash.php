@@ -79,6 +79,7 @@ $application->addCommands(
         new Chash\Command\Translation\ImportLanguageCommand(),
         new Chash\Command\Translation\ListLanguagesCommand(),
         new Chash\Command\Translation\PlatformLanguageCommand(),
+        new Chash\Command\Translation\TermsPackageCommand(),
 
         new Chash\Command\User\ChangePassCommand(),
         new Chash\Command\User\DisableAdminsCommand(),
