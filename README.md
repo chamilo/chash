@@ -174,6 +174,7 @@ Available commands:
       translation:import_language           Import a Chamilo language package
       translation:list                      Gets all languages as a list
       translation:platform_language         Gets or sets the platform language
+      translation:terms_package             Generates a package of given language terms
 
     user
       user:change_pass                      Updates the user password to the one given
