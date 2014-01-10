@@ -103,11 +103,11 @@ class ConvertVideosCommand extends CommonChamiloDatabaseCommand
 
             // Find the files we want to treat, using Finder selectors
             $finder = new Finder();
-            $filter = function (\SplFileInfo $file)
+            $filter = function (\SplFileInfo $file, $ext, $orig)
             {
-                $combinedExt = '.'.$this->origExt.'.'.$this->ext;
+                $combinedExt = '.'.$orig.'.'.$ext;
                 $combinedExtLength = strlen($combinedExt);
-                $extLength = strlen('.' . $this->ext);
+                $extLength = strlen('.' . $ext);
                 if (substr($file->getRealPath(),-$combinedExtLength) == $combinedExt) {
                     return false;
                 }
@@ -116,7 +116,7 @@ class ConvertVideosCommand extends CommonChamiloDatabaseCommand
                     return false;
                 }
             };
-            $finder->sortByName()->files()->in($dir)->name('*.'.$this->ext)->filter($filter);
+            $finder->sortByName()->files()->in($dir)->name('*.'.$this->ext)->filter($filter, $this->ext, $this->origExt);
 
             // Print the list of matching files we found
             if (count($finder) > 0) {
@@ -125,8 +125,8 @@ class ConvertVideosCommand extends CommonChamiloDatabaseCommand
                     $output->writeln($file->getRealpath());
                 }
             } else {
-                $output->writeln('The system has detected several videos already converted: ');
                 if (count($this->excluded) > 0) {
+                    $output->writeln('The system has detected several videos already converted: ');
                     foreach ($this->excluded as $file) {
                         $output->writeln('- '.$file->getRealPath());
                     }
