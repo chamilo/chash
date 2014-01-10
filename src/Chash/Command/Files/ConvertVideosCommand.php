@@ -99,7 +99,10 @@ class ConvertVideosCommand extends CommonChamiloDatabaseCommand
             if (empty($bitRate)) {
                 $bitRate = '512';
             }
-
+            $vcodec = 'copy';
+            if ($this->ext == 'webm') {
+                $vcodec = 'libvpx';
+            }
 
             // Find the files we want to treat, using Finder selectors
             $finder = new Finder();
@@ -160,8 +163,8 @@ class ConvertVideosCommand extends CommonChamiloDatabaseCommand
                 $origNameCommand = preg_replace('/\s/','\ ',$origName);
                 $origNameCommand = preg_replace('/\(/','\(',$origNameCommand);
                 $origNameCommand = preg_replace('/\)/','\)',$origNameCommand);
-                $output->writeln('ffmpeg -i ' . $newNameCommand . ' -b ' . $bitRate . 'k -f ' . $this->ext . ' -vcodec copy -acodec copy -r ' . $fps . ' ' . $origNameCommand);
-                $exec = @system('ffmpeg -i ' . $newNameCommand . ' -b ' . $bitRate . 'k -f ' . $this->ext . ' -vcodec copy -acodec copy -r ' . $fps . ' ' . $origNameCommand, $out);
+                $output->writeln('ffmpeg -i ' . $newNameCommand . ' -b ' . $bitRate . 'k -f ' . $this->ext . ' -vcodec ' . $vcodec . ' -acodec copy -r ' . $fps . ' ' . $origNameCommand);
+                $exec = @system('ffmpeg -i ' . $newNameCommand . ' -b ' . $bitRate . 'k -f ' . $this->ext . ' -vcodec ' . $vcodec . ' -acodec copy -r ' . $fps . ' ' . $origNameCommand, $out);
                 $sizeNew += filesize($origName);
                 $counter ++;
             }
