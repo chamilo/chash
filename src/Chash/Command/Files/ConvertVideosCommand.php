@@ -153,9 +153,15 @@ class ConvertVideosCommand extends CommonChamiloDatabaseCommand
                 $origName = $file->getRealPath();
                 $newName = substr($file->getRealPath(),0,-4).'orig.webm';
                 $fs->rename($origName, $newName);
-                //$output->writeln('ffmpeg -i ' . $newName . ' -b ' . $bitRate . 'k -f ' . $this->ext . ' -vcodec copy -acodec copy -r ' . $fps . ' ' . $origName);
                 $out = array();
-                $exec = @system('ffmpeg -i ' . $newName . ' -b ' . $bitRate . 'k -f ' . $this->ext . ' -vcodec copy -acodec copy -r ' . $fps . ' ' . $origName, $out);
+                $newNameCommand = preg_replace('/\s/','\ ',$newName);
+                $newNameCommand = preg_replace('/\(/','\(',$newNameCommand);
+                $newNameCommand = preg_replace('/\)/','\)',$newNameCommand);
+                $origNameCommand = preg_replace('/\s/','\ ',$origName);
+                $origNameCommand = preg_replace('/\(/','\(',$origNameCommand);
+                $origNameCommand = preg_replace('/\)/','\)',$origNameCommand);
+                $output->writeln('ffmpeg -i ' . $newNameCommand . ' -b ' . $bitRate . 'k -f ' . $this->ext . ' -vcodec copy -acodec copy -r ' . $fps . ' ' . $origNameCommand);
+                $exec = @system('ffmpeg -i ' . $newNameCommand . ' -b ' . $bitRate . 'k -f ' . $this->ext . ' -vcodec copy -acodec copy -r ' . $fps . ' ' . $origNameCommand, $out);
                 $sizeNew += filesize($origName);
                 $counter ++;
             }
