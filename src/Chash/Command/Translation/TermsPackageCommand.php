@@ -97,6 +97,9 @@ class TermsPackageCommand extends CommonChamiloDatabaseCommand
             $output->writeln('The directory '.$source.' does not seem to exist. The source directory must exist and contain the language files, similar to e.g. /var/www/chamilo/main/lang/english');
             exit;
         }
+        // Generate a folder name for saving the *partial* files in the original language - use suffix "_partial
+        $origLang = substr(substr($source,0,-1),strrpos(substr($source,0,-1),'/')).'_partial';
+
         if (!is_dir($destination)) {
             $output->writeln('The directory '.$destination.' does not seem to exist. The destination directory must exist in order for this script to write the results in a safe place');
             exit;
@@ -133,16 +136,30 @@ class TermsPackageCommand extends CommonChamiloDatabaseCommand
             }
             $output->writeln('Destination directory '.$destination.$language.' already exists. We recommend using an empty directory. Files in this directory will be overwritten if necessary. Sorry.');
         } elseif (!@mkdir($destination.$language)) {
-            $output->writeln('For some reason, the ');
+            $output->writeln('For some reason, the directory creation returned an error for '.$destination.$language);
+            exit;
+        }
+        if (is_dir($destination.$origLang)) {
+            if (!is_writeable($destination.$origLang)) {
+                $output->writeln('Destination directory '.$destination.$origLang.' already exists but is not writeable. Please make sure whoever launches this script has privileges to write in there.');
+                exit;
+            }
+            $output->writeln('Destination directory '.$destination.$origLang.' already exists. We recommend using an empty directory. Files in this directory will be overwritten if necessary. Sorry.');
+        } elseif (!@mkdir($destination.$origLang)) {
+            $output->writeln('For some reason, the directory creation returned an error for '.$destination.$origLang);
             exit;
         }
         // Start working on those files!
         $listFiles = scandir($source);
-        $localVar = array();
+        $countVars = 0;
+        $countTranslatedVars = 0;
+        $countWords = 0;
+        $countTranslatedWords = 0;
         $fileString = '<?php'."\n";
         foreach ($listFiles as $file) {
             if (substr($file,-1,1) == '.') { continue; }
             $destFileLines = $fileString;
+            $origFileLines = $fileString;
             $partialSourceFile = $langDir.$language.'/'.$file;
             $output->writeln('Source File 2 = '.$partialSourceFile);
             $sourceVars = $this->_getLangVars($source.$file);
@@ -154,14 +171,23 @@ class TermsPackageCommand extends CommonChamiloDatabaseCommand
             foreach ($sourceVars as $var => $val) {
                 if (in_array($var, $source2Keys)) {
                     $destFileLines .= '$'.$var.'='.$source2Vars[$var]."\n";
+                    $origFileLines .= '$'.$var.'='.$val."\n";
+                    $countTranslatedVars++;
+                    $countTranslatedWords += str_word_count($sourceVars[$var]);
                 } else {
                     $destFileLines .= '$'.$var.'="";'."\n";
+                    $origFileLines .= '$'.$var.'='.$val."\n";
                 }
+                $countVars++;
+                $countWords += str_word_count($sourceVars[$var]);
             }
             $output->writeln('Writing to file '.$destination.$language.'/'.$file);
             $w = file_put_contents($destination.$language.'/'.$file, $destFileLines);
+            $w = file_put_contents($destination.$origLang.'/'.$file, $origFileLines);
         }
-        $output->writeln('Written translation files for packaging in '.$destination.$language);
+        $output->writeln('Written translation files for packaging in '.$destination.$language.'.');
+        $output->writeln('Found '.$countVars.' variables, of which '.$countTranslatedVars.' were already translated (and '.($countVars-$countTranslatedVars).' are missing).');
+        $output->writeln('In words, there are '.$countWords.' words in total, of which only '.($countWords - $countTranslatedWords).' still need translating.');
         if ($tgz) {
             $output->writeln('Compressing as .tar.gz...');
             chdir($destination);
