@@ -216,7 +216,7 @@ UNLOCK TABLES;
 
 -- xxCOURSExx
 
-CREATE TABLE IF NOT EXISTS metadata (c_id INT NOT NULL, eid VARCHAR(250) NOT NULL, mdxmltext TEXT default '', md5 CHAR(32) default '', htmlcache1 TEXT default '', htmlcache2 TEXT default '', indexabletext TEXT default '', PRIMARY KEY (c_id, eid))
+CREATE TABLE IF NOT EXISTS metadata (c_id INT NOT NULL, eid VARCHAR(250) NOT NULL, mdxmltext TEXT default '', md5 CHAR(32) default '', htmlcache1 TEXT default '', htmlcache2 TEXT default '', indexabletext TEXT default '', PRIMARY KEY (c_id, eid));
 ALTER TABLE lp ADD COLUMN hide_toc_frame INT NOT NULL DEFAULT 0;
 ALTER TABLE lp ADD COLUMN seriousgame_mode INT NOT NULL DEFAULT 0;
 ALTER TABLE lp_item_view MODIFY COLUMN suspend_data longtext;
