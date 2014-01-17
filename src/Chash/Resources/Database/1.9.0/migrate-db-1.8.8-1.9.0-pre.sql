@@ -193,6 +193,9 @@ DELETE FROM settings_current WHERE variable = 'read_more_limit';
 DELETE FROM settings_current WHERE variable = 'user_order_by';
 DELETE FROM settings_options WHERE variable = 'user_order_by';
 
+DROP PROCEDURE IF EXISTS dropIndexIfExists;
+DROP PROCEDURE IF EXISTS AddColumnUnlessExists;
+
 -- Do not move this query
 UPDATE settings_current SET selected_value = '1.9.0.18715b' WHERE variable = 'chamilo_database_version';
 
@@ -217,16 +220,16 @@ UNLOCK TABLES;
 -- xxCOURSExx
 
 CREATE TABLE IF NOT EXISTS metadata (c_id INT NOT NULL, eid VARCHAR(250) NOT NULL, mdxmltext TEXT default '', md5 CHAR(32) default '', htmlcache1 TEXT default '', htmlcache2 TEXT default '', indexabletext TEXT default '', PRIMARY KEY (c_id, eid));
-ALTER TABLE lp ADD COLUMN hide_toc_frame INT NOT NULL DEFAULT 0;
-ALTER TABLE lp ADD COLUMN seriousgame_mode INT NOT NULL DEFAULT 0;
-ALTER TABLE lp_item_view MODIFY COLUMN suspend_data longtext;
-ALTER TABLE quiz ADD COLUMN review_answers INT NOT NULL DEFAULT 0;
-ALTER TABLE student_publication ADD COLUMN contains_file INT NOT NULL DEFAULT 1;
-ALTER TABLE student_publication ADD COLUMN allow_text_assignment INT NOT NULL DEFAULT 0;
-ALTER TABLE quiz ADD COLUMN random_by_category INT NOT NULL DEFAULT 0;
-ALTER TABLE quiz ADD COLUMN text_when_finished TEXT DEFAULT NULL;
-ALTER TABLE quiz ADD COLUMN display_category_name INT NOT NULL DEFAULT 1;
-ALTER TABLE quiz ADD COLUMN pass_percentage INT DEFAULT NULL;
-ALTER TABLE quiz_answer ADD COLUMN answer_code char(10) default '';
-ALTER TABLE quiz_question ADD COLUMN question_code char(10) default '';
-INSERT INTO course_setting (variable, value, category) VALUES ('allow_public_certificates', 0, 'certificates');
+ALTER TABLE {prefix}lp ADD COLUMN hide_toc_frame INT NOT NULL DEFAULT 0;
+ALTER TABLE {prefix}lp ADD COLUMN seriousgame_mode INT NOT NULL DEFAULT 0;
+ALTER TABLE {prefix}lp_item_view MODIFY COLUMN suspend_data longtext;
+ALTER TABLE {prefix}quiz ADD COLUMN review_answers INT NOT NULL DEFAULT 0;
+ALTER TABLE {prefix}student_publication ADD COLUMN contains_file INT NOT NULL DEFAULT 1;
+ALTER TABLE {prefix}student_publication ADD COLUMN allow_text_assignment INT NOT NULL DEFAULT 0;
+ALTER TABLE {prefix}quiz ADD COLUMN random_by_category INT NOT NULL DEFAULT 0;
+ALTER TABLE {prefix}quiz ADD COLUMN text_when_finished TEXT DEFAULT NULL;
+ALTER TABLE {prefix}quiz ADD COLUMN display_category_name INT NOT NULL DEFAULT 1;
+ALTER TABLE {prefix}quiz ADD COLUMN pass_percentage INT DEFAULT NULL;
+ALTER TABLE {prefix}quiz_answer ADD COLUMN answer_code char(10) default '';
+ALTER TABLE {prefix}quiz_question ADD COLUMN question_code char(10) default '';
+INSERT INTO {prefix}course_setting (variable, value, category) VALUES ('allow_public_certificates', 0, 'certificates');
