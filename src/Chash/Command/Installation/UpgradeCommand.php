@@ -320,6 +320,7 @@ class UpgradeCommand extends CommonCommand
         $this->setExtraDatabaseSettings($extraDatabaseSettings);
         $this->setDoctrineSettings();
         $conn = $this->getConnection();
+        $conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
 
         if ($conn) {
             $output->writeln("<comment>Connection to the database established.</comment>");
