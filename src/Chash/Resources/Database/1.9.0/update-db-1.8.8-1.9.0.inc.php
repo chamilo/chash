@@ -73,6 +73,12 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
             if (!empty($rows)) {
                 $output->writeln('Moving users from class_user to usergroup_rel_user ');
                 foreach ($rows as $row) {
+                    if (empty($mapping_classes[$row['class_id']])) {
+                        // Cover a special case where data would not be
+                        // consistent - see BT#7254
+                        $output->writeln("<comment>Warning: data inconsistency: \$mapping_classes[".$row['class_id']."] was not defined, suggesting that this class ID was still used in class_user although the class had been removed</comment>");
+                        continue;
+                    }
                     $values = array(
                         'usergroup_id' => $mapping_classes[$row['class_id']],
                         'user_id' => $row['user_id']
@@ -105,7 +111,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                     if (empty($mapping_classes[$row['class_id']])) {
                         // Cover a special case where data would not be
                         // consistent - see BT#7254
-                        $output->writeln("<comment>Warning: data inconsistency: \$mapping_classes[".$row['class_id']."] was not defined, suggesting class this class ID was still used in course_rel_class although the class had been removed</comment>");
+                        $output->writeln("<comment>Warning: data inconsistency: \$mapping_classes[".$row['class_id']."] was not defined, suggesting that this class ID was still used in course_rel_class although the class had been removed</comment>");
                         continue;
                     }
                     $values = array(
