@@ -102,6 +102,12 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                     $subResult = $mainConnection->executeQuery($sql_course);
                     $courseInfo = $subResult->fetch();
                     $course_id  = $courseInfo['id'];
+                    if (empty($mapping_classes[$row['class_id']])) {
+                        // Cover a special case where data would not be
+                        // consistent - see BT#7254
+                        $output->writeln("<comment>Warning: data inconsistency: \$mapping_classes[".$row['class_id']."] was not defined, suggesting class this class ID was still used in course_rel_class although the class had been removed</comment>");
+                        continue;
+                    }
                     $values = array(
                         'usergroup_id' => $mapping_classes[$row['class_id']],
                         'course_id' => $course_id
