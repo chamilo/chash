@@ -1324,6 +1324,8 @@ CREATE TABLE c_quiz (
   hide_question_title INT default 0,
   score_type_model INT default 0,
   global_category_id INT default NULL,
+  on_success_message longtext,
+  on_failed_message longtext,
   PRIMARY KEY (iid)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
