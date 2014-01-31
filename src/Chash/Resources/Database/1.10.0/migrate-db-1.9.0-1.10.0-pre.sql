@@ -50,8 +50,9 @@ CREATE TABLE IF NOT EXISTS access_url_rel_course_category (access_url_id int uns
 
 ALTER TABLE c_student_publication ADD COLUMN filename varchar(255) DEFAULT NULL;
 ALTER TABLE course ADD COLUMN add_teachers_to_sessions_courses tinyint NOT NULL default 0;
-ALTER TABLE c_quiz ADD COLUMN on_success_message longtext;
-ALTER TABLE c_quiz ADD COLUMN on_failed_message longtext;
+ALTER TABLE c_quiz ADD COLUMN on_success_message longtext default '';
+ALTER TABLE c_quiz ADD COLUMN on_failed_message longtext default '';
+ALTER TABLE c_quiz ADD COLUMN email_notification_template_to_user longtext default '';
 
 ALTER TABLE c_tool_intro MODIFY COLUMN intro_text MEDIUMTEXT NOT NULL;
 ALTER TABLE user MODIFY COLUMN hr_dept_id int unsigned default 0;
@@ -206,7 +207,6 @@ INSERT INTO settings_options (variable, value, display_text) VALUES ('default_ca
 INSERT INTO settings_options (variable, value, display_text) VALUES ('default_calendar_view', 'basicWeek', 'BasicWeek');
 INSERT INTO settings_options (variable, value, display_text) VALUES ('default_calendar_view', 'agendaWeek', 'Week');
 INSERT INTO settings_options (variable, value, display_text) VALUES ('default_calendar_view', 'agendaDay', 'Day');
-
 INSERT INTO settings_options (variable, value, display_text) VALUES ('documents_default_visibility_defined_in_course', 'true', 'Yes');
 INSERT INTO settings_options (variable, value, display_text) VALUES ('documents_default_visibility_defined_in_course', 'false', 'No');
 INSERT INTO settings_options (variable, value, display_text) VALUES ('allow_personal_user_files', 'true', 'Yes');
@@ -218,4 +218,4 @@ INSERT INTO branch_transaction_status VALUES (1, 'To be executed'), (2, 'Execute
 UPDATE course_field SET field_type = 3 WHERE field_variable = 'special_course';
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.057' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.058' WHERE variable = 'chamilo_database_version';
