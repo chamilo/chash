@@ -3643,4 +3643,4 @@ CREATE TABLE user_session_path (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Do not move this
-UPDATE settings_current SET selected_value = '1.10.0.058' WHERE variable = 'chamilo_database_version';
+UPDATE settings_current SET selected_value = '1.10.0.059' WHERE variable = 'chamilo_database_version';
