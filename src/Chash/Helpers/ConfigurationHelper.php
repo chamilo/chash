@@ -385,11 +385,15 @@ class ConfigurationHelper extends Helper
     /**
      * @return Finder
      */
-    public function getDataFolders()
+    public function getDataFolders($depth = null)
     {
         $finder = new Finder();
         $sysPath = $this->getSysPath();
-        $finder->directories()->in($sysPath);
+        if (!isset($depth)) {
+            $finder->directories()->in($sysPath);
+        } else {
+            $finder->directories()->depth($depth)->in($sysPath);
+        }
         $finder->path('courses');
         $finder->path('data/courses');
         
