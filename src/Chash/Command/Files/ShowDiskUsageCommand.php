@@ -102,9 +102,8 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
             }
         }
         if (count($orphanList) > 0) {
-            $output->writeln('Some orphans were found:');
             foreach($orphanList as $key => $orphan) {
-                $output->writeln($key.' -> '.$size.'k');
+                $output->writeln('ORPHAN-DIR:'.$key.';'.$size.';;;');
             }
         }
         $output->writeln('Total size: '.$totalSize);
