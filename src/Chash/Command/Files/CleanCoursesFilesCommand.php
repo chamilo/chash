@@ -24,6 +24,7 @@ class CleanCoursesFilesCommand extends CommonChamiloDatabaseCommand
         parent::configure();
         $this
             ->setName('files:clean_courses_files')
+            ->setAliases(array('ccf'))
             ->setDescription('Cleans the courses directory');
     }
 
