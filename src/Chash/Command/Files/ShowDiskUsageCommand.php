@@ -24,7 +24,7 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
         parent::configure();
         $this
             ->setName('files:show_disk_usage')
-            ->setAliases('fsdu')
+            ->setAliases(array('fsdu'))
             ->setDescription('Shows the disk usage vs allowed space, per course');
     }
 
