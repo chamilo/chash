@@ -318,7 +318,7 @@ class ConfigurationHelper extends Helper
      /**
      * @return array
      */
-    public function getDataFiles()
+    public function getCoursesFiles()
     {
         $finder = new Finder();
         $sysPath = $this->getSysPath();
