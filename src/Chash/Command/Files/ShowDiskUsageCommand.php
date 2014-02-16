@@ -31,7 +31,14 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
                 null,
                 InputOption::VALUE_NONE,
                 'Show the results split by url, if using the multi-url feature, using an unprecise "best-guess" process considering all session-specific material to be part of the same root course'
-            );
+            )
+            ->addOption(
+                'csv',
+                null,
+                InputOption::VALUE_NONE,
+                'Skip confirmation question and output directly to semi-column CSV format'
+            )
+        ;
     }
 
     /**
@@ -42,18 +49,23 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
+        $csv = $input->getOption('csv'); //1 if the option was set
 
-        $this->writeCommandHeader($output, 'Checking courses dir...');
+        if (!$csv) {
+            $this->writeCommandHeader($output, 'Checking courses dir...');
 
-        $dialog = $this->getHelperSet()->get('dialog');
+            $dialog = $this->getHelperSet()->get('dialog');
 
-        if (!$dialog->askConfirmation(
-            $output,
-            '<question>This operation can take several hours on large volumes. Continue? (y/N)</question>',
-            false
-        )
-        ) {
-            return;
+            if (!$dialog->askConfirmation(
+                $output,
+                '<question>This operation can take several hours on large volumes. Continue? (y/N)</question>',
+                false
+            )
+            ) {
+                return;
+            }
+        } else {
+            $output->writeln(getcwd().';;;;');
         }
 
         // Get database and path information
@@ -64,7 +76,9 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
         $portals = array(1 => 'http://localhost/');
         $multi = $input->getOption('multi-url'); //1 if the option was set
         if ($multi) {
-            $output->writeln('Using multi-url mode');
+            if (!$csv) {
+                $output->writeln('Using multi-url mode');
+            }
             $urlTable = $_configuration['main_database'].'.access_url';
             $sql = "SELECT id, url FROM $urlTable ORDER BY url";
             $res = mysql_query($sql);
