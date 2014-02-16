@@ -38,6 +38,12 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
                 InputOption::VALUE_NONE,
                 'Skip confirmation question and output directly to semi-column CSV format'
             )
+            ->addOption(
+                'KB',
+                null,
+                InputOption::VALUE_NONE,
+                'Show results in KB instead of MB'
+            )
         ;
     }
 
@@ -49,6 +55,16 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
+        $kb = $input->getOption('KB'); //1 if the option was set
+        $div = 1024*1024;
+        $div2 = 1024;
+        $unit = 'MB';
+        if ($kb) {
+            // Show results in KB instead of MB
+            $div = 1024;
+            $div2 = 1;
+            $unit = 'KB';
+        }
         $csv = $input->getOption('csv'); //1 if the option was set
 
         if (!$csv) {
@@ -123,7 +139,7 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
             }
             $localSize = 0;
             if (count($dirs) > 0) {
-                $output->writeln('=== Code;Size(KB);Quota(KB);UsedRatio');
+                $output->writeln('=== Code;Size('.$unit.');Quota('.$unit.');UsedRatio');
                 foreach ($dirs as $dir) {
                     $file = $dir->getFileName();
                     if (isset($localCourses[$file]['code']) && isset($globalCourses[$file]['code']) && isset($finalList[$globalCourses[$file]['code']])) {
@@ -137,12 +153,12 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
                     } else {
                         $res = exec('du -s '.$dir->getRealPath());
                         $res = preg_split('/\s/',$res);
-                        $size = $res[0];
+                        $size = round($res[0]/$div2,1);
 
                         if (isset($localCourses[$file]['code'])) {
                             $localSize += $size; //always add size to local portal (but only add to total size if new)
                             $code = $localCourses[$file]['code'];
-                            $quota = round($localCourses[$file]['quota']/1024, 0);
+                            $quota = round($localCourses[$file]['quota']/$div, 0);
                             $rate = '-';
                             if ($quota > 0) {
                                 $rate = round(($size/$quota)*100, 0);
@@ -167,12 +183,12 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
             $output->writeln('--- Subtotal;'.$portalName.' ('.$portalId.');'.$localSize.';;');
         }
         if (count($orphanList) > 0) {
-            $output->writeln('=== Code;Size(KB);Quota(KB);UsedRatio');
+            $output->writeln('=== Code;Size('.$unit.');Quota('.$unit.');UsedRatio');
             foreach($orphanList as $key => $orphan) {
                 $output->writeln('ORPHAN-DIR:'.$key.';'.$size.';;;');
                 $totalSize += $size;
             }
         }
-        $output->writeln('### Total size: '.$totalSize);
+        $output->writeln('### Total size;'.$totalSize.';;;');
     }
 }
