@@ -421,8 +421,8 @@ class ConfigurationHelper extends Helper
         $finder = new Finder();
         $sysPath = $this->getSysPath();
         $finder->directories()->in($sysPath);
-        $finder->path('archive');
-        $finder->path('data/temp');
+        $finder->path('archive/');
+        $finder->path('data/temp/');
         return $finder;
     }
 
