@@ -90,17 +90,25 @@ class UpdateDirectoryMaxSizeCommand extends CommonChamiloDatabaseCommand
                     $quota = round($globalCourses[$file]['quota']/(1024*1024), 0); //quota is originally in Bytes in DB. Store in MB
                     $rate = '-';
                     if ($quota > 0) {
-                        $newAllowedSize = $size;
-                        $rate = round(($newAllowedSize/$quota)*100, 0); //rate is a percentage of disk use vs allowed quota, in MB
-                        while ($rate < $threshold) { // Typically 80 < 75 -> increase quota
+                        $newAllowedSize = $quota;
+                        $rate = round(($size/$newAllowedSize)*100, 0); //rate is a percentage of disk use vs allowed quota, in MB
+                        $increase = false;
+                        while ($rate > $threshold) { // Typically 80 > 75 -> increase quota
+                            //$output->writeln('...Rate '.$rate.' is larger than '.$threshold.', so increase allowed size');
                             // Current disk usage goes beyond threshold. Increase allowed size by 100MB
                             $newAllowedSize += $add;
-                            $rate = round(($newAllowedSize/$quota)*100, 0);
+                            //$output->writeln('....New allowed size is '.$newAllowedSize);
+                            $rate = round(($size/$newAllowedSize)*100, 0);
+                            //$output->writeln('...Rate is now '.$rate);
+                            $increase = true;
                         }
                         $newAllowedSize = $newAllowedSize*1024*1024;
+                        //$output->writeln('Allowed size is '.$newAllowedSize.' Bytes, or '.round($newAllowedSize/(1024*1024)));
                         $sql = "UPDATE $courseTable SET disk_quota = $newAllowedSize WHERE id = ".$globalCourses[$file]['id'];
                         $res = mysql_query($sql);
-                        $output->writeln('Increased max size of '.$globalCourses[$file]['code'].'('.$globalCourses[$file]['id'].') to '.$newAllowedSize);
+                        if ($increase) {
+                            $output->writeln('Increased max size of '.$globalCourses[$file]['code'].'('.$globalCourses[$file]['id'].') to '.$newAllowedSize);
+                        }
                     } else {
                         //Quota is 0 (unlimited?)
                     }
