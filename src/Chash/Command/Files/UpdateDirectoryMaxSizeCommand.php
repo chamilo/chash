@@ -82,26 +82,27 @@ class UpdateDirectoryMaxSizeCommand extends CommonChamiloDatabaseCommand
         if (count($dirs) > 0) {
             foreach ($dirs as $dir) {
                 $file = $dir->getFileName();
-                $res = exec('du -s '.$dir->getRealPath()); //results are in KB
+                $res = exec('du -s '.$dir->getRealPath()); // results are returned in KB (under Linux)
                 $res = preg_split('/\s/',$res);
-                $size = round($res[0]/1024,1); // $size is stores in MB
+                $size = round($res[0]/1024,1); // $size is stored in MB
                 if (isset($globalCourses[$file]['code'])) {
                     $code = $globalCourses[$file]['code'];
                     $quota = round($globalCourses[$file]['quota']/(1024*1024), 0); //quota is originally in Bytes in DB. Store in MB
                     $rate = '-';
                     if ($quota > 0) {
-                        $rate = round(($size/$quota)*100, 0);
-                        if ($rate > $threshold) {
+                        $newAllowedSize = $size;
+                        $rate = round(($newAllowedSize/$quota)*100, 0); //rate is a percentage of disk use vs allowed quota, in MB
+                        while ($rate < $threshold) { // Typically 80 < 75 -> increase quota
                             // Current disk usage goes beyond threshold. Increase allowed size by 100MB
-                            $newQuota = ($quota + $add);
-                            while ($newQuota < $size) {
-                                $newQuota += $add;
-                            }
-                            $newQuota = $newQuota*1024*1024;
-                            $sql = "UPDATE $courseTable SET disk_quota = $newQuota WHERE id = ".$globalCourses[$file]['id'];
-                            $res = mysql_query($sql);
-                            $output->writeln('Increased max size of '.$globalCourses[$file]['code'].'('.$globalCourses[$file]['id'].') to '.$newQuota);
+                            $newAllowedSize += $add;
+                            $rate = round(($newAllowedSize/$quota)*100, 0);
                         }
+                        $newAllowedSize = $newAllowedSize*1024*1024;
+                        $sql = "UPDATE $courseTable SET disk_quota = $newAllowedSize WHERE id = ".$globalCourses[$file]['id'];
+                        $res = mysql_query($sql);
+                        $output->writeln('Increased max size of '.$globalCourses[$file]['code'].'('.$globalCourses[$file]['id'].') to '.$newAllowedSize);
+                    } else {
+                        //Quota is 0 (unlimited?)
                     }
                 }
             }
