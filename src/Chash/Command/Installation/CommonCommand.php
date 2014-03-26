@@ -897,6 +897,13 @@ class CommonCommand extends AbstractCommand
                         $em = \Doctrine\ORM\EntityManager::create($params, $config);
                     }
                 }
+
+                if (!empty($em)) {
+                    $platform = $em->getConnection()->getDatabasePlatform();
+                    $platform->registerDoctrineTypeMapping('enum', 'string');
+                    $platform->registerDoctrineTypeMapping('set', 'string');
+                }
+
                 $helper = new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($em->getConnection());
                 $this->getApplication()->getHelperSet()->set($helper, $dbInfo['database']);
             }
