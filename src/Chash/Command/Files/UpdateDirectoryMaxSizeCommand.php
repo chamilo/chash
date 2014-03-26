@@ -28,7 +28,7 @@ class UpdateDirectoryMaxSizeCommand extends CommonChamiloDatabaseCommand
         $this
             ->setName('files:update_directory_max_size')
             ->setAliases(array('fudms'))
-            ->setDescription('Increases the max disk space for all the courses reaching a certain threshold. Max space needs to be of at least 1MB for each course first.')
+            ->setDescription('Increases the max disk space for all the courses reaching a certain threshold.')
             ->addOption(
                 'threshold',
                 null,
@@ -56,10 +56,17 @@ class UpdateDirectoryMaxSizeCommand extends CommonChamiloDatabaseCommand
         if (empty($add)) {
             $add = 100;
         }
+
+        if ($add == 1) {
+            $this->writeCommandHeader($output, 'Max space needs to be of at least 1MB for each course first');
+            return;
+        }
+
         $theshold = $input->getOption('threshold');
         if (empty($threshold)) {
             $threshold = 75;
         }
+        $this->writeCommandHeader($output, 'Using threshold: '.$threshold);
         $this->writeCommandHeader($output, 'Checking courses dir...');
 
         // Get database and path information
