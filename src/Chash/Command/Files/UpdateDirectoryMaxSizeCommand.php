@@ -62,7 +62,7 @@ class UpdateDirectoryMaxSizeCommand extends CommonChamiloDatabaseCommand
             return;
         }
 
-        $theshold = $input->getOption('threshold');
+        $threshold = $input->getOption('threshold');
         if (empty($threshold)) {
             $threshold = 75;
         }
