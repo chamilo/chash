@@ -44,6 +44,12 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
                 InputOption::VALUE_NONE,
                 'Show results in KB instead of MB'
             )
+            ->addOption(
+                'documents-only',
+                null,
+                InputOption::VALUE_NONE,
+                'Show results only from the document directory'
+            )
         ;
     }
 
@@ -122,6 +128,14 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
         $finalListOrder = array();
         $orphanList = array();
         $dirs = $this->getConfigurationHelper()->getDataFolders(1);
+        $isDocumentOnly = $input->getOption('documents-only'); 
+        $dirDoc = "";
+        $docsOnly = "";
+        if ($isDocumentOnly) {
+            $dirDoc = "/document";
+            $docsOnly = " DocsOnly";
+        }
+        
         // browse all the portals
         foreach ($portals as $portalId => $portalName) {
             if (empty($portalId)) { continue; }
@@ -140,7 +154,7 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
             }
             $localSize = 0;
             if (count($dirs) > 0) {
-                $output->writeln(';CCC Code;Size('.$unit.');Quota('.$unit.');UsedRatio');
+                $output->writeln(';CCC Code;Size' . $docsOnly. '(' . $unit . ');Quota(' . $unit . ');UsedRatio');
                 foreach ($dirs as $dir) {
                     $file = $dir->getFileName();
                     if (isset($localCourses[$file]['code']) && isset($globalCourses[$file]['code']) && isset($finalList[$globalCourses[$file]['code']])) {
@@ -153,7 +167,7 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
                             ';'.$finalList[$globalCourses[$file]['code']]['rate']);
                         $localSize += $size;
                     } else {
-                        $res = exec('du -s '.$dir->getRealPath());
+                        $res = exec('du -s ' . $dir->getRealPath() . $dirDoc);
                         $res = preg_split('/\s/',$res);
                         $size = round($res[0]/$div2,1);
 
@@ -187,7 +201,7 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
             $output->writeln(';;;;;');
         }
         if (count($orphanList) > 0) {
-            $output->writeln('CCC Code;Size('.$unit.');Quota('.$unit.');UsedRatio');
+            $output->writeln('CCC Code;Size' . $docsOnly . '(' . $unit . ');Quota(' . $unit . ');UsedRatio');
             foreach($orphanList as $key => $orphan) {
                 $output->writeln($portalName . ';ORPHAN-DIR: '.$key.';'.$size.';;;');
                 $totalSize += $size;
