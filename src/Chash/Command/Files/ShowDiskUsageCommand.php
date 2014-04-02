@@ -161,7 +161,7 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
             }
             $localSize = 0;
             if (count($dirs) > 0) {
-                $output->writeln(';CCC Code;Size' . $docsOnly. '(' . $unit . ');Quota(' . $unit . ');UsedRatio');
+                $output->writeln(';Code;Size' . $docsOnly. '(' . $unit . ');Quota(' . $unit . ');UsedRatio');
                 foreach ($dirs as $dir) {
                     $file = $dir->getFileName();
                     if (isset($localCourses[$file]['code']) && isset($globalCourses[$file]['code']) && isset($finalList[$globalCourses[$file]['code']])) {
@@ -204,7 +204,7 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
                     }
                 }
             }
-            $output->writeln($portalName . ';SSS Subtotal;' . round($localSize/$div2, $precision) . ';;;');
+            $output->writeln($portalName . ';Subtotal;' . round($localSize/$div2, $precision) . ';;;');
             $output->writeln(';;;;;');
         }
         if (count($orphanList) > 0) {
@@ -216,6 +216,6 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
                 $totalSize += $size;
             }
         }
-        $output->writeln($portalName . ';TTT Total size;' . round($totalSize/$div2, $precision) . ';;;');
+        $output->writeln($portalName . ';Total size;' . round($totalSize/$div2, $precision) . ';;;');
     }
 }
