@@ -89,6 +89,7 @@ $application->addCommands(
         new Chash\Command\User\MakeAdminCommand(),
         new Chash\Command\User\ResetLoginCommand(),
         new Chash\Command\User\SetLanguageCommand(),
+        new Chash\Command\User\UsersPerUrlAccessCommand(),
     )
 );
 $application->run();

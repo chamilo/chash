@@ -50,6 +50,13 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
                 InputOption::VALUE_NONE,
                 'Show results only from the document directory'
             )
+            ->addOption(
+                'precision',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Precision to show results',
+                '1'
+            )
         ;
     }
 
@@ -135,7 +142,7 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
             $dirDoc = "/document";
             $docsOnly = " DocsOnly";
         }
-        
+        $precision = $input->getOption('precision');
         // browse all the portals
         foreach ($portals as $portalId => $portalName) {
             if (empty($portalId)) { continue; }
@@ -154,22 +161,22 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
             }
             $localSize = 0;
             if (count($dirs) > 0) {
-                $output->writeln(';CCC Code;Size' . $docsOnly. '(' . $unit . ');Quota(' . $unit . ');UsedRatio');
+                $output->writeln(';Code;Size' . $docsOnly. '(' . $unit . ');Quota(' . $unit . ');UsedRatio');
                 foreach ($dirs as $dir) {
                     $file = $dir->getFileName();
                     if (isset($localCourses[$file]['code']) && isset($globalCourses[$file]['code']) && isset($finalList[$globalCourses[$file]['code']])) {
                         // if this course has already been analysed, recover existing information
                         $size = $finalList[$globalCourses[$file]['code']]['size'];
-                        $output->writeln($portalName.
-                            ';'.$globalCourses[$file]['code'].
-                            ';'.$size.
-                            ';'.$finalList[$globalCourses[$file]['code']]['quota'].
-                            ';'.$finalList[$globalCourses[$file]['code']]['rate']);
+                        $output->writeln($portalName .
+                            ';' . $globalCourses[$file]['code'] .
+                            ';' . round($size/$div2, $precision) .
+                            ';' . $finalList[$globalCourses[$file]['code']]['quota'] .
+                            ';' . $finalList[$globalCourses[$file]['code']]['rate']);
                         $localSize += $size;
                     } else {
                         $res = exec('du -s ' . $dir->getRealPath() . $dirDoc);
                         $res = preg_split('/\s/',$res);
-                        $size = round($res[0]/$div2,1);
+                        $size = $res[0];
 
                         if (isset($localCourses[$file]['code'])) {
                             $localSize += $size; //always add size to local portal (but only add to total size if new)
@@ -177,7 +184,7 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
                             $quota = round($localCourses[$file]['quota']/$div, 0);
                             $rate = '-';
                             if ($quota > 0) {
-                                $rate = round(($size/$quota)*100, 0);
+                                $rate = round((round($size/$div2, 2)/$quota)*100, 0);
                             }
                             $finalList[$code] = array(
                                 'code'  => $code,
@@ -188,8 +195,8 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
                             );
                             //$finalListOrder[$code] = $size;
                             $totalSize += $size; //only add to total if new course
-
-                            $output->writeln($portalName . '; ' . $code . ';' . $size . ';' . $finalList[$code]['quota'] . ';' . $rate);
+                            
+                            $output->writeln($portalName . '; ' . $code . ';' . round($size/$div2, $precision) . ';' . $finalList[$code]['quota'] . ';' . $rate);
                         } elseif (!isset($globalCourses[$file]['code']) && !isset($orphanList[$file])) {
                             // only add to orphans if not in global list from db
                             $orphanList[$file] = array('size' => $size);
@@ -197,16 +204,18 @@ class ShowDiskUsageCommand extends CommonChamiloDatabaseCommand
                     }
                 }
             }
-            $output->writeln($portalName . ';SSS Subtotal;' . $localSize . ';;;');
+            $output->writeln($portalName . ';Subtotal;' . round($localSize/$div2, $precision) . ';;;');
             $output->writeln(';;;;;');
         }
         if (count($orphanList) > 0) {
             $output->writeln('CCC Code;Size' . $docsOnly . '(' . $unit . ');Quota(' . $unit . ');UsedRatio');
             foreach($orphanList as $key => $orphan) {
-                $output->writeln($portalName . ';ORPHAN-DIR: '.$key.';'.$size.';;;');
+                $size = $orphan['size'];
+                $sizeToShow = !empty($orphan['size']) ? round($orphan['size']/$div2, $precision) : 0;
+                $output->writeln($portalName . ';ORPHAN-DIR: ' . $key . ';' . $sizeToShow . ';;;');
                 $totalSize += $size;
             }
         }
-        $output->writeln($portalName . ';TTT Total size;' . $totalSize . ';;;');
+        $output->writeln($portalName . ';Total size;' . round($totalSize/$div2, $precision) . ';;;');
     }
 }
