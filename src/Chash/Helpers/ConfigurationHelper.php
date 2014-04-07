@@ -439,9 +439,11 @@ class ConfigurationHelper extends Helper
         $sysPath = $this->getSysPath();
         if (is_dir($sysPath.'archive')) {
             $finder->in($sysPath.'archive/');
+            $finder->files()->notName('index.*');
         }
         if (is_dir($sysPath.'data/temp')) {
             $finder->in($sysPath.'data/temp/');
+            $finder->files()->notName('index.*');
         }
         return $finder;
     }
