@@ -18,6 +18,7 @@ class StatusCommand extends CommonCommand
         $this
             ->setName('chamilo:status')
             ->setDescription('Show the information of the current Chamilo installation')
+            ->addOption('show-pass', null, InputOption::VALUE_OPTIONAL, 'Set a value to show the chamilo database password')
             ->addOption('path', null, InputOption::VALUE_OPTIONAL, 'The path to the Chamilo folder');
     }
 
@@ -32,7 +33,8 @@ class StatusCommand extends CommonCommand
     protected function execute(Console\Input\InputInterface $input, Console\Output\OutputInterface $output)
     {
         $path = $input->getOption('path');
-
+        $showPass = $input->getOption('show-pass');
+        
         $_configuration = $this->getConfigurationHelper()->getConfiguration($path);
 
         if (empty($_configuration)) {
@@ -40,7 +42,7 @@ class StatusCommand extends CommonCommand
             $output->writeln("<comment>For example: </comment><info>chamilo:status --path=/var/www/chamilo</info>");
             return 0;
         }
-
+                
         $databaseSettings = array(
             'driver' => 'pdo_mysql',
             'host' => $_configuration['db_host'],
@@ -48,6 +50,15 @@ class StatusCommand extends CommonCommand
             'user' => $_configuration['db_user'],
             'password' => $_configuration['db_password']
         );
+        
+        $dbPassword = $databaseSettings['password'];
+        if (empty($showPass)) {
+            $dbPassLen = strlen($dbPassword);
+            $dbPassword = '';
+            for ($i = 1; $i <= $dbPassLen; $i++) {
+                $dbPassword .= '*';
+            }
+        }
 
         // single_database
 
@@ -80,29 +91,29 @@ class StatusCommand extends CommonCommand
         }
 
         //$output->writeln('<comment>Chamilo $_configuration[db_driver]:</comment> <info>'.$_configuration['db_driver'].'</info>');
-        $output->writeln('<comment>Chamilo $_configuration[main_database]:</comment> <info>'.$_configuration['main_database'].'</info>');
-        $output->writeln('<comment>Chamilo $_configuration[db_host]:</comment> <info>'.$_configuration['db_host'].'</info>');
-        $output->writeln('<comment>Chamilo $_configuration[db_user]:</comment> <info>'.$_configuration['db_user'].'</info>');
-        $output->writeln('<comment>Chamilo $_configuration[db_password]:</comment> <info>'.$_configuration['db_password'].'</info>');
+        $output->writeln('<comment>Chamilo $_configuration[main_database]:</comment> <info>' . $_configuration['main_database'] . '</info>');
+        $output->writeln('<comment>Chamilo $_configuration[db_host]:</comment> <info>' . $_configuration['db_host'] . '</info>');
+        $output->writeln('<comment>Chamilo $_configuration[db_user]:</comment> <info>' . $_configuration['db_user'] . '</info>');
+        $output->writeln('<comment>Chamilo $_configuration[db_password]:</comment> <info>' . $dbPassword . '</info>');
 
         if (isset($_configuration['db_port'])) {
-            $output->writeln('<comment>Chamilo $_configuration[db_port]:</comment> <info>'.$_configuration['db_port'].'</info>');
+            $output->writeln('<comment>Chamilo $_configuration[db_port]:</comment> <info>' . $_configuration['db_port'] . '</info>');
         }
 
         if (isset($_configuration['single_database'])) {
-            $output->writeln('<comment>Chamilo $_configuration[single_database]:</comment> <info>'.$_configuration['single_database'].'</info>');
+            $output->writeln('<comment>Chamilo $_configuration[single_database]:</comment> <info>' . $_configuration['single_database'] . '</info>');
         }
 
         if (isset($_configuration['db_prefix'])) {
-            $output->writeln('<comment>Chamilo $_configuration[db_prefix]:</comment> <info>'.$_configuration['db_prefix'].'</info>');
+            $output->writeln('<comment>Chamilo $_configuration[db_prefix]:</comment> <info>' . $_configuration['db_prefix'] . '</info>');
         }
 
         if (isset($_configuration['db_glue'])) {
-            $output->writeln('<comment>Chamilo $_configuration[db_glue]:</comment> <info>'.$_configuration['db_glue'].'</info>');
+            $output->writeln('<comment>Chamilo $_configuration[db_glue]:</comment> <info>' . $_configuration['db_glue'] . '</info>');
         }
 
         if (isset($_configuration['db_prefix'])) {
-            $output->writeln('<comment>Chamilo $_configuration[table_prefix]:</comment> <info>'.$_configuration['table_prefix'].'</info>');
+            $output->writeln('<comment>Chamilo $_configuration[table_prefix]:</comment> <info>' . $_configuration['table_prefix'] . '</info>');
         }
         $output->writeln('');
 
@@ -110,11 +121,11 @@ class StatusCommand extends CommonCommand
             $output->writeln("<comment>Please check your Chamilo installation carefully the <info>'chamilo_database_version'</info> admin does not exists.</comment>");
         } else {
             $output->writeln('<comment>Chamilo database settings:</comment>');
-            $output->writeln("<comment>Chamilo setting_current['".$databaseSetting."']:</comment> <info>".$chamiloVersion."</info>");
+            $output->writeln("<comment>Chamilo setting_current['" . $databaseSetting . "']:</comment> <info>" . $chamiloVersion . "</info>");
         }
 
         if (isset($_configuration['system_version'])) {
-            $output->writeln('<comment>Chamilo $_configuration[system_version]:</comment> <info>'.$_configuration['system_version'].'</info>');
+            $output->writeln('<comment>Chamilo $_configuration[system_version]:</comment> <info>' . $_configuration['system_version'] . '</info>');
         }
 
         if (!version_compare(substr($chamiloVersion, 0, 5), substr($_configuration['system_version'], 0, 5), '==' )) {
