@@ -445,6 +445,58 @@ class ConfigurationHelper extends Helper
         }
         return $finder;
     }
+    
+    /**
+     * Lists the lib folder
+     * @return Finder
+     */
+    public function getLibFolder()
+    {
+        $sysPath = $this->getSysPath();
+        if (is_dir($sysPath . 'main/inc/lib/')) {
+            return $sysPath . 'main/inc/lib/';
+        }
+        
+        return false;
+    }
+    /**
+     * Lists the files in the main/inc/conf
+     * @param fileName
+     * @return Finder
+     */
+    public function getConfFile($fileName)
+    {
+        $finder = new Finder();
+        $sysPath = $this->getSysPath();
+        if (is_dir($sysPath . 'main/inc/conf')) {
+            $finder->files()->name($fileName)->in($sysPath . 'main/inc/conf');
+        }
+        
+        foreach ($finder as $file) {
+            return $file;
+        }
+
+        return false;
+    }
+    /**
+     * Lists the files in the main/inc/lib
+     * @param fileName
+     * @return Finder
+     */
+    public function getLibFile($fileName)
+    {
+        $finder = new Finder();
+        $sysPath = $this->getSysPath();
+        if (is_dir($sysPath . 'main/inc/lib')) {
+            $finder->files()->name($fileName)->in($sysPath . 'main/inc/lib');
+        }
+        
+        foreach ($finder as $file) {
+            return $file;
+        }
+
+        return false;
+    }
 
     /**
      * Sets the system's root path (e.g. /var/www/chamilo/)
