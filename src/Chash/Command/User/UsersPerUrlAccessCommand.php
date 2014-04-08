@@ -39,21 +39,24 @@ class UsersPerUrlAccessCommand extends CommonChamiloUserCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-        $dbh = $this->getHelper('configuration')->getConnection();
-       
-        if (!empty($dbh)) {
-            $ls = "SELECT url, count(user_id) as users FROM access_url a
+        $connection = $this->getHelper('configuration')->getConnection();
+        $table = $this->getHelperSet()->get('table');
+        if (!empty($connection)) {
+            $sql = "SELECT url, count(user_id) as users FROM access_url a
                     INNER JOIN access_url_rel_user r ON a.id = r.access_url_id
                     order by url";
-            $lq = mysql_query($ls);
-            if ($lq === false) {
+            $rs = mysql_query($sql);
+            if ($rs === false) {
                 $output->writeln('Error in query: '.mysql_error());
                 return null;
             } else {
-                $output->writeln("Url\t\t\t\t| Number of users");
-                while ($lr = mysql_fetch_assoc($lq)) {
-                    $output->writeln($lr['url'] . "\t\t| " . $lr['users']);
+                $table->setHeaders(array('Url', 'Number of Users'));
+                $usersPerUrl = array();
+                while ($row = mysql_fetch_assoc($rs)) {
+                    $usersPerUrl[] = array($row['url'], $row['users']);
                 }
+                $table->setRows($usersPerUrl);
+                $table->render($output);
             }
         }
         return null;
