@@ -39,8 +39,8 @@ class UsersPerUrlAccessCommand extends CommonChamiloUserCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-        $dbh = $this->getHelper('configuration')->getConnection();
-       
+        $connection = $this->getConnection();
+
         if (!empty($dbh)) {
             $ls = "SELECT url, count(user_id) as users FROM access_url a
                     INNER JOIN access_url_rel_user r ON a.id = r.access_url_id

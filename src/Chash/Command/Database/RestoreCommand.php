@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * to store to a file)
  * @param array $params params received
  */
-class RestoreCommand extends CommonChamiloDatabaseCommand
+class RestoreCommand extends CommonDatabaseCommand
 {
     /**
      *

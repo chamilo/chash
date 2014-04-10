@@ -2,7 +2,7 @@
 
 namespace Chash\Command\Files;
 
-use Chash\Command\Database\CommonChamiloDatabaseCommand;
+use Chash\Command\Database\CommonDatabaseCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class CleanTempFolderCommand
  * @package Chash\Command\Files
  */
-class CleanTempFolderCommand extends CommonChamiloDatabaseCommand
+class CleanTempFolderCommand extends CommonDatabaseCommand
 {
     /**
      *

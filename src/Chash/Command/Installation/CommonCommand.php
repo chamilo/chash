@@ -831,7 +831,10 @@ class CommonCommand extends AbstractCommand
         $config->setProxyDir(__DIR__ . '/Proxies');
         $config->setProxyNamespace('Proxies');
 
-        $em = \Doctrine\ORM\EntityManager::create($this->getDatabaseSettings(), $config);
+        $em = \Doctrine\ORM\EntityManager::create(
+            $this->getDatabaseSettings(),
+            $config
+        );
 
         // Fixes some errors
         $platform = $em->getConnection()->getDatabasePlatform();
@@ -840,8 +843,8 @@ class CommonCommand extends AbstractCommand
 
         $helpers = array(
             'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($em->getConnection()),
-            'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper($em),
-            'configuration' => new \Chash\Helpers\ConfigurationHelper()
+            'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper($em)
+            //'configuration' => new \Chash\Helpers\ConfigurationHelper()
         );
 
         foreach ($helpers as $name => $helper) {

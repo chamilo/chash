@@ -2,7 +2,7 @@
 
 namespace Chash\Command\Files;
 
-use Chash\Command\Database\CommonChamiloDatabaseCommand;
+use Chash\Command\Database\CommonDatabaseCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * continue working progressively.
  * @package Chash\Command\Files
  */
-class UpdateDirectoryMaxSizeCommand extends CommonChamiloDatabaseCommand
+class UpdateDirectoryMaxSizeCommand extends CommonDatabaseCommand
 {
     /**
      *
@@ -71,7 +71,7 @@ class UpdateDirectoryMaxSizeCommand extends CommonChamiloDatabaseCommand
 
         // Get database and path information
         $coursesPath = $this->getConfigurationHelper()->getSysPath();
-        $this->getConfigurationHelper()->getConnection();
+        $connection = $this->getConnection();
         $_configuration = $this->getConfigurationHelper()->getConfiguration();
 
         $courseTable = $_configuration['main_database'].'.course';
@@ -85,7 +85,7 @@ class UpdateDirectoryMaxSizeCommand extends CommonChamiloDatabaseCommand
             }
         }
 
-        $dirs = $this->getConfigurationHelper()->getDataFolders(1);
+        $dirs = $this->getConfigurationHelper()->getDataFolders();
         if (count($dirs) > 0) {
             foreach ($dirs as $dir) {
                 $file = $dir->getFileName();

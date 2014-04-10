@@ -12,10 +12,10 @@ use Chash\Command\Installation\CommonCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 
 /**
- * Class CommonChamiloDatabaseCommand
+ * Class CommonDatabaseCommand
  * @package Chash\Command\Database
  */
-class CommonChamiloDatabaseCommand extends CommonCommand
+class CommonDatabaseCommand extends CommonCommand
 {
     /**
      *
@@ -38,6 +38,32 @@ class CommonChamiloDatabaseCommand extends CommonCommand
     }
 
     /**
+     * Get connection to the database
+     * @return \Doctrine\DBAL\Connection
+     *
+     */
+    public function getConnection()
+    {
+        try {
+            return $this->getHelper('db')->getConnection();
+        } catch (Exception $e)  {
+            echo $e->getMessage();
+        }
+    }
+
+    /**
+     * @return \Doctrine\ORM\EntityManager
+     */
+    public function getEntityManager()
+    {
+        try {
+            return $this->getHelper('em')->getEntityManager();
+        } catch (Exception $e)  {
+            echo $e->getMessage();
+        }
+    }
+
+    /**
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int|null|void
@@ -49,11 +75,11 @@ class CommonChamiloDatabaseCommand extends CommonCommand
         $configuration = $this->getConfigurationHelper()->readConfigurationFile($configurationFile);
 
         if (empty($configuration)) {
-            // Test out a few possibilities
+            // Test out a few possibilities.
             $configurationFile = $this->getConfigurationHelper()->getConfigurationFilePath();
             $configuration = $this->getConfigurationHelper()->readConfigurationFile($configurationFile);
             if (empty($configuration)) {
-                $output->writeln('<error>The configuration file was not found.</error>');
+                $output->writeln('<error>The configuration file was not found or Chamilo is not installed here.</error>');
                 $output->writeln('<comment>Try</comment> <info>prefix:command --conf=/var/www/chamilo/config/configuration.php</info>');
                 exit;
             }
@@ -63,5 +89,18 @@ class CommonChamiloDatabaseCommand extends CommonCommand
         $this->getConfigurationHelper()->setConfiguration($configuration);
         $sysPath = $this->getConfigurationHelper()->getSysPathFromConfigurationFile($configurationFile);
         $this->getConfigurationHelper()->setSysPath($sysPath);
+
+        $databaseSettings = array(
+            'driver' => 'pdo_mysql',
+            'host' => $configuration['db_host'],
+            'dbname' => $configuration['main_database'],
+            'user' => $configuration['db_user'],
+            'password' => $configuration['db_password']
+        );
+
+        // Setting doctrine connection
+        $this->setDatabaseSettings($databaseSettings);
+        $this->setDoctrineSettings();
+        //$this->getApplication()->getHelperSet()->set($this->getConfigurationHelper(), 'configuration');
     }
 }

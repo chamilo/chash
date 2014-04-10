@@ -2,6 +2,7 @@
 
 namespace Chash\Helpers;
 
+use Guzzle\Tests\Batch\ExceptionBufferingBatchTest;
 use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Finder\Finder;
@@ -385,18 +386,23 @@ class ConfigurationHelper extends Helper
     /**
      * @return Finder
      */
-    public function getDataFolders($depth = null)
+    public function getDataFolders()
     {
         $finder = new Finder();
         $sysPath = $this->getSysPath();
-        if (!isset($depth)) {
-            $finder->directories()->in($sysPath);
-        } else {
-            $finder->directories()->depth($depth)->in($sysPath);
+
+        if (empty($sysPath)) {
+            return null;
         }
-        $finder->path('courses');
-        $finder->path('data/courses');
-        
+
+        if (is_dir($sysPath.'courses')) {
+            $finder->directories()->depth('== 0')->in($sysPath.'/courses');
+        }
+
+        if (is_dir($sysPath.'data/courses')) {
+            $finder->directories()->depth('== 0')->in($sysPath.'/data/courses');
+        }
+
         return $finder;
     }
 
@@ -522,32 +528,6 @@ class ConfigurationHelper extends Helper
     public function getSysPath()
     {
         return $this->sysPath;
-    }
-
-    /**
-     * Connect to the database
-     * @return object Database handler
-     */
-    public function getConnection($path = null)
-    {
-        $conf = $this->getConfiguration($path);
-        $dbh = false;
-
-        if (isset($conf['db_host']) && isset($conf['db_host']) && isset($conf['db_password'])) {
-            $dbh  = mysql_connect($conf['db_host'], $conf['db_user'], $conf['db_password']);
-
-            if (!$dbh) {
-
-                return false;
-                //die('Could not connect to server: '.mysql_error());
-            }
-            $db = mysql_select_db($conf['main_database'], $dbh);
-            if (!$db) {
-
-                return false;
-            }
-        }
-        return $dbh;
     }
 
     /**
