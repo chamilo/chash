@@ -593,4 +593,16 @@ class ConfigurationHelper extends Helper
     {
         return 'configuration';
     }
+    /**
+     * Gets the current install's major version. Requires getConfiguration() to be called first
+     * @return  string  The major version (two-parts version number, e.g. "1.9")
+     */
+    public function getMajorVersion()
+    {
+        if (empty($this->configuration)) {
+            $this->getConfiguration();
+        }
+        list($first, $second) = preg_split('/\./',$this->configuration['system_version']);
+        return $first.'.'.$second;
+    }
 }

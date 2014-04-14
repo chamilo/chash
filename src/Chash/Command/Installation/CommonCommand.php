@@ -220,6 +220,7 @@ class CommonCommand extends AbstractCommand
             }
         }
         natsort($dirList);
+
         return $dirList;
     }
 
@@ -926,6 +927,7 @@ class CommonCommand extends AbstractCommand
 
         if (count($files) < 1) {
             $output->writeln('<comment>No files found.</comment>');
+
             return 0;
         }
 
@@ -947,6 +949,8 @@ class CommonCommand extends AbstractCommand
         } catch (IOException $e) {
             echo "\n An error occurred while removing the directory: ".$e->getMessage()."\n ";
         }
+
+        return 0;
     }
 
     /**
@@ -978,8 +982,8 @@ class CommonCommand extends AbstractCommand
         $fs = new Filesystem();
 
         // Download the chamilo package from from github:
+        $versionTag = str_replace('.', '_', $version);
         if (empty($updateInstallation)) {
-            $versionTag = str_replace('.', '_', $version);
             $updateInstallation = "https://github.com/chamilo/chamilo-lms/archive/CHAMILO_".$versionTag."_STABLE.zip";
 
             switch($version) {
@@ -998,6 +1002,7 @@ class CommonCommand extends AbstractCommand
             // Check temp folder
             if (!is_writable($defaultTempFolder)) {
                 $output->writeln("<comment>We don't have permissions to write in the temp folder: $defaultTempFolder</comment>");
+
                 return 0;
             }
 
@@ -1005,6 +1010,7 @@ class CommonCommand extends AbstractCommand
             if (strpos($updateInstallation, 'http') === false) {
                 if (!file_exists($updateInstallation)) {
                     $output->writeln("<comment>File does not exists: $updateInstallation</comment>");
+
                     return 0;
                 }
             } else {
@@ -1031,6 +1037,7 @@ class CommonCommand extends AbstractCommand
                 if (!file_exists($updateInstallationLocalName)) {
                     $output->writeln("<error>Can't download the file!</error>");
                     $output->writeln("<comment>Check if you can download this file in your browser first:</comment> <info>$updateInstallation</info>");
+
                     return 0;
                 }
             }
@@ -1048,6 +1055,7 @@ class CommonCommand extends AbstractCommand
                     $chamiloPath = $folderPath.'/chamilo-lms-CHAMILO_'.$versionTag.'_STABLE/main/inc/global.inc.php';
                     if (file_exists($chamiloPath)) {
                         $output->writeln("<comment>Files have been already extracted here: </comment><info>".$folderPath.'/chamilo-lms-CHAMILO_'.$versionTag.'_STABLE/'."</info>");
+
                         return $folderPath.'/chamilo-lms-CHAMILO_'.$versionTag.'_STABLE/';
                     }
                 }
@@ -1076,9 +1084,9 @@ class CommonCommand extends AbstractCommand
 
                         unlink($updateInstallation);
                         $output->writeln("<comment>Removing file</comment>:<info>$updateInstallation</info>");
-
                         //$output->writeln("Error:");
                         //$output->writeln($e->getMessage());
+
                         return 0;
                     }
                 }
@@ -1087,15 +1095,19 @@ class CommonCommand extends AbstractCommand
 
                 if (empty($chamiloLocationPath)) {
                     $output->writeln("<error>Chamilo folder structure not found in package.</error>");
+
                     return 0;
                 }
 
                 return $chamiloLocationPath;
             } else {
                 $output->writeln("<comment>File doesn't exist.</comment>");
+
                 return 0;
             }
         }
+
+        return 0;
     }
 
     /**
