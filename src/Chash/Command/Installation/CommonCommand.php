@@ -11,6 +11,8 @@ use Symfony\Component\Filesystem\Exception\IOException;
 use Alchemy\Zippy\Zippy;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Finder\Finder;
+use Doctrine\DBAL\Connection;
 
 /**
  * Class CommonCommand
@@ -914,11 +916,11 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * @param \Symfony\Component\Finder\Finder $files
+     * @param Finder $files
      * @param OutputInterface $output
      * @return int
      */
-    public function removeFiles(\Symfony\Component\Finder\Finder $files, OutputInterface $output)
+    public function removeFiles(Finder $files, OutputInterface $output)
     {
         $dryRun = $this->getConfigurationHelper()->getDryRun();
 
@@ -1263,10 +1265,10 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     * @param \Doctrine\DBAL\Connection $connection
+     * @param OutputInterface $output
+     * @param Connection $connection
      */
-    public function setPortalSettingsInChamilo(OutputInterface $output, \Doctrine\DBAL\Connection $connection)
+    public function setPortalSettingsInChamilo(OutputInterface $output, Connection $connection)
     {
         $adminSettings = $this->getAdminSettings();
 
@@ -1288,10 +1290,10 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     * @param \Doctrine\DBAL\Connection $connection
+     * @param OutputInterface $output
+     * @param Connection $connection
      */
-    public function setAdminSettingsInChamilo(OutputInterface $output, \Doctrine\DBAL\Connection $connection)
+    public function setAdminSettingsInChamilo(OutputInterface $output, Connection $connection)
     {
         $settings = $this->getAdminSettings();
 
