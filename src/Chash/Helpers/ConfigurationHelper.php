@@ -59,7 +59,8 @@ class ConfigurationHelper extends Helper
             '1.9.4',
             '1.9.6',
             '1.9.8',
-            '1.10.0'
+            '10.0.0',
+            '11.0.0'
         );
 
         return $versionList;
