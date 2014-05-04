@@ -494,6 +494,10 @@ class CommonCommand extends AbstractCommand
                 'require_update' => false,
                 'parent' => '1.9.0'
             ),
+            '1.9.6.1' => array(
+                'require_update' => false,
+                'parent' => '1.9.0'
+            ),
             '1.9.6' => array(
                 'require_update' => false,
                 'parent' => '1.9.0'
