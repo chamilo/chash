@@ -1,6 +1,8 @@
 Chamilo Shell script
 ====================
 
+[![Latest Stable Version](https://poser.pugx.org/chamilo/chash/v/stable.png)](https://packagist.org/packages/chamilo/chash) [![Total Downloads](https://poser.pugx.org/chamilo/chash/downloads.png)](https://packagist.org/packages/chamilo/chash) [![Latest Unstable Version](https://poser.pugx.org/chamilo/chash/v/unstable.png)](https://packagist.org/packages/chamilo/chash) [![License](https://poser.pugx.org/chamilo/chash/license.png)](https://packagist.org/packages/chamilo/chash)
+
 The Chamilo Shell ("Chash") is a command-line PHP tool meant to speed up the management of (multiple)
 Chamilo portals under Linux.
 
