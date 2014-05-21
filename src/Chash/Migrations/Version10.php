@@ -32,7 +32,6 @@ class Version10 extends AbstractMigration
         /*-- ALTER TABLE c_lp_item ADD INDEX idx_c_lp_item_cid_lp_id (c_id, lp_id);
         -- ALTER TABLE c_lp_item_view ADD INDEX idx_c_lp_item_view_cid_lp_view_id_lp_item_id(c_id, lp_view_id, lp_item_id);*/
 
-
         $this->addSql("CREATE TABLE IF NOT EXISTS php_session(session_id varchar(255) NOT NULL, session_value LONGTEXT NOT NULL, session_time int NOT NULL, PRIMARY KEY (session_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
         $this->addSql("CREATE TABLE IF NOT EXISTS session_field_options (id int unsigned NOT NULL auto_increment, field_id int NOT NULL, option_value text, option_display_text varchar(255), option_order int, tms DATETIME NOT NULL default '0000-00-00 00:00:00', PRIMARY KEY (id))");
         $this->addSql("CREATE TABLE IF NOT EXISTS course_field_options (id int NOT NULL auto_increment, field_id int NOT NULL, option_value text, option_display_text varchar(255), option_order int, tms DATETIME NOT NULL default '0000-00-00 00:00:00', PRIMARY KEY (id))");
@@ -371,6 +370,14 @@ class Version10 extends AbstractMigration
         $this->addSql('ALTER TABLE user MODIFY COLUMN chatcall_date datetime default NULL');
         $this->addSql('ALTER TABLE user MODIFY COLUMN chatcall_text varchar(50) default NULL');
         $this->addSql('ALTER TABLE user MODIFY COLUMN expiration_date datetime default NULL');
+
+        $this->addSql('ALTER TABLE c_blog_rating MODIFY COLUMN rating_type varchar(100) NOT NULL DEFAULT "post"');
+        $this->addSql('ALTER TABLE c_link MODIFY COLUMN on_homepage varchar(100) NOT NULL DEFAULT "0"');
+        $this->addSql('ALTER TABLE c_quiz_answer MODIFY COLUMN hotspot_type varchar(100) DEFAULT NULL');
+        $this->addSql('ALTER TABLE c_survey MODIFY COLUMN anonymous varchar(255) NOT NULL DEFAULT "0"');
+        $this->addSql('ALTER TABLE c_tool MODIFY COLUMN target varchar(100) NOT NULL DEFAULT "_self"');
+        $this->addSql('ALTER TABLE course_category MODIFY COLUMN rating_type varchar(100) NOT NULL DEFAULT "post"');
+        $this->addSql('ALTER TABLE course_category MODIFY COLUMN rating_type varchar(100) NOT NULL DEFAULT "post"');
     }
 
     /**
@@ -545,7 +552,7 @@ class Version10 extends AbstractMigration
 
         // Chamilo version
         $this->addSql(
-            "UPDATE settings_current SET selected_value = '10.062' WHERE variable = 'chamilo_database_version'"
+            "UPDATE settings_current SET selected_value = '10.063' WHERE variable = 'chamilo_database_version'"
         );
     }
 
