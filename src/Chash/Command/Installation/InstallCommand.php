@@ -148,8 +148,7 @@ class InstallCommand extends CommonCommand
         }
 
         $configurationDistExists = false;
-
-        if (file_exists($this->getRootSys().'config/configuration.dist.php')) {
+        if (file_exists($this->getRootSys().'config/parameters.yml.dist')) {
             $configurationDistExists = true;
         } else {
             // Try the old one
@@ -163,7 +162,8 @@ class InstallCommand extends CommonCommand
             return 0;
         }
 
-        if (file_exists($configurationPath.'configuration.php') || file_exists($configurationPath.'configuration.yml')) {
+        if (file_exists($configurationPath.'configuration.php') ||
+            file_exists($configurationPath.'configuration.yml')) {
             if ($this->commandLine) {
                 $output->writeln("<comment>There's a Chamilo portal here:</comment> <info>".$configurationPath."</info>");
                 $output->writeln("<comment>You should run <info>chamilo:wipe $path </info><comment>if you want to start with a fresh install.</comment>");
@@ -214,6 +214,7 @@ class InstallCommand extends CommonCommand
             $output->writeln("<comment>Admin settings: (".$total.")</comment>");
             $adminSettings = array();
             $counter = 1;
+
             foreach ($params as $key => $value) {
                 if (!isset($filledParams[$key])) {
                     $data = $dialog->ask(
@@ -229,6 +230,7 @@ class InstallCommand extends CommonCommand
                     $adminSettings[$key] = $filledParams[$key];
                 }
             }
+
             $this->setAdminSettings($adminSettings);
 
             // Ask for db settings

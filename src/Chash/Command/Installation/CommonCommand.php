@@ -13,6 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Finder\Finder;
 use Doctrine\DBAL\Connection;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class CommonCommand
@@ -666,48 +667,60 @@ class CommonCommand extends AbstractCommand
         // Version settings
         $configuration['system_version']           = $version;
 
-        if (file_exists($this->getRootSys().'config/configuration.dist.php')) {
-            $contents = file_get_contents($this->getRootSys().'config/configuration.dist.php');
+        if (file_exists($this->getRootSys().'config/parameters.yml.dist')) {
+            $file = $this->getRootSys().'config/parameters.yml.dist';
+            $contents = file_get_contents($file);
+            $yamlParser = new Parser();
+            $expectedValues = $yamlParser->parse($contents);
+
+            $expectedValues['database_driver'] = $configuration['driver'];
+            $expectedValues['database_host'] = $configuration['db_host'];
+            $expectedValues['database_port'] = $configuration['db_port'];
+            $expectedValues['database_name'] = $configuration['main_database'];
+            $expectedValues['database_user'] = $configuration['db_user'];
+            $expectedValues['database_password'] = $configuration['db_password'];
+            $expectedValues['password_encryption'] = $configuration['password_encryption'];
+
+            $result = file_put_contents($file, Yaml::dump($expectedValues, 99));
         } else {
             // Try the old one
-            //$contents = file_get_contents($this->getRootSys().'main/inc/conf/configuration.dist.php');
             $contents = file_get_contents($this->getRootSys().'main/install/configuration.dist.php');
+
+            $config['{DATE_GENERATED}'] = date('r');
+            $config['{DATABASE_HOST}'] = $configuration['db_host'];
+            $config['{DATABASE_PORT}'] = $configuration['db_port'];
+            $config['{DATABASE_USER}'] = $configuration['db_user'];
+            $config['{DATABASE_PASSWORD}'] = $configuration['db_password'];
+            $config['{DATABASE_MAIN}'] = $configuration['main_database'];
+            $config['{DATABASE_DRIVER}'] = $configuration['driver'];
+
+            $config['{COURSE_TABLE_PREFIX}'] = '';
+            $config['{DATABASE_GLUE}'] = "`.`"; // keeping for backward compatibility
+            $config['{DATABASE_PREFIX}'] = '';
+            $config['{DATABASE_STATS}'] = $configuration['main_database'];
+            $config['{DATABASE_SCORM}'] = $configuration['main_database'];
+            $config['{DATABASE_PERSONAL}'] = $configuration['main_database'];
+            $config['TRACKING_ENABLED'] = "'true'";
+            $config['SINGLE_DATABASE'] = "false";
+
+            $config['{ROOT_WEB}'] = $portalSettings['institution_url'];
+            $config['{ROOT_SYS}'] = $this->getRootSys();
+
+            $config['{URL_APPEND_PATH}'] = "";
+            $config['{SECURITY_KEY}'] = $configuration['security_key'];
+            $config['{ENCRYPT_PASSWORD}'] = $configuration['password_encryption'];
+
+            $config['SESSION_LIFETIME'] = 3600;
+            $config['{NEW_VERSION}'] = $version;
+            $config['NEW_VERSION_STABLE'] = 'true';
+
+            foreach ($config as $key => $value) {
+                $contents = str_replace($key, $value, $contents);
+            }
+
+            $newConfigurationFile = $configurationPath.'configuration.php';
+            $result = file_put_contents($newConfigurationFile, $contents);
         }
-
-        $config['{DATE_GENERATED}'] = date('r');
-        $config['{DATABASE_HOST}'] = $configuration['db_host'];
-        $config['{DATABASE_PORT}'] = $configuration['db_port'];
-        $config['{DATABASE_USER}'] = $configuration['db_user'];
-        $config['{DATABASE_PASSWORD}'] = $configuration['db_password'];
-        $config['{DATABASE_MAIN}'] = $configuration['main_database'];
-        $config['{DATABASE_DRIVER}'] = $configuration['driver'];
-
-        $config['{COURSE_TABLE_PREFIX}'] = '';
-        $config['{DATABASE_GLUE}'] = "`.`"; // keeping for backward compatibility
-        $config['{DATABASE_PREFIX}'] = '';
-        $config['{DATABASE_STATS}'] = $configuration['main_database'];
-        $config['{DATABASE_SCORM}'] = $configuration['main_database'];
-        $config['{DATABASE_PERSONAL}'] = $configuration['main_database'];
-        $config['TRACKING_ENABLED'] = "'true'";
-        $config['SINGLE_DATABASE'] = "false";
-
-        $config['{ROOT_WEB}'] = $portalSettings['institution_url'];
-        $config['{ROOT_SYS}'] = $this->getRootSys();
-
-        $config['{URL_APPEND_PATH}'] = "";
-        $config['{SECURITY_KEY}'] = $configuration['security_key'];
-        $config['{ENCRYPT_PASSWORD}'] = $configuration['password_encryption'];
-
-        $config['SESSION_LIFETIME'] = 3600;
-        $config['{NEW_VERSION}'] = $version;
-        $config['NEW_VERSION_STABLE'] = 'true';
-
-        foreach ($config as $key => $value) {
-            $contents = str_replace($key, $value, $contents);
-        }
-        $newConfigurationFile = $configurationPath.'configuration.php';
-
-        $result = file_put_contents($newConfigurationFile, $contents);
 
         return $result;
     }
