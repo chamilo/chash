@@ -15,7 +15,7 @@
 
 DROP TABLE IF EXISTS user;
 CREATE TABLE IF NOT EXISTS user (
-  user_id int unsigned NOT NULL auto_increment,
+  user_id int NOT NULL auto_increment,
   lastname varchar(60) default NULL,
   firstname varchar(60) default NULL,
   username varchar(100) NOT NULL default '',
@@ -26,22 +26,22 @@ CREATE TABLE IF NOT EXISTS user (
   official_code varchar(40) default NULL,
   phone varchar(30) default NULL,
   picture_uri varchar(250) default NULL,
-  creator_id int unsigned default NULL,
+  creator_id int  default NULL,
   competences text,
   diplomas text,
   openarea text,
   teach text,
   productions varchar(250) default NULL,
-  chatcall_user_id int unsigned default 0,
+  chatcall_user_id int  default 0,
   chatcall_date datetime default NULL,
   chatcall_text varchar(50) default NULL,
   language varchar(40) default NULL,
   registration_date datetime NOT NULL default '0000-00-00 00:00:00',
   expiration_date datetime default NULL,
-  active tinyint unsigned NOT NULL default 1,
+  active tinyint  NOT NULL default 1,
   openid varchar(255) DEFAULT NULL,
   theme varchar(255) DEFAULT NULL,
-  hr_dept_id int unsigned default 0,
+  hr_dept_id int  default 0,
   salt VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY (user_id),
   UNIQUE KEY username (username)
@@ -56,7 +56,6 @@ INSERT INTO user (lastname, firstname, username, password, auth_source, email, s
 INSERT INTO user (lastname, firstname, username, password, auth_source, email, status, official_code, creator_id, registration_date, expiration_date,active,openid,language) VALUES ('Anonymous', 'Joe', '', '', 'platform', 'anonymous@localhost', 6, 'anonymous', 1, NOW(), '0000-00-00 00:00:00', 1,NULL,'{ADMINLANGUAGE}');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE user ENABLE KEYS */;
-
 
 CREATE TABLE roles (
   id INT auto_increment,
@@ -91,7 +90,7 @@ INSERT INTO users_roles VALUES (1, 18);
 DROP TABLE IF EXISTS admin;
 CREATE TABLE IF NOT EXISTS admin (
   id  INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  user_id int unsigned NOT NULL default '0',
+  user_id int  NOT NULL default '0',
   UNIQUE KEY user_id (user_id)
 );
 
@@ -112,7 +111,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS class;
 CREATE TABLE IF NOT EXISTS class (
-  id mediumint unsigned NOT NULL auto_increment,
+  id mediumint  NOT NULL auto_increment,
   code varchar(40) default '',
   name text NOT NULL,
   PRIMARY KEY  (id)
@@ -134,8 +133,8 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS class_user;
 CREATE TABLE IF NOT EXISTS class_user (
-  class_id mediumint unsigned NOT NULL default '0',
-  user_id int unsigned NOT NULL default '0',
+  class_id mediumint  NOT NULL default '0',
+  user_id int  NOT NULL default '0',
   PRIMARY KEY  (class_id,user_id)
 );
 
@@ -169,7 +168,7 @@ CREATE TABLE IF NOT EXISTS course (
   visual_code varchar(40) default NULL,
   department_name varchar(30) default NULL,
   department_url varchar(180) default NULL,
-  disk_quota bigint unsigned default NULL,
+  disk_quota bigint  default NULL,
   last_visit datetime default NULL,
   last_edit datetime default NULL,
   creation_date datetime default NULL,
@@ -202,11 +201,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS course_category;
 CREATE TABLE IF NOT EXISTS course_category (
-  id int unsigned NOT NULL auto_increment,
+  id int  NOT NULL auto_increment,
   name varchar(100) NOT NULL default '',
   code varchar(40) NOT NULL default '',
   parent_id varchar(40) default NULL,
-  tree_pos int unsigned default NULL,
+  tree_pos int  default NULL,
   children_count smallint default NULL,
   auth_course_child varchar(100) default 'TRUE',
   auth_cat_child varchar(100) default 'TRUE',
@@ -277,7 +276,7 @@ CREATE TABLE IF NOT EXISTS course_field_values(
     course_code varchar(40) NOT NULL,
     field_id int NOT NULL,
     field_value text,
-    user_id INT unsigned NOT NULL default 0,
+    user_id INT  NOT NULL default 0,
     comment VARCHAR(100) default '',
     tms DATETIME NOT NULL default '0000-00-00 00:00:00',
     PRIMARY KEY(id)
@@ -290,12 +289,12 @@ CREATE TABLE IF NOT EXISTS course_field_values(
 
 DROP TABLE IF EXISTS course_module;
 CREATE TABLE IF NOT EXISTS course_module (
-  id int unsigned NOT NULL auto_increment,
+  id int  NOT NULL auto_increment,
   name varchar(255) NOT NULL,
   link varchar(255) NOT NULL,
   image varchar(100) default NULL,
-  row_module int unsigned NOT NULL default '0',
-  column_module int unsigned NOT NULL default '0',
+  row_module int  NOT NULL default '0',
+  column_module int  NOT NULL default '0',
   position varchar(20) NOT NULL default 'basic',
   PRIMARY KEY  (id)
 );
@@ -348,7 +347,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS course_rel_class;
 CREATE TABLE IF NOT EXISTS course_rel_class (
   course_code char(40) NOT NULL,
-  class_id mediumint unsigned NOT NULL,
+  class_id mediumint  NOT NULL,
   PRIMARY KEY  (course_code,class_id)
 );
 
@@ -368,22 +367,22 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS course_rel_user;
 CREATE TABLE IF NOT EXISTS course_rel_user (
-  id int unsigned AUTO_INCREMENT,
-  c_id INT unsigned NOT NULL,
+  id int  AUTO_INCREMENT,
+  c_id INT  NOT NULL,
   course_code varchar(40) NOT NULL,
-  user_id int unsigned NOT NULL default '0',
+  user_id int  NOT NULL,
   status tinyint NOT NULL default '5',
   role varchar(60) default NULL,
   group_id int NOT NULL default '0',
-  tutor_id int unsigned NOT NULL default '0',
+  tutor_id int  NOT NULL default '0',
   sort int default NULL,
   user_course_cat int default '0',
   relation_type int default 0,
   legal_agreement INTEGER DEFAULT 0,
   PRIMARY KEY(id)
 );
-ALTER TABLE course_rel_user ADD INDEX course_rel_user_user_id (user_id);
-ALTER TABLE course_rel_user ADD INDEX course_rel_user_c_id_user_id (c_id, user_id);
+ALTER TABLE course_rel_user ADD INDEX course_rel_user_user_id (id, user_id);
+ALTER TABLE course_rel_user ADD INDEX course_rel_user_c_id_user_id (id, c_id, user_id);
 
 --
 -- Dumping data for table course_rel_user
@@ -401,13 +400,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS language;
 CREATE TABLE IF NOT EXISTS language (
-  id tinyint unsigned NOT NULL auto_increment,
+  id tinyint  NOT NULL auto_increment,
   original_name varchar(255) default NULL,
   english_name varchar(255) default NULL,
   isocode varchar(10) default NULL,
   dokeos_folder varchar(250) default NULL,
   available tinyint NOT NULL default 1,
-  parent_id tinyint unsigned,
+  parent_id tinyint ,
   PRIMARY KEY  (id)
 );
 ALTER TABLE language ADD INDEX idx_language_dokeos_folder(dokeos_folder);
@@ -500,15 +499,15 @@ CREATE TABLE IF NOT EXISTS php_session (
 --
 DROP TABLE IF EXISTS session;
 CREATE TABLE IF NOT EXISTS session (
-  id INT unsigned NOT NULL auto_increment,
-  id_coach int unsigned NOT NULL default '0',
+  id INT  NOT NULL auto_increment,
+  id_coach int  NOT NULL default '0',
   name char(150) NOT NULL default '',
   description text,
   show_description int default NULL,
-  nbr_courses int unsigned NOT NULL default '0',
-  nbr_users int unsigned NOT NULL default '0',
-  nbr_classes int unsigned NOT NULL default '0',
-  session_admin_id INT UNSIGNED NOT NULL,
+  nbr_courses int  NOT NULL default '0',
+  nbr_users int  NOT NULL default '0',
+  nbr_classes int  NOT NULL default '0',
+  session_admin_id INT  NOT NULL,
   visibility int NOT NULL default 1,
   session_category_id int default NULL,
   promotion_id INT NOT NULL,
@@ -530,10 +529,10 @@ ALTER TABLE session ADD INDEX idx_id_session_admin_id (session_admin_id);
 --
 DROP TABLE IF EXISTS session_rel_course;
 CREATE TABLE IF NOT EXISTS session_rel_course (
-    id INT unsigned NOT NULL auto_increment,
-    id_session INT unsigned NOT NULL default '0',
+    id INT  NOT NULL auto_increment,
+    id_session INT  NOT NULL default '0',
     c_id INT NOT NULL default '0',
-    nbr_users int unsigned NOT NULL default '0',
+    nbr_users int  NOT NULL default '0',
     PRIMARY KEY(id)
 );
 ALTER TABLE session_rel_course ADD INDEX idx_session_rel_course_course_id (c_id);
@@ -543,10 +542,10 @@ ALTER TABLE session_rel_course ADD INDEX idx_session_rel_course_course_id (c_id)
 --
 DROP TABLE IF EXISTS session_rel_course_rel_user;
 CREATE TABLE IF NOT EXISTS session_rel_course_rel_user (
-  id INT unsigned NOT NULL auto_increment,
-  id_session INT unsigned NOT NULL default '0',
+  id INT  NOT NULL auto_increment,
+  id_session INT  NOT NULL default '0',
   c_id INT NOT NULL default '0',
-  id_user int unsigned NOT NULL default '0',
+  id_user int  NOT NULL default '0',
   visibility int NOT NULL default 1,
   status int NOT NULL default 0,
   legal_agreement INTEGER DEFAULT 0,
@@ -563,8 +562,8 @@ ALTER TABLE session_rel_course_rel_user ADD INDEX idx_session_rel_course_rel_use
 --
 DROP TABLE IF EXISTS session_rel_user;
 CREATE TABLE IF NOT EXISTS session_rel_user (
-  id_session mediumint unsigned NOT NULL default '0',
-  id_user int unsigned NOT NULL default '0',
+  id_session mediumint  NOT NULL default '0',
+  id_user int  NOT NULL default '0',
   relation_type int default 0,
   moved_to int default 0,
   moved_status int default 0,
@@ -592,7 +591,7 @@ CREATE TABLE IF NOT EXISTS session_field (
 
 DROP TABLE IF EXISTS session_field_options;
 CREATE TABLE IF NOT EXISTS session_field_options(
-    id int unsigned NOT NULL auto_increment,
+    id int  NOT NULL auto_increment,
     field_id int NOT NULL,
     option_value text,
     option_display_text varchar(255),
@@ -605,11 +604,11 @@ CREATE TABLE IF NOT EXISTS session_field_options(
 
 DROP TABLE IF EXISTS session_field_values;
 CREATE TABLE IF NOT EXISTS session_field_values(
-    id bigint unsigned NOT NULL auto_increment,
+    id bigint  NOT NULL auto_increment,
     session_id int NOT NULL,
     field_id int NOT NULL,
     field_value text,
-    user_id INT unsigned NOT NULL default 0,
+    user_id INT  NOT NULL default 0,
     comment VARCHAR(100) default '',
     tms DATETIME NOT NULL default '0000-00-00 00:00:00',
     PRIMARY KEY(id)
@@ -625,7 +624,7 @@ ALTER TABLE session_field_values ADD INDEX idx_session_field_values_field_id(fie
 
 DROP TABLE IF EXISTS settings_current;
 CREATE TABLE IF NOT EXISTS settings_current (
-  id int unsigned NOT NULL auto_increment,
+  id int  NOT NULL auto_increment,
   variable varchar(255) default NULL,
   subkey varchar(255) default NULL,
   type varchar(255) default NULL,
@@ -635,8 +634,8 @@ CREATE TABLE IF NOT EXISTS settings_current (
   comment varchar(255) default NULL,
   scope varchar(50) default NULL,
   subkeytext varchar(255) default NULL,
-  access_url int unsigned not null default 1,
-  access_url_changeable int unsigned not null default 0,
+  access_url int  not null default 1,
+  access_url_changeable int  not null default 0,
   access_url_locked int not null default 0,
   PRIMARY KEY id (id),
   INDEX (access_url)
@@ -980,7 +979,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS settings_options;
 CREATE TABLE IF NOT EXISTS settings_options (
-  id int unsigned NOT NULL auto_increment,
+  id int  NOT NULL auto_increment,
   variable varchar(255) default NULL,
   value varchar(255) default NULL,
   display_text varchar(255) NOT NULL default '',
@@ -1349,7 +1348,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS sys_announcement;
 CREATE TABLE IF NOT EXISTS sys_announcement (
-  id int unsigned NOT NULL auto_increment,
+  id int  NOT NULL auto_increment,
   date_start datetime NOT NULL default '0000-00-00 00:00:00',
   date_end datetime NOT NULL default '0000-00-00 00:00:00',
   visible_teacher tinyint NOT NULL default 0,
@@ -1368,7 +1367,7 @@ CREATE TABLE IF NOT EXISTS sys_announcement (
 
 DROP TABLE IF EXISTS shared_survey;
 CREATE TABLE IF NOT EXISTS shared_survey (
-  survey_id int unsigned NOT NULL auto_increment,
+  survey_id int  NOT NULL auto_increment,
   code varchar(20) default NULL,
   title text default NULL,
   subtitle text default NULL,
@@ -1444,7 +1443,7 @@ CREATE TABLE IF NOT EXISTS gradebook_category (
     visible tinyint NOT NULL,
     certif_min_score int DEFAULT NULL,
     session_id int DEFAULT NULL,
-    document_id int unsigned DEFAULT NULL,
+    document_id int  DEFAULT NULL,
     locked int NOT NULL DEFAULT 0,
     default_lowest_eval_exclude TINYINT default null,
   PRIMARY KEY  (id)
@@ -1452,7 +1451,7 @@ CREATE TABLE IF NOT EXISTS gradebook_category (
 
 DROP TABLE IF EXISTS gradebook_evaluation;
 CREATE TABLE IF NOT EXISTS gradebook_evaluation (
-    id int unsigned NOT NULL auto_increment,
+    id int  NOT NULL auto_increment,
     name text NOT NULL,
     description text,
     user_id int NOT NULL,
@@ -1460,7 +1459,7 @@ CREATE TABLE IF NOT EXISTS gradebook_evaluation (
     category_id int default NULL,
     created_at DATETIME NOT NULL default '0000-00-00 00:00:00',
     weight FLOAT NOT NULL,
-    max float unsigned NOT NULL,
+    max float  NOT NULL,
     visible int NOT NULL,
     type varchar(40) NOT NULL default 'evaluation',
     locked int NOT NULL DEFAULT 0,
@@ -1490,17 +1489,17 @@ CREATE TABLE IF NOT EXISTS gradebook_result (
   user_id int NOT NULL,
   evaluation_id int NOT NULL,
   created_at DATETIME NOT NULL default '0000-00-00 00:00:00',
-  score float unsigned default NULL,
+  score float  default NULL,
   PRIMARY KEY  (id)
 );
 
 DROP TABLE IF EXISTS gradebook_score_display;
 CREATE TABLE IF NOT EXISTS gradebook_score_display (
   id int NOT NULL auto_increment,
-  score float unsigned NOT NULL,
+  score float  NOT NULL,
   display varchar(40) NOT NULL,
   category_id int NOT NULL default 0,
-  score_color_percent float unsigned NOT NULL default 0,
+  score_color_percent float  NOT NULL default 0,
   PRIMARY KEY (id)
 );
 
@@ -1508,9 +1507,9 @@ ALTER TABLE gradebook_score_display ADD INDEX(category_id);
 
 DROP TABLE IF EXISTS gradebook_evaluation_type;
 CREATE TABLE IF NOT EXISTS gradebook_evaluation_type (
-    id  INT unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    id  INT  PRIMARY KEY NOT NULL AUTO_INCREMENT,
     name varchar(255),
-    external_id INT unsigned NOT NULL DEFAULT 0
+    external_id INT  NOT NULL DEFAULT 0
 );
 
 DROP TABLE IF EXISTS user_field;
@@ -1545,10 +1544,10 @@ CREATE TABLE IF NOT EXISTS user_field_options (
 DROP TABLE IF EXISTS user_field_values;
 CREATE TABLE IF NOT EXISTS user_field_values(
     id	bigint	NOT NULL auto_increment,
-    user_id	int	unsigned NOT NULL,
+    user_id	int	 NOT NULL,
     field_id int NOT NULL,
     field_value	text,
-    author_id INT unsigned NOT NULL default 0,
+    author_id INT  NOT NULL default 0,
     comment VARCHAR(100) default '',
     tms DATETIME NOT NULL default '0000-00-00 00:00:00',
     PRIMARY KEY(id)
@@ -1588,7 +1587,7 @@ CREATE TABLE IF NOT EXISTS gradebook_result_log (
     user_id int NOT NULL,
     evaluation_id int NOT NULL,
     created_at DATETIME NOT NULL default '0000-00-00 00:00:00',
-    score float unsigned default NULL,
+    score float  default NULL,
     PRIMARY KEY(id)
 );
 
@@ -1608,13 +1607,13 @@ CREATE TABLE IF NOT EXISTS gradebook_linkeval_log (
 
 DROP TABLE IF EXISTS access_url;
 CREATE TABLE IF NOT EXISTS access_url(
-    id	int	unsigned NOT NULL auto_increment,
+    id	int	 NOT NULL auto_increment,
     url	varchar(255) NOT NULL,
     description text,
-    active	int unsigned not null default 0,
+    active	int  not null default 0,
     created_by	int	not null,
     tms DATETIME NOT NULL default '0000-00-00 00:00:00',
-    url_type tinyint unsigned default 1,
+    url_type tinyint  default 1,
     PRIMARY KEY (id)
 );
 
@@ -1622,9 +1621,10 @@ INSERT INTO access_url(url, description, active, created_by) VALUES ('http://loc
 
 DROP TABLE IF EXISTS access_url_rel_user;
 CREATE TABLE IF NOT EXISTS access_url_rel_user (
-  access_url_id int unsigned NOT NULL,
-  user_id int unsigned NOT NULL,
-  PRIMARY KEY (access_url_id, user_id)
+  id int NOT NULL auto_increment,
+  access_url_id int  NOT NULL,
+  user_id int  NOT NULL,
+  PRIMARY KEY (id)
 );
 
 ALTER TABLE access_url_rel_user ADD INDEX idx_access_url_rel_user_user (user_id);
@@ -1636,31 +1636,34 @@ INSERT INTO access_url_rel_user VALUES(1, 1);
 
 DROP TABLE IF EXISTS access_url_rel_course;
 CREATE TABLE IF NOT EXISTS access_url_rel_course (
-  id int unsigned NOT NULL auto_increment,
-  access_url_id int unsigned NOT NULL,
-  c_id int unsigned NOT NULL default 0,
+  id int  NOT NULL auto_increment,
+  access_url_id int  NOT NULL,
+  c_id int  NOT NULL default 0,
   PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS access_url_rel_session;
 CREATE TABLE IF NOT EXISTS access_url_rel_session (
-  access_url_id int unsigned NOT NULL,
-  session_id int unsigned NOT NULL,
-  PRIMARY KEY (access_url_id, session_id)
+  id int  NOT NULL auto_increment,
+  access_url_id int  NOT NULL,
+  session_id int  NOT NULL,
+  PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS access_url_rel_usergroup;
 CREATE TABLE IF NOT EXISTS access_url_rel_usergroup (
-  access_url_id int unsigned NOT NULL,
-  usergroup_id int unsigned NOT NULL,
-  PRIMARY KEY (access_url_id, usergroup_id)
+  id int  NOT NULL auto_increment,
+  access_url_id int  NOT NULL,
+  usergroup_id int  NOT NULL,
+  PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS access_url_rel_course_category;
 CREATE TABLE IF NOT EXISTS access_url_rel_course_category (
-  access_url_id int unsigned NOT NULL,
-  course_category_id int unsigned NOT NULL,
-  PRIMARY KEY (access_url_id, course_category_id)
+  id int  NOT NULL auto_increment,
+  access_url_id int  NOT NULL,
+  course_category_id int  NOT NULL,
+  PRIMARY KEY (id)
 );
 
 --
@@ -1668,7 +1671,7 @@ CREATE TABLE IF NOT EXISTS access_url_rel_course_category (
 --
 DROP TABLE IF EXISTS sys_calendar;
 CREATE TABLE IF NOT EXISTS sys_calendar (
-  id int unsigned NOT NULL auto_increment,
+  id int  NOT NULL auto_increment,
   title varchar(255) NOT NULL,
   content longtext,
   start_date datetime NOT NULL default '0000-00-00 00:00:00',
@@ -1680,7 +1683,7 @@ CREATE TABLE IF NOT EXISTS sys_calendar (
 
 DROP TABLE IF EXISTS system_template;
 CREATE TABLE IF NOT EXISTS system_template (
-  id int UNSIGNED NOT NULL auto_increment,
+  id int  NOT NULL auto_increment,
   title varchar(250) NOT NULL,
   comment text NOT NULL,
   image varchar(250) NOT NULL,
@@ -2455,7 +2458,7 @@ INSERT INTO system_template (title, comment, image, content) VALUES
 
 DROP TABLE IF EXISTS reservation_category;
 CREATE TABLE IF NOT EXISTS reservation_category (
-   id  int unsigned NOT NULL auto_increment,
+   id  int  NOT NULL auto_increment,
    parent_id  int NOT NULL default 0,
    name  varchar(128) NOT NULL default '',
   PRIMARY KEY  ( id )
@@ -2463,7 +2466,7 @@ CREATE TABLE IF NOT EXISTS reservation_category (
 
 DROP TABLE IF EXISTS reservation_category_rights;
 CREATE TABLE IF NOT EXISTS reservation_category_rights  (
-    id  int unsigned NOT NULL auto_increment,
+    id  int  NOT NULL auto_increment,
     category_id  int NOT NULL default 0,
     class_id  int NOT NULL default 0,
     m_items  tinyint NOT NULL default 0,
@@ -2472,13 +2475,13 @@ CREATE TABLE IF NOT EXISTS reservation_category_rights  (
 
 DROP TABLE IF EXISTS reservation_item;
 CREATE TABLE IF NOT EXISTS  reservation_item  (
-   id  int unsigned NOT NULL auto_increment,
-   category_id  int unsigned NOT NULL default 0,
+   id  int  NOT NULL auto_increment,
+   category_id  int  NOT NULL default 0,
    course_code  varchar(40) NOT NULL default '',
    name  varchar(128) NOT NULL default '',
    description  text NOT NULL,
    blackout  tinyint NOT NULL default 0,
-   creator  int unsigned NOT NULL default 0,
+   creator  int  NOT NULL default 0,
    always_available TINYINT NOT NULL default 0,
   PRIMARY KEY  ( id )
 );
@@ -2491,11 +2494,11 @@ CREATE TABLE IF NOT EXISTS  reservation_item  (
 
 DROP TABLE IF EXISTS reservation_item_rights;
 CREATE TABLE IF NOT EXISTS  reservation_item_rights  (
-   item_id  int unsigned NOT NULL default 0,
-   class_id  int unsigned NOT NULL default 0,
-   edit_right  tinyint unsigned NOT NULL default 0,
-   delete_right  tinyint unsigned NOT NULL default 0,
-   m_reservation  tinyint unsigned NOT NULL default 0,
+   item_id  int  NOT NULL default 0,
+   class_id  int  NOT NULL default 0,
+   edit_right  tinyint  NOT NULL default 0,
+   delete_right  tinyint  NOT NULL default 0,
+   m_reservation  tinyint  NOT NULL default 0,
    view_right  tinyint NOT NULL default 0,
   PRIMARY KEY  ( item_id , class_id )
 );
@@ -2508,16 +2511,16 @@ CREATE TABLE IF NOT EXISTS  reservation_item_rights  (
 
 DROP TABLE IF EXISTS reservation_main;
 CREATE TABLE IF NOT EXISTS  reservation_main  (
-   id  int unsigned NOT NULL auto_increment,
-   subid  int unsigned NOT NULL default 0,
-   item_id  int unsigned NOT NULL default 0,
-   auto_accept  tinyint unsigned NOT NULL default 0,
-   max_users  int unsigned NOT NULL default 1,
+   id  int  NOT NULL auto_increment,
+   subid  int  NOT NULL default 0,
+   item_id  int  NOT NULL default 0,
+   auto_accept  tinyint  NOT NULL default 0,
+   max_users  int  NOT NULL default 1,
    start_at  datetime NOT NULL default '0000-00-00 00:00:00',
    end_at  datetime NOT NULL default '0000-00-00 00:00:00',
    subscribe_from  datetime NOT NULL default '0000-00-00 00:00:00',
    subscribe_until  datetime NOT NULL default '0000-00-00 00:00:00',
-   subscribers  int unsigned NOT NULL default 0,
+   subscribers  int  NOT NULL default 0,
    notes  text NOT NULL,
    timepicker  tinyint NOT NULL default 0,
    timepicker_min  int NOT NULL default 0,
@@ -2531,10 +2534,10 @@ CREATE TABLE IF NOT EXISTS  reservation_main  (
 
 DROP TABLE IF EXISTS reservation_subscription;
 CREATE TABLE IF NOT EXISTS  reservation_subscription  (
-   dummy  int unsigned NOT NULL auto_increment,
-   user_id  int unsigned NOT NULL default 0,
-   reservation_id  int unsigned NOT NULL default 0,
-   accepted  tinyint unsigned NOT NULL default 0,
+   dummy  int  NOT NULL auto_increment,
+   user_id  int  NOT NULL default 0,
+   reservation_id  int  NOT NULL default 0,
+   accepted  tinyint  NOT NULL default 0,
    start_at  datetime NOT NULL default '0000-00-00 00:00:00',
    end_at  datetime NOT NULL default '0000-00-00 00:00:00',
   PRIMARY KEY  ( dummy )
@@ -2545,9 +2548,9 @@ CREATE TABLE IF NOT EXISTS  reservation_subscription  (
 --
 DROP TABLE IF EXISTS user_rel_user;
 CREATE TABLE IF NOT EXISTS user_rel_user (
-  id bigint unsigned not null auto_increment,
-  user_id int unsigned not null,
-  friend_user_id int unsigned not null,
+  id bigint  not null auto_increment,
+  user_id int  not null,
+  friend_user_id int  not null,
   relation_type int not null default 0,
   last_edit DATETIME,
   PRIMARY KEY(id)
@@ -2562,7 +2565,7 @@ ALTER TABLE user_rel_user ADD INDEX idx_user_rel_user__user_friend_user(user_id,
 --
 DROP TABLE IF EXISTS user_friend_relation_type;
 CREATE TABLE IF NOT EXISTS user_friend_relation_type(
-  id int unsigned not null auto_increment,
+  id int  not null auto_increment,
   title char(20),
   PRIMARY KEY(id)
 );
@@ -2574,8 +2577,8 @@ CREATE TABLE IF NOT EXISTS user_friend_relation_type(
 
 DROP TABLE IF EXISTS user_api_key;
 CREATE TABLE IF NOT EXISTS user_api_key (
-    id int unsigned NOT NULL auto_increment,
-    user_id int unsigned NOT NULL,
+    id int  NOT NULL auto_increment,
+    user_id int  NOT NULL,
     api_key char(32) NOT NULL,
     api_service char(10) NOT NULL default 'dokeos',
     api_end_point text DEFAULT NULL,
@@ -2592,15 +2595,15 @@ ALTER TABLE user_api_key ADD INDEX idx_user_api_keys_user (user_id);
 
 DROP TABLE IF EXISTS message;
 CREATE TABLE IF NOT EXISTS message(
-    id bigint unsigned not null auto_increment,
-    user_sender_id int unsigned not null,
-    user_receiver_id int unsigned not null,
-    msg_status tinyint unsigned not null default 0,
+    id bigint  not null auto_increment,
+    user_sender_id int  not null,
+    user_receiver_id int  not null,
+    msg_status tinyint  not null default 0,
     send_date datetime not null default '0000-00-00 00:00:00',
     title varchar(255) not null,
     content longtext not null,
-    group_id int unsigned not null default 0,
-    parent_id int unsigned not null default 0,
+    group_id int  not null default 0,
+    parent_id int  not null default 0,
     update_date datetime not null default '0000-00-00 00:00:00',
     PRIMARY KEY(id)
 );
@@ -2641,10 +2644,10 @@ CREATE TABLE IF NOT EXISTS legal (
 
 DROP TABLE IF EXISTS gradebook_certificate;
 CREATE TABLE IF NOT EXISTS gradebook_certificate (
-    id bigint unsigned not null auto_increment,
-    cat_id int unsigned not null,
-    user_id int unsigned not null,
-    score_certificate float unsigned not null default 0,
+    id bigint  not null auto_increment,
+    cat_id int  not null,
+    user_id int  not null,
+    score_certificate float  not null default 0,
     created_at DATETIME NOT NULL default '0000-00-00 00:00:00',
     path_certificate text null,
     PRIMARY KEY(id)
@@ -2702,7 +2705,6 @@ CREATE TABLE IF NOT EXISTS session_category (
   PRIMARY KEY  (id)
 );
 
-
 --
 -- Table structure for table user tag
 --
@@ -2726,7 +2728,7 @@ CREATE TABLE IF NOT EXISTS user_rel_tag (
 
 DROP TABLE IF EXISTS announcement_rel_group;
 CREATE TABLE IF NOT EXISTS announcement_rel_group (
-  id INT unsigned NOT NULL auto_increment,
+  id INT  NOT NULL auto_increment,
 	group_id int NOT NULL,
 	announcement_id int NOT NULL,
 	PRIMARY KEY (id)
@@ -2771,7 +2773,7 @@ DROP TABLE IF EXISTS course_request;
 CREATE TABLE IF NOT EXISTS course_request (
   id int NOT NULL AUTO_INCREMENT,
   code varchar(40) NOT NULL,
-  user_id int unsigned NOT NULL default '0',
+  user_id int  NOT NULL default '0',
   directory varchar(40) DEFAULT NULL,
   db_name varchar(40) DEFAULT NULL,
   course_language varchar(20) DEFAULT NULL,
@@ -2783,9 +2785,9 @@ CREATE TABLE IF NOT EXISTS course_request (
   request_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   objetives text,
   target_audience text,
-  status int unsigned NOT NULL default '0',
-  info int unsigned NOT NULL default '0',
-  exemplary_content int unsigned NOT NULL default '0',
+  status int  NOT NULL default '0',
+  info int  NOT NULL default '0',
+  exemplary_content int  NOT NULL default '0',
   PRIMARY KEY (id),
   UNIQUE KEY code (code)
 );
@@ -2821,7 +2823,7 @@ DROP TABLE IF EXISTS usergroup;
 CREATE TABLE IF NOT EXISTS usergroup (
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
-    group_type INT unsigned NOT NULL default 0,
+    group_type INT  NOT NULL default 0,
     description TEXT NOT NULL,
     picture varchar(255) NOT NULL,
     url varchar(255) NOT NULL,
@@ -3003,13 +3005,13 @@ ALTER TABLE user_rel_event_type ADD INDEX event_name_index (event_type_name);
 
 DROP TABLE IF EXISTS track_course_ranking;
 CREATE TABLE IF NOT EXISTS track_course_ranking (
-    id   int unsigned not null PRIMARY KEY AUTO_INCREMENT,
-    c_id  int unsigned not null,
-    session_id  int unsigned not null default 0,
-    url_id  int unsigned not null default 0,
-    accesses int unsigned not null default 0,
-    total_score int unsigned not null default 0,
-    users int unsigned not null default 0,
+    id   int  not null PRIMARY KEY AUTO_INCREMENT,
+    c_id  int  not null,
+    session_id  int  not null default 0,
+    url_id  int  not null default 0,
+    accesses int  not null default 0,
+    total_score int  not null default 0,
+    users int  not null default 0,
     creation_date datetime not null
 );
 
@@ -3020,12 +3022,12 @@ ALTER TABLE track_course_ranking ADD INDEX idx_tcc_creation_date (creation_date)
 
 DROP TABLE IF EXISTS user_rel_course_vote;
 CREATE TABLE IF NOT EXISTS user_rel_course_vote (
-    id int unsigned not null AUTO_INCREMENT PRIMARY KEY,
-    c_id int unsigned not null,
-    user_id int unsigned not null,
-    session_id int unsigned not null default 0,
-    url_id int unsigned not null default 0,
-    vote int unsigned not null default 0
+    id int  not null AUTO_INCREMENT PRIMARY KEY,
+    c_id int  not null,
+    user_id int  not null,
+    session_id int  not null default 0,
+    url_id int  not null default 0,
+    vote int  not null default 0
 );
 
 ALTER TABLE user_rel_course_vote ADD INDEX idx_ucv_cid (c_id);
@@ -3035,12 +3037,12 @@ ALTER TABLE user_rel_course_vote ADD INDEX idx_ucv_cuid (user_id, c_id);
 -- Global chat
 DROP TABLE IF EXISTS chat;
 CREATE TABLE IF NOT EXISTS chat (
-	id			INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+	id			INTEGER  NOT NULL AUTO_INCREMENT,
 	from_user	INTEGER,
 	to_user		INTEGER,
 	message		TEXT NOT NULL,
 	sent		DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
-	recd		INTEGER UNSIGNED NOT NULL DEFAULT 0,
+	recd		INTEGER  NOT NULL DEFAULT 0,
 	PRIMARY KEY (id)
 );
 
@@ -3076,7 +3078,7 @@ ALTER TABLE gradebook_category ADD COLUMN grade_model_id INT DEFAULT 0;
 
 DROP TABLE IF EXISTS course_type;
 CREATE TABLE course_type (
-    id int unsigned not null auto_increment primary key,
+    id int  not null auto_increment primary key,
     name varchar(50) not null,
     translation_var char(40) default 'UndefinedCourseTypeLabel',
     description text default '',
@@ -3086,49 +3088,49 @@ CREATE TABLE course_type (
 INSERT INTO course_type (id, name) VALUES (1, 'All tools');
 INSERT INTO course_type (id, name) VALUES (2, 'Entry exam');
 
-ALTER TABLE course add course_type_id int unsigned default 1;
+ALTER TABLE course add course_type_id int  default 1;
 
 DROP TABLE IF EXISTS usergroup_rel_question;
 CREATE TABLE usergroup_rel_question (
-    id int unsigned not null auto_increment primary key,
-    c_id int unsigned not null,
-    question_id int unsigned not null,
-    usergroup_id int unsigned not null,
+    id int  not null auto_increment primary key,
+    c_id int  not null,
+    question_id int  not null,
+    usergroup_id int  not null,
     coefficient float(6,2)
 );
 
 DROP TABLE IF EXISTS branch_sync;
 CREATE TABLE branch_sync(
-  id int unsigned not null AUTO_INCREMENT PRIMARY KEY,
-  access_url_id int unsigned not null,
+  id int not null AUTO_INCREMENT PRIMARY KEY,
+  access_url_id int not null,
   branch_name varchar(250) default '',
   branch_ip varchar(40) default '',
   latitude decimal(15,7),
   longitude decimal(15,7),
-  dwn_speed int unsigned default null,
-  up_speed int unsigned default null,
-  delay int unsigned default null,
+  dwn_speed int  default null,
+  up_speed int  default null,
+  delay int  default null,
   admin_mail varchar(250) default '',
   admin_name varchar(250) default '',
   admin_phone varchar(250) default '',
-  last_sync_trans_id bigint unsigned default 0,
+  last_sync_trans_id bigint default 0,
   last_sync_trans_date datetime,
   last_sync_type char(20) default 'full',
   ssl_pub_key varchar(250) default '',
   branch_type varchar(250) default null,
-  lft int unsigned,
-  rgt int unsigned,
-  lvl int unsigned,
-  root int unsigned,
-  parent_id int unsigned
+  lft int ,
+  rgt int ,
+  lvl int ,
+  root int ,
+  parent_id int
 );
 
 INSERT INTO branch_sync (id, access_url_id, branch_name, branch_ip) VALUES (1, 1, 'Local', '127.0.0.1');
 
 DROP TABLE IF EXISTS branch_sync_log;
 CREATE TABLE branch_sync_log(
-  id bigint unsigned not null AUTO_INCREMENT PRIMARY KEY,
-  transaction_id bigint unsigned not null default 0,
+  id bigint  not null AUTO_INCREMENT PRIMARY KEY,
+  transaction_id bigint  not null default 0,
   import_time datetime,
   message mediumtext not null
 );
@@ -3143,8 +3145,8 @@ INSERT INTO branch_transaction_status VALUES (1, 'To be executed'), (2, 'Execute
 
 DROP TABLE IF EXISTS branch_transaction;
 CREATE TABLE branch_transaction (
-    id bigint unsigned not null AUTO_INCREMENT,
-    transaction_id bigint unsigned,
+    id bigint  not null AUTO_INCREMENT,
+    transaction_id bigint ,
     branch_id int not null default 0,
     action char(20),
     item_id char(36),
@@ -3156,14 +3158,14 @@ CREATE TABLE branch_transaction (
 );
 
 CREATE TABLE IF NOT EXISTS branch_transaction_data (
-    id bigint unsigned NOT NULL PRIMARY KEY,
+    id bigint  NOT NULL PRIMARY KEY,
     data text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
 );
 
 DROP TABLE IF EXISTS track_e_access;
 CREATE TABLE track_e_access (
   access_id int NOT NULL auto_increment,
-  access_user_id int unsigned default NULL,
+  access_user_id int  default NULL,
   access_date datetime NOT NULL default '0000-00-00 00:00:00',
   c_id INT NOT NULL DEFAULT 0,
   access_tool varchar(30) default NULL,
@@ -3176,11 +3178,11 @@ CREATE TABLE track_e_access (
 DROP TABLE IF EXISTS track_e_lastaccess;
 CREATE TABLE track_e_lastaccess (
   access_id bigint NOT NULL auto_increment,
-  access_user_id int unsigned default NULL,
+  access_user_id int  default NULL,
   access_date datetime NOT NULL default '0000-00-00 00:00:00',
   c_id INT NOT NULL DEFAULT 0,
   access_tool varchar(30) default NULL,
-  access_session_id int unsigned default NULL,
+  access_session_id int  default NULL,
   PRIMARY KEY  (access_id),
   KEY access_c_id_user_id (c_id, access_user_id),
   KEY access_user_id (access_user_id),
@@ -3191,21 +3193,21 @@ CREATE TABLE track_e_lastaccess (
 DROP TABLE IF EXISTS track_e_default;
 CREATE TABLE track_e_default (
   default_id int NOT NULL auto_increment,
-  default_user_id int unsigned NOT NULL default 0,
+  default_user_id int  NOT NULL default 0,
   default_cours_code varchar(40) NOT NULL default '',
   default_date datetime NOT NULL default '0000-00-00 00:00:00',
   default_event_type varchar(255) NOT NULL default '',
   default_value_type varchar(255) NOT NULL default '',
   default_value text NOT NULL,
-  c_id int unsigned default NULL,
-  session_id int unsigned default 0,
+  c_id int  default NULL,
+  session_id int  default 0,
   PRIMARY KEY (default_id)
 );
 
 DROP TABLE IF EXISTS track_e_downloads;
 CREATE TABLE track_e_downloads (
   down_id int NOT NULL auto_increment,
-  down_user_id int unsigned default NULL,
+  down_user_id int  default NULL,
   down_date datetime NOT NULL default '0000-00-00 00:00:00',
   c_id int NOT NULL default 0,
   down_doc_path varchar(255) NOT NULL default '',
@@ -3216,24 +3218,24 @@ CREATE TABLE track_e_downloads (
 DROP TABLE IF EXISTS track_e_exercices;
 CREATE TABLE track_e_exercices (
   exe_id int NOT NULL auto_increment,
-  exe_user_id int unsigned default NULL,
+  exe_user_id int  default NULL,
   exe_date datetime NOT NULL default '0000-00-00 00:00:00',
-  exe_exo_id int unsigned NOT NULL default 0,
+  exe_exo_id int  NOT NULL default 0,
   exe_result float(6,2) NOT NULL default 0,
   exe_weighting float(6,2) NOT NULL default 0,
-  c_id INT unsigned NOT NULL default 0,
+  c_id INT  NOT NULL default 0,
   PRIMARY KEY  (exe_id)
 );
 
 ALTER TABLE track_e_exercices ADD status varchar(20) NOT NULL default '';
 ALTER TABLE track_e_exercices ADD data_tracking text NOT NULL default '';
 ALTER TABLE track_e_exercices ADD start_date datetime NOT NULL default '0000-00-00 00:00:00';
-ALTER TABLE track_e_exercices ADD steps_counter SMALLINT UNSIGNED NOT NULL default 0;
-ALTER TABLE track_e_exercices ADD session_id INT UNSIGNED NOT NULL default 0;
+ALTER TABLE track_e_exercices ADD steps_counter SMALLINT  NOT NULL default 0;
+ALTER TABLE track_e_exercices ADD session_id INT  NOT NULL default 0;
 ALTER TABLE track_e_exercices ADD INDEX ( session_id ) ;
 ALTER TABLE track_e_exercices ADD orig_lp_id int  NOT NULL default 0;
 ALTER TABLE track_e_exercices ADD orig_lp_item_id int  NOT NULL default 0;
-ALTER TABLE track_e_exercices ADD exe_duration int UNSIGNED NOT NULL default 0;
+ALTER TABLE track_e_exercices ADD exe_duration int  NOT NULL default 0;
 ALTER TABLE track_e_exercices ADD COLUMN expired_time_control datetime NOT NULL DEFAULT '0000-00-00 00:00:00';
 ALTER TABLE track_e_exercices ADD COLUMN orig_lp_item_view_id INT NOT NULL DEFAULT 0;
 ALTER TABLE track_e_exercices ADD COLUMN questions_to_check TEXT  NOT NULL DEFAULT '';
@@ -3250,7 +3252,7 @@ CREATE TABLE track_e_attempt (
     position int default 0,
     tms datetime NOT NULL default '0000-00-00 00:00:00',
     session_id INT NOT NULL DEFAULT 0,
-    c_id INT unsigned NOT NULL default 0,
+    c_id INT  NOT NULL default 0,
     filename VARCHAR(255) DEFAULT NULL
 );
 
@@ -3262,11 +3264,11 @@ ALTER TABLE track_e_attempt ADD INDEX (session_id);
 DROP TABLE IF EXISTS track_e_attempt_recording;
 CREATE TABLE track_e_attempt_recording (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    exe_id int unsigned NOT NULL,
-    question_id int unsigned NOT NULL,
+    exe_id int  NOT NULL,
+    question_id int  NOT NULL,
     marks int NOT NULL,
     insert_date datetime NOT NULL default '0000-00-00 00:00:00',
-    author int unsigned NOT NULL,
+    author int  NOT NULL,
     teacher_comment longtext NOT NULL,
     session_id INT NOT NULL DEFAULT 0
 );
@@ -3278,9 +3280,9 @@ DROP TABLE IF EXISTS track_e_hotpotatoes;
 CREATE TABLE track_e_hotpotatoes (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     exe_name VARCHAR( 255 ) NOT NULL ,
-    exe_user_id int unsigned DEFAULT NULL ,
+    exe_user_id int  DEFAULT NULL ,
     exe_date DATETIME DEFAULT '0000-00-00 00:00:00' NOT NULL ,
-    c_id INT unsigned NOT NULL default 0,
+    c_id INT  NOT NULL default 0,
     exe_result smallint default 0 NOT NULL ,
     exe_weighting smallint default 0 NOT NULL
 );
@@ -3288,7 +3290,7 @@ CREATE TABLE track_e_hotpotatoes (
 DROP TABLE IF EXISTS track_e_links;
 CREATE TABLE track_e_links (
   links_id int NOT NULL auto_increment,
-  links_user_id int unsigned default NULL,
+  links_user_id int  default NULL,
   links_date datetime NOT NULL default '0000-00-00 00:00:00',
   c_id INT NOT NULL DEFAULT 0,
   links_link_id int NOT NULL default 0,
@@ -3300,7 +3302,7 @@ CREATE TABLE track_e_links (
 DROP TABLE IF EXISTS track_e_login;
 CREATE TABLE track_e_login (
   login_id int NOT NULL auto_increment,
-  login_user_id int unsigned NOT NULL default 0,
+  login_user_id int  NOT NULL default 0,
   login_date datetime NOT NULL default '0000-00-00 00:00:00',
   login_ip varchar(39) NOT NULL default '',
   logout_date datetime NULL default NULL,
@@ -3311,7 +3313,7 @@ CREATE TABLE track_e_login (
 DROP TABLE IF EXISTS track_e_online;
 CREATE TABLE track_e_online (
   login_id int NOT NULL auto_increment,
-  login_user_id int unsigned NOT NULL default 0,
+  login_user_id int  NOT NULL default 0,
   login_date datetime NOT NULL default '0000-00-00 00:00:00',
   login_ip varchar(39) NOT NULL default '',
   course varchar(40) default NULL,
@@ -3324,7 +3326,7 @@ CREATE TABLE track_e_online (
 DROP TABLE IF EXISTS track_e_uploads;
 CREATE TABLE track_e_uploads (
   upload_id int NOT NULL auto_increment,
-  upload_user_id int unsigned default NULL,
+  upload_user_id int  default NULL,
   upload_date datetime NOT NULL default '0000-00-00 00:00:00',
   upload_cours_id varchar(40) NOT NULL default '',
   upload_work_id int NOT NULL default 0,
@@ -3336,7 +3338,7 @@ CREATE TABLE track_e_uploads (
 
 DROP TABLE IF EXISTS track_e_course_access;
 CREATE TABLE track_e_course_access (
-  course_access_id bigint unsigned NOT NULL auto_increment,
+  course_access_id bigint  NOT NULL auto_increment,
   user_id int NOT NULL,
   login_course_date datetime NOT NULL default '0000-00-00 00:00:00',
   logout_course_date datetime default NULL,
@@ -3353,7 +3355,7 @@ CREATE TABLE track_e_hotspot (
   hotspot_exe_id int NOT NULL,
   hotspot_question_id int NOT NULL,
   hotspot_answer_id int NOT NULL,
-  hotspot_correct tinyint(3) unsigned NOT NULL,
+  hotspot_correct tinyint(3)  NOT NULL,
   hotspot_coordinate text NOT NULL,
   c_id int NOT NULL default 0,
   PRIMARY KEY (hotspot_id),
@@ -3396,7 +3398,7 @@ ALTER TABLE track_e_uploads ADD INDEX (upload_session_id);
 --
 DROP TABLE IF EXISTS track_stored_values;
 CREATE TABLE IF NOT EXISTS track_stored_values (
-    id int unsigned not null AUTO_INCREMENT PRIMARY KEY,
+    id int  not null AUTO_INCREMENT PRIMARY KEY,
 	user_id INT NOT NULL,
 	sco_id INT NOT NULL,
 	course_id CHAR(40) NOT NULL,
@@ -3408,7 +3410,7 @@ ALTER TABLE track_stored_values ADD UNIQUE (user_id, sco_id, course_id, sv_key);
 
 DROP TABLE IF EXISTS track_stored_value_stack;
 CREATE TABLE IF NOT EXISTS track_stored_values_stack (
-    id int unsigned not null AUTO_INCREMENT PRIMARY KEY,
+    id int  not null AUTO_INCREMENT PRIMARY KEY,
 	user_id INT NOT NULL,
 	sco_id INT NOT NULL,
 	stack_order INT NOT NULL,
@@ -3421,7 +3423,7 @@ ALTER TABLE track_stored_values_stack ADD UNIQUE (user_id, sco_id, course_id, sv
 
 DROP TABLE IF EXISTS track_e_attempt_coeff;
 CREATE TABLE track_e_attempt_coeff (
-    id int unsigned not null auto_increment primary key,
+    id int  not null auto_increment primary key,
     attempt_id INT NOT NULL,
     marks_coeff float(6,2)
 );
@@ -3433,7 +3435,7 @@ CREATE TABLE track_e_attempt_coeff (
 DROP TABLE IF EXISTS personal_agenda;
 CREATE TABLE personal_agenda (
   id int NOT NULL auto_increment,
-  user int unsigned,
+  user int ,
   title text,
   `text` longtext,
   `date` datetime DEFAULT NULL,
@@ -3463,8 +3465,8 @@ CREATE TABLE personal_agenda_repeat_not (
 
 DROP TABLE IF EXISTS user_course_category;
 CREATE TABLE user_course_category (
-  id int unsigned NOT NULL auto_increment,
-  user_id int unsigned NOT NULL default 0,
+  id int  NOT NULL auto_increment,
+  user_id int  NOT NULL default 0,
   title text NOT NULL,
   sort int,
   PRIMARY KEY(id)
@@ -3510,7 +3512,7 @@ CREATE TABLE IF NOT EXISTS question_field_values(
     question_id int NOT NULL,
     field_id int NOT NULL,
     field_value text,
-    user_id INT unsigned NOT NULL default 0,
+    user_id INT  NOT NULL default 0,
     comment VARCHAR(100) default '',
     tms DATETIME NOT NULL default '0000-00-00 00:00:00',
     PRIMARY KEY(id)
@@ -3556,13 +3558,13 @@ CREATE TABLE question_score (
 
 DROP TABLE IF EXISTS curriculum_category;
 CREATE TABLE curriculum_category (
-    id int unsigned not null primary key AUTO_INCREMENT,
-    c_id int unsigned, -- the course ID (not setting as "not null" because at some point in the future it might be considered course-agnostic). This is only necessary for the item with parent_id = 0
-    session_id int unsigned, -- the session ID (not setting as "not null" because at some point in the future it might be considered session-agnostic). This is only necessary for the item with parent_id = 0
+    id int  not null primary key AUTO_INCREMENT,
+    c_id int , -- the course ID (not setting as "not null" because at some point in the future it might be considered course-agnostic). This is only necessary for the item with parent_id = 0
+    session_id int , -- the session ID (not setting as "not null" because at some point in the future it might be considered session-agnostic). This is only necessary for the item with parent_id = 0
     title varchar(255),
-    max_score int unsigned not null default 1,
-    min_chars tinyint unsigned not null default 0, -- the minimum number of characters an item field in this category requires to be considered a valid submission (and generate score),
-    parent_id int unsigned DEFAULT NULL,
+    max_score int  not null default 1,
+    min_chars tinyint  not null default 0, -- the minimum number of characters an item field in this category requires to be considered a valid submission (and generate score),
+    parent_id int  DEFAULT NULL,
     lvl int default NULL,
     lft int default NULL,
     rgt int default NULL,
@@ -3571,33 +3573,33 @@ CREATE TABLE curriculum_category (
 
 DROP TABLE IF EXISTS curriculum_item;
 CREATE TABLE curriculum_item (
-    id int unsigned not null primary key AUTO_INCREMENT,
-    category_id int unsigned not null, -- references the curriculum category's id
+    id int  not null primary key AUTO_INCREMENT,
+    category_id int  not null, -- references the curriculum category's id
     title varchar(255),
-    score int unsigned not null default 1, -- how much points are assigned for filling this item
-    max_repeat tinyint unsigned not null default 1 -- how many items of this type are allowed
+    score int  not null default 1, -- how much points are assigned for filling this item
+    max_repeat tinyint  not null default 1 -- how many items of this type are allowed
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS curriculum_item_rel_user;
 CREATE TABLE curriculum_item_rel_user (
-    id int unsigned not null primary key AUTO_INCREMENT,
-    item_id int unsigned not null, -- the id of the item
-    user_id int unsigned not null,
-    order_id tinyint unsigned not null default 0, -- given there is a item_max_repeat field, this allows us to store more than one answer per item.id per user
+    id int  not null primary key AUTO_INCREMENT,
+    item_id int  not null, -- the id of the item
+    user_id int  not null,
+    order_id tinyint  not null default 0, -- given there is a item_max_repeat field, this allows us to store more than one answer per item.id per user
     description varchar(255) not null default '' -- the text given as "answer" by the student
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS curriculum_rel_user;
 CREATE TABLE curriculum_rel_user (
-    id int unsigned not null primary key AUTO_INCREMENT,
-    category_id int unsigned not null, -- references c_curriculum_category.id where parent_id = 0 (one root curriculum)
-    user_id int unsigned not null,
-    score int unsigned not null default 0 -- the temporary total score given to the user for the information he completed
+    id int  not null primary key AUTO_INCREMENT,
+    category_id int  not null, -- references c_curriculum_category.id where parent_id = 0 (one root curriculum)
+    user_id int  not null,
+    score int  not null default 0 -- the temporary total score given to the user for the information he completed
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS tool;
 CREATE TABLE tool (
-    id int unsigned not null primary key AUTO_INCREMENT,
+    id int  not null primary key AUTO_INCREMENT,
     name varchar(255),
     image varchar(255),
     description TEXT
@@ -3614,18 +3616,18 @@ INSERT INTO tool (name) VALUES('glossary');
 
 DROP TABLE IF EXISTS session_path;
 CREATE TABLE session_path (
-    id int unsigned not null primary key AUTO_INCREMENT,
+    id int  not null primary key AUTO_INCREMENT,
     name varchar(255),
     description TEXT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS session_tree;
 CREATE TABLE session_tree (
-    id int unsigned not null primary key AUTO_INCREMENT,
-    session_path_id int unsigned not null,
-    session_id int unsigned,
-    course_id int unsigned,
-    tool_id int unsigned,
+    id int  not null primary key AUTO_INCREMENT,
+    session_path_id int  not null,
+    session_id int ,
+    course_id int ,
+    tool_id int ,
     type varchar(255),
     lft int,
     lvl int,
@@ -3636,10 +3638,10 @@ CREATE TABLE session_tree (
 
 DROP TABLE IF EXISTS user_session_path;
 CREATE TABLE user_session_path (
-    id int unsigned not null primary key AUTO_INCREMENT,
-    session_path_id int unsigned,
-    user_id int unsigned,
+    id int  not null primary key AUTO_INCREMENT,
+    session_path_id int ,
+    user_id int ,
     status varchar(100),
-    percentage int unsigned
+    percentage int
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

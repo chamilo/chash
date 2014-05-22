@@ -23,9 +23,9 @@ DROP TABLE IF EXISTS c_announcement;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_announcement (
-  iid int unsigned NOT NULL AUTO_INCREMENT,
+  iid int  NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL,
+  id int(10)  NOT NULL,
   title text,
   content longtext,
   end_date date DEFAULT NULL,
@@ -46,9 +46,9 @@ DROP TABLE IF EXISTS c_announcement_attachment;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_announcement_attachment (
-  iid int unsigned NOT NULL AUTO_INCREMENT,
+  iid int  NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(11) unsigned NOT NULL,
+  id int(11)  NOT NULL,
   path varchar(255) NOT NULL,
   comment text,
   size int(11) NOT NULL DEFAULT '0',
@@ -67,9 +67,9 @@ DROP TABLE IF EXISTS c_attendance;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_attendance (
-  iid int unsigned not null AUTO_INCREMENT,
+  iid int  not null AUTO_INCREMENT,
   c_id int NOT NULL,
-  id int unsigned NOT NULL,
+  id int  NOT NULL,
   name text NOT NULL,
   description longtext,
   active tinyint NOT NULL DEFAULT '1',
@@ -93,9 +93,9 @@ DROP TABLE IF EXISTS c_attendance_calendar;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_attendance_calendar (
-  iid int unsigned NOT NULL AUTO_INCREMENT,
+  iid int  NOT NULL AUTO_INCREMENT,
   c_id int NOT NULL,
-  id int unsigned NOT NULL,
+  id int  NOT NULL,
   attendance_id int NOT NULL,
   date_time datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   done_attendance tinyint NOT NULL DEFAULT '0',
@@ -114,9 +114,9 @@ DROP TABLE IF EXISTS c_attendance_result;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_attendance_result (
-  iid int unsigned NOT NULL AUTO_INCREMENT,
+  iid int  NOT NULL AUTO_INCREMENT,
   c_id int NOT NULL,
-  id int unsigned NOT NULL,
+  id int  NOT NULL,
   user_id int NOT NULL,
   attendance_id int NOT NULL,
   score int NOT NULL DEFAULT '0',
@@ -135,7 +135,7 @@ DROP TABLE IF EXISTS c_attendance_sheet;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_attendance_sheet (
-  iid int unsigned NOT NULL AUTO_INCREMENT,
+  iid int  NOT NULL AUTO_INCREMENT,
   c_id int NOT NULL,
   user_id int NOT NULL,
   attendance_calendar_id int NOT NULL,
@@ -154,9 +154,9 @@ DROP TABLE IF EXISTS c_attendance_sheet_log;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_attendance_sheet_log (
-  iid int unsigned NOT NULL AUTO_INCREMENT,
+  iid int  NOT NULL AUTO_INCREMENT,
   c_id int NOT NULL,
-  id int unsigned NOT NULL,
+  id int  NOT NULL,
   attendance_id int NOT NULL DEFAULT '0',
   lastedit_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   lastedit_type varchar(200) NOT NULL,
@@ -180,7 +180,7 @@ CREATE TABLE c_blog (
   blog_name varchar(250) NOT NULL DEFAULT '',
   blog_subtitle varchar(250) DEFAULT NULL,
   date_creation datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  visibility tinyint(3) unsigned NOT NULL DEFAULT '0',
+  visibility tinyint(3)  NOT NULL DEFAULT '0',
   session_id int(11) DEFAULT '0',
   PRIMARY KEY (c_id,blog_id),
   KEY session_id (session_id)
@@ -196,7 +196,7 @@ DROP TABLE IF EXISTS c_blog_attachment;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_blog_attachment (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL AUTO_INCREMENT,
   path varchar(255) NOT NULL COMMENT 'the real filename',
   comment text,
   size int(11) NOT NULL DEFAULT '0',
@@ -297,7 +297,7 @@ CREATE TABLE c_blog_task (
   title varchar(250) NOT NULL DEFAULT '',
   description text NOT NULL,
   color varchar(10) NOT NULL DEFAULT '',
-  system_task tinyint(3) unsigned NOT NULL DEFAULT '0',
+  system_task tinyint(3)  NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,task_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Table with tasks for a blog';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -328,13 +328,13 @@ DROP TABLE IF EXISTS c_calendar_event;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_calendar_event (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL AUTO_INCREMENT,
   title varchar(255) NOT NULL,
   content longtext,
   start_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   end_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   parent_event_id int(11) DEFAULT NULL,
-  session_id int(10) unsigned NOT NULL DEFAULT '0',
+  session_id int(10)  NOT NULL DEFAULT '0',
   all_day int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,id),
   KEY session_id (session_id)
@@ -402,8 +402,8 @@ DROP TABLE IF EXISTS c_chat_connected;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_chat_connected (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
-  user_id int(10) unsigned NOT NULL DEFAULT '0',
+  id int(10)  NOT NULL AUTO_INCREMENT,
+  user_id int(10)  NOT NULL DEFAULT '0',
   last_connection datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   session_id int(11) NOT NULL DEFAULT '0',
   to_group_id int(11) NOT NULL DEFAULT '0',
@@ -421,11 +421,11 @@ DROP TABLE IF EXISTS c_course_description;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_course_description (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL AUTO_INCREMENT,
   title varchar(255) DEFAULT NULL,
   content longtext,
   session_id int(11) DEFAULT '0',
-  description_type tinyint(3) unsigned NOT NULL DEFAULT '0',
+  description_type tinyint(3)  NOT NULL DEFAULT '0',
   progress int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,id),
   KEY session_id (session_id)
@@ -441,7 +441,7 @@ DROP TABLE IF EXISTS c_course_setting;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_course_setting (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL AUTO_INCREMENT,
   variable varchar(255) NOT NULL DEFAULT '',
   subkey varchar(255) DEFAULT NULL,
   type varchar(255) DEFAULT NULL,
@@ -463,14 +463,14 @@ DROP TABLE IF EXISTS c_document;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_document (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL AUTO_INCREMENT,
   path varchar(255) NOT NULL DEFAULT '',
   comment text,
   title varchar(255) DEFAULT NULL,
   filetype set('file','folder') NOT NULL DEFAULT 'file',
   size int(11) NOT NULL DEFAULT '0',
-  readonly tinyint(3) unsigned NOT NULL,
-  session_id int(10) unsigned NOT NULL DEFAULT '0',
+  readonly tinyint(3)  NOT NULL,
+  session_id int(10)  NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -486,8 +486,8 @@ CREATE TABLE c_dropbox_category (
   c_id int(11) NOT NULL,
   cat_id int(11) NOT NULL AUTO_INCREMENT,
   cat_name text NOT NULL,
-  received tinyint(3) unsigned NOT NULL DEFAULT '0',
-  sent tinyint(3) unsigned NOT NULL DEFAULT '0',
+  received tinyint(3)  NOT NULL DEFAULT '0',
+  sent tinyint(3)  NOT NULL DEFAULT '0',
   user_id int(11) NOT NULL DEFAULT '0',
   session_id int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,cat_id),
@@ -523,19 +523,20 @@ DROP TABLE IF EXISTS c_dropbox_file;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_dropbox_file (
+  iid int(10)  NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL,
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
-  uploader_id int(10) unsigned NOT NULL DEFAULT '0',
+  uploader_id int(10)  NOT NULL DEFAULT '0',
   filename varchar(250) NOT NULL DEFAULT '',
-  filesize int(10) unsigned NOT NULL,
+  filesize int(10)  NOT NULL,
   title varchar(250) DEFAULT '',
   description varchar(250) DEFAULT '',
   author varchar(250) DEFAULT '',
   upload_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   last_upload_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   cat_id int(11) NOT NULL DEFAULT '0',
-  session_id int(10) unsigned NOT NULL,
-  PRIMARY KEY (c_id,id),
+  session_id int(10)  NOT NULL,
+  PRIMARY KEY (iid),
   UNIQUE KEY UN_filename (filename),
   KEY session_id (session_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -550,8 +551,8 @@ DROP TABLE IF EXISTS c_dropbox_person;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_dropbox_person (
   c_id int(11) NOT NULL,
-  file_id int(10) unsigned NOT NULL,
-  user_id int(10) unsigned NOT NULL DEFAULT '0',
+  file_id int(10)  NOT NULL,
+  user_id int(10)  NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,file_id,user_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -565,12 +566,12 @@ DROP TABLE IF EXISTS c_dropbox_post;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_dropbox_post (
   c_id int(11) NOT NULL,
-  file_id int(10) unsigned NOT NULL,
-  dest_user_id int(10) unsigned NOT NULL DEFAULT '0',
+  file_id int(10)  NOT NULL,
+  dest_user_id int(10)  NOT NULL DEFAULT '0',
   feedback_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   feedback text,
   cat_id int(11) NOT NULL DEFAULT '0',
-  session_id int(10) unsigned NOT NULL,
+  session_id int(10)  NOT NULL,
   PRIMARY KEY (c_id,file_id,dest_user_id),
   KEY session_id (session_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -609,7 +610,7 @@ CREATE TABLE c_forum_category (
   cat_comment text,
   cat_order int(11) NOT NULL DEFAULT '0',
   locked int(11) NOT NULL DEFAULT '0',
-  session_id int(10) unsigned NOT NULL DEFAULT '0',
+  session_id int(10)  NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,cat_id),
   KEY session_id (session_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -732,13 +733,13 @@ CREATE TABLE c_forum_thread (
   thread_views int(11) DEFAULT '0',
   thread_last_post int(11) DEFAULT NULL,
   thread_date datetime DEFAULT '0000-00-00 00:00:00',
-  thread_sticky tinyint(3) unsigned DEFAULT '0',
+  thread_sticky tinyint(3)  DEFAULT '0',
   locked int(11) NOT NULL DEFAULT '0',
-  session_id int(10) unsigned DEFAULT NULL,
+  session_id int(10)  DEFAULT NULL,
   thread_title_qualify varchar(255) DEFAULT '',
-  thread_qualify_max float(6,2) unsigned NOT NULL DEFAULT '0.00',
+  thread_qualify_max float(6,2)  NOT NULL DEFAULT '0.00',
   thread_close_date datetime DEFAULT '0000-00-00 00:00:00',
-  thread_weight float(6,2) unsigned NOT NULL DEFAULT '0.00',
+  thread_weight float(6,2)  NOT NULL DEFAULT '0.00',
   PRIMARY KEY (c_id,thread_id),
   KEY idx_forum_thread_forum_id (forum_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -753,8 +754,8 @@ DROP TABLE IF EXISTS c_forum_thread_qualify;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_forum_thread_qualify (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
-  user_id int(10) unsigned NOT NULL,
+  id int(10)  NOT NULL AUTO_INCREMENT,
+  user_id int(10)  NOT NULL,
   thread_id int(11) NOT NULL,
   qualify float(6,2) NOT NULL DEFAULT '0.00',
   qualify_user_id int(11) DEFAULT NULL,
@@ -774,8 +775,8 @@ DROP TABLE IF EXISTS c_forum_thread_qualify_log;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_forum_thread_qualify_log (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
-  user_id int(10) unsigned NOT NULL,
+  id int(10)  NOT NULL AUTO_INCREMENT,
+  user_id int(10)  NOT NULL,
   thread_id int(11) NOT NULL,
   qualify float(6,2) NOT NULL DEFAULT '0.00',
   qualify_user_id int(11) DEFAULT NULL,
@@ -795,7 +796,7 @@ DROP TABLE IF EXISTS c_glossary;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_glossary (
   c_id int(11) NOT NULL,
-  glossary_id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  glossary_id int(10)  NOT NULL AUTO_INCREMENT,
   name varchar(255) NOT NULL,
   description longtext NOT NULL,
   display_order int(11) DEFAULT NULL,
@@ -814,21 +815,21 @@ DROP TABLE IF EXISTS c_group_category;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_group_category (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL AUTO_INCREMENT,
   title varchar(255) NOT NULL DEFAULT '',
   description longtext NOT NULL,
-  doc_state tinyint(3) unsigned NOT NULL DEFAULT '1',
-  calendar_state tinyint(3) unsigned NOT NULL DEFAULT '1',
-  work_state tinyint(3) unsigned NOT NULL DEFAULT '1',
-  announcements_state tinyint(3) unsigned NOT NULL DEFAULT '1',
-  forum_state tinyint(3) unsigned NOT NULL DEFAULT '1',
-  wiki_state tinyint(3) unsigned NOT NULL DEFAULT '1',
-  chat_state tinyint(3) unsigned NOT NULL DEFAULT '1',
-  max_student int(10) unsigned NOT NULL DEFAULT '8',
-  self_reg_allowed tinyint(3) unsigned NOT NULL DEFAULT '0',
-  self_unreg_allowed tinyint(3) unsigned NOT NULL DEFAULT '0',
-  groups_per_user int(10) unsigned NOT NULL DEFAULT '0',
-  display_order int(10) unsigned NOT NULL DEFAULT '0',
+  doc_state tinyint(3)  NOT NULL DEFAULT '1',
+  calendar_state tinyint(3)  NOT NULL DEFAULT '1',
+  work_state tinyint(3)  NOT NULL DEFAULT '1',
+  announcements_state tinyint(3)  NOT NULL DEFAULT '1',
+  forum_state tinyint(3)  NOT NULL DEFAULT '1',
+  wiki_state tinyint(3)  NOT NULL DEFAULT '1',
+  chat_state tinyint(3)  NOT NULL DEFAULT '1',
+  max_student int(10)  NOT NULL DEFAULT '8',
+  self_reg_allowed tinyint(3)  NOT NULL DEFAULT '0',
+  self_unreg_allowed tinyint(3)  NOT NULL DEFAULT '0',
+  groups_per_user int(10)  NOT NULL DEFAULT '0',
+  display_order int(10)  NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -841,23 +842,23 @@ DROP TABLE IF EXISTS c_group_info;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_group_info (
-  iid int(10) unsigned NOT NULL AUTO_INCREMENT,
+  iid int(10)  NOT NULL AUTO_INCREMENT,
   id int(11) NOT NULL,
   c_id int(11) NOT NULL,
   name varchar(100) DEFAULT NULL,
-  category_id int(10) unsigned NOT NULL DEFAULT '0',
+  category_id int(10)  NOT NULL DEFAULT '0',
   description longtext,
-  max_student int(10) unsigned NOT NULL DEFAULT '8',
-  doc_state tinyint(3) unsigned NOT NULL DEFAULT '1',
-  calendar_state tinyint(3) unsigned NOT NULL DEFAULT '0',
-  work_state tinyint(3) unsigned NOT NULL DEFAULT '0',
-  announcements_state tinyint(3) unsigned NOT NULL DEFAULT '0',
-  forum_state tinyint(3) unsigned NOT NULL DEFAULT '0',
-  wiki_state tinyint(3) unsigned NOT NULL DEFAULT '1',
-  chat_state tinyint(3) unsigned NOT NULL DEFAULT '1',
+  max_student int(10)  NOT NULL DEFAULT '8',
+  doc_state tinyint(3)  NOT NULL DEFAULT '1',
+  calendar_state tinyint(3)  NOT NULL DEFAULT '0',
+  work_state tinyint(3)  NOT NULL DEFAULT '0',
+  announcements_state tinyint(3)  NOT NULL DEFAULT '0',
+  forum_state tinyint(3)  NOT NULL DEFAULT '0',
+  wiki_state tinyint(3)  NOT NULL DEFAULT '1',
+  chat_state tinyint(3)  NOT NULL DEFAULT '1',
   secret_directory varchar(255) DEFAULT NULL,
-  self_registration_allowed tinyint(3) unsigned NOT NULL DEFAULT '0',
-  self_unregistration_allowed tinyint(3) unsigned NOT NULL DEFAULT '0',
+  self_registration_allowed tinyint(3)  NOT NULL DEFAULT '0',
+  self_unregistration_allowed tinyint(3)  NOT NULL DEFAULT '0',
   session_id int(11) NOT NULL,
   PRIMARY KEY (iid)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -888,9 +889,9 @@ DROP TABLE IF EXISTS c_group_rel_user;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_group_rel_user (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
-  user_id int(10) unsigned NOT NULL,
-  group_id int(10) unsigned NOT NULL DEFAULT '0',
+  id int(10)  NOT NULL AUTO_INCREMENT,
+  user_id int(10)  NOT NULL,
+  group_id int(10)  NOT NULL DEFAULT '0',
   status int(11) NOT NULL DEFAULT '0',
   role char(50) NOT NULL,
   PRIMARY KEY (c_id,id)
@@ -907,19 +908,19 @@ DROP TABLE IF EXISTS c_item_property;
 CREATE TABLE c_item_property (
   c_id int(11) NOT NULL,
   tool varchar(100) NOT NULL DEFAULT '',
-  insert_user_id int(10) unsigned NOT NULL DEFAULT '0',
+  insert_user_id int(10)  NOT NULL DEFAULT '0',
   insert_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   lastedit_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   ref int(11) NOT NULL DEFAULT '0',
   lastedit_type varchar(100) NOT NULL DEFAULT '',
-  lastedit_user_id int(10) unsigned NOT NULL DEFAULT '0',
-  to_group_id int(10) unsigned DEFAULT NULL,
-  to_user_id int(10) unsigned DEFAULT NULL,
+  lastedit_user_id int(10)  NOT NULL DEFAULT '0',
+  to_group_id int(10)  DEFAULT NULL,
+  to_user_id int(10)  DEFAULT NULL,
   visibility tinyint(4) NOT NULL DEFAULT '1',
   start_visible datetime DEFAULT NULL,
   end_visible datetime DEFAULT NULL,
   id_session int(11) DEFAULT NULL,
-  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  id bigint(20)  NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (id),
   KEY idx_item_property_toolref (tool, ref)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -934,12 +935,12 @@ DROP TABLE IF EXISTS c_link;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_link (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL AUTO_INCREMENT,
   url text NOT NULL,
   title varchar(150) DEFAULT NULL,
   description text,
-  category_id int(10) unsigned DEFAULT NULL,
-  display_order int(10) unsigned NOT NULL DEFAULT '0',
+  category_id int(10)  DEFAULT NULL,
+  display_order int(10)  NOT NULL DEFAULT '0',
   on_homepage varchar(100) NOT NULL DEFAULT '0',
   target char(10) DEFAULT '_self',
   session_id int(11) DEFAULT '0',
@@ -957,10 +958,10 @@ DROP TABLE IF EXISTS c_link_category;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_link_category (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL AUTO_INCREMENT,
   category_title varchar(255) NOT NULL,
   description text,
-  display_order mediumint(8) unsigned NOT NULL DEFAULT '0',
+  display_order mediumint(8)  NOT NULL DEFAULT '0',
   session_id int(11) DEFAULT '0',
   PRIMARY KEY (c_id,id),
   KEY session_id (session_id)
@@ -975,40 +976,41 @@ DROP TABLE IF EXISTS c_lp;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_lp (
+  iid int  NOT NULL AUTO_INCREMENT,
+  id int(10),
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
-  lp_type int(10) unsigned NOT NULL,
+  lp_type int(10)  NOT NULL,
   name varchar(255) NOT NULL,
   ref tinytext,
   description longtext,
   path text NOT NULL,
-  force_commit tinyint(3) unsigned NOT NULL DEFAULT '0',
+  force_commit tinyint(3)  NOT NULL DEFAULT '0',
   default_view_mod char(32) NOT NULL DEFAULT 'embedded',
   default_encoding char(32) NOT NULL DEFAULT 'UTF-8',
-  display_order int(10) unsigned NOT NULL DEFAULT '0',
+  display_order int(10)  NOT NULL DEFAULT '0',
   content_maker tinytext NOT NULL,
   content_local varchar(32) NOT NULL DEFAULT 'local',
   content_license text NOT NULL,
-  prevent_reinit tinyint(3) unsigned NOT NULL DEFAULT '1',
+  prevent_reinit tinyint(3)  NOT NULL DEFAULT '1',
   js_lib tinytext NOT NULL,
-  debug tinyint(3) unsigned NOT NULL DEFAULT '0',
+  debug tinyint(3)  NOT NULL DEFAULT '0',
   theme varchar(255) NOT NULL DEFAULT '',
   preview_image varchar(255) NOT NULL DEFAULT '',
   author varchar(255) NOT NULL DEFAULT '',
-  session_id int(10) unsigned NOT NULL DEFAULT '0',
-  prerequisite int(10) unsigned NOT NULL DEFAULT '0',
+  session_id int(10)  NOT NULL DEFAULT '0',
+  prerequisite int(10)  NOT NULL DEFAULT '0',
   hide_toc_frame tinyint(4) NOT NULL DEFAULT '0',
   seriousgame_mode tinyint(4) NOT NULL DEFAULT '0',
-  use_max_score int(10) unsigned NOT NULL DEFAULT '1',
-  autolunch int(10) unsigned NOT NULL DEFAULT '0',
+  use_max_score int(10)  NOT NULL DEFAULT '1',
+  autolunch int(10)  NOT NULL DEFAULT '0',
   created_on datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   modified_on datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   publicated_on datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   expired_on datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   max_attempts int(11) NOT NULL DEFAULT '0',
-  category_id int(10) unsigned NOT NULL DEFAULT '0',
+  category_id int(10)  NOT NULL DEFAULT '0',
   subscribe_users int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,id)
+  PRIMARY KEY (iid)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1020,8 +1022,8 @@ DROP TABLE IF EXISTS c_lp_category;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_lp_category (
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
-  c_id int(10) unsigned NOT NULL,
+  id int(10)  NOT NULL AUTO_INCREMENT,
+  c_id int(10)  NOT NULL,
   name varchar(255) DEFAULT NULL,
   position int(11) DEFAULT NULL,
   PRIMARY KEY (id)
@@ -1037,20 +1039,20 @@ DROP TABLE IF EXISTS c_lp_item;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_lp_item (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
-  lp_id int(10) unsigned NOT NULL,
+  id int(10)  NOT NULL AUTO_INCREMENT,
+  lp_id int(10)  NOT NULL,
   item_type char(32) NOT NULL DEFAULT 'dokeos_document',
   ref tinytext NOT NULL,
   title varchar(511) NOT NULL,
   description varchar(511) NOT NULL DEFAULT '',
   path text NOT NULL,
-  min_score float unsigned NOT NULL DEFAULT '0',
-  max_score float unsigned DEFAULT '100',
-  mastery_score float unsigned DEFAULT NULL,
-  parent_item_id int(10) unsigned NOT NULL DEFAULT '0',
-  previous_item_id int(10) unsigned NOT NULL DEFAULT '0',
-  next_item_id int(10) unsigned NOT NULL DEFAULT '0',
-  display_order int(10) unsigned NOT NULL DEFAULT '0',
+  min_score float  NOT NULL DEFAULT '0',
+  max_score float  DEFAULT '100',
+  mastery_score float  DEFAULT NULL,
+  parent_item_id int(10)  NOT NULL DEFAULT '0',
+  previous_item_id int(10)  NOT NULL DEFAULT '0',
+  next_item_id int(10)  NOT NULL DEFAULT '0',
+  display_order int(10)  NOT NULL DEFAULT '0',
   prerequisite text,
   parameters text,
   launch_data text NOT NULL,
@@ -1073,13 +1075,13 @@ DROP TABLE IF EXISTS c_lp_item_view;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_lp_item_view (
   c_id int(11) NOT NULL,
-  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  lp_item_id int(10) unsigned NOT NULL,
-  lp_view_id int(10) unsigned NOT NULL,
-  view_count int(10) unsigned NOT NULL DEFAULT '0',
-  start_time int(10) unsigned NOT NULL,
-  total_time int(10) unsigned NOT NULL DEFAULT '0',
-  score float unsigned NOT NULL DEFAULT '0',
+  id bigint(20)  NOT NULL AUTO_INCREMENT,
+  lp_item_id int(10)  NOT NULL,
+  lp_view_id int(10)  NOT NULL,
+  view_count int(10)  NOT NULL DEFAULT '0',
+  start_time int(10)  NOT NULL,
+  total_time int(10)  NOT NULL DEFAULT '0',
+  score float  NOT NULL DEFAULT '0',
   status char(32) NOT NULL DEFAULT 'not attempted',
   suspend_data longtext,
   lesson_location text,
@@ -1101,9 +1103,9 @@ DROP TABLE IF EXISTS c_lp_iv_interaction;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_lp_iv_interaction (
   c_id int(11) NOT NULL,
-  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  order_id int(10) unsigned NOT NULL DEFAULT '0',
-  lp_iv_id bigint(20) unsigned NOT NULL,
+  id bigint(20)  NOT NULL AUTO_INCREMENT,
+  order_id int(10)  NOT NULL DEFAULT '0',
+  lp_iv_id bigint(20)  NOT NULL,
   interaction_id varchar(255) NOT NULL DEFAULT '',
   interaction_type varchar(255) NOT NULL DEFAULT '',
   weighting double NOT NULL DEFAULT '0',
@@ -1126,13 +1128,13 @@ DROP TABLE IF EXISTS c_lp_iv_objective;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_lp_iv_objective (
   c_id int(11) NOT NULL,
-  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  lp_iv_id bigint(20) unsigned NOT NULL,
-  order_id int(10) unsigned NOT NULL DEFAULT '0',
+  id bigint(20)  NOT NULL AUTO_INCREMENT,
+  lp_iv_id bigint(20)  NOT NULL,
+  order_id int(10)  NOT NULL DEFAULT '0',
   objective_id varchar(255) NOT NULL DEFAULT '',
-  score_raw float unsigned NOT NULL DEFAULT '0',
-  score_max float unsigned NOT NULL DEFAULT '0',
-  score_min float unsigned NOT NULL DEFAULT '0',
+  score_raw float  NOT NULL DEFAULT '0',
+  score_max float  NOT NULL DEFAULT '0',
+  score_min float  NOT NULL DEFAULT '0',
   status char(32) NOT NULL DEFAULT 'not attempted',
   PRIMARY KEY (c_id,id),
   KEY lp_iv_id (lp_iv_id)
@@ -1148,12 +1150,12 @@ DROP TABLE IF EXISTS c_lp_view;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_lp_view (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
-  lp_id int(10) unsigned NOT NULL,
-  user_id int(10) unsigned NOT NULL,
-  view_count int(10) unsigned NOT NULL DEFAULT '0',
-  last_item int(10) unsigned NOT NULL DEFAULT '0',
-  progress int(10) unsigned DEFAULT '0',
+  id int(10)  NOT NULL AUTO_INCREMENT,
+  lp_id int(10)  NOT NULL,
+  user_id int(10)  NOT NULL,
+  view_count int(10)  NOT NULL DEFAULT '0',
+  last_item int(10)  NOT NULL DEFAULT '0',
+  progress int(10)  DEFAULT '0',
   session_id int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,id),
   KEY lp_id (lp_id),
@@ -1190,8 +1192,8 @@ DROP TABLE IF EXISTS c_notebook;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_notebook (
   c_id int(11) NOT NULL,
-  notebook_id int(10) unsigned NOT NULL AUTO_INCREMENT,
-  user_id int(10) unsigned NOT NULL,
+  notebook_id int(10)  NOT NULL AUTO_INCREMENT,
+  user_id int(10)  NOT NULL,
   course varchar(40) NOT NULL,
   session_id int(11) NOT NULL DEFAULT '0',
   title varchar(255) NOT NULL,
@@ -1212,7 +1214,7 @@ DROP TABLE IF EXISTS c_online_connected;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_online_connected (
   c_id int(11) NOT NULL,
-  user_id int(10) unsigned NOT NULL,
+  user_id int(10)  NOT NULL,
   last_connection datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (c_id,user_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -1227,7 +1229,7 @@ DROP TABLE IF EXISTS c_online_link;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_online_link (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL AUTO_INCREMENT,
   name char(50) NOT NULL DEFAULT '',
   url char(100) NOT NULL,
   PRIMARY KEY (c_id,id)
@@ -1293,16 +1295,16 @@ DROP TABLE IF EXISTS c_quiz;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_quiz (
-  iid int unsigned NOT NULL auto_increment,
+  iid int  NOT NULL auto_increment,
   c_id int(11) NOT NULL,
   title varchar(255) NOT NULL,
   description longtext,
   sound varchar(255) DEFAULT NULL,
-  type tinyint(3) unsigned NOT NULL DEFAULT '1',
+  type tinyint(3)  NOT NULL DEFAULT '1',
   random int(11) NOT NULL DEFAULT '0',
-  random_answers tinyint(3) unsigned NOT NULL DEFAULT '0',
+  random_answers tinyint(3)  NOT NULL DEFAULT '0',
   active tinyint(4) NOT NULL DEFAULT '0',
-  results_disabled int(10) unsigned NOT NULL DEFAULT '0',
+  results_disabled int(10)  NOT NULL DEFAULT '0',
   access_condition text,
   max_attempt int(11) NOT NULL DEFAULT '0',
   start_time datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -1340,14 +1342,14 @@ DROP TABLE IF EXISTS c_quiz_answer;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_quiz_answer (
-  iid bigint unsigned NOT NULL AUTO_INCREMENT,
+  iid bigint  NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  question_id int(10) unsigned NOT NULL,
+  question_id int(10)  NOT NULL,
   answer longtext NOT NULL,
-  correct mediumint(8) unsigned DEFAULT NULL,
+  correct mediumint(8)  DEFAULT NULL,
   comment longtext,
   ponderation float(6,2) NOT NULL DEFAULT '0.00',
-  position mediumint(8) unsigned NOT NULL DEFAULT '1',
+  position mediumint(8)  NOT NULL DEFAULT '1',
   hotspot_coordinates text,
   hotspot_type varchar(100) DEFAULT NULL,
   destination text NOT NULL,
@@ -1365,9 +1367,9 @@ DROP TABLE IF EXISTS c_quiz_order;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_quiz_order (
-  iid bigint unsigned NOT NULL auto_increment,
-  c_id int(10) unsigned NOT NULL,
-  session_id int(10) unsigned NOT NULL,
+  iid bigint  NOT NULL auto_increment,
+  c_id int(10)  NOT NULL,
+  session_id int(10)  NOT NULL,
   exercise_id int(11) NOT NULL,
   exercise_order int(11) NOT NULL,
   PRIMARY KEY (iid)
@@ -1382,18 +1384,18 @@ DROP TABLE IF EXISTS c_quiz_question;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_quiz_question (
-  iid bigint unsigned NOT NULL auto_increment,
+  iid bigint  NOT NULL auto_increment,
   c_id int(11) NOT NULL,
   question longtext NOT NULL,
   description longtext,
   ponderation float(6,2) NOT NULL DEFAULT '0.00',
-  position mediumint(8) unsigned NOT NULL DEFAULT '1',
-  type tinyint(3) unsigned NOT NULL DEFAULT '2',
+  position mediumint(8)  NOT NULL DEFAULT '1',
+  type tinyint(3)  NOT NULL DEFAULT '2',
   picture varchar(50) DEFAULT NULL,
-  level int(10) unsigned NOT NULL DEFAULT '0',
+  level int(10)  NOT NULL DEFAULT '0',
   extra varchar(255) DEFAULT NULL,
   question_code char(10) DEFAULT '',
-  parent_id int(10) unsigned NOT NULL DEFAULT '0',
+  parent_id int(10)  NOT NULL DEFAULT '0',
   PRIMARY KEY (iid)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1405,11 +1407,9 @@ ALTER TABLE c_quiz_question ADD INDEX idx_c_q_qst_cpt (c_id, parent_id, type);
 --
 
 DROP TABLE IF EXISTS c_quiz_category;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_quiz_category (
-  iid bigint unsigned NOT NULL AUTO_INCREMENT,
-  parent_id int unsigned DEFAULT NULL,
+  iid bigint NOT NULL AUTO_INCREMENT,
+  parent_id bigint DEFAULT NULL,
   c_id int(11) NOT NULL,
   title varchar(255) NOT NULL,
   description longtext NOT NULL,
@@ -1420,7 +1420,6 @@ CREATE TABLE c_quiz_category (
   visibility INT default 1,
   PRIMARY KEY (iid)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table c_quiz_question_option
@@ -1430,11 +1429,11 @@ DROP TABLE IF EXISTS c_quiz_question_option;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_quiz_question_option (
-  iid bigint unsigned NOT NULL auto_increment,
+  iid bigint  NOT NULL auto_increment,
   c_id int(11) NOT NULL,
   question_id int(11) NOT NULL,
   name varchar(255) DEFAULT NULL,
-  position int(10) unsigned NOT NULL,
+  position int(10)  NOT NULL,
   PRIMARY KEY (iid)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1445,7 +1444,7 @@ CREATE TABLE c_quiz_question_option (
 
 DROP TABLE IF EXISTS c_quiz_question_rel_category;
 CREATE TABLE c_quiz_question_rel_category (
-  iid int unsigned NOT NULL AUTO_INCREMENT,
+  iid int  NOT NULL AUTO_INCREMENT,
   c_id int NOT NULL,
   question_id int NOT NULL,
 	category_id int NOT NULL,
@@ -1458,10 +1457,10 @@ DROP TABLE IF EXISTS c_quiz_rel_category;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_quiz_rel_category (
-  iid bigint unsigned NOT NULL AUTO_INCREMENT,
+  iid bigint  NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
   category_id int(11) NOT NULL,
-  exercise_id int unsigned NOT NULL,
+  exercise_id int  NOT NULL,
   count_questions int NOT NULL default 0,
   PRIMARY KEY (iid)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -1475,11 +1474,11 @@ DROP TABLE IF EXISTS c_quiz_rel_question;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_quiz_rel_question (
-  iid bigint unsigned NOT NULL AUTO_INCREMENT,
+  iid bigint  NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  question_id int(10) unsigned NOT NULL,
-  exercice_id int(10) unsigned NOT NULL,
-  question_order int(10) unsigned NOT NULL DEFAULT '1',
+  question_id int(10)  NOT NULL,
+  exercice_id int(10)  NOT NULL,
+  question_order int(10)  NOT NULL DEFAULT '1',
   PRIMARY KEY (iid)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 ALTER TABLE c_quiz_rel_question ADD INDEX idx_cqrq_id (question_id);
@@ -1495,11 +1494,11 @@ DROP TABLE IF EXISTS c_resource;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_resource (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL AUTO_INCREMENT,
   source_type varchar(50) DEFAULT NULL,
-  source_id int(10) unsigned DEFAULT NULL,
+  source_id int(10)  DEFAULT NULL,
   resource_type varchar(50) DEFAULT NULL,
-  resource_id int(10) unsigned DEFAULT NULL,
+  resource_id int(10)  DEFAULT NULL,
   PRIMARY KEY (c_id,id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1581,7 +1580,7 @@ DROP TABLE IF EXISTS c_student_publication;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_student_publication (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL AUTO_INCREMENT,
   url varchar(255) DEFAULT NULL,
   title varchar(255) DEFAULT NULL,
   filename varchar(255) DEFAULT NULL,
@@ -1592,14 +1591,14 @@ CREATE TABLE c_student_publication (
   post_group_id int(11) NOT NULL DEFAULT '0',
   sent_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   filetype set('file','folder') NOT NULL DEFAULT 'file',
-  has_properties int(10) unsigned NOT NULL DEFAULT '0',
+  has_properties int(10)  NOT NULL DEFAULT '0',
   view_properties tinyint(4) DEFAULT NULL,
-  qualification float(6,2) unsigned NOT NULL DEFAULT '0.00',
+  qualification float(6,2)  NOT NULL DEFAULT '0.00',
   date_of_qualification datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  parent_id int(10) unsigned NOT NULL DEFAULT '0',
-  qualificator_id int(10) unsigned NOT NULL DEFAULT '0',
-  weight float(6,2) unsigned NOT NULL DEFAULT '0.00',
-  session_id int(10) unsigned NOT NULL DEFAULT '0',
+  parent_id int(10)  NOT NULL DEFAULT '0',
+  qualificator_id int(10)  NOT NULL DEFAULT '0',
+  weight float(6,2)  NOT NULL DEFAULT '0.00',
+  session_id int(10)  NOT NULL DEFAULT '0',
   user_id int(11) NOT NULL,
   allow_text_assignment int(11) NOT NULL DEFAULT '0',
   contains_file int(11) NOT NULL DEFAULT '0',
@@ -1636,7 +1635,7 @@ DROP TABLE IF EXISTS c_survey;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_survey (
   c_id int(11) NOT NULL,
-  survey_id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  survey_id int(10)  NOT NULL AUTO_INCREMENT,
   code varchar(20) DEFAULT NULL,
   title text,
   subtitle text,
@@ -1659,11 +1658,11 @@ CREATE TABLE c_survey (
   shuffle tinyint(1) NOT NULL DEFAULT '0',
   one_question_per_page tinyint(1) NOT NULL DEFAULT '0',
   survey_version varchar(255) NOT NULL DEFAULT '',
-  parent_id int(10) unsigned NOT NULL,
+  parent_id int(10)  NOT NULL,
   survey_type int(11) NOT NULL DEFAULT '0',
   show_form_profile int(11) NOT NULL DEFAULT '0',
   form_fields text NOT NULL,
-  session_id int(10) unsigned NOT NULL DEFAULT '0',
+  session_id int(10)  NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,survey_id),
   KEY session_id (session_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -1678,11 +1677,11 @@ DROP TABLE IF EXISTS c_survey_answer;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_survey_answer (
   c_id int(11) NOT NULL,
-  answer_id int(10) unsigned NOT NULL AUTO_INCREMENT,
-  survey_id int(10) unsigned NOT NULL,
-  question_id int(10) unsigned NOT NULL,
+  answer_id int(10)  NOT NULL AUTO_INCREMENT,
+  survey_id int(10)  NOT NULL,
+  question_id int(10)  NOT NULL,
   option_id text NOT NULL,
-  value int(10) unsigned NOT NULL,
+  value int(10)  NOT NULL,
   user varchar(250) NOT NULL,
   PRIMARY KEY (c_id,answer_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -1697,10 +1696,10 @@ DROP TABLE IF EXISTS c_survey_group;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_survey_group (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL AUTO_INCREMENT,
   name varchar(20) NOT NULL,
   description varchar(255) NOT NULL,
-  survey_id int(10) unsigned NOT NULL,
+  survey_id int(10)  NOT NULL,
   PRIMARY KEY (c_id,id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1714,14 +1713,14 @@ DROP TABLE IF EXISTS c_survey_invitation;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_survey_invitation (
   c_id int(11) NOT NULL,
-  survey_invitation_id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  survey_invitation_id int(10)  NOT NULL AUTO_INCREMENT,
   survey_code varchar(20) NOT NULL,
   user varchar(250) NOT NULL,
   invitation_code varchar(250) NOT NULL,
   invitation_date datetime NOT NULL,
   reminder_date datetime NOT NULL,
   answered int(11) NOT NULL DEFAULT '0',
-  session_id int(10) unsigned NOT NULL DEFAULT '0',
+  session_id int(10)  NOT NULL DEFAULT '0',
   group_id int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,survey_invitation_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -1736,8 +1735,8 @@ DROP TABLE IF EXISTS c_survey_question;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_survey_question (
   c_id int(11) NOT NULL,
-  question_id int(10) unsigned NOT NULL AUTO_INCREMENT,
-  survey_id int(10) unsigned NOT NULL,
+  question_id int(10)  NOT NULL AUTO_INCREMENT,
+  survey_id int(10)  NOT NULL,
   survey_question longtext NOT NULL,
   survey_question_comment longtext NOT NULL,
   type varchar(250) NOT NULL,
@@ -1745,9 +1744,9 @@ CREATE TABLE c_survey_question (
   sort int(11) NOT NULL,
   shared_question_id int(11) DEFAULT NULL,
   max_value int(11) DEFAULT NULL,
-  survey_group_pri int(10) unsigned NOT NULL DEFAULT '0',
-  survey_group_sec1 int(10) unsigned NOT NULL DEFAULT '0',
-  survey_group_sec2 int(10) unsigned NOT NULL DEFAULT '0',
+  survey_group_pri int(10)  NOT NULL DEFAULT '0',
+  survey_group_sec1 int(10)  NOT NULL DEFAULT '0',
+  survey_group_sec2 int(10)  NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,question_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1761,9 +1760,9 @@ DROP TABLE IF EXISTS c_survey_question_option;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_survey_question_option (
   c_id int(11) NOT NULL,
-  question_option_id int(10) unsigned NOT NULL AUTO_INCREMENT,
-  question_id int(10) unsigned NOT NULL,
-  survey_id int(10) unsigned NOT NULL,
+  question_option_id int(10)  NOT NULL AUTO_INCREMENT,
+  question_id int(10)  NOT NULL,
+  survey_id int(10)  NOT NULL,
   option_text text NOT NULL,
   sort int(11) NOT NULL,
   value int(11) NOT NULL DEFAULT '0',
@@ -1783,7 +1782,7 @@ CREATE TABLE c_thematic (
   id int(11) NOT NULL AUTO_INCREMENT,
   title varchar(255) NOT NULL,
   content longtext,
-  display_order int(10) unsigned NOT NULL DEFAULT '0',
+  display_order int(10)  NOT NULL DEFAULT '0',
   active tinyint(4) NOT NULL DEFAULT '0',
   session_id int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,id),
@@ -1839,21 +1838,22 @@ DROP TABLE IF EXISTS c_tool;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_tool (
+  iid int  NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  id int(10),
   name varchar(255) NOT NULL,
   link varchar(255) NOT NULL,
   image varchar(255) DEFAULT NULL,
-  visibility tinyint(3) unsigned DEFAULT '0',
+  visibility tinyint(3)  DEFAULT '0',
   admin varchar(255) DEFAULT NULL,
   address varchar(255) DEFAULT NULL,
-  added_tool tinyint(3) unsigned DEFAULT '1',
+  added_tool tinyint(3)  DEFAULT '1',
   target varchar(100) NOT NULL DEFAULT '_self',
   category varchar(20) NOT NULL DEFAULT 'authoring',
   session_id int(11) DEFAULT '0',
   custom_icon varchar(255) DEFAULT NULL,
   description varchar(255) DEFAULT NULL,
-  PRIMARY KEY (c_id,id),
+  PRIMARY KEY (iid),
   KEY session_id (session_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1883,9 +1883,9 @@ DROP TABLE IF EXISTS c_userinfo_content;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_userinfo_content (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
-  user_id int(10) unsigned NOT NULL,
-  definition_id int(10) unsigned NOT NULL,
+  id int(10)  NOT NULL AUTO_INCREMENT,
+  user_id int(10)  NOT NULL,
+  definition_id int(10)  NOT NULL,
   editor_ip varchar(39) DEFAULT NULL,
   edition_time datetime DEFAULT NULL,
   content text NOT NULL,
@@ -1903,11 +1903,11 @@ DROP TABLE IF EXISTS c_userinfo_def;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_userinfo_def (
   c_id int(11) NOT NULL,
-  id int(10) unsigned NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL AUTO_INCREMENT,
   title varchar(80) NOT NULL DEFAULT '',
   comment text,
-  line_count tinyint(3) unsigned NOT NULL DEFAULT '5',
-  rank tinyint(3) unsigned NOT NULL DEFAULT '0',
+  line_count tinyint(3)  NOT NULL DEFAULT '5',
+  rank tinyint(3)  NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
