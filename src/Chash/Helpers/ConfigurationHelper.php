@@ -593,7 +593,6 @@ class ConfigurationHelper extends Helper
         return $dbs;
     }
 
-
     /**
      * @return string
      */
