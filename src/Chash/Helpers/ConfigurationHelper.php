@@ -112,8 +112,8 @@ class ConfigurationHelper extends Helper
             $chamiloPath = $path;
         }
 
-        if (is_dir($chamiloPath.'/config/')) {
-            return $dir = realpath($chamiloPath.'/config/').'/';
+        if (is_dir($chamiloPath.'/app/config/')) {
+            return $dir = realpath($chamiloPath.'/app/config/').'/';
         }
 
         return false;
