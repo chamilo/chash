@@ -495,6 +495,10 @@ class CommonCommand extends AbstractCommand
                 'require_update' => false,
                 'parent' => '1.9.0'
             ),
+            '1.9.6.1' => array(
+                'require_update' => false,
+                'parent' => '1.9.0'
+            ),
             '1.9.8' => array(
                 'require_update' => false,
                 'parent' => '1.9.0'
@@ -975,9 +979,16 @@ class CommonCommand extends AbstractCommand
         // Download the chamilo package from from github:
         if (empty($updateInstallation)) {
             $versionTag = str_replace('.', '_', $version);
-            $updateInstallation = "https://github.com/chamilo/chamilo-lms/archive/CHAMILO_".$versionTag."_STABLE.zip";
+            if (version_compare($version, '1.9.6.1', '<=')) {
 
-            switch($version) {
+                // Uses the CHAMILO_1_9_6_1_STABLE.zip format
+                $updateInstallation = "https://github.com/chamilo/chamilo-lms/archive/CHAMILO_" . $versionTag . "_STABLE.zip";
+            } else {
+                // From 1.9.8 we will use the v1.9.8 tag
+                $updateInstallation = "https://github.com/chamilo/chamilo-lms/archive/v".$versionTag.".zip";
+            }
+
+            switch ($version) {
                 case 'master':
                     $updateInstallation = "https://github.com/chamilo/chamilo-lms/archive/master.zip";
                     break;
