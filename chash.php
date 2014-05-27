@@ -69,6 +69,7 @@ $application->addCommands(
         new Chash\Command\Files\SetPermissionsAfterInstallCommand(),
         new Chash\Command\Files\ShowDiskUsageCommand(),
         new Chash\Command\Files\UpdateDirectoryMaxSizeCommand(),
+        new Chash\Command\Files\ReplaceURLCommand(),
 
         new Chash\Command\Info\WhichCommand(),
 

@@ -91,6 +91,7 @@ class CommonDatabaseCommand extends CommonCommand
         $this->getConfigurationHelper()->setConfiguration($configuration);
         $sysPath = $this->getConfigurationHelper()->getSysPathFromConfigurationFile($configurationFile);
         $this->getConfigurationHelper()->setSysPath($sysPath);
+        $this->setRootSysDependingConfigurationPath($sysPath);
 
         $databaseSettings = array(
             'driver' => 'pdo_mysql',
