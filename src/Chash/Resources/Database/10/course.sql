@@ -924,6 +924,7 @@ CREATE TABLE c_item_property (
   PRIMARY KEY (id),
   KEY idx_item_property_toolref (tool, ref)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+ALTER TABLE c_item_property ADD INDEX idx_item_property_tooliuid(tool, insert_user_id);
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

@@ -549,10 +549,11 @@ class Version10 extends AbstractMigration
         $this->addSql("TRUNCATE branch_transaction_status");
         $this->addSql("INSERT INTO branch_transaction_status VALUES (1, 'To be executed'), (2, 'Executed successfully'), (3, 'Execution deprecated'), (4, 'Execution failed')");
         $this->addSql("UPDATE course_field SET field_type = 3 WHERE field_variable = 'special_course'");
+        $this->addSql("ALTER TABLE c_item_property ADD INDEX idx_item_property_tooliuid(tool, insert_user_id)");
 
         // Chamilo version
         $this->addSql(
-            "UPDATE settings_current SET selected_value = '10.063' WHERE variable = 'chamilo_database_version'"
+            "UPDATE settings_current SET selected_value = '10.064' WHERE variable = 'chamilo_database_version'"
         );
     }
 
