@@ -539,7 +539,7 @@ CREATE TABLE c_dropbox_file (
   PRIMARY KEY (iid),
   UNIQUE KEY UN_filename (filename),
   KEY session_id (session_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -550,11 +550,12 @@ DROP TABLE IF EXISTS c_dropbox_person;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_dropbox_person (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
   file_id int(10)  NOT NULL,
   user_id int(10)  NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,file_id,user_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (iid)
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -565,16 +566,17 @@ DROP TABLE IF EXISTS c_dropbox_post;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_dropbox_post (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  file_id int(10)  NOT NULL,
+  file_id int(10) NOT NULL,
   dest_user_id int(10)  NOT NULL DEFAULT '0',
   feedback_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   feedback text,
   cat_id int(11) NOT NULL DEFAULT '0',
   session_id int(10)  NOT NULL,
-  PRIMARY KEY (c_id,file_id,dest_user_id),
+  PRIMARY KEY (iid),
   KEY session_id (session_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -842,13 +844,13 @@ DROP TABLE IF EXISTS c_group_info;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_group_info (
-  iid int(10)  NOT NULL AUTO_INCREMENT,
-  id int(11) NOT NULL,
-  c_id int(11) NOT NULL,
+  iid int NOT NULL AUTO_INCREMENT,
+  id int NOT NULL,
+  c_id int NOT NULL,
   name varchar(100) DEFAULT NULL,
-  category_id int(10)  NOT NULL DEFAULT '0',
+  category_id int  NOT NULL DEFAULT '0',
   description longtext,
-  max_student int(10)  NOT NULL DEFAULT '8',
+  max_student int  NOT NULL DEFAULT '8',
   doc_state tinyint(3)  NOT NULL DEFAULT '1',
   calendar_state tinyint(3)  NOT NULL DEFAULT '0',
   work_state tinyint(3)  NOT NULL DEFAULT '0',
@@ -859,7 +861,7 @@ CREATE TABLE c_group_info (
   secret_directory varchar(255) DEFAULT NULL,
   self_registration_allowed tinyint(3)  NOT NULL DEFAULT '0',
   self_unregistration_allowed tinyint(3)  NOT NULL DEFAULT '0',
-  session_id int(11) NOT NULL,
+  session_id int NOT NULL,
   PRIMARY KEY (iid)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1384,7 +1386,7 @@ DROP TABLE IF EXISTS c_quiz_question;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_quiz_question (
-  iid bigint  NOT NULL auto_increment,
+  iid bigint NOT NULL auto_increment,
   c_id int(11) NOT NULL,
   question longtext NOT NULL,
   description longtext,
@@ -1397,7 +1399,7 @@ CREATE TABLE c_quiz_question (
   question_code char(10) DEFAULT '',
   parent_id int(10)  NOT NULL DEFAULT '0',
   PRIMARY KEY (iid)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 ALTER TABLE c_quiz_question ADD INDEX idx_c_q_qst_cpt (c_id, parent_id, type);
@@ -1419,7 +1421,7 @@ CREATE TABLE c_quiz_category (
   root int default NULL,
   visibility INT default 1,
   PRIMARY KEY (iid)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 --
 -- Table structure for table c_quiz_question_option
@@ -1444,14 +1446,14 @@ CREATE TABLE c_quiz_question_option (
 
 DROP TABLE IF EXISTS c_quiz_question_rel_category;
 CREATE TABLE c_quiz_question_rel_category (
-  iid int  NOT NULL AUTO_INCREMENT,
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int NOT NULL,
-  question_id int NOT NULL,
-	category_id int NOT NULL,
+  question_id bigint NOT NULL,
+	category_id bigint NOT NULL,
   PRIMARY KEY (iid)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
-ALTER TABLE c_quiz_question_rel_category ADD INDEX idx_c_q_qst_r_cat_qc(question_id, c_id);
+ALTER TABLE c_quiz_question_rel_category ADD INDEX idx_c_q_qst_r_cat_qc(iid, question_id, c_id);
 
 DROP TABLE IF EXISTS c_quiz_rel_category;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;

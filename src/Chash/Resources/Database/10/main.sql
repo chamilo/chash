@@ -15,24 +15,27 @@
 
 DROP TABLE IF EXISTS user;
 CREATE TABLE IF NOT EXISTS user (
-  user_id int NOT NULL auto_increment,
+  id int NOT NULL auto_increment,
+  user_id int,
   lastname varchar(60) default NULL,
   firstname varchar(60) default NULL,
-  username varchar(100) NOT NULL default '',
-  password varchar(50) NOT NULL default '',
+  username varchar(255) NOT NULL,
+  username_canonical VARCHAR(255) NOT NULL,
+  password varchar(255) NOT NULL default '',
   auth_source varchar(50) default 'platform',
-  email varchar(100) default NULL,
-  status tinyint NOT NULL default '5',
+  email varchar(255) NOT NULL,
+  email_canonical VARCHAR(255) NOT NULL,
+  status tinyint default '5',
   official_code varchar(40) default NULL,
   phone varchar(30) default NULL,
   picture_uri varchar(250) default NULL,
-  creator_id int  default NULL,
+  creator_id int default NULL,
   competences text,
   diplomas text,
   openarea text,
   teach text,
   productions varchar(250) default NULL,
-  chatcall_user_id int  default 0,
+  chatcall_user_id int default 0,
   chatcall_date datetime default NULL,
   chatcall_text varchar(50) default NULL,
   language varchar(40) default NULL,
@@ -43,19 +46,13 @@ CREATE TABLE IF NOT EXISTS user (
   theme varchar(255) DEFAULT NULL,
   hr_dept_id int  default 0,
   salt VARCHAR(255) DEFAULT NULL,
-  PRIMARY KEY (user_id),
-  UNIQUE KEY username (username)
+  PRIMARY KEY (id)
 );
-ALTER TABLE user ADD INDEX (status);
-
 
 /*!40000 ALTER TABLE user DISABLE KEYS */;
-LOCK TABLES user WRITE;
-INSERT INTO user (lastname, firstname, username, password, auth_source, email, status, official_code,phone, creator_id, registration_date, expiration_date,active,openid,language) VALUES ('{ADMINLASTNAME}','{ADMINFIRSTNAME}','{ADMINLOGIN}','{ADMINPASSWORD}','{PLATFORM_AUTH_SOURCE}','{ADMINEMAIL}',1,'ADMIN','{ADMINPHONE}',1,NOW(),'0000-00-00 00:00:00','1',NULL,'{ADMINLANGUAGE}');
+INSERT INTO user (lastname, firstname, username, username_canonical, password, auth_source, email, email_canonical, status, official_code,phone, creator_id, registration_date, expiration_date,active,openid,language) VALUES ('{ADMINLASTNAME}','{ADMINFIRSTNAME}', '{ADMINLOGIN}', '{ADMINLOGIN}','{ADMINPASSWORD}','{PLATFORM_AUTH_SOURCE}','{ADMINEMAIL}', '{ADMINEMAIL}', '1','ADMIN','{ADMINPHONE}',1,NOW(),'0000-00-00 00:00:00','1',NULL,'{ADMINLANGUAGE}');
 -- Insert anonymous user
-INSERT INTO user (lastname, firstname, username, password, auth_source, email, status, official_code, creator_id, registration_date, expiration_date,active,openid,language) VALUES ('Anonymous', 'Joe', '', '', 'platform', 'anonymous@localhost', 6, 'anonymous', 1, NOW(), '0000-00-00 00:00:00', 1,NULL,'{ADMINLANGUAGE}');
-UNLOCK TABLES;
-/*!40000 ALTER TABLE user ENABLE KEYS */;
+INSERT INTO user (lastname, firstname, username, username_canonical, password, auth_source, email, email_canonical, status, official_code, creator_id, registration_date, expiration_date,active,openid,language) VALUES ('Anonymous', 'Joe', 'anon', 'anon',  '', 'platform', 'anonymous@localhost', 'anonymous@localhost',  6, 'anonymous', 1, NOW(), '0000-00-00 00:00:00', 1,NULL,'{ADMINLANGUAGE}');
 
 CREATE TABLE roles (
   id INT auto_increment,
@@ -163,7 +160,7 @@ CREATE TABLE IF NOT EXISTS course (
   description text,
   category_code varchar(40) default NULL,
   visibility tinyint default '0',
-  show_score int NOT NULL default '1',
+  show_score int default '1',
   tutor_name varchar(200) default NULL,
   visual_code varchar(40) default NULL,
   department_name varchar(30) default NULL,
@@ -174,12 +171,12 @@ CREATE TABLE IF NOT EXISTS course (
   creation_date datetime default NULL,
   expiration_date datetime default NULL,
   target_course_code varchar(40) default NULL,
-  subscribe tinyint NOT NULL default '1',
-  unsubscribe tinyint NOT NULL default '1',
-  registration_code varchar(255) NOT NULL default '',
-  legal text  NOT NULL,
-  activate_legal INT NOT NULL DEFAULT 0,
-  add_teachers_to_sessions_courses tinyint NOT NULL default 0,
+  subscribe tinyint default '1',
+  unsubscribe tinyint default '1',
+  registration_code varchar(255) default '',
+  legal text,
+  activate_legal INT DEFAULT 0,
+  add_teachers_to_sessions_courses tinyint default 0,
   PRIMARY KEY (id),
   UNIQUE KEY code (code)
 );
@@ -367,18 +364,18 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS course_rel_user;
 CREATE TABLE IF NOT EXISTS course_rel_user (
-  id int  AUTO_INCREMENT,
+  id int AUTO_INCREMENT,
   c_id INT  NOT NULL,
   course_code varchar(40) NOT NULL,
   user_id int  NOT NULL,
   status tinyint NOT NULL default '5',
   role varchar(60) default NULL,
-  group_id int NOT NULL default '0',
-  tutor_id int  NOT NULL default '0',
+  group_id int default '0',
+  tutor_id int default '0',
   sort int default NULL,
   user_course_cat int default '0',
   relation_type int default 0,
-  legal_agreement INTEGER DEFAULT 0,
+  legal_agreement int DEFAULT 0,
   PRIMARY KEY(id)
 );
 ALTER TABLE course_rel_user ADD INDEX course_rel_user_user_id (id, user_id);
@@ -499,15 +496,15 @@ CREATE TABLE IF NOT EXISTS php_session (
 --
 DROP TABLE IF EXISTS session;
 CREATE TABLE IF NOT EXISTS session (
-  id INT  NOT NULL auto_increment,
-  id_coach int  NOT NULL default '0',
+  id INT NOT NULL auto_increment,
+  id_coach int NOT NULL default '0',
   name char(150) NOT NULL default '',
   description text,
   show_description int default NULL,
-  nbr_courses int  NOT NULL default '0',
-  nbr_users int  NOT NULL default '0',
-  nbr_classes int  NOT NULL default '0',
-  session_admin_id INT  NOT NULL,
+  nbr_courses int default '0',
+  nbr_users int default '0',
+  nbr_classes int default '0',
+  session_admin_id INT NOT NULL,
   visibility int NOT NULL default 1,
   session_category_id int default NULL,
   promotion_id INT NOT NULL,
@@ -554,8 +551,6 @@ CREATE TABLE IF NOT EXISTS session_rel_course_rel_user (
 
 ALTER TABLE session_rel_course_rel_user ADD INDEX idx_session_rel_course_rel_user_id_user (id_user);
 ALTER TABLE session_rel_course_rel_user ADD INDEX idx_session_rel_course_rel_user_course_id (c_id);
-
-
 
 --
 -- Table structure for table session_rel_user
@@ -1629,14 +1624,14 @@ CREATE TABLE IF NOT EXISTS access_url_rel_user (
 
 ALTER TABLE access_url_rel_user ADD INDEX idx_access_url_rel_user_user (user_id);
 ALTER TABLE access_url_rel_user ADD INDEX idx_access_url_rel_user_access_url(access_url_id);
-ALTER TABLE access_url_rel_user ADD INDEX idx_access_url_rel_user_access_url_user (user_id,access_url_id);
+ALTER TABLE access_url_rel_user ADD INDEX idx_access_url_rel_user_access_url_user (user_id, access_url_id);
 
 -- Adding admin to the first portal
-INSERT INTO access_url_rel_user VALUES(1, 1);
+INSERT INTO access_url_rel_user VALUES(1, 1, 1);
 
 DROP TABLE IF EXISTS access_url_rel_course;
 CREATE TABLE IF NOT EXISTS access_url_rel_course (
-  id int  NOT NULL auto_increment,
+  id int NOT NULL auto_increment,
   access_url_id int  NOT NULL,
   c_id int  NOT NULL default 0,
   PRIMARY KEY (id)
@@ -1644,7 +1639,7 @@ CREATE TABLE IF NOT EXISTS access_url_rel_course (
 
 DROP TABLE IF EXISTS access_url_rel_session;
 CREATE TABLE IF NOT EXISTS access_url_rel_session (
-  id int  NOT NULL auto_increment,
+  id int NOT NULL auto_increment,
   access_url_id int  NOT NULL,
   session_id int  NOT NULL,
   PRIMARY KEY (id)
@@ -1652,7 +1647,7 @@ CREATE TABLE IF NOT EXISTS access_url_rel_session (
 
 DROP TABLE IF EXISTS access_url_rel_usergroup;
 CREATE TABLE IF NOT EXISTS access_url_rel_usergroup (
-  id int  NOT NULL auto_increment,
+  id int NOT NULL auto_increment,
   access_url_id int  NOT NULL,
   usergroup_id int  NOT NULL,
   PRIMARY KEY (id)
@@ -1660,7 +1655,7 @@ CREATE TABLE IF NOT EXISTS access_url_rel_usergroup (
 
 DROP TABLE IF EXISTS access_url_rel_course_category;
 CREATE TABLE IF NOT EXISTS access_url_rel_course_category (
-  id int  NOT NULL auto_increment,
+  id int NOT NULL auto_increment,
   access_url_id int  NOT NULL,
   course_category_id int  NOT NULL,
   PRIMARY KEY (id)
@@ -1671,7 +1666,7 @@ CREATE TABLE IF NOT EXISTS access_url_rel_course_category (
 --
 DROP TABLE IF EXISTS sys_calendar;
 CREATE TABLE IF NOT EXISTS sys_calendar (
-  id int  NOT NULL auto_increment,
+  id int NOT NULL auto_increment,
   title varchar(255) NOT NULL,
   content longtext,
   start_date datetime NOT NULL default '0000-00-00 00:00:00',
@@ -2455,93 +2450,6 @@ INSERT INTO system_template (title, comment, image, content) VALUES
             </center>
             </body>
 ');
-
-DROP TABLE IF EXISTS reservation_category;
-CREATE TABLE IF NOT EXISTS reservation_category (
-   id  int  NOT NULL auto_increment,
-   parent_id  int NOT NULL default 0,
-   name  varchar(128) NOT NULL default '',
-  PRIMARY KEY  ( id )
-);
-
-DROP TABLE IF EXISTS reservation_category_rights;
-CREATE TABLE IF NOT EXISTS reservation_category_rights  (
-    id  int  NOT NULL auto_increment,
-    category_id  int NOT NULL default 0,
-    class_id  int NOT NULL default 0,
-    m_items  tinyint NOT NULL default 0,
-    PRIMARY KEY  ( id )
-);
-
-DROP TABLE IF EXISTS reservation_item;
-CREATE TABLE IF NOT EXISTS  reservation_item  (
-   id  int  NOT NULL auto_increment,
-   category_id  int  NOT NULL default 0,
-   course_code  varchar(40) NOT NULL default '',
-   name  varchar(128) NOT NULL default '',
-   description  text NOT NULL,
-   blackout  tinyint NOT NULL default 0,
-   creator  int  NOT NULL default 0,
-   always_available TINYINT NOT NULL default 0,
-  PRIMARY KEY  ( id )
-);
-
-
-
---
--- Table structure for table reservation item_rights
---
-
-DROP TABLE IF EXISTS reservation_item_rights;
-CREATE TABLE IF NOT EXISTS  reservation_item_rights  (
-   item_id  int  NOT NULL default 0,
-   class_id  int  NOT NULL default 0,
-   edit_right  tinyint  NOT NULL default 0,
-   delete_right  tinyint  NOT NULL default 0,
-   m_reservation  tinyint  NOT NULL default 0,
-   view_right  tinyint NOT NULL default 0,
-  PRIMARY KEY  ( item_id , class_id )
-);
-
-
-
---
--- Table structure for main reservation table
---
-
-DROP TABLE IF EXISTS reservation_main;
-CREATE TABLE IF NOT EXISTS  reservation_main  (
-   id  int  NOT NULL auto_increment,
-   subid  int  NOT NULL default 0,
-   item_id  int  NOT NULL default 0,
-   auto_accept  tinyint  NOT NULL default 0,
-   max_users  int  NOT NULL default 1,
-   start_at  datetime NOT NULL default '0000-00-00 00:00:00',
-   end_at  datetime NOT NULL default '0000-00-00 00:00:00',
-   subscribe_from  datetime NOT NULL default '0000-00-00 00:00:00',
-   subscribe_until  datetime NOT NULL default '0000-00-00 00:00:00',
-   subscribers  int  NOT NULL default 0,
-   notes  text NOT NULL,
-   timepicker  tinyint NOT NULL default 0,
-   timepicker_min  int NOT NULL default 0,
-   timepicker_max  int NOT NULL default 0,
-  PRIMARY KEY  ( id )
-);
-
---
--- Table structure for reservation subscription table
---
-
-DROP TABLE IF EXISTS reservation_subscription;
-CREATE TABLE IF NOT EXISTS  reservation_subscription  (
-   dummy  int  NOT NULL auto_increment,
-   user_id  int  NOT NULL default 0,
-   reservation_id  int  NOT NULL default 0,
-   accepted  tinyint  NOT NULL default 0,
-   start_at  datetime NOT NULL default '0000-00-00 00:00:00',
-   end_at  datetime NOT NULL default '0000-00-00 00:00:00',
-  PRIMARY KEY  ( dummy )
-);
 
 --
 -- Table structure for table user_rel_user
