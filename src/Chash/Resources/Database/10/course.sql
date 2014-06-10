@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS c_announcement;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_announcement (
-  iid int  NOT NULL AUTO_INCREMENT,
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
   id int(10)  NOT NULL,
   title text,
@@ -172,20 +172,17 @@ CREATE TABLE c_attendance_sheet_log (
 --
 
 DROP TABLE IF EXISTS c_blog;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_blog (
   iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  blog_id int(11) NOT NULL AUTO_INCREMENT,
+  blog_id int(11) NOT NULL,
   blog_name varchar(250) NOT NULL DEFAULT '',
   blog_subtitle varchar(250) DEFAULT NULL,
   date_creation datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   visibility tinyint(3)  NOT NULL DEFAULT '0',
   session_id int(11) DEFAULT '0',
-  PRIMARY KEY (iid),
-  KEY session_id (session_id)
-) DEFAULT CHARSET=utf8 COMMENT='Table with blogs in this course';
+  PRIMARY KEY (iid)
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -197,8 +194,8 @@ DROP TABLE IF EXISTS c_blog_attachment;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_blog_attachment (
   iid int NOT NULL AUTO_INCREMENT,
+  id int(10),
   c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
   path varchar(255) NOT NULL COMMENT 'the real filename',
   comment text,
   size int(11) NOT NULL DEFAULT '0',
@@ -219,8 +216,8 @@ DROP TABLE IF EXISTS c_blog_comment;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_blog_comment (
   iid int NOT NULL AUTO_INCREMENT,
+  comment_id int(11) NOT NULL,
   c_id int(11) NOT NULL,
-  comment_id int(11) NOT NULL AUTO_INCREMENT,
   title varchar(250) NOT NULL DEFAULT '',
   comment longtext NOT NULL,
   author_id int(11) NOT NULL DEFAULT '0',
@@ -242,8 +239,8 @@ DROP TABLE IF EXISTS c_blog_post;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_blog_post (
   iid int NOT NULL AUTO_INCREMENT,
+  post_id int(11) NOT NULL,
   c_id int(11) NOT NULL,
-  post_id int(11) NOT NULL AUTO_INCREMENT,
   title varchar(250) NOT NULL DEFAULT '',
   full_text longtext NOT NULL,
   date_creation datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -261,14 +258,15 @@ DROP TABLE IF EXISTS c_blog_rating;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_blog_rating (
+  iid int NOT NULL AUTO_INCREMENT,
+  rating_id int(11) NOT NULL,
   c_id int(11) NOT NULL,
-  rating_id int(11) NOT NULL AUTO_INCREMENT,
   blog_id int(11) NOT NULL DEFAULT '0',
   rating_type varchar(100) NOT NULL DEFAULT 'post',
   item_id int(11) NOT NULL DEFAULT '0',
   user_id int(11) NOT NULL DEFAULT '0',
   rating int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,rating_id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8 COMMENT='Table with ratings for post/comments in a certain blog';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -280,10 +278,11 @@ DROP TABLE IF EXISTS c_blog_rel_user;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_blog_rel_user (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
   blog_id int(11) NOT NULL DEFAULT '0',
   user_id int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,blog_id,user_id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8 COMMENT='Table representing users subscribed to a blog';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -295,14 +294,15 @@ DROP TABLE IF EXISTS c_blog_task;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_blog_task (
+  iid int NOT NULL AUTO_INCREMENT,
+  task_id int(11) NOT NULL,
   c_id int(11) NOT NULL,
-  task_id int(11) NOT NULL AUTO_INCREMENT,
   blog_id int(11) NOT NULL DEFAULT '0',
   title varchar(250) NOT NULL DEFAULT '',
   description text NOT NULL,
   color varchar(10) NOT NULL DEFAULT '',
   system_task tinyint(3)  NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,task_id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8 COMMENT='Table with tasks for a blog';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -314,12 +314,13 @@ DROP TABLE IF EXISTS c_blog_task_rel_user;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_blog_task_rel_user (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
   blog_id int(11) NOT NULL DEFAULT '0',
   user_id int(11) NOT NULL DEFAULT '0',
   task_id int(11) NOT NULL DEFAULT '0',
   target_date date NOT NULL DEFAULT '0000-00-00',
-  PRIMARY KEY (c_id,blog_id,user_id,task_id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8 COMMENT='Table with tasks assigned to a user in a blog';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -331,8 +332,9 @@ DROP TABLE IF EXISTS c_calendar_event;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_calendar_event (
+  iid int NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL,
   c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
   title varchar(255) NOT NULL,
   content longtext,
   start_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -340,7 +342,7 @@ CREATE TABLE c_calendar_event (
   parent_event_id int(11) DEFAULT NULL,
   session_id int(10)  NOT NULL DEFAULT '0',
   all_day int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,id),
+  PRIMARY KEY (iid),
   KEY session_id (session_id)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -353,14 +355,15 @@ DROP TABLE IF EXISTS c_calendar_event_attachment;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_calendar_event_attachment (
+  iid int NOT NULL AUTO_INCREMENT,
+  id int(11) NOT NULL,
   c_id int(11) NOT NULL,
-  id int(11) NOT NULL AUTO_INCREMENT,
   path varchar(255) NOT NULL,
   comment text,
   size int(11) NOT NULL DEFAULT '0',
   agenda_id int(11) NOT NULL,
   filename varchar(255) NOT NULL,
-  PRIMARY KEY (c_id,id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -372,13 +375,14 @@ DROP TABLE IF EXISTS c_calendar_event_repeat;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_calendar_event_repeat (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
   cal_id int(11) NOT NULL DEFAULT '0',
   cal_type varchar(20) DEFAULT NULL,
   cal_end int(11) DEFAULT NULL,
   cal_frequency int(11) DEFAULT '1',
   cal_days char(7) DEFAULT NULL,
-  PRIMARY KEY (c_id,cal_id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -390,10 +394,11 @@ DROP TABLE IF EXISTS c_calendar_event_repeat_not;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_calendar_event_repeat_not (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
   cal_id int(11) NOT NULL,
   cal_date int(11) NOT NULL,
-  PRIMARY KEY (c_id,cal_id,cal_date)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -405,13 +410,13 @@ DROP TABLE IF EXISTS c_chat_connected;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_chat_connected (
+  iid int(10)  NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
   user_id int(10)  NOT NULL DEFAULT '0',
   last_connection datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   session_id int(11) NOT NULL DEFAULT '0',
   to_group_id int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,id,user_id,last_connection),
+  PRIMARY KEY (iid),
   KEY char_connected_index (user_id,session_id,to_group_id)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -424,14 +429,14 @@ DROP TABLE IF EXISTS c_course_description;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_course_description (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
   title varchar(255) DEFAULT NULL,
   content longtext,
   session_id int(11) DEFAULT '0',
   description_type tinyint(3)  NOT NULL DEFAULT '0',
   progress int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,id),
+  PRIMARY KEY (iid),
   KEY session_id (session_id)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -444,8 +449,8 @@ DROP TABLE IF EXISTS c_course_setting;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_course_setting (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
   variable varchar(255) NOT NULL DEFAULT '',
   subkey varchar(255) DEFAULT NULL,
   type varchar(255) DEFAULT NULL,
@@ -454,7 +459,7 @@ CREATE TABLE c_course_setting (
   title varchar(255) NOT NULL DEFAULT '',
   comment varchar(255) DEFAULT NULL,
   subkeytext varchar(255) DEFAULT NULL,
-  PRIMARY KEY (c_id,id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -466,16 +471,17 @@ DROP TABLE IF EXISTS c_document;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_document (
+  iid int(10)  NOT NULL AUTO_INCREMENT,
+  id int(10) NOT NULL,
   c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
   path varchar(255) NOT NULL DEFAULT '',
   comment text,
   title varchar(255) DEFAULT NULL,
-  filetype set('file','folder') NOT NULL DEFAULT 'file',
+  filetype NOT NULL DEFAULT 'file',
   size int(11) NOT NULL DEFAULT '0',
   readonly tinyint(3)  NOT NULL,
   session_id int(10)  NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -487,14 +493,15 @@ DROP TABLE IF EXISTS c_dropbox_category;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_dropbox_category (
+  iid int NOT NULL AUTO_INCREMENT,
+  cat_id int(11) NOT NULL,
   c_id int(11) NOT NULL,
-  cat_id int(11) NOT NULL AUTO_INCREMENT,
   cat_name text NOT NULL,
   received tinyint(3)  NOT NULL DEFAULT '0',
   sent tinyint(3)  NOT NULL DEFAULT '0',
   user_id int(11) NOT NULL DEFAULT '0',
   session_id int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,cat_id),
+  PRIMARY KEY (iid),
   KEY session_id (session_id)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -507,13 +514,14 @@ DROP TABLE IF EXISTS c_dropbox_feedback;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_dropbox_feedback (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  feedback_id int(11) NOT NULL AUTO_INCREMENT,
+  feedback_id int(11) NOT NULL,
   file_id int(11) NOT NULL DEFAULT '0',
   author_user_id int(11) NOT NULL DEFAULT '0',
   feedback text NOT NULL,
   feedback_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (c_id,feedback_id),
+  PRIMARY KEY (iid),
   KEY file_id (file_id),
   KEY author_user_id (author_user_id)
 ) DEFAULT CHARSET=utf8;
@@ -591,14 +599,14 @@ DROP TABLE IF EXISTS c_forum_attachment;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_forum_attachment (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(11) NOT NULL AUTO_INCREMENT,
   path varchar(255) NOT NULL,
   comment text,
   size int(11) NOT NULL DEFAULT '0',
   post_id int(11) NOT NULL,
   filename varchar(255) NOT NULL,
-  PRIMARY KEY (c_id,id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -610,14 +618,15 @@ DROP TABLE IF EXISTS c_forum_category;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_forum_category (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  cat_id int(11) NOT NULL AUTO_INCREMENT,
+  cat_id int(11) NOT NULL,
   cat_title varchar(255) NOT NULL DEFAULT '',
   cat_comment text,
   cat_order int(11) NOT NULL DEFAULT '0',
   locked int(11) NOT NULL DEFAULT '0',
   session_id int(10)  NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,cat_id),
+  PRIMARY KEY (iid),
   KEY session_id (session_id)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -630,8 +639,9 @@ DROP TABLE IF EXISTS c_forum_forum;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_forum_forum (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  forum_id int(11) NOT NULL AUTO_INCREMENT,
+  forum_id int(11) NOT NULL,
   forum_title varchar(255) NOT NULL DEFAULT '',
   forum_comment longtext,
   forum_threads int(11) DEFAULT '0',
@@ -652,7 +662,7 @@ CREATE TABLE c_forum_forum (
   forum_image varchar(255) NOT NULL DEFAULT '',
   start_time datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   end_time datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (c_id,forum_id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -664,12 +674,13 @@ DROP TABLE IF EXISTS c_forum_mailcue;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_forum_mailcue (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(11) NOT NULL AUTO_INCREMENT,
+  id int(11) NOT NULL,
   user_id int(11) NOT NULL DEFAULT '0',
   thread_id int(11) NOT NULL DEFAULT '0',
   post_id int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (id,c_id,thread_id,user_id,post_id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -681,13 +692,14 @@ DROP TABLE IF EXISTS c_forum_notification;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_forum_notification (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int NOT NULL,
-  id int NOT NULL AUTO_INCREMENT,
+  id int NOT NULL,
   user_id int NOT NULL DEFAULT 0,
   forum_id int NOT NULL DEFAULT 0,
   thread_id int NOT NULL DEFAULT 0,
   post_id int NOT NULL DEFAULT 0,
-  PRIMARY KEY (id, c_id, user_id, forum_id, thread_id, post_id),
+  PRIMARY KEY (iid),
   KEY user_id (user_id),
   KEY forum_id (forum_id)
 ) DEFAULT CHARSET=utf8;
@@ -701,8 +713,9 @@ DROP TABLE IF EXISTS c_forum_post;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_forum_post (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  post_id int(11) NOT NULL AUTO_INCREMENT,
+  post_id int(11) NOT NULL,
   post_title varchar(250) DEFAULT NULL,
   post_text longtext,
   thread_id int(11) DEFAULT '0',
@@ -713,7 +726,7 @@ CREATE TABLE c_forum_post (
   post_notification tinyint(4) DEFAULT '0',
   post_parent_id int(11) DEFAULT '0',
   visible tinyint(4) DEFAULT '1',
-  PRIMARY KEY (c_id,post_id),
+  PRIMARY KEY (iid),
   KEY poster_id (poster_id),
   KEY forum_id (forum_id),
   KEY idx_forum_post_thread_id (thread_id),
@@ -729,8 +742,9 @@ DROP TABLE IF EXISTS c_forum_thread;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_forum_thread (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  thread_id int(11) NOT NULL AUTO_INCREMENT,
+  thread_id int(11) NOT NULL,
   thread_title varchar(255) DEFAULT NULL,
   forum_id int(11) DEFAULT NULL,
   thread_replies int(11) DEFAULT '0',
@@ -746,7 +760,7 @@ CREATE TABLE c_forum_thread (
   thread_qualify_max float(6,2)  NOT NULL DEFAULT '0.00',
   thread_close_date datetime DEFAULT '0000-00-00 00:00:00',
   thread_weight float(6,2)  NOT NULL DEFAULT '0.00',
-  PRIMARY KEY (c_id,thread_id),
+  PRIMARY KEY (iid),
   KEY idx_forum_thread_forum_id (forum_id)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -759,15 +773,16 @@ DROP TABLE IF EXISTS c_forum_thread_qualify;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_forum_thread_qualify (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL,
   user_id int(10)  NOT NULL,
   thread_id int(11) NOT NULL,
   qualify float(6,2) NOT NULL DEFAULT '0.00',
   qualify_user_id int(11) DEFAULT NULL,
   qualify_time datetime DEFAULT '0000-00-00 00:00:00',
   session_id int(11) DEFAULT NULL,
-  PRIMARY KEY (c_id,id),
+  PRIMARY KEY (iid),
   KEY user_id (user_id,thread_id)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -780,15 +795,16 @@ DROP TABLE IF EXISTS c_forum_thread_qualify_log;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_forum_thread_qualify_log (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL,
   user_id int(10)  NOT NULL,
   thread_id int(11) NOT NULL,
   qualify float(6,2) NOT NULL DEFAULT '0.00',
   qualify_user_id int(11) DEFAULT NULL,
   qualify_time datetime DEFAULT '0000-00-00 00:00:00',
   session_id int(11) DEFAULT NULL,
-  PRIMARY KEY (c_id,id),
+  PRIMARY KEY (iid),
   KEY user_id (user_id,thread_id)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -801,13 +817,14 @@ DROP TABLE IF EXISTS c_glossary;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_glossary (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  glossary_id int(10)  NOT NULL AUTO_INCREMENT,
+  glossary_id int(10)  NOT NULL,
   name varchar(255) NOT NULL,
   description longtext NOT NULL,
   display_order int(11) DEFAULT NULL,
   session_id int(11) DEFAULT '0',
-  PRIMARY KEY (c_id,glossary_id),
+  PRIMARY KEY (iid),
   KEY session_id (session_id)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -820,8 +837,9 @@ DROP TABLE IF EXISTS c_group_category;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_group_category (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL,
   title varchar(255) NOT NULL DEFAULT '',
   description longtext NOT NULL,
   doc_state tinyint(3)  NOT NULL DEFAULT '1',
@@ -836,7 +854,7 @@ CREATE TABLE c_group_category (
   self_unreg_allowed tinyint(3)  NOT NULL DEFAULT '0',
   groups_per_user int(10)  NOT NULL DEFAULT '0',
   display_order int(10)  NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -878,11 +896,12 @@ DROP TABLE IF EXISTS c_group_rel_tutor;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_group_rel_tutor (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(11) NOT NULL AUTO_INCREMENT,
+  id int(11) NOT NULL,
   user_id int(11) NOT NULL,
   group_id int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -894,13 +913,14 @@ DROP TABLE IF EXISTS c_group_rel_user;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_group_rel_user (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL,
   user_id int(10)  NOT NULL,
   group_id int(10)  NOT NULL DEFAULT '0',
   status int(11) NOT NULL DEFAULT '0',
   role char(50) NOT NULL,
-  PRIMARY KEY (c_id,id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -912,6 +932,8 @@ DROP TABLE IF EXISTS c_item_property;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_item_property (
+  iid int NOT NULL AUTO_INCREMENT,
+  id bigint(20)  NOT NULL,
   c_id int(11) NOT NULL,
   tool varchar(100) NOT NULL DEFAULT '',
   insert_user_id int(10)  NOT NULL DEFAULT '0',
@@ -926,8 +948,7 @@ CREATE TABLE c_item_property (
   start_visible datetime DEFAULT NULL,
   end_visible datetime DEFAULT NULL,
   id_session int(11) DEFAULT NULL,
-  id bigint(20)  NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (id),
+  PRIMARY KEY (iid),
   KEY idx_item_property_toolref (tool, ref)
 ) DEFAULT CHARSET=utf8;
 
@@ -942,8 +963,9 @@ DROP TABLE IF EXISTS c_link;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_link (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
+  id int  NOT NULL,
   url text NOT NULL,
   title varchar(150) DEFAULT NULL,
   description text,
@@ -952,7 +974,7 @@ CREATE TABLE c_link (
   on_homepage varchar(100) NOT NULL DEFAULT '0',
   target char(10) DEFAULT '_self',
   session_id int(11) DEFAULT '0',
-  PRIMARY KEY (c_id,id),
+  PRIMARY KEY (iid),
   KEY session_id (session_id)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -965,13 +987,14 @@ DROP TABLE IF EXISTS c_link_category;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_link_category (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL,
   category_title varchar(255) NOT NULL,
   description text,
   display_order mediumint(8)  NOT NULL DEFAULT '0',
   session_id int(11) DEFAULT '0',
-  PRIMARY KEY (c_id,id),
+  PRIMARY KEY (iid),
   KEY session_id (session_id)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1030,11 +1053,12 @@ DROP TABLE IF EXISTS c_lp_category;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_lp_category (
-  id int(10)  NOT NULL AUTO_INCREMENT,
+  iid int(10)  NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL,
   c_id int(10)  NOT NULL,
   name varchar(255) DEFAULT NULL,
   position int(11) DEFAULT NULL,
-  PRIMARY KEY (id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1046,8 +1070,9 @@ DROP TABLE IF EXISTS c_lp_item;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_lp_item (
+  iid int NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL,
   c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
   lp_id int(10)  NOT NULL,
   item_type char(32) NOT NULL DEFAULT 'dokeos_document',
   ref tinytext NOT NULL,
@@ -1068,7 +1093,7 @@ CREATE TABLE c_lp_item (
   terms text,
   search_did int(11) DEFAULT NULL,
   audio varchar(250) DEFAULT NULL,
-  PRIMARY KEY (c_id,id),
+  PRIMARY KEY (iid),
   KEY lp_id (lp_id),
   KEY idx_c_lp_item_cid_lp_id (c_id,lp_id)
 ) DEFAULT CHARSET=utf8;
@@ -1082,8 +1107,9 @@ DROP TABLE IF EXISTS c_lp_item_view;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_lp_item_view (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id bigint(20)  NOT NULL AUTO_INCREMENT,
+  id bigint(20)  NOT NULL,
   lp_item_id int(10)  NOT NULL,
   lp_view_id int(10)  NOT NULL,
   view_count int(10)  NOT NULL DEFAULT '0',
@@ -1095,7 +1121,7 @@ CREATE TABLE c_lp_item_view (
   lesson_location text,
   core_exit varchar(32) NOT NULL DEFAULT 'none',
   max_score varchar(8) DEFAULT '',
-  PRIMARY KEY (c_id,id),
+  PRIMARY KEY (iid),
   KEY lp_item_id (lp_item_id),
   KEY lp_view_id (lp_view_id),
   KEY idx_c_lp_item_view_cid_lp_view_id_lp_item_id (c_id,lp_view_id,lp_item_id)
@@ -1110,8 +1136,9 @@ DROP TABLE IF EXISTS c_lp_iv_interaction;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_lp_iv_interaction (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id bigint(20)  NOT NULL AUTO_INCREMENT,
+  id bigint(20)  NOT NULL,
   order_id int(10)  NOT NULL DEFAULT '0',
   lp_iv_id bigint(20)  NOT NULL,
   interaction_id varchar(255) NOT NULL DEFAULT '',
@@ -1122,7 +1149,7 @@ CREATE TABLE c_lp_iv_interaction (
   student_response text NOT NULL,
   result varchar(255) NOT NULL DEFAULT '',
   latency varchar(16) NOT NULL DEFAULT '',
-  PRIMARY KEY (c_id,id),
+  PRIMARY KEY (iid),
   KEY lp_iv_id (lp_iv_id)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1135,8 +1162,9 @@ DROP TABLE IF EXISTS c_lp_iv_objective;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_lp_iv_objective (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id bigint(20)  NOT NULL AUTO_INCREMENT,
+  id bigint(20)  NOT NULL,
   lp_iv_id bigint(20)  NOT NULL,
   order_id int(10)  NOT NULL DEFAULT '0',
   objective_id varchar(255) NOT NULL DEFAULT '',
@@ -1144,7 +1172,7 @@ CREATE TABLE c_lp_iv_objective (
   score_max float  NOT NULL DEFAULT '0',
   score_min float  NOT NULL DEFAULT '0',
   status char(32) NOT NULL DEFAULT 'not attempted',
-  PRIMARY KEY (c_id,id),
+  PRIMARY KEY (iid),
   KEY lp_iv_id (lp_iv_id)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1157,37 +1185,19 @@ DROP TABLE IF EXISTS c_lp_view;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_lp_view (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL,
   lp_id int(10)  NOT NULL,
   user_id int(10)  NOT NULL,
   view_count int(10)  NOT NULL DEFAULT '0',
   last_item int(10)  NOT NULL DEFAULT '0',
   progress int(10)  DEFAULT '0',
   session_id int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,id),
+  PRIMARY KEY (iid),
   KEY lp_id (lp_id),
   KEY user_id (user_id),
   KEY session_id (session_id)
-) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table c_metadata
---
-
-DROP TABLE IF EXISTS c_metadata;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE c_metadata (
-  c_id int(11) NOT NULL,
-  eid varchar(250) NOT NULL,
-  mdxmltext text,
-  md5 char(32) DEFAULT '',
-  htmlcache1 text,
-  htmlcache2 text,
-  indexabletext text,
-  PRIMARY KEY (c_id,eid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1199,8 +1209,9 @@ DROP TABLE IF EXISTS c_notebook;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_notebook (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  notebook_id int(10)  NOT NULL AUTO_INCREMENT,
+  notebook_id int(10)  NOT NULL,
   user_id int(10)  NOT NULL,
   course varchar(40) NOT NULL,
   session_id int(11) NOT NULL DEFAULT '0',
@@ -1209,7 +1220,7 @@ CREATE TABLE c_notebook (
   creation_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   update_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   status int(11) DEFAULT NULL,
-  PRIMARY KEY (c_id,notebook_id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1221,10 +1232,11 @@ DROP TABLE IF EXISTS c_online_connected;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_online_connected (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
   user_id int(10)  NOT NULL,
   last_connection datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (c_id,user_id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1236,11 +1248,12 @@ DROP TABLE IF EXISTS c_online_link;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_online_link (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL,
   name char(50) NOT NULL DEFAULT '',
   url char(100) NOT NULL,
-  PRIMARY KEY (c_id,id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1252,12 +1265,13 @@ DROP TABLE IF EXISTS c_permission_group;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_permission_group (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(11) NOT NULL AUTO_INCREMENT,
+  id int(11) NOT NULL,
   group_id int(11) NOT NULL DEFAULT '0',
   tool varchar(250) NOT NULL DEFAULT '',
   action varchar(250) NOT NULL DEFAULT '',
-  PRIMARY KEY (c_id,id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1269,12 +1283,13 @@ DROP TABLE IF EXISTS c_permission_task;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_permission_task (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(11) NOT NULL AUTO_INCREMENT,
+  id int(11) NOT NULL,
   task_id int(11) NOT NULL DEFAULT '0',
   tool varchar(250) NOT NULL DEFAULT '',
   action varchar(250) NOT NULL DEFAULT '',
-  PRIMARY KEY (c_id,id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1286,12 +1301,13 @@ DROP TABLE IF EXISTS c_permission_user;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_permission_user (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(11) NOT NULL AUTO_INCREMENT,
+  id int NOT NULL,
   user_id int(11) NOT NULL DEFAULT '0',
   tool varchar(250) NOT NULL DEFAULT '',
   action varchar(250) NOT NULL DEFAULT '',
-  PRIMARY KEY (c_id,id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1350,7 +1366,7 @@ DROP TABLE IF EXISTS c_quiz_answer;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_quiz_answer (
-  iid bigint  NOT NULL AUTO_INCREMENT,
+  iid bigint NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
   question_id int(10)  NOT NULL,
   answer longtext NOT NULL,
@@ -1375,7 +1391,7 @@ DROP TABLE IF EXISTS c_quiz_order;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_quiz_order (
-  iid bigint  NOT NULL auto_increment,
+  iid bigint NOT NULL auto_increment,
   c_id int(10)  NOT NULL,
   session_id int(10)  NOT NULL,
   exercise_id int(11) NOT NULL,
@@ -1493,102 +1509,14 @@ ALTER TABLE c_quiz_rel_question ADD INDEX idx_cqrq_id (question_id);
 ALTER TABLE c_quiz_rel_question ADD INDEX idx_cqrq_cidexid (c_id, exercice_id);
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table c_resource
---
-
-DROP TABLE IF EXISTS c_resource;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE c_resource (
-  c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
-  source_type varchar(50) DEFAULT NULL,
-  source_id int(10)  DEFAULT NULL,
-  resource_type varchar(50) DEFAULT NULL,
-  resource_id int(10)  DEFAULT NULL,
-  PRIMARY KEY (c_id,id)
-) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table c_role
---
-
-DROP TABLE IF EXISTS c_role;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE c_role (
-  c_id int(11) NOT NULL,
-  role_id int(11) NOT NULL AUTO_INCREMENT,
-  role_name varchar(250) NOT NULL DEFAULT '',
-  role_comment text,
-  default_role tinyint(4) DEFAULT '0',
-  PRIMARY KEY (c_id,role_id)
-) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table c_role_group
---
-
-DROP TABLE IF EXISTS c_role_group;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE c_role_group (
-  c_id int(11) NOT NULL,
-  id int(11) NOT NULL AUTO_INCREMENT,
-  role_id int(11) NOT NULL DEFAULT '0',
-  scope varchar(20) NOT NULL DEFAULT 'course',
-  group_id int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (id,c_id,group_id)
-) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table c_role_permissions
---
-
-DROP TABLE IF EXISTS c_role_permissions;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE c_role_permissions (
-  c_id int(11) NOT NULL,
-  id int(11) NOT NULL AUTO_INCREMENT,
-  role_id int(11) NOT NULL DEFAULT '0',
-  tool varchar(250) NOT NULL DEFAULT '',
-  action varchar(50) NOT NULL DEFAULT '',
-  default_perm tinyint(4) NOT NULL DEFAULT '0',
-  PRIMARY KEY (id,c_id,role_id,tool,action)
-) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table c_role_user
---
-
-DROP TABLE IF EXISTS c_role_user;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE c_role_user (
-  c_id int(11) NOT NULL,
-  role_id int(11) NOT NULL DEFAULT '0',
-  scope varchar(20) NOT NULL DEFAULT 'course',
-  user_id int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,role_id,user_id)
-) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table c_student_publication
---
 
 DROP TABLE IF EXISTS c_student_publication;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_student_publication (
+  iid int(10)  NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL,
   url varchar(255) DEFAULT NULL,
   title varchar(255) DEFAULT NULL,
   filename varchar(255) DEFAULT NULL,
@@ -1598,7 +1526,7 @@ CREATE TABLE c_student_publication (
   accepted tinyint(4) DEFAULT '0',
   post_group_id int(11) NOT NULL DEFAULT '0',
   sent_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  filetype set('file','folder') NOT NULL DEFAULT 'file',
+  filetype NOT NULL DEFAULT 'file',
   has_properties int(10)  NOT NULL DEFAULT '0',
   view_properties tinyint(4) DEFAULT NULL,
   qualification float(6,2)  NOT NULL DEFAULT '0.00',
@@ -1610,7 +1538,7 @@ CREATE TABLE c_student_publication (
   user_id int(11) NOT NULL,
   allow_text_assignment int(11) NOT NULL DEFAULT '0',
   contains_file int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,id),
+  PRIMARY KEY (iid),
   KEY session_id (session_id)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1623,14 +1551,15 @@ DROP TABLE IF EXISTS c_student_publication_assignment;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_student_publication_assignment (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(11) NOT NULL AUTO_INCREMENT,
+  id int(11) NOT NULL,
   expires_on datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   ends_on datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   add_to_calendar tinyint(4) NOT NULL,
   enable_qualification tinyint(4) NOT NULL,
   publication_id int(11) NOT NULL,
-  PRIMARY KEY (c_id,id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1642,8 +1571,9 @@ DROP TABLE IF EXISTS c_survey;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_survey (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  survey_id int(10)  NOT NULL AUTO_INCREMENT,
+  survey_id int(10)  NOT NULL,
   code varchar(20) DEFAULT NULL,
   title text,
   subtitle text,
@@ -1671,7 +1601,7 @@ CREATE TABLE c_survey (
   show_form_profile int(11) NOT NULL DEFAULT '0',
   form_fields text NOT NULL,
   session_id int(10)  NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,survey_id),
+  PRIMARY KEY (iid),
   KEY session_id (session_id)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1684,14 +1614,15 @@ DROP TABLE IF EXISTS c_survey_answer;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_survey_answer (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  answer_id int(10)  NOT NULL AUTO_INCREMENT,
+  answer_id int(10)  NOT NULL,
   survey_id int(10)  NOT NULL,
   question_id int(10)  NOT NULL,
   option_id text NOT NULL,
   value int(10)  NOT NULL,
   user varchar(250) NOT NULL,
-  PRIMARY KEY (c_id,answer_id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1703,12 +1634,13 @@ DROP TABLE IF EXISTS c_survey_group;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_survey_group (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
+  id int(10)  NOT NULL,
   name varchar(20) NOT NULL,
   description varchar(255) NOT NULL,
   survey_id int(10)  NOT NULL,
-  PRIMARY KEY (c_id,id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1720,8 +1652,9 @@ DROP TABLE IF EXISTS c_survey_invitation;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_survey_invitation (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  survey_invitation_id int(10)  NOT NULL AUTO_INCREMENT,
+  survey_invitation_id int(10)  NOT NULL,
   survey_code varchar(20) NOT NULL,
   user varchar(250) NOT NULL,
   invitation_code varchar(250) NOT NULL,
@@ -1730,7 +1663,7 @@ CREATE TABLE c_survey_invitation (
   answered int(11) NOT NULL DEFAULT '0',
   session_id int(10)  NOT NULL DEFAULT '0',
   group_id int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,survey_invitation_id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1742,8 +1675,9 @@ DROP TABLE IF EXISTS c_survey_question;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_survey_question (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  question_id int(10)  NOT NULL AUTO_INCREMENT,
+  question_id int(10)  NOT NULL,
   survey_id int(10)  NOT NULL,
   survey_question longtext NOT NULL,
   survey_question_comment longtext NOT NULL,
@@ -1755,7 +1689,7 @@ CREATE TABLE c_survey_question (
   survey_group_pri int(10)  NOT NULL DEFAULT '0',
   survey_group_sec1 int(10)  NOT NULL DEFAULT '0',
   survey_group_sec2 int(10)  NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,question_id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1767,14 +1701,15 @@ DROP TABLE IF EXISTS c_survey_question_option;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_survey_question_option (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  question_option_id int(10)  NOT NULL AUTO_INCREMENT,
+  question_option_id int(10)  NOT NULL,
   question_id int(10)  NOT NULL,
   survey_id int(10)  NOT NULL,
   option_text text NOT NULL,
   sort int(11) NOT NULL,
   value int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,question_option_id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1786,14 +1721,15 @@ DROP TABLE IF EXISTS c_thematic;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_thematic (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(11) NOT NULL AUTO_INCREMENT,
+  id int(11) NOT NULL,
   title varchar(255) NOT NULL,
   content longtext,
   display_order int(10)  NOT NULL DEFAULT '0',
   active tinyint(4) NOT NULL DEFAULT '0',
   session_id int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,id),
+  PRIMARY KEY (iid),
   KEY active (active,session_id)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1806,15 +1742,16 @@ DROP TABLE IF EXISTS c_thematic_advance;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_thematic_advance (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(11) NOT NULL AUTO_INCREMENT,
+  id int(11) NOT NULL,
   thematic_id int(11) NOT NULL,
   attendance_id int(11) NOT NULL DEFAULT '0',
   content longtext,
   start_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   duration int(11) NOT NULL DEFAULT '0',
   done_advance tinyint(4) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,id),
+  PRIMARY KEY (iid),
   KEY thematic_id (thematic_id)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1827,13 +1764,14 @@ DROP TABLE IF EXISTS c_thematic_plan;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_thematic_plan (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(11) NOT NULL AUTO_INCREMENT,
+  id int(11) NOT NULL,
   thematic_id int(11) NOT NULL,
   title varchar(255) NOT NULL,
   description longtext,
   description_type int(11) NOT NULL,
-  PRIMARY KEY (c_id,id),
+  PRIMARY KEY (iid),
   KEY thematic_id (thematic_id,description_type)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1874,49 +1812,12 @@ DROP TABLE IF EXISTS c_tool_intro;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_tool_intro (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
   id varchar(50) NOT NULL,
   intro_text longtext NOT NULL,
   session_id int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,id,session_id)
-) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table c_userinfo_content
---
-
-DROP TABLE IF EXISTS c_userinfo_content;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE c_userinfo_content (
-  c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
-  user_id int(10)  NOT NULL,
-  definition_id int(10)  NOT NULL,
-  editor_ip varchar(39) DEFAULT NULL,
-  edition_time datetime DEFAULT NULL,
-  content text NOT NULL,
-  PRIMARY KEY (c_id,id),
-  KEY user_id (user_id)
-) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table c_userinfo_def
---
-
-DROP TABLE IF EXISTS c_userinfo_def;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE c_userinfo_def (
-  c_id int(11) NOT NULL,
-  id int(10)  NOT NULL AUTO_INCREMENT,
-  title varchar(80) NOT NULL DEFAULT '',
-  comment text,
-  line_count tinyint(3)  NOT NULL DEFAULT '5',
-  rank tinyint(3)  NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1928,8 +1829,9 @@ DROP TABLE IF EXISTS c_wiki;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_wiki (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(11) NOT NULL AUTO_INCREMENT,
+  id int(11) NOT NULL,
   page_id int(11) NOT NULL DEFAULT '0',
   reflink varchar(255) NOT NULL DEFAULT 'index',
   title varchar(255) NOT NULL,
@@ -1955,7 +1857,7 @@ CREATE TABLE c_wiki (
   tag text NOT NULL,
   user_ip varchar(39) NOT NULL,
   session_id int(11) DEFAULT '0',
-  PRIMARY KEY (c_id,id),
+  PRIMARY KEY (iid),
   KEY reflink (reflink),
   KEY group_id (group_id),
   KEY page_id (page_id),
@@ -1971,6 +1873,7 @@ DROP TABLE IF EXISTS c_wiki_conf;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_wiki_conf (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
   page_id int(11) NOT NULL DEFAULT '0',
   task text NOT NULL,
@@ -1986,7 +1889,7 @@ CREATE TABLE c_wiki_conf (
   startdate_assig datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   enddate_assig datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   delayedsubmit int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,page_id),
+  PRIMARY KEY (iid),
   KEY page_id (page_id)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1999,14 +1902,15 @@ DROP TABLE IF EXISTS c_wiki_discuss;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_wiki_discuss (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
-  id int(11) NOT NULL AUTO_INCREMENT,
+  id int(11) NOT NULL,
   publication_id int(11) NOT NULL DEFAULT '0',
   userc_id int(11) NOT NULL DEFAULT '0',
   comment text NOT NULL,
   p_score varchar(255) DEFAULT NULL,
   dtime datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (c_id,id)
+  PRIMARY KEY (iid)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2018,13 +1922,14 @@ DROP TABLE IF EXISTS c_wiki_mailcue;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_wiki_mailcue (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
   id int(11) NOT NULL,
   user_id int(11) NOT NULL,
   type text NOT NULL,
   group_id int(11) DEFAULT NULL,
   session_id int(11) DEFAULT '0',
-  PRIMARY KEY (c_id,id,user_id),
+  PRIMARY KEY (iid),
   KEY c_id (c_id,id)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2032,23 +1937,23 @@ CREATE TABLE c_wiki_mailcue (
 
 DROP TABLE IF EXISTS c_student_publication_rel_document;
 CREATE TABLE c_student_publication_rel_document (
-    id  INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    work_id INT NOT NULL,
-    document_id INT NOT NULL,
-    c_id INT NOT NULL
+  iid  INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  work_id INT NOT NULL,
+  document_id INT NOT NULL,
+  c_id INT NOT NULL
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS c_student_publication_rel_user;
 CREATE TABLE c_student_publication_rel_user (
-    id  INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    work_id INT NOT NULL,
-    user_id INT NOT NULL,
-    c_id INT NOT NULL
+  iid  INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  work_id INT NOT NULL,
+  user_id INT NOT NULL,
+  c_id INT NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS c_student_publication_comment;
 CREATE TABLE c_student_publication_comment (
-  id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  iid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   work_id INT NOT NULL,
   c_id INT NOT NULL,
   comment longtext,
