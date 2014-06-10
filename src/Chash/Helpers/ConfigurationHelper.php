@@ -208,8 +208,8 @@ class ConfigurationHelper extends Helper
         $configurationPath = dirname($configurationFile);
 
         // New structure
-        if (file_exists($configurationPath.'/../main/install/index.php')) {
-            return realpath($configurationPath.'/../').'/';
+        if (file_exists($configurationPath.'/../../main/install/index.php')) {
+            return realpath($configurationPath.'/../../').'/';
         }
 
         // Old structure
@@ -255,12 +255,11 @@ class ConfigurationHelper extends Helper
                         $yaml = new Parser();
                         $_configurationYML = $yaml->parse(file_get_contents($configurationFile));
                         if (isset($configurationFile) && !empty($configurationFile)) {
-                            if (isset($_configuration) && !empty($_configuration)) {
-                                $_configuration = array_merge($_configuration, $_configurationYML);
-                            } else {
-                                $_configuration = $_configurationYML;
+                            if (isset($_configurationYML) && !empty($_configurationYML)) {
+                                $_configuration = $_configurationYML['parameters'];
                             }
                         }
+
                         return $_configuration;
                         break;
                 }
