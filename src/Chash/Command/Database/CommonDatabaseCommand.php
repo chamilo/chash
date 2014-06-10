@@ -93,13 +93,23 @@ class CommonDatabaseCommand extends CommonCommand
         $this->getConfigurationHelper()->setSysPath($sysPath);
         $this->setRootSysDependingConfigurationPath($sysPath);
 
-        $databaseSettings = array(
-            'driver' => 'pdo_mysql',
-            'host' => $configuration['db_host'],
-            'dbname' => $configuration['main_database'],
-            'user' => $configuration['db_user'],
-            'password' => $configuration['db_password']
-        );
+        if ($this->getConfigurationHelper()->isLegacy()) {
+            $databaseSettings = array(
+                'driver' => 'pdo_mysql',
+                'host' => $configuration['db_host'],
+                'dbname' => $configuration['main_database'],
+                'user' => $configuration['db_user'],
+                'password' => $configuration['db_password']
+            );
+        } else {
+            $databaseSettings = array(
+                'driver' => 'pdo_mysql',
+                'host' => $configuration['database_host'],
+                'dbname' => $configuration['database_name'],
+                'user' => $configuration['database_user'],
+                'password' => $configuration['database_password']
+            );
+        }
 
         // Setting doctrine connection
         $this->setDatabaseSettings($databaseSettings);

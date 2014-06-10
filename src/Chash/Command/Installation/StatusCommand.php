@@ -20,7 +20,7 @@ class StatusCommand extends CommonDatabaseCommand
     {
         parent::configure();
         $this
-            ->setName('chamilo:status')
+            ->setName('chash:chamilo_status')
             ->setDescription('Show the information of the current Chamilo installation')
         ;
     }

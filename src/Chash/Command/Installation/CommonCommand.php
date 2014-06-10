@@ -579,7 +579,7 @@ class CommonCommand extends AbstractCommand
             $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($path);
             $this->setRootSys(realpath($configurationPath.'/../../../').'/');
         } else {
-            // Chamilo installations > 1.10
+            // Chamilo installations >= 10
             $this->setRootSys(realpath($configurationPath.'/../').'/');
         }
     }
@@ -654,34 +654,38 @@ class CommonCommand extends AbstractCommand
         $configuration['security_key'] = md5(uniqid(rand().time()));
 
         // Hash function method
-        $configuration['password_encryption']      = $portalSettings['encrypt_method'];
+        $configuration['password_encryption'] = $portalSettings['encrypt_method'];
         // Session lifetime
-        $configuration['session_lifetime']         = 3600;
+        $configuration['session_lifetime'] = 3600;
         // Activation for multi-url access
-        $configuration['multiple_access_urls']   = false;
+        $configuration['multiple_access_urls'] = false;
         //Deny the elimination of users
-        $configuration['deny_delete_users']        = false;
+        $configuration['deny_delete_users'] = false;
         //Prevent all admins from using the "login_as" feature
         $configuration['login_as_forbidden_globally'] = false;
 
         // Version settings
-        $configuration['system_version']           = $version;
+        $configuration['system_version'] = $version;
 
         if (file_exists($this->getRootSys().'config/parameters.yml.dist')) {
-            $file = $this->getRootSys().'config/parameters.yml.dist';
-            $contents = file_get_contents($file);
-            $yamlParser = new Parser();
-            $expectedValues = $yamlParser->parse($contents);
+            $file = $this->getRootSys().'config/parameters.yml';
+            if (!file_exists($file)) {
+                $contents = file_get_contents($file);
+                $yamlParser = new Parser();
+                $expectedValues = $yamlParser->parse($contents);
 
-            $expectedValues['database_driver'] = $configuration['driver'];
-            $expectedValues['database_host'] = $configuration['db_host'];
-            $expectedValues['database_port'] = $configuration['db_port'];
-            $expectedValues['database_name'] = $configuration['main_database'];
-            $expectedValues['database_user'] = $configuration['db_user'];
-            $expectedValues['database_password'] = $configuration['db_password'];
-            $expectedValues['password_encryption'] = $configuration['password_encryption'];
+                $expectedValues['database_driver'] = $configuration['driver'];
+                $expectedValues['database_host'] = $configuration['db_host'];
+                $expectedValues['database_port'] = $configuration['db_port'];
+                $expectedValues['database_name'] = $configuration['main_database'];
+                $expectedValues['database_user'] = $configuration['db_user'];
+                $expectedValues['database_password'] = $configuration['db_password'];
+                $expectedValues['password_encryption'] = $configuration['password_encryption'];
 
-            $result = file_put_contents($file, Yaml::dump($expectedValues, 99));
+                $result = file_put_contents($file, Yaml::dump(array('parameters' => $expectedValues), 99));
+            } else {
+                return true;
+            }
         } else {
             // Try the old one
             $contents = file_get_contents($this->getRootSys().'main/install/configuration.dist.php');
@@ -1391,7 +1395,7 @@ class CommonCommand extends AbstractCommand
     public function getEncryptedPassword($password, $salt = null)
     {
         $configuration = $this->getConfigurationArray();
-        $encryptionMethod = $configuration['password_encryption'];
+        $encryptionMethod = isset($configuration['password_encryption']) ? $configuration['password_encryption'] : null;
 
         switch ($encryptionMethod) {
             case 'sha1':

@@ -16,13 +16,21 @@ class ConfigurationHelper extends Helper
     protected $configuration;
     protected $sysPath;
     protected $dryRun = false;
+    protected $isLegacy = true;
 
     /**
      *
      */
     public function __construct()
     {
+    }
 
+    /**
+     * @return bool
+     */
+    public function isLegacy()
+    {
+        return $this->isLegacy;
     }
 
     /**
@@ -84,12 +92,14 @@ class ConfigurationHelper extends Helper
             $chamiloPath = $path;
         }
 
+        // Chamilo 1.9.x and 1.8.x
         if (is_dir($chamiloPath.'/main/inc/conf')) {
             return realpath($chamiloPath.'/main/inc/conf/').'/';
         }
-
-        if (is_dir($chamiloPath.'/config')) {
-            return realpath($chamiloPath.'/config/').'/';
+        // Chamilo 10
+        if (is_dir($chamiloPath.'/app/config')) {
+            $this->isLegacy = false;
+            return realpath($chamiloPath.'/app/config/').'/';
         }
 
         return false;
@@ -150,8 +160,8 @@ class ConfigurationHelper extends Helper
                 return $confPath.'configuration.php';
             }
 
-            if (file_exists($confPath.'configuration.yml')) {
-                return $confPath.'configuration.yml';
+            if (file_exists($confPath.'parameters.yml')) {
+                return $confPath.'parameters.yml';
             }
         }
 
@@ -323,7 +333,6 @@ class ConfigurationHelper extends Helper
         return $finder;
     }
 
-
     /**
      * @return array
      */
@@ -435,11 +444,14 @@ class ConfigurationHelper extends Helper
     {
         $finder = new Finder();
         $sysPath = $this->getSysPath();
-        if (is_dir($sysPath.'archive')) {
-            $finder->directories()->in($sysPath.'archive/');
-        }
-        if (is_dir($sysPath.'data/temp')) {
-            $finder->directories->in($sysPath.'data/temp/');
+        if ($this->isLegacy()) {
+            if (is_dir($sysPath . 'archive')) {
+                $finder->directories()->in($sysPath . 'archive/');
+            }
+        } else {
+            if (is_dir($sysPath . 'app/cache')) {
+                $finder->directories->in($sysPath . 'app/cache/');
+            }
         }
         return $finder;
     }
@@ -451,13 +463,16 @@ class ConfigurationHelper extends Helper
     {
         $finder = new Finder();
         $sysPath = $this->getSysPath();
-        if (is_dir($sysPath.'archive')) {
-            $finder->in($sysPath.'archive/');
-            $finder->files()->notName('index.*');
-        }
-        if (is_dir($sysPath.'data/temp')) {
-            $finder->in($sysPath.'data/temp/');
-            $finder->files()->notName('index.*');
+        if ($this->isLegacy()) {
+            if (is_dir($sysPath . 'archive')) {
+                $finder->in($sysPath . 'archive/');
+                $finder->files()->notName('index.*');
+            }
+        } else {
+            if (is_dir($sysPath . 'app/cache')) {
+                $finder->in($sysPath . 'app/cache/');
+                $finder->files()->notName('index.*');
+            }
         }
         return $finder;
     }
@@ -481,8 +496,8 @@ class ConfigurationHelper extends Helper
         $sysPath = $this->getSysPath();
 
         $tempPath = 'archive/';
-        if (is_dir($sysPath.'config')) {
-            $tempPath = 'data/temp/';
+        if (is_dir($sysPath.'app/config')) {
+            $tempPath = 'app/cache/';
         }
 
         $app['temp.paths'] = new \stdClass();

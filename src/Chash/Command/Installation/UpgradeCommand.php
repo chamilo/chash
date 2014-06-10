@@ -37,7 +37,7 @@ class UpgradeCommand extends CommonCommand
     protected function configure()
     {
         $this
-            ->setName('chamilo:upgrade')
+            ->setName('chash:chamilo_upgrade')
             ->setDescription('Execute a chamilo migration to a specified version or the latest available version')
             ->addArgument('version', InputArgument::REQUIRED, 'The version to migrate to', null)
             ->addOption('path', null, InputOption::VALUE_OPTIONAL, 'The path to the chamilo folder')

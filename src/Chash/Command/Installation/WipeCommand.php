@@ -19,7 +19,7 @@ class WipeCommand extends CommonCommand
     protected function configure()
     {
         $this
-            ->setName('chamilo:wipe')
+            ->setName('chash:chamilo_wipe')
             ->setDescription('Prepares a portal for a new installation')
             ->addArgument('path', InputArgument::OPTIONAL, 'The path to the Chamilo folder');
     }

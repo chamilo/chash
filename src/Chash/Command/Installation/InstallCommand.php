@@ -25,7 +25,7 @@ class InstallCommand extends CommonCommand
     protected function configure()
     {
         $this
-            ->setName('chamilo:install')
+            ->setName('chash:chamilo_install')
             ->setDescription('Execute a Chamilo installation to a specified version.')
             ->addArgument('version', InputArgument::REQUIRED, 'The version to migrate to.', null)
             ->addArgument('path', InputArgument::OPTIONAL, 'The path to the chamilo folder')
