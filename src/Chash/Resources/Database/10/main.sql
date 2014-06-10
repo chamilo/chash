@@ -154,7 +154,6 @@ CREATE TABLE IF NOT EXISTS course (
   id int auto_increment,
   code varchar(40) NOT NULL,
   directory varchar(40) default NULL,
-  db_name varchar(40) default NULL,
   course_language varchar(20) default NULL,
   title varchar(250) default NULL,
   description text,
@@ -629,8 +628,8 @@ CREATE TABLE IF NOT EXISTS settings_current (
   comment varchar(255) default NULL,
   scope varchar(50) default NULL,
   subkeytext varchar(255) default NULL,
-  access_url int  not null default 1,
-  access_url_changeable int  not null default 0,
+  access_url int not null default 1,
+  access_url_changeable int not null default 0,
   access_url_locked int not null default 0,
   PRIMARY KEY id (id),
   INDEX (access_url)
@@ -1602,7 +1601,7 @@ CREATE TABLE IF NOT EXISTS gradebook_linkeval_log (
 
 DROP TABLE IF EXISTS access_url;
 CREATE TABLE IF NOT EXISTS access_url(
-    id	int	 NOT NULL auto_increment,
+    id int	NOT NULL auto_increment,
     url	varchar(255) NOT NULL,
     description text,
     active	int  not null default 0,
@@ -1632,31 +1631,31 @@ INSERT INTO access_url_rel_user VALUES(1, 1, 1);
 DROP TABLE IF EXISTS access_url_rel_course;
 CREATE TABLE IF NOT EXISTS access_url_rel_course (
   id int NOT NULL auto_increment,
-  access_url_id int  NOT NULL,
-  c_id int  NOT NULL default 0,
+  access_url_id int NOT NULL,
+  c_id int NOT NULL default 0,
   PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS access_url_rel_session;
 CREATE TABLE IF NOT EXISTS access_url_rel_session (
   id int NOT NULL auto_increment,
-  access_url_id int  NOT NULL,
-  session_id int  NOT NULL,
+  access_url_id int NOT NULL,
+  session_id int NOT NULL,
   PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS access_url_rel_usergroup;
 CREATE TABLE IF NOT EXISTS access_url_rel_usergroup (
   id int NOT NULL auto_increment,
-  access_url_id int  NOT NULL,
-  usergroup_id int  NOT NULL,
+  access_url_id int NOT NULL,
+  usergroup_id int NOT NULL,
   PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS access_url_rel_course_category;
 CREATE TABLE IF NOT EXISTS access_url_rel_course_category (
   id int NOT NULL auto_increment,
-  access_url_id int  NOT NULL,
+  access_url_id int NOT NULL,
   course_category_id int  NOT NULL,
   PRIMARY KEY (id)
 );
@@ -3477,7 +3476,7 @@ CREATE TABLE curriculum_category (
     lft int default NULL,
     rgt int default NULL,
     root int default NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS curriculum_item;
 CREATE TABLE curriculum_item (
@@ -3486,7 +3485,7 @@ CREATE TABLE curriculum_item (
     title varchar(255),
     score int  not null default 1, -- how much points are assigned for filling this item
     max_repeat tinyint  not null default 1 -- how many items of this type are allowed
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS curriculum_item_rel_user;
 CREATE TABLE curriculum_item_rel_user (
@@ -3495,7 +3494,7 @@ CREATE TABLE curriculum_item_rel_user (
     user_id int  not null,
     order_id tinyint  not null default 0, -- given there is a item_max_repeat field, this allows us to store more than one answer per item.id per user
     description varchar(255) not null default '' -- the text given as "answer" by the student
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS curriculum_rel_user;
 CREATE TABLE curriculum_rel_user (
@@ -3503,7 +3502,7 @@ CREATE TABLE curriculum_rel_user (
     category_id int  not null, -- references c_curriculum_category.id where parent_id = 0 (one root curriculum)
     user_id int  not null,
     score int  not null default 0 -- the temporary total score given to the user for the information he completed
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS tool;
 CREATE TABLE tool (

@@ -33,7 +33,7 @@ CREATE TABLE c_announcement (
   email_sent tinyint(4) DEFAULT '0',
   session_id int(11) DEFAULT '0',
   PRIMARY KEY (iid),
-  UNIQUE KEY (c_id,id),
+  UNIQUE KEY (iid),
   KEY session_id (session_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -67,7 +67,7 @@ DROP TABLE IF EXISTS c_attendance;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_attendance (
-  iid int  not null AUTO_INCREMENT,
+  iid int not null AUTO_INCREMENT,
   c_id int NOT NULL,
   id int  NOT NULL,
   name text NOT NULL,
@@ -93,7 +93,7 @@ DROP TABLE IF EXISTS c_attendance_calendar;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_attendance_calendar (
-  iid int  NOT NULL AUTO_INCREMENT,
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int NOT NULL,
   id int  NOT NULL,
   attendance_id int NOT NULL,
@@ -114,7 +114,7 @@ DROP TABLE IF EXISTS c_attendance_result;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_attendance_result (
-  iid int  NOT NULL AUTO_INCREMENT,
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int NOT NULL,
   id int  NOT NULL,
   user_id int NOT NULL,
@@ -135,7 +135,7 @@ DROP TABLE IF EXISTS c_attendance_sheet;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_attendance_sheet (
-  iid int  NOT NULL AUTO_INCREMENT,
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int NOT NULL,
   user_id int NOT NULL,
   attendance_calendar_id int NOT NULL,
@@ -154,7 +154,7 @@ DROP TABLE IF EXISTS c_attendance_sheet_log;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_attendance_sheet_log (
-  iid int  NOT NULL AUTO_INCREMENT,
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int NOT NULL,
   id int  NOT NULL,
   attendance_id int NOT NULL DEFAULT '0',
@@ -175,6 +175,7 @@ DROP TABLE IF EXISTS c_blog;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_blog (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
   blog_id int(11) NOT NULL AUTO_INCREMENT,
   blog_name varchar(250) NOT NULL DEFAULT '',
@@ -182,9 +183,9 @@ CREATE TABLE c_blog (
   date_creation datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   visibility tinyint(3)  NOT NULL DEFAULT '0',
   session_id int(11) DEFAULT '0',
-  PRIMARY KEY (c_id,blog_id),
+  PRIMARY KEY (iid),
   KEY session_id (session_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Table with blogs in this course';
+) DEFAULT CHARSET=utf8 COMMENT='Table with blogs in this course';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -195,6 +196,7 @@ DROP TABLE IF EXISTS c_blog_attachment;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_blog_attachment (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
   id int(10)  NOT NULL AUTO_INCREMENT,
   path varchar(255) NOT NULL COMMENT 'the real filename',
@@ -204,8 +206,8 @@ CREATE TABLE c_blog_attachment (
   filename varchar(255) NOT NULL COMMENT 'the user s file name',
   blog_id int(11) NOT NULL,
   comment_id int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (iid)
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -216,6 +218,7 @@ DROP TABLE IF EXISTS c_blog_comment;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_blog_comment (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
   comment_id int(11) NOT NULL AUTO_INCREMENT,
   title varchar(250) NOT NULL DEFAULT '',
@@ -226,8 +229,8 @@ CREATE TABLE c_blog_comment (
   post_id int(11) NOT NULL DEFAULT '0',
   task_id int(11) DEFAULT NULL,
   parent_comment_id int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,comment_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Table with comments on posts in a blog';
+  PRIMARY KEY (iid)
+) DEFAULT CHARSET=utf8 COMMENT='Table with comments on posts in a blog';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -238,6 +241,7 @@ DROP TABLE IF EXISTS c_blog_post;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE c_blog_post (
+  iid int NOT NULL AUTO_INCREMENT,
   c_id int(11) NOT NULL,
   post_id int(11) NOT NULL AUTO_INCREMENT,
   title varchar(250) NOT NULL DEFAULT '',
@@ -245,8 +249,8 @@ CREATE TABLE c_blog_post (
   date_creation datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   blog_id int(11) NOT NULL DEFAULT '0',
   author_id int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (c_id,post_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Table with posts / blog.';
+  PRIMARY KEY (iid)
+) DEFAULT CHARSET=utf8 COMMENT='Table with posts / blog.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -265,7 +269,7 @@ CREATE TABLE c_blog_rating (
   user_id int(11) NOT NULL DEFAULT '0',
   rating int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,rating_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Table with ratings for post/comments in a certain blog';
+) DEFAULT CHARSET=utf8 COMMENT='Table with ratings for post/comments in a certain blog';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -280,7 +284,7 @@ CREATE TABLE c_blog_rel_user (
   blog_id int(11) NOT NULL DEFAULT '0',
   user_id int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,blog_id,user_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Table representing users subscribed to a blog';
+) DEFAULT CHARSET=utf8 COMMENT='Table representing users subscribed to a blog';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -299,7 +303,7 @@ CREATE TABLE c_blog_task (
   color varchar(10) NOT NULL DEFAULT '',
   system_task tinyint(3)  NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,task_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Table with tasks for a blog';
+) DEFAULT CHARSET=utf8 COMMENT='Table with tasks for a blog';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -316,7 +320,7 @@ CREATE TABLE c_blog_task_rel_user (
   task_id int(11) NOT NULL DEFAULT '0',
   target_date date NOT NULL DEFAULT '0000-00-00',
   PRIMARY KEY (c_id,blog_id,user_id,task_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Table with tasks assigned to a user in a blog';
+) DEFAULT CHARSET=utf8 COMMENT='Table with tasks assigned to a user in a blog';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -338,7 +342,7 @@ CREATE TABLE c_calendar_event (
   all_day int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,id),
   KEY session_id (session_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -357,7 +361,7 @@ CREATE TABLE c_calendar_event_attachment (
   agenda_id int(11) NOT NULL,
   filename varchar(255) NOT NULL,
   PRIMARY KEY (c_id,id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -375,7 +379,7 @@ CREATE TABLE c_calendar_event_repeat (
   cal_frequency int(11) DEFAULT '1',
   cal_days char(7) DEFAULT NULL,
   PRIMARY KEY (c_id,cal_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -390,7 +394,7 @@ CREATE TABLE c_calendar_event_repeat_not (
   cal_id int(11) NOT NULL,
   cal_date int(11) NOT NULL,
   PRIMARY KEY (c_id,cal_id,cal_date)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -409,7 +413,7 @@ CREATE TABLE c_chat_connected (
   to_group_id int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,id,user_id,last_connection),
   KEY char_connected_index (user_id,session_id,to_group_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -429,7 +433,7 @@ CREATE TABLE c_course_description (
   progress int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,id),
   KEY session_id (session_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -451,7 +455,7 @@ CREATE TABLE c_course_setting (
   comment varchar(255) DEFAULT NULL,
   subkeytext varchar(255) DEFAULT NULL,
   PRIMARY KEY (c_id,id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -472,7 +476,7 @@ CREATE TABLE c_document (
   readonly tinyint(3)  NOT NULL,
   session_id int(10)  NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -492,7 +496,7 @@ CREATE TABLE c_dropbox_category (
   session_id int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,cat_id),
   KEY session_id (session_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -512,7 +516,7 @@ CREATE TABLE c_dropbox_feedback (
   PRIMARY KEY (c_id,feedback_id),
   KEY file_id (file_id),
   KEY author_user_id (author_user_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -595,7 +599,7 @@ CREATE TABLE c_forum_attachment (
   post_id int(11) NOT NULL,
   filename varchar(255) NOT NULL,
   PRIMARY KEY (c_id,id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -615,7 +619,7 @@ CREATE TABLE c_forum_category (
   session_id int(10)  NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,cat_id),
   KEY session_id (session_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -649,7 +653,7 @@ CREATE TABLE c_forum_forum (
   start_time datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   end_time datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (c_id,forum_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -666,7 +670,7 @@ CREATE TABLE c_forum_mailcue (
   thread_id int(11) NOT NULL DEFAULT '0',
   post_id int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (id,c_id,thread_id,user_id,post_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -686,7 +690,7 @@ CREATE TABLE c_forum_notification (
   PRIMARY KEY (id, c_id, user_id, forum_id, thread_id, post_id),
   KEY user_id (user_id),
   KEY forum_id (forum_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -714,7 +718,7 @@ CREATE TABLE c_forum_post (
   KEY forum_id (forum_id),
   KEY idx_forum_post_thread_id (thread_id),
   KEY idx_forum_post_visible (visible)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -744,7 +748,7 @@ CREATE TABLE c_forum_thread (
   thread_weight float(6,2)  NOT NULL DEFAULT '0.00',
   PRIMARY KEY (c_id,thread_id),
   KEY idx_forum_thread_forum_id (forum_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -765,7 +769,7 @@ CREATE TABLE c_forum_thread_qualify (
   session_id int(11) DEFAULT NULL,
   PRIMARY KEY (c_id,id),
   KEY user_id (user_id,thread_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -786,7 +790,7 @@ CREATE TABLE c_forum_thread_qualify_log (
   session_id int(11) DEFAULT NULL,
   PRIMARY KEY (c_id,id),
   KEY user_id (user_id,thread_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -805,7 +809,7 @@ CREATE TABLE c_glossary (
   session_id int(11) DEFAULT '0',
   PRIMARY KEY (c_id,glossary_id),
   KEY session_id (session_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -833,7 +837,7 @@ CREATE TABLE c_group_category (
   groups_per_user int(10)  NOT NULL DEFAULT '0',
   display_order int(10)  NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -863,7 +867,7 @@ CREATE TABLE c_group_info (
   self_unregistration_allowed tinyint(3)  NOT NULL DEFAULT '0',
   session_id int NOT NULL,
   PRIMARY KEY (iid)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -879,7 +883,7 @@ CREATE TABLE c_group_rel_tutor (
   user_id int(11) NOT NULL,
   group_id int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -897,7 +901,7 @@ CREATE TABLE c_group_rel_user (
   status int(11) NOT NULL DEFAULT '0',
   role char(50) NOT NULL,
   PRIMARY KEY (c_id,id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -925,7 +929,7 @@ CREATE TABLE c_item_property (
   id bigint(20)  NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (id),
   KEY idx_item_property_toolref (tool, ref)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -948,7 +952,7 @@ CREATE TABLE c_link (
   session_id int(11) DEFAULT '0',
   PRIMARY KEY (c_id,id),
   KEY session_id (session_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -967,7 +971,7 @@ CREATE TABLE c_link_category (
   session_id int(11) DEFAULT '0',
   PRIMARY KEY (c_id,id),
   KEY session_id (session_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1013,7 +1017,7 @@ CREATE TABLE c_lp (
   category_id int(10)  NOT NULL DEFAULT '0',
   subscribe_users int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (iid)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1029,7 +1033,7 @@ CREATE TABLE c_lp_category (
   name varchar(255) DEFAULT NULL,
   position int(11) DEFAULT NULL,
   PRIMARY KEY (id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1065,7 +1069,7 @@ CREATE TABLE c_lp_item (
   PRIMARY KEY (c_id,id),
   KEY lp_id (lp_id),
   KEY idx_c_lp_item_cid_lp_id (c_id,lp_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1093,7 +1097,7 @@ CREATE TABLE c_lp_item_view (
   KEY lp_item_id (lp_item_id),
   KEY lp_view_id (lp_view_id),
   KEY idx_c_lp_item_view_cid_lp_view_id_lp_item_id (c_id,lp_view_id,lp_item_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1118,7 +1122,7 @@ CREATE TABLE c_lp_iv_interaction (
   latency varchar(16) NOT NULL DEFAULT '',
   PRIMARY KEY (c_id,id),
   KEY lp_iv_id (lp_iv_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1140,7 +1144,7 @@ CREATE TABLE c_lp_iv_objective (
   status char(32) NOT NULL DEFAULT 'not attempted',
   PRIMARY KEY (c_id,id),
   KEY lp_iv_id (lp_iv_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1163,7 +1167,7 @@ CREATE TABLE c_lp_view (
   KEY lp_id (lp_id),
   KEY user_id (user_id),
   KEY session_id (session_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1182,7 +1186,7 @@ CREATE TABLE c_metadata (
   htmlcache2 text,
   indexabletext text,
   PRIMARY KEY (c_id,eid)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1204,7 +1208,7 @@ CREATE TABLE c_notebook (
   update_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   status int(11) DEFAULT NULL,
   PRIMARY KEY (c_id,notebook_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1219,7 +1223,7 @@ CREATE TABLE c_online_connected (
   user_id int(10)  NOT NULL,
   last_connection datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (c_id,user_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1235,7 +1239,7 @@ CREATE TABLE c_online_link (
   name char(50) NOT NULL DEFAULT '',
   url char(100) NOT NULL,
   PRIMARY KEY (c_id,id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1252,7 +1256,7 @@ CREATE TABLE c_permission_group (
   tool varchar(250) NOT NULL DEFAULT '',
   action varchar(250) NOT NULL DEFAULT '',
   PRIMARY KEY (c_id,id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1269,7 +1273,7 @@ CREATE TABLE c_permission_task (
   tool varchar(250) NOT NULL DEFAULT '',
   action varchar(250) NOT NULL DEFAULT '',
   PRIMARY KEY (c_id,id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1286,7 +1290,7 @@ CREATE TABLE c_permission_user (
   tool varchar(250) NOT NULL DEFAULT '',
   action varchar(250) NOT NULL DEFAULT '',
   PRIMARY KEY (c_id,id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1333,7 +1337,7 @@ CREATE TABLE c_quiz (
   on_failed_message longtext default '',
   notify_user_by_email int default 0,
   PRIMARY KEY (iid)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1357,7 +1361,7 @@ CREATE TABLE c_quiz_answer (
   destination text NOT NULL,
   answer_code char(10) DEFAULT '',
   PRIMARY KEY (iid)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 ALTER TABLE c_quiz_answer ADD INDEX idx_cqa_qid (question_id);
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1375,7 +1379,7 @@ CREATE TABLE c_quiz_order (
   exercise_id int(11) NOT NULL,
   exercise_order int(11) NOT NULL,
   PRIMARY KEY (iid)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1437,7 +1441,7 @@ CREATE TABLE c_quiz_question_option (
   name varchar(255) DEFAULT NULL,
   position int(10)  NOT NULL,
   PRIMARY KEY (iid)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1465,7 +1469,7 @@ CREATE TABLE c_quiz_rel_category (
   exercise_id int  NOT NULL,
   count_questions int NOT NULL default 0,
   PRIMARY KEY (iid)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1482,7 +1486,7 @@ CREATE TABLE c_quiz_rel_question (
   exercice_id int(10)  NOT NULL,
   question_order int(10)  NOT NULL DEFAULT '1',
   PRIMARY KEY (iid)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 ALTER TABLE c_quiz_rel_question ADD INDEX idx_cqrq_id (question_id);
 ALTER TABLE c_quiz_rel_question ADD INDEX idx_cqrq_cidexid (c_id, exercice_id);
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1502,7 +1506,7 @@ CREATE TABLE c_resource (
   resource_type varchar(50) DEFAULT NULL,
   resource_id int(10)  DEFAULT NULL,
   PRIMARY KEY (c_id,id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1519,7 +1523,7 @@ CREATE TABLE c_role (
   role_comment text,
   default_role tinyint(4) DEFAULT '0',
   PRIMARY KEY (c_id,role_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1536,7 +1540,7 @@ CREATE TABLE c_role_group (
   scope varchar(20) NOT NULL DEFAULT 'course',
   group_id int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (id,c_id,group_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1554,7 +1558,7 @@ CREATE TABLE c_role_permissions (
   action varchar(50) NOT NULL DEFAULT '',
   default_perm tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (id,c_id,role_id,tool,action)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1570,7 +1574,7 @@ CREATE TABLE c_role_user (
   scope varchar(20) NOT NULL DEFAULT 'course',
   user_id int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,role_id,user_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1606,7 +1610,7 @@ CREATE TABLE c_student_publication (
   contains_file int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,id),
   KEY session_id (session_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1625,7 +1629,7 @@ CREATE TABLE c_student_publication_assignment (
   enable_qualification tinyint(4) NOT NULL,
   publication_id int(11) NOT NULL,
   PRIMARY KEY (c_id,id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1667,7 +1671,7 @@ CREATE TABLE c_survey (
   session_id int(10)  NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,survey_id),
   KEY session_id (session_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1686,7 +1690,7 @@ CREATE TABLE c_survey_answer (
   value int(10)  NOT NULL,
   user varchar(250) NOT NULL,
   PRIMARY KEY (c_id,answer_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1703,7 +1707,7 @@ CREATE TABLE c_survey_group (
   description varchar(255) NOT NULL,
   survey_id int(10)  NOT NULL,
   PRIMARY KEY (c_id,id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1725,7 +1729,7 @@ CREATE TABLE c_survey_invitation (
   session_id int(10)  NOT NULL DEFAULT '0',
   group_id int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,survey_invitation_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1750,7 +1754,7 @@ CREATE TABLE c_survey_question (
   survey_group_sec1 int(10)  NOT NULL DEFAULT '0',
   survey_group_sec2 int(10)  NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,question_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1769,7 +1773,7 @@ CREATE TABLE c_survey_question_option (
   sort int(11) NOT NULL,
   value int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,question_option_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1789,7 +1793,7 @@ CREATE TABLE c_thematic (
   session_id int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,id),
   KEY active (active,session_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1810,7 +1814,7 @@ CREATE TABLE c_thematic_advance (
   done_advance tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,id),
   KEY thematic_id (thematic_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1829,7 +1833,7 @@ CREATE TABLE c_thematic_plan (
   description_type int(11) NOT NULL,
   PRIMARY KEY (c_id,id),
   KEY thematic_id (thematic_id,description_type)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1857,7 +1861,7 @@ CREATE TABLE c_tool (
   description varchar(255) DEFAULT NULL,
   PRIMARY KEY (iid),
   KEY session_id (session_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1873,7 +1877,7 @@ CREATE TABLE c_tool_intro (
   intro_text longtext NOT NULL,
   session_id int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,id,session_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1893,7 +1897,7 @@ CREATE TABLE c_userinfo_content (
   content text NOT NULL,
   PRIMARY KEY (c_id,id),
   KEY user_id (user_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1911,7 +1915,7 @@ CREATE TABLE c_userinfo_def (
   line_count tinyint(3)  NOT NULL DEFAULT '5',
   rank tinyint(3)  NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1954,7 +1958,7 @@ CREATE TABLE c_wiki (
   KEY group_id (group_id),
   KEY page_id (page_id),
   KEY session_id (session_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1982,7 +1986,7 @@ CREATE TABLE c_wiki_conf (
   delayedsubmit int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (c_id,page_id),
   KEY page_id (page_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2001,7 +2005,7 @@ CREATE TABLE c_wiki_discuss (
   p_score varchar(255) DEFAULT NULL,
   dtime datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (c_id,id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2020,7 +2024,7 @@ CREATE TABLE c_wiki_mailcue (
   session_id int(11) DEFAULT '0',
   PRIMARY KEY (c_id,id,user_id),
   KEY c_id (c_id,id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
