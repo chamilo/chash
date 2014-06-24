@@ -858,8 +858,8 @@ class CommonCommand extends AbstractCommand
                         array(
                             'name' => 'chamilo',
                             'sql' => array(
-                                'course.sql',
-                                'main.sql'
+                                //'course.sql',
+                                //'main.sql'
                             ),
                         ),
                     ),
@@ -871,8 +871,8 @@ class CommonCommand extends AbstractCommand
                         array(
                             'name' => 'chamilo',
                             'sql' => array(
-                                'course.sql',
-                                'main.sql'
+                                //'course.sql',
+                                //'main.sql'
                             ),
                         ),
                     ),
@@ -1343,23 +1343,74 @@ class CommonCommand extends AbstractCommand
      */
     public function setPortalSettingsInChamilo(OutputInterface $output, Connection $connection)
     {
+        // Admin settings
         $adminSettings = $this->getAdminSettings();
 
-        $connection->update('settings_current', array('selected_value' => $adminSettings['email']), array('variable' => 'emailAdministrator'));
-        $connection->update('settings_current', array('selected_value' => $adminSettings['lastname']), array('variable' => 'administratorSurname'));
-        $connection->update('settings_current', array('selected_value' => $adminSettings['firstname']), array('variable' => 'administratorName'));
-        $connection->update('settings_current', array('selected_value' => $adminSettings['language']), array('variable' => 'platformLanguage'));
+        $connection->update(
+            'settings_current',
+            array('selected_value' => $adminSettings['email']),
+            array('variable' => 'emailAdministrator')
+        );
+        $connection->update(
+            'settings_current',
+            array('selected_value' => $adminSettings['lastname']),
+            array('variable' => 'administratorSurname')
+        );
+        $connection->update(
+            'settings_current',
+            array('selected_value' => $adminSettings['firstname']),
+            array('variable' => 'administratorName')
+        );
+        $connection->update(
+            'settings_current',
+            array('selected_value' => $adminSettings['language']),
+            array('variable' => 'platformLanguage')
+        );
 
+        // Portal settings.
         $settings = $this->getPortalSettings();
 
-        $connection->update('settings_current', array('selected_value' => 1), array('variable' => 'allow_registration'));
-        $connection->update('settings_current', array('selected_value' => 1), array('variable' => 'allow_registration_as_teacher'));
+        $connection->update(
+            'settings_current',
+            array('selected_value' => 1),
+            array('variable' => 'allow_registration')
+        );
 
-        $connection->update('settings_current', array('selected_value' => $settings['permissions_for_new_directories']), array('variable' => 'permissions_for_new_directories'));
-        $connection->update('settings_current', array('selected_value' => $settings['permissions_for_new_files']), array('variable' => 'permissions_for_new_files'));
-        $connection->update('settings_current', array('selected_value' => $settings['institution']), array('variable' => 'Institution'));
-        $connection->update('settings_current', array('selected_value' => $settings['institution_url']), array('variable' => 'InstitutionUrl'));
-        $connection->update('settings_current', array('selected_value' => $settings['sitename']), array('variable' => 'siteName'));
+        $connection->update(
+            'settings_current',
+            array('selected_value' => 1),
+            array('variable' => 'allow_registration_as_teacher')
+        );
+
+        $connection->update(
+            'settings_current',
+            array('selected_value' => $settings['permissions_for_new_directories']),
+            array('variable' => 'permissions_for_new_directories')
+        );
+
+        $connection->update(
+            'settings_current',
+            array('selected_value' => $settings['permissions_for_new_files']),
+            array('variable' => 'permissions_for_new_files')
+        );
+
+        $connection->update(
+            'settings_current',
+            array('selected_value' => $settings['institution']),
+            array('variable' => 'Institution')
+        );
+
+        $connection->update(
+            'settings_current',
+            array('selected_value' => $settings['institution_url']),
+            array('variable' => 'InstitutionUrl')
+        );
+
+        $connection->update(
+            'settings_current',
+            array('selected_value' => $settings['sitename']),
+            array('variable' => 'siteName')
+        );
     }
 
     /**

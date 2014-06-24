@@ -34,6 +34,14 @@ class ConfigurationHelper extends Helper
     }
 
     /**
+     * @param bool $isLegacy
+     */
+    public function setIsLegacy($isLegacy)
+    {
+        $this->isLegacy = $isLegacy;
+    }
+
+    /**
      * @return bool
      */
     public function getDryRun()
