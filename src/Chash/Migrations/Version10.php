@@ -378,6 +378,8 @@ class Version10 extends AbstractMigration
         $this->addSql('ALTER TABLE c_tool MODIFY COLUMN target varchar(100) NOT NULL DEFAULT "_self"');
         $this->addSql('ALTER TABLE course_category MODIFY COLUMN rating_type varchar(100) NOT NULL DEFAULT "post"');
         $this->addSql('ALTER TABLE course_category MODIFY COLUMN rating_type varchar(100) NOT NULL DEFAULT "post"');
+
+        $this->addSql('ALTER TABLE user_rel_tag ADD INDEX idx_user_rel_tag_user (user_id)');
     }
 
     /**
