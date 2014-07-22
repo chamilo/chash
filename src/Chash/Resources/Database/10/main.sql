@@ -49,102 +49,6 @@ CREATE TABLE IF NOT EXISTS user (
   PRIMARY KEY (id)
 );
 
-/*!40000 ALTER TABLE user DISABLE KEYS */;
-INSERT INTO user (lastname, firstname, username, username_canonical, password, auth_source, email, email_canonical, status, official_code,phone, creator_id, registration_date, expiration_date,active,openid,language) VALUES ('{ADMINLASTNAME}','{ADMINFIRSTNAME}', '{ADMINLOGIN}', '{ADMINLOGIN}','{ADMINPASSWORD}','{PLATFORM_AUTH_SOURCE}','{ADMINEMAIL}', '{ADMINEMAIL}', '1','ADMIN','{ADMINPHONE}',1,NOW(),'0000-00-00 00:00:00','1',NULL,'{ADMINLANGUAGE}');
--- Insert anonymous user
-INSERT INTO user (lastname, firstname, username, username_canonical, password, auth_source, email, email_canonical, status, official_code, creator_id, registration_date, expiration_date,active,openid,language) VALUES ('Anonymous', 'Joe', 'anon', 'anon',  '', 'platform', 'anonymous@localhost', 'anonymous@localhost',  6, 'anonymous', 1, NOW(), '0000-00-00 00:00:00', 1,NULL,'{ADMINLANGUAGE}');
-
-CREATE TABLE roles (
-  id INT auto_increment,
-  name VARCHAR(255),
-  role VARCHAR(255) UNIQUE,
-  PRIMARY KEY(id)
-);
-
-CREATE TABLE users_roles (
-  user_id INT NOT NULL,
-  role_id INT NOT NULL,
-  PRIMARY KEY(user_id, role_id)
-);
-
-
-INSERT INTO roles (id, name, role) VALUES('1', 'Teacher', 'ROLE_TEACHER');
-INSERT INTO roles (id, name, role) VALUES('4', 'RRHH', 'ROLE_RRHH');
-INSERT INTO roles (id, name, role) VALUES('3', 'Session Manager', 'ROLE_SESSION_MANAGER');
-INSERT INTO roles (id ,name, role) VALUES('5', 'Student', 'ROLE_STUDENT');
-INSERT INTO roles (id, name, role) VALUES('6', 'Anonymous', 'ROLE_ANONYMOUS');
-INSERT INTO roles (id, name, role) VALUES('11', 'Admin', 'ROLE_ADMIN');
-INSERT INTO roles (id, name, role) VALUES('17', 'Question Manager', 'ROLE_QUESTION_MANAGER');
-INSERT INTO roles (id, name, role) VALUES('18', 'Global admin', 'ROLE_GLOBAL_ADMIN');
-
--- Admin
-INSERT INTO users_roles VALUES (1, 18);
-
---
--- Table structure for table admin
---
-
-DROP TABLE IF EXISTS admin;
-CREATE TABLE IF NOT EXISTS admin (
-  id  INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  user_id int  NOT NULL default '0',
-  UNIQUE KEY user_id (user_id)
-);
-
---
--- Dumping data for table admin
---
-
-
-/*!40000 ALTER TABLE admin DISABLE KEYS */;
-LOCK TABLES admin WRITE;
-INSERT INTO admin VALUES (1, 1);
-UNLOCK TABLES;
-/*!40000 ALTER TABLE admin ENABLE KEYS */;
-
---
--- Table structure for table class
---
-
-DROP TABLE IF EXISTS class;
-CREATE TABLE IF NOT EXISTS class (
-  id mediumint  NOT NULL auto_increment,
-  code varchar(40) default '',
-  name text NOT NULL,
-  PRIMARY KEY  (id)
-);
-
---
--- Dumping data for table class
---
-
-
-/*!40000 ALTER TABLE class DISABLE KEYS */;
-LOCK TABLES class WRITE;
-UNLOCK TABLES;
-/*!40000 ALTER TABLE class ENABLE KEYS */;
-
---
--- Table structure for table class_user
---
-
-DROP TABLE IF EXISTS class_user;
-CREATE TABLE IF NOT EXISTS class_user (
-  class_id mediumint  NOT NULL default '0',
-  user_id int  NOT NULL default '0',
-  PRIMARY KEY  (class_id,user_id)
-);
-
---
--- Dumping data for table class_user
---
-
-
-/*!40000 ALTER TABLE class_user DISABLE KEYS */;
-LOCK TABLES class_user WRITE;
-UNLOCK TABLES;
-/*!40000 ALTER TABLE class_user ENABLE KEYS */;
-
 --
 -- Table structure for table course
 --
@@ -243,7 +147,8 @@ CREATE TABLE IF NOT EXISTS course_field (
 );
 
 -- Special course
-INSERT INTO course_field (field_type, field_variable, field_display_text, field_default_value, field_visible, field_changeable) VALUES (13, 'special_course','Special course', 'Yes', 1 , 1);
+INSERT INTO course_field (field_type, field_variable, field_display_text, field_default_value, field_visible, field_changeable)
+VALUES (13, 'special_course','Special course', 'Yes', 1 , 1);
 
 --
 -- Table structure for table course_field_options
@@ -337,27 +242,6 @@ UNLOCK TABLES;
 /*!40000 ALTER TABLE course_module ENABLE KEYS */;
 
 --
--- Table structure for table course_rel_class
---
-
-DROP TABLE IF EXISTS course_rel_class;
-CREATE TABLE IF NOT EXISTS course_rel_class (
-  course_code char(40) NOT NULL,
-  class_id mediumint  NOT NULL,
-  PRIMARY KEY  (course_code,class_id)
-);
-
---
--- Dumping data for table course_rel_class
---
-
-
-/*!40000 ALTER TABLE course_rel_class DISABLE KEYS */;
-LOCK TABLES course_rel_class WRITE;
-UNLOCK TABLES;
-/*!40000 ALTER TABLE course_rel_class ENABLE KEYS */;
-
---
 -- Table structure for table course_rel_user
 --
 
@@ -396,7 +280,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS language;
 CREATE TABLE IF NOT EXISTS language (
-  id tinyint  NOT NULL auto_increment,
+  id int NOT NULL auto_increment,
   original_name varchar(255) default NULL,
   english_name varchar(255) default NULL,
   isocode varchar(10) default NULL,
@@ -478,17 +362,6 @@ UPDATE language SET available=1 WHERE dokeos_folder = '{PLATFORMLANGUAGE}';
 UNLOCK TABLES;
 /*!40000 ALTER TABLE language ENABLE KEYS */;
 
---
--- Table structure for table php_session
---
-
-DROP TABLE IF EXISTS php_session;
-CREATE TABLE IF NOT EXISTS php_session (
-  session_id varchar(255) NOT NULL,
-  session_value longtext NOT NULL,
-  session_time int NOT NULL,
-  PRIMARY KEY (session_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Table structure for table session
@@ -644,10 +517,8 @@ ALTER TABLE settings_current ADD INDEX idx_settings_current_au_cat (access_url, 
 
 /*!40000 ALTER TABLE settings_current DISABLE KEYS */;
 LOCK TABLES settings_current WRITE;
-INSERT INTO settings_current
-(variable, subkey, type, category, selected_value, title, comment, scope, subkeytext, access_url_changeable)
-VALUES
-('Institution',NULL,'textfield','Platform','{ORGANISATIONNAME}','InstitutionTitle','InstitutionComment','platform',NULL, 1),
+INSERT INTO settings_current (variable, subkey, type, category, selected_value, title, comment, scope, subkeytext, access_url_changeable)
+VALUES ('Institution',NULL,'textfield','Platform','{ORGANISATIONNAME}','InstitutionTitle','InstitutionComment','platform',NULL, 1),
 ('InstitutionUrl',NULL,'textfield','Platform','{ORGANISATIONURL}','InstitutionUrlTitle','InstitutionUrlComment',NULL,NULL, 1),
 ('siteName',NULL,'textfield','Platform','{CAMPUSNAME}','SiteNameTitle','SiteNameComment',NULL,NULL, 1),
 ('noreply_email_address', '', 'textfield', 'Platform', '', 'NoReplyEmailAddress', 'NoReplyEmailAddressComment', NULL, NULL, 0),
