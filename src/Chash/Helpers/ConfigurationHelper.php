@@ -215,13 +215,13 @@ class ConfigurationHelper extends Helper
 
         $configurationPath = dirname($configurationFile);
 
-        // New structure
-        if (file_exists($configurationPath.'/../../main/install/index.php')) {
+        // New structure (>= v10)
+        if (file_exists($configurationPath.'/../../web/app.php')) {
             return realpath($configurationPath.'/../../').'/';
         }
 
-        // Old structure
-        if (file_exists($configurationPath.'/../../install/index.php')) {
+        // Old structure (<= v1.9.*)
+        if (file_exists($configurationPath.'/../../../user_portal.php')) {
             return realpath($configurationPath.'/../../../').'/';
         }
 
