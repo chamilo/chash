@@ -118,7 +118,7 @@ class ShowDiskUsageCommand extends CommonDatabaseCommand
         }
 
         $globalCourses = array();
-        $sql = "SELECT id, code, directory, disk_quota FROM course";
+        $sql = "SELECT id, code, directory, disk_quota FROM course ORDER BY code";
         $stmt = $connection->query($sql);
         while ($row = $stmt->fetch()) {
             $globalCourses[$row['directory']] = array(
@@ -126,19 +126,29 @@ class ShowDiskUsageCommand extends CommonDatabaseCommand
                 'quota' => $row['disk_quota']
             );
         }
+        $globalCoursesSizeSum = array();
+        $sql = "SELECT directory, sum(size) as tSize
+            FROM c_document INNER JOIN course ON c_document.c_id = course.id
+            WHERE c_document.path NOT LIKE '%_DELETED'
+            GROUP BY directory";
+        $stmt = $connection->query($sql);
+        while ($row = $stmt->fetch()) {
+            $globalCoursesSizeSum[$row['directory']] = $row['tSize'];
+            $globalCourses[$row['directory']]['dbSize'] = $row['tSize'];
+        }
 
         // Size for all portals combined
-        $totalSize = 0;
+        $totalSize = $totalDbSize = 0;
         $finalList = array();
         $orphanList = array();
         $dirs = $this->getConfigurationHelper()->getDataFolders();
 
         $isDocumentOnly = $input->getOption('documents-only');
         $dirDoc = "";
-        $docsOnly = "";
+        $docsOnly = "AllDiskFiles";
         if ($isDocumentOnly) {
             $dirDoc = "/document";
-            $docsOnly = " DocsOnly";
+            $docsOnly = " DocFilesOnly";
         }
         $precision = $input->getOption('precision');
 
@@ -156,7 +166,15 @@ class ShowDiskUsageCommand extends CommonDatabaseCommand
 
         /** @var TableHelper $table */
         $table = $this->getHelperSet()->get('table');
-        $table->setHeaders(array('Code', 'Size', $docsOnly. '(' . $unit . ')', 'Quota(' . $unit . ')', 'UsedRatio'));
+        $table->setHeaders(array(
+                'Portal',
+                'Code',
+                $docsOnly. '(' . $unit . ')',
+                'DBDocs(' . $unit . ')',
+                'DBQuota(' . $unit . ')',
+                'UsedDiskVsDBQuota',
+            )
+        );
 
         // browse all the portals
         foreach ($portals as $portalId => $portalName) {
@@ -172,12 +190,15 @@ class ShowDiskUsageCommand extends CommonDatabaseCommand
                 if (!empty($row['directory'])) {
                     $localCourses[$row['directory']] = array(
                         'code' => $row['code'],
-                        'quota' => $row['disk_quota']
+                        'quota' => $row['disk_quota'],
+                        // recover the previously-calculated total size of the documents folder from DB
+                        'dbSize' => $globalCoursesSizeSum[$row['directory']],
                     );
                 }
             }
 
-            $localSize = 0;
+            // Size "local" to each course
+            $localSize = $localDbSize = 0;
             if (count($dirs) > 0) {
                 foreach ($dirs as $dir) {
                     $file = $dir->getFileName();
@@ -188,16 +209,19 @@ class ShowDiskUsageCommand extends CommonDatabaseCommand
                     ) {
                         // if this course has already been analysed, recover existing information
                         $size = $finalList[$globalCourses[$file]['code']]['size'];
+                        $dbSize = $finalList[$globalCourses[$file]['code']]['dbSize'];
                         $table->addRow(
                             array(
                                 $portalName,
                                 $globalCourses[$file]['code'],
                                 round($size/$div2, $precision),
+                                round($dbSize/$div2, $precision),
                                 $finalList[$globalCourses[$file]['code']]['quota'],
                                 $finalList[$globalCourses[$file]['code']]['rate']
                             )
                         );
                         $localSize += $size;
+                        $localDbSize += $dbSize;
                     } else {
                         $res = exec('du -s ' . $dir->getRealPath() . $dirDoc);
                         $res = preg_split('/\s/',$res);
@@ -206,6 +230,8 @@ class ShowDiskUsageCommand extends CommonDatabaseCommand
                         if (isset($localCourses[$file]['code'])) {
                             $localSize += $size; //always add size to local portal (but only add to total size if new)
                             $code = $localCourses[$file]['code'];
+                            $dbSize = round($localCourses[$file]['dbSize']/$div2, $precision);
+                            $localDbSize += $dbSize;
                             $quota = round($localCourses[$file]['quota']/$div, 0);
                             $rate = '-';
                             if ($quota > 0) {
@@ -215,17 +241,20 @@ class ShowDiskUsageCommand extends CommonDatabaseCommand
                                 'code'  => $code,
                                 'dir'   => $file,
                                 'size'  => $size,
+                                'dbSize'=> $dbSize,
                                 'quota' => $quota,
-                                'rate'  => $rate,
+                                'rateVsDisk'  => $rate,
                             );
                             //$finalListOrder[$code] = $size;
                             $totalSize += $size; //only add to total if new course
+                            $totalDbSize += $dbSize; //only add to total if new course
 
                             $table->addRow(
                                 array(
                                     $portalName,
                                     $code,
                                     round($size/$div2, $precision),
+                                    round($dbSize/$div2, $precision),
                                     $finalList[$code]['quota'],
                                     $rate
                                 )
@@ -242,15 +271,25 @@ class ShowDiskUsageCommand extends CommonDatabaseCommand
             $table->addRow(
                 array(
                     $portalName,
-                    'Subtotal',
-                    round($localSize/$div2, $precision)
+                    'SubtotalWithoutOrphans',
+                    round($localSize/$div2, $precision),
+                    round($localDbSize/$div2, $precision),
                 )
             );
         }
 
         if (count($orphanList) > 0) {
             $table->addRow(array());
-            $table->addRow(array('Code', 'Size', $docsOnly . '(' . $unit . ')', 'Quota(' . $unit . ')', 'UsedRatio'));
+            $table->addRow(
+                array(
+                    'Portal',
+                    'Code',
+                    $docsOnly . '(' . $unit . ')',
+                    'DBDocs(' . $unit . ')',
+                    'Quota(' . $unit . ')',
+                    'UsedRatio'
+                )
+            );
             //$output->writeln('CCC Code;Size' . $docsOnly . '(' . $unit . ');Quota(' . $unit . ');UsedRatio');
             foreach($orphanList as $key => $orphan) {
                 $size = $orphan['size'];
@@ -269,7 +308,8 @@ class ShowDiskUsageCommand extends CommonDatabaseCommand
             array(
                 $portalName,
                 'Total size',
-                round($totalSize/$div2, $precision)
+                round($totalSize/$div2, $precision),
+                round($totalDbSize/$div2, $precision)
             )
         );
 
