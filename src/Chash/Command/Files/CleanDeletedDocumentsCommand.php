@@ -36,7 +36,14 @@ class CleanDeletedDocumentsCommand extends CommonDatabaseCommand
                 null,
                 InputOption::VALUE_NONE,
                 'Show the complete list of files to be deleted before asking for confirmation'
-            );
+            )
+            ->addOption(
+                'from-db',
+                null,
+                InputOption::VALUE_NONE,
+                'Also delete items from the c_document table'
+            )
+        ;
     }
 
     /**
@@ -78,6 +85,29 @@ class CleanDeletedDocumentsCommand extends CommonDatabaseCommand
             )
             ) {
                 return;
+            }
+            $deleteFromDb = $input->getOption('from-db');
+            if ($deleteFromDb) {
+                $connection = $this->getConnection();
+                $sql = "DELETE FROM c_document WHERE path LIKE '%_DELETED%'";
+                $stmt = $connection->query($sql);
+                /*
+                while ($row = $stmt->fetch()) {
+                    $sql2 = "SELECT id FROM c_item_property
+                        WHERE c_id = " . $row['c_id'] . "
+                            AND tool = 'document'
+                            AND ref = ".$row['id'];
+                    $stmt2 = $connection->query($sql2);
+                    while ($row2 = $stmt2->fetch()) {
+                        $output->writeln($row['c_id'] . ' ' . $row2['id']);
+                    }
+
+                }
+                */
+                $output->writeln(
+                    'Deleted all database references in c_document.
+                     Table c_item_property left untouched, to keep history.'
+                );
             }
         }
         $this->removeFiles($files, $output);
