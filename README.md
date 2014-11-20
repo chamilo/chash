@@ -153,7 +153,7 @@ Available commands:
 
     files
       files:clean_config_files              Cleans the config files to help you re-install
-      files:clean_data_files                Cleans the data directory
+      files:clean_course_files              Cleans the courses directory
       files:clean_deleted_documents         Cleans the documents that were deleted but left as _DELETED_
       files:clean_temp_folder               Cleans the temp directory.
       files:generate_temp_folders           Generate temp folder structure: twig

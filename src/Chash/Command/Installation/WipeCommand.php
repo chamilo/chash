@@ -85,11 +85,11 @@ class WipeCommand extends CommonCommand
         $input = new ArrayInput($arguments);
         $command->run($input, $output);
 
-        // Cleaning data files
-        $command = $this->getApplication()->find('files:clean_data_files');
+        // Cleaning courses files
+        $command = $this->getApplication()->find('files:clean_courses_files');
 
         $arguments = array(
-            'command' => 'files:clean_data_files',
+            'command' => 'files:clean_courses_files',
             '--conf' => $configurationFilePath
         );
         $input = new ArrayInput($arguments);
