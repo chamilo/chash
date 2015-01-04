@@ -100,8 +100,8 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
             }
 
             $show = $input->getOption('show'); //1 if the option was set
+
             // Get all courses by URL
-            $connection = $this->getConnection();
             $sql = "SELECT * FROM access_url_rel_course "
                 //." WHERE access_url_id != 1 "
                 . " ORDER BY access_url_id, course_code ASC";
@@ -157,25 +157,27 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                 // for deletion, then delete it and its relations with sessions.
                 // If it is available in other URLs, only delete its relations
                 // to the given URLs
-                foreach ($urlCourses[$urlId] as $courseCode) {
-                    if (count($coursesUrl[$courseCode]) > 1) {
-                        $output->writeln(
-                            'Course ' . $courseCode . ' is used ' .
-                            'by more than one URL (' .
-                            implode(',', $coursesUrl[$courseCode]) .
-                            ').'
-                        );
-                        $output->writeln(
-                            'Deleting only references to given URL (' . $urlId . ')...'
-                        );
-                        $this->unlinkCourse($output, $courseCode, $urlId);
-                    } else { // The course is only in the given URL
-                        $output->writeln(
-                            'Course ' . $courseCode . ' is only used ' .
-                            'on this portal. Proceeding with deletion...'
-                        );
-                        $this->unlinkCourse($output, $courseCode, $urlId);
-                        $this->deleteCourse($output, $courseCode);
+                if (count($urlCourses) > 0 && count($urlCourses[$urlId]) > 0) {
+                    foreach ($urlCourses[$urlId] as $courseCode) {
+                        if (count($coursesUrl[$courseCode]) > 1) {
+                            $output->writeln(
+                                'Course ' . $courseCode . ' is used ' .
+                                'by more than one URL (' .
+                                implode(',', $coursesUrl[$courseCode]) .
+                                ').'
+                            );
+                            $output->writeln(
+                                'Deleting only references to given URL (' . $urlId . ')...'
+                            );
+                            $this->unlinkCourse($output, $courseCode, $urlId);
+                        } else { // The course is only in the given URL
+                            $output->writeln(
+                                'Course ' . $courseCode . ' is only used ' .
+                                'on this portal. Proceeding with deletion...'
+                            );
+                            $this->unlinkCourse($output, $courseCode, $urlId);
+                            $this->deleteCourse($output, $courseCode);
+                        }
                     }
                 }
                 // We removed all courses from that unique URL, so check if
@@ -196,7 +198,7 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                         if (count($urls) > 1) {
                             // user is in more than one URL, so only remove
                             // reference to this URL
-                            $sql = 'DELETE FROM access_url_rel_user where access_url_id = $urlId AND user_id = $user';
+                            $sql = "DELETE FROM access_url_rel_user where access_url_id = $urlId AND user_id = $user";
                             $stmt = $connection->query($sql);
                         } else {
                             if ($urls[0] == $urlId) {
@@ -428,16 +430,6 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
         // only for sysadmins anyway
         $connection = $this->getConnection();
 
-        $usergroup_rel_user = Database :: get_main_table(TABLE_USERGROUP_REL_USER);
-        $table_course_user = Database :: get_main_table(TABLE_MAIN_COURSE_USER);
-        $table_course = Database :: get_main_table(TABLE_MAIN_COURSE);
-        $table_session = Database :: get_main_table(TABLE_MAIN_SESSION);
-        $table_admin = Database :: get_main_table(TABLE_MAIN_ADMIN);
-        $table_session_user = Database :: get_main_table(TABLE_MAIN_SESSION_USER);
-        $table_session_course_user = Database :: get_main_table(TABLE_MAIN_SESSION_COURSE_USER);
-        $table_group = Database :: get_course_table(TABLE_GROUP_USER);
-        $table_work = Database :: get_course_table(TABLE_STUDENT_PUBLICATION);
-
         // Unsubscribe the user from all groups in all his courses
         $sql = "SELECT c.id as courseId FROM course c, course_rel_user cu
                 WHERE cu.user_id = $userId AND c.code = cu.course_code";
@@ -474,16 +466,17 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
         // Delete user picture
         /* TODO: Logic about api_get_setting('split_users_upload_directory') == 'true'
         a user has 4 different sized photos to be deleted. */
-        $user_info = api_get_user_info($userId);
         $sysPath = $this->getConfigurationHelper()->getSysPath();
-        if (strlen($user_info['picture_uri']) > 0) {
-            $sub = '';
-            if (api_get_setting('split_users_upload_directory') == 'true') {
-                $sub = substr($userId, 0, 1) . '/';
-            }
-            $img_path = $sysPath . 'main/upload/users/'. $sub . $userId . '/' . $user_info['picture_uri'];
-            if (file_exists($img_path))
-                unlink($img_path);
+        $sub = '';
+        $sql = "SELECT selected_value FROM settings_current WHERE variable = 'split_users_upload_directory'";
+        $stmt = $connection->query($sql);
+        $row = $stmt->fetch();
+        if ($row['selected_value'] == 'true') {
+            $sub = substr($userId, 0, 1) . '/';
+        }
+        $img_path = $sysPath . 'main/upload/users/'. $sub . $userId;
+        if (file_exists($img_path)) {
+            unlink($img_path);
         }
 
         // Delete the personal course categories
@@ -502,16 +495,16 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
         $sql = "DELETE FROM personal_agenda WHERE user = $userId";
         $stmt = $connection->query($sql);
 
-        $sql = "DELETE FROM gradebook_results_table WHERE user_id = $userId";
+        $sql = "DELETE FROM gradebook_result WHERE user_id = $userId";
         $stmt = $connection->query($sql);
 
         $sql = "DELETE FROM user_field_values WHERE user_id = $userId";
         $stmt = $connection->query($sql);
 
-        $sql = "DELETE group_rel_user WHERE user_id = $userId";
+        $sql = "DELETE FROM group_rel_user WHERE user_id = $userId";
         $stmt = $connection->query($sql);
 
-        $sql = "DELETE user_rel_user WHERE user_id = $userId";
+        $sql = "DELETE FROM user_rel_user WHERE user_id = $userId";
         $stmt = $connection->query($sql);
 
         // Removing survey invitation
