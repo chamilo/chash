@@ -113,21 +113,30 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                 $coursesUrl[$row['course_code']][] = $row['access_url_id'];
             }
 
+            $urlId = $input->getArgument('url');
+
             if ($show) {
                 $output->writeln('');
-                $count = count($urlCourses[1]);
+                $count = count($urlCourses);
                 if ($count > 0) {
                     $output->writeln('List of URLs vs courses');
-                    $output->writeln('URL ID' . "\t" . 'Course code');
+                    $output->writeln('URL ID' . "\t" . 'Only in this URL?' . "\t" . 'Course code' );
                     foreach ($urlCourses as $url => $courses) {
+                        if (!empty($urlId)) {
+                            // if a URL was defined, skip other URLs
+                            if ($url != $urlId) {
+                                continue;
+                            }
+                        }
                         foreach ($courses as $code) {
-                            $output->writeln($url . "\t" . $code);
+                            $countUrl = count($coursesUrl[$code]);
+                            $unique = ($countUrl <= 1 ? 'yes' : 'no');
+                            $output->writeln($url . "\t" . $unique . "\t\t\t" . $code);
                         }
                     }
                 }
             }
 
-            $urlId = $input->getArgument('url');
             if (!empty($urlId)) {
                 $output->writeln('');
                 if ($urlId == 1) {
