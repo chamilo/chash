@@ -47,6 +47,12 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                 'Show the list of courses directories to be deleted'
             )
             ->addOption(
+                'du',
+                null,
+                InputOption::VALUE_NONE,
+                'Show disk usage for each course (only with --show)'
+            )
+            ->addOption(
                 'delete-users',
                 null,
                 InputOption::VALUE_NONE,
@@ -102,25 +108,32 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
             $show = $input->getOption('show'); //1 if the option was set
 
             // Get all courses by URL
-            $sql = "SELECT * FROM access_url_rel_course "
+            $sql = "SELECT u.course_code, u.access_url_id, c.directory "
+                . " FROM access_url_rel_course u, course c "
+                . " WHERE u.course_code = c.code "
                 //." WHERE access_url_id != 1 "
                 . " ORDER BY access_url_id, course_code ASC";
             $stmt = $connection->query($sql);
             $urlCourses = array();
             $coursesUrl = array();
+            $coursesDir = array();
             while ($row = $stmt->fetch()) {
                 $urlCourses[$row['access_url_id']][] = $row['course_code'];
                 $coursesUrl[$row['course_code']][] = $row['access_url_id'];
+                $coursesDir[$row['course_code']] = $row['directory'];
             }
 
             $urlId = $input->getArgument('url');
+            $du = $input->getOption('du'); //1 if the option was set
+            $sysPath = $this->getConfigurationHelper()->getSysPath();
+            $coursesPath = $sysPath.'courses/';
 
             if ($show) {
                 $output->writeln('');
                 $count = count($urlCourses);
                 if ($count > 0) {
                     $output->writeln('List of URLs vs courses');
-                    $output->writeln('URL ID' . "\t" . 'Only in this URL?' . "\t" . 'Course code' );
+                    $output->writeln('URL ID' . "\t" . 'Only in this URL?' . "\t" . ($du ? 'Size (B)' . "\t\t" : '') . 'Course code' );
                     foreach ($urlCourses as $url => $courses) {
                         if (!empty($urlId)) {
                             // if a URL was defined, skip other URLs
@@ -131,7 +144,18 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                         foreach ($courses as $code) {
                             $countUrl = count($coursesUrl[$code]);
                             $unique = ($countUrl <= 1 ? 'yes' : 'no');
-                            $output->writeln($url . "\t" . $unique . "\t\t\t" . $code);
+                            $diskUsage = '';
+                            if ($du) {
+                                $courseDir = $coursesPath.$coursesDir[$code];
+                                if (!is_dir($courseDir)) {
+                                    $size = 'N/A';
+                                } else {
+                                    $res = @exec('du -s ' . $courseDir);
+                                    $res = preg_split('/\s/', $res);
+                                    $size = $res[0];
+                                }
+                            }
+                            $output->writeln($url . "\t" . $unique . "\t\t\t" . ($du ? $size . "\t\t" : '') . $code);
                         }
                     }
                 }
