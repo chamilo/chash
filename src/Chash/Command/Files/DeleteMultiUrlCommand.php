@@ -197,7 +197,7 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                 // for deletion, then delete it and its relations with sessions.
                 // If it is available in other URLs, only delete its relations
                 // to the given URLs
-                if (count($urlCourses) > 0 && count($urlCourses[$urlId]) > 0) {
+                if (count($urlCourses) > 0 && isset($urlCourses[$urlId]) && count($urlCourses[$urlId]) > 0) {
                     foreach ($urlCourses[$urlId] as $courseCode) {
                         if (count($coursesUrl[$courseCode]) > 1) {
                             $output->writeln(
