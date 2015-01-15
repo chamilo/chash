@@ -178,7 +178,7 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                 $dialog = $this->getHelperSet()->get('dialog');
                 if (!$dialog->askConfirmation(
                     $output,
-                    '<question>Are you sure you want to delete URL ' . $urlId . '? (y/N)</question>',
+                    '<question>Are you sure you want to delete URL ' . $urlId . ' and all the courses that are used only in this URL? (y/N)</question>',
                     false
                 )
                 ) {
