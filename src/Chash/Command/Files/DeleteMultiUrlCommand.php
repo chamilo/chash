@@ -134,7 +134,7 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                 $count = count($urlCourses);
                 if ($count > 0) {
                     $output->writeln('List of URLs vs courses');
-                    $output->writeln('URL ID' . "\t" . 'Only in this URL?' . "\t" . ($du ? 'Size (B)' . "\t\t" : '') . 'Course code' );
+                    $output->writeln('URL ID' . "\t" . 'Only in this URL?' . "\t" . ($du ? 'Size (KB)' . "\t\t" : '') . 'Course code' );
                     foreach ($urlCourses as $url => $courses) {
                         if (!empty($urlId)) {
                             // if a URL was defined, skip other URLs
