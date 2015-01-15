@@ -316,7 +316,7 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                     $stmtDelete = $connection->query($sqlDelete);
                     $sqlDelete = "DELETE FROM access_url_rel_session WHERE session_id = $sessionId";
                     $stmtDelete = $connection->query($sqlDelete);
-                    $sqlDelete = "DELETE FROM session_field_value WHERE session_id = $sessionId";
+                    $sqlDelete = "DELETE FROM session_field_values WHERE session_id = $sessionId";
                     $stmtDelete = $connection->query($sqlDelete);
                     $sqlDelete = "DELETE FROM session WHERE id = $sessionId";
                     $stmtDelete = $connection->query($sqlDelete);
