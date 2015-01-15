@@ -127,6 +127,7 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
             $du = $input->getOption('du'); //1 if the option was set
             $sysPath = $this->getConfigurationHelper()->getSysPath();
             $coursesPath = $sysPath.'courses/';
+            $totalDiskUsage = 0;
 
             if ($show) {
                 $output->writeln('');
@@ -153,12 +154,18 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                                     $res = @exec('du -s ' . $courseDir);
                                     $res = preg_split('/\s/', $res);
                                     $size = $res[0];
+                                    if ($unique == 'yes') {
+                                        $totalDiskUsage += $size;
+                                    }
                                 }
                             }
                             $output->writeln($url . "\t" . $unique . "\t\t\t" . ($du ? $size . "\t\t" : '') . $code);
                         }
                     }
                 }
+            }
+            if ($du) {
+                $output->writeln('Total size of courses only in this URL: '.$totalDiskUsage);
             }
 
             if (!empty($urlId)) {
