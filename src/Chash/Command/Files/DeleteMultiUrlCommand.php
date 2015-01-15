@@ -299,7 +299,7 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                 . "WHERE id_session = $sessionId "
                 . " AND course_code = '$courseCode' ";
             $stmt = $connection->query($sql);
-            $sql = "SELECT count(*) FROM session_rel_course WHERE session_id = $sessionId";
+            $sql = "SELECT count(*) FROM session_rel_course WHERE id_session = $sessionId";
             $stmt = $connection->query($sql);
             while ($row = $stmt->fetch()) {
                 $output->writeln('No course left in session ' . $sessionId . ' so deleting the session');
