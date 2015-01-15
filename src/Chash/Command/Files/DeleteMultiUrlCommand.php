@@ -174,7 +174,7 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                     $output->writeln('URL 1 cannot be deleted as it is the main URL');
                     return;
                 }
-                $output->writeln('Selected URL: ' . $urlId . '(' . $urls[$urlId]['url'] . ')');
+                $output->writeln('Selected URL: ' . $urlId . ' (' . $urls[$urlId]['url'] . ')');
                 if (!in_array($urlId, array_keys($urls))) {
                     $output->writeln(
                         'URL ' . $urlId . ' does not exist. ' .
