@@ -284,7 +284,7 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
         $stmt = $connection->query($sql);
         $sessions = array();
         while ($row = $stmt->fetch()) {
-            $sessions[] = $row['sessionid'];
+            $sessions[] = $row['id_session'];
         }
         $output->writeln('Sessions using course ' . $courseCode . ' in URL ' . $urlId . ': ' . implode(',',
                 $sessions));
