@@ -98,23 +98,38 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
             // Check the courses that match the search criteria
             if (!empty($courseId)) {
                 $courseId = intval($courseId);
-                $output->writeln('ID-based course search: ' . $courseId);
                 $sql = "SELECT id, code, category_code, creation_date
                     FROM course
-                    WHERE id = $courseId
-                    ORDER BY creation_date";
+                    WHERE id = $courseId ";
+                if (!empty($beforeDate)) {
+                    $output->writeln('ID-based course search: ' . $courseId . ' and date < ' . $beforeDate);
+                    $sql .= " AND creation_date < '$beforeDate' ";
+                } else {
+                    $output->writeln('ID-based course search: ' . $courseId);
+                }
+                $sql .= " ORDER BY creation_date";
             } elseif (!empty($courseCode)) {
-                $output->writeln('Code-based course search: ' . $courseCode);
                 $sql = "SELECT id, code, category_code, creation_date
                     FROM course
-                    WHERE code = '$courseCode'
-                    ORDER BY creation_date";
+                    WHERE code = '$courseCode' ";
+                if (!empty($beforeDate)) {
+                    $output->writeln('Code-based course search: ' . $courseCode . ' and date < ' . $beforeDate);
+                    $sql .= " AND creation_date < '$beforeDate' ";
+                } else {
+                    $output->writeln('Code-based course search: ' . $courseCode);
+                }
+                $sql .= " ORDER BY creation_date";
             } elseif (!empty($courseCategory)) {
-                $output->writeln('Category-based course search: ' . $courseCategory);
                 $sql = "SELECT id, code, category_code, creation_date
                     FROM course
-                    WHERE category_code = '$courseCategory'
-                    ORDER BY creation_date";
+                    WHERE category_code = '$courseCategory'";
+                if (!empty($beforeDate)) {
+                    $output->writeln('Category-based course search: ' . $courseCategory . ' and date < ' . $beforeDate);
+                    $sql .= " AND creation_date < '$beforeDate' ";
+                } else {
+                    $output->writeln('Category-based course search: ' . $courseCategory);
+                }
+                $sql .= " ORDER BY creation_date";
             } elseif (!empty($beforeDate)) {
                 $output->writeln('Category-based course search: ' . $beforeDate);
                 $sql = "SELECT id, code, category_code, creation_date
