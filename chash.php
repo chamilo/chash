@@ -64,6 +64,7 @@ $application->addCommands(
         new Chash\Command\Files\CleanDeletedDocumentsCommand(),
         new Chash\Command\Files\CleanTempFolderCommand(),
         new Chash\Command\Files\ConvertVideosCommand(),
+        new Chash\Command\Files\DeleteCoursesCommand(),
         new Chash\Command\Files\DeleteMultiUrlCommand(),
         new Chash\Command\Files\GenerateTempFileStructureCommand(),
         new Chash\Command\Files\MailConfCommand(),
