@@ -129,7 +129,7 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
             while ($row = $stmt->fetch()) {
                 $courses[$row['id']] = array(
                     'code' => $row['code'],
-                    'category' => $row['category'],
+                    'category' => $row['category_code'],
                     'date' => $row['creation_date']
                 );
                 $courseIdsString .= $row['id'].', ';
