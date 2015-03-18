@@ -296,6 +296,13 @@ class CommonCommand extends AbstractCommand
                 ),
                 'type' => 'text'
             ),
+            'site_url' => array(
+                'attributes' => array(
+                    'label' => 'URL of site to install',
+                    'data' => 'http://localhost/',
+                ),
+                'type' => 'text'
+            ),
             'institution' => array(
                 'attributes' => array(
                     'data' => 'Chamilo',
@@ -304,8 +311,8 @@ class CommonCommand extends AbstractCommand
             ),
             'institution_url' => array(
                 'attributes' => array(
-                    'label' => 'URL',
-                    'data' => 'http://localhost/',
+                    'label' => 'Website of the institution',
+                    'data' => 'https://chamilo.org/',
                 ),
                 'type' => 'text'
             ),
@@ -402,7 +409,7 @@ class CommonCommand extends AbstractCommand
      */
     public function getLatestVersion()
     {
-        return '10';
+        return '1.10.x';
     }
 
     /**
@@ -507,25 +514,41 @@ class CommonCommand extends AbstractCommand
                 'require_update' => false,
                 'parent' => '1.9.0'
             ),
+            '1.9.10' => array(
+                'require_update' => false,
+                'parent' => '1.9.0'
+            ),
+            '1.9.10.2' => array(
+                'require_update' => false,
+                'parent' => '1.9.0'
+            ),
             '1.9.x' => array(
               'require_update' => false,
               'parent' => '1.9.0'
             ),
-            '10'  => array(
+            '1.10.0' => array(
+                'require_update' => true,
+                'pre' => 'migrate-db-1.9.0-1.10.0-pre.sql',
+                'post' => 'migrate-db-1.9.0-1.10.0-post.sql',
+                'update_db' => 'update-db-1.9.0-1.10.0.inc.php',
+                'update_files' => 'update-files-1.9.0-1.10.0.inc.php',
+                //'hook_to_doctrine_version' => '10'
+            ),
+            '1.10.x' => array(
+                'require_update' => true,
+                'pre' => 'migrate-db-1.9.0-1.10.0-pre.sql',
+                'post' => 'migrate-db-1.9.0-1.10.0-post.sql',
+                'update_db' => 'update-db-1.9.0-1.10.0.inc.php',
+                'update_files' => 'update-files-1.9.0-1.10.0.inc.php',
+                //'hook_to_doctrine_version' => '10'
+            ),
+            '2.0'  => array(
                 'require_update' => true,
                 'pre' => 'pre.sql',
                 'post' => 'post.sql',
                 'update_db' => 'update.php',
                 'update_files' => null,
-                'hook_to_doctrine_version' => '10'
-            ),
-            '11'  => array(
-                'require_update' => true,
-                /*'pre' => 'pre.sql',
-                'post' => 'post.sql',
-                'update_db' => 'update.php',*/
-                'update_files' => null,
-                'hook_to_doctrine_version' => '11'
+                'hook_to_doctrine_version' => '2'
             ),
             'master'  => array(
                 'require_update' => true,
@@ -533,7 +556,7 @@ class CommonCommand extends AbstractCommand
                 'post' => 'post.sql',
                 'update_db' => 'update.php',
                 'update_files' => null,
-                'hook_to_doctrine_version' => '10'
+                'hook_to_doctrine_version' => '2'
             )
         );
 
@@ -612,7 +635,7 @@ class CommonCommand extends AbstractCommand
          * $app->match('/portal-settings', ...)
          * in main/install/index.php.
          */
-        $baseUrl = parse_url($portalSettings['institution_url'], PHP_URL_PATH);
+        $baseUrl = parse_url($portalSettings['site_url'], PHP_URL_PATH);
 
         // The second case should never happen, but let's play safe.
         if ($baseUrl == null or substr($baseUrl, 0, 1) != '/') {
@@ -649,7 +672,7 @@ class CommonCommand extends AbstractCommand
         $configuration['main_database'] = $databaseSettings['dbname'];
         $configuration['driver'] = $databaseSettings['driver'];
 
-        $configuration['root_web'] = $portalSettings['institution_url'];
+        $configuration['root_web'] = $portalSettings['site_url'];
         $configuration['root_sys'] = $this->getRootSys();
         $configuration['security_key'] = md5(uniqid(rand().time()));
 
@@ -707,7 +730,7 @@ class CommonCommand extends AbstractCommand
             $config['TRACKING_ENABLED'] = "'true'";
             $config['SINGLE_DATABASE'] = "false";
 
-            $config['{ROOT_WEB}'] = $portalSettings['institution_url'];
+            $config['{ROOT_WEB}'] = $portalSettings['site_url'];
             $config['{ROOT_SYS}'] = $this->getRootSys();
 
             $config['{URL_APPEND_PATH}'] = "";
@@ -852,7 +875,19 @@ class CommonCommand extends AbstractCommand
                     ),
                 )
             ),
-            '10' => array(
+            '1.10.0' => array(
+                'section' => array(
+                    'main' => array(
+                        array(
+                            'name' => 'chamilo',
+                            'sql' => array(
+                                'db_main.sql',
+                            ),
+                        ),
+                    ),
+                )
+            ),
+            '2.0' => array(
                 'section' => array(
                     'main' => array(
                         array(
@@ -1053,6 +1088,10 @@ class CommonCommand extends AbstractCommand
                     break;
                 case '1.9.x':
                     $updateInstallation = "https://github.com/chamilo/chamilo-lms/archive/1.9.x.zip";
+                    break;
+                case '1.10.x':
+                    $updateInstallation = "https://github.com/chamilo/chamilo-lms/archive/1.10.x.zip";
+                    break;
             }
         }
 

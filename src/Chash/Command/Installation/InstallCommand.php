@@ -76,13 +76,13 @@ class InstallCommand extends CommonCommand
         $linuxUser = $this->linuxUser;
         $linuxGroup = $this->linuxGroup;
         $dialog = $this->getHelperSet()->get('dialog');
-        $configurationPath = $this->getConfigurationHelper()->getConfigurationPath();
+        $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($path);
 
         if (empty($configurationPath)) {
-            $output->writeln("<error>There's an error while loading the configuration path. Are you sure this is a Chamilo path?</error>");
-            $output->writeln("<comment>Try setting up a Chamilo path for example: </comment> <info>chamilo:install 10 /var/www/chamilo</info>");
+            $output->writeln("<error>There was an error while loading the configuration path (looked for at $configurationPath). Are you sure this is a Chamilo path?</error>");
+            $output->writeln("<comment>Try setting up a Chamilo path for example: </comment> <info>chamilo:install 1.10.x /var/www/chamilo</info>");
             $output->writeln("<comment>You can also *download* a Chamilo package adding the --download-package option:</comment>");
-            $output->writeln("<info>chamilo:install 10 /var/www/chamilo --download-package</info>");
+            $output->writeln("<info>chamilo:install 1.10.x /var/www/chamilo --download-package</info>");
             return 0;
         }
 
@@ -560,10 +560,12 @@ class InstallCommand extends CommonCommand
             case '1.9.8':
             case '1.9.10':
             case '1.9.10.2':
+            case '1.9.x':
                 $newVersion = '1.9.0';
                 break;
-            case '10':
+            case '1.10':
             case '1.10.0':
+            case '1.10.x':
                 $newVersion = '1.10.0';
                 break;
             case '2':
