@@ -1228,7 +1228,7 @@ VALUES
 ('enable_webcam_clip', 'false', 'No'),
 ('prevent_session_admins_to_manage_all_users', 'true', 'Yes'),
 ('prevent_session_admins_to_manage_all_users', 'false', 'No'),
-('documents_default_visibility_defined_in_course', 'true', 'Yes');
+('documents_default_visibility_defined_in_course', 'true', 'Yes'),
 ('documents_default_visibility_defined_in_course', 'false', 'No');
 
 UNLOCK TABLES;

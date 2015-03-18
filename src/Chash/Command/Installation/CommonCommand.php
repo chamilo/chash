@@ -389,14 +389,14 @@ class CommonCommand extends AbstractCommand
             ),
             'dbuser' => array(
                 'attributes' => array(
-                    'label' => 'User',
+                    'label' => 'Database user',
                     'data' => 'root',
                 ),
                 'type' => 'text'
             ),
             'dbpassword' => array(
                 'attributes' => array(
-                    'label' => 'Password',
+                    'label' => 'Database password',
                     'data' => 'root',
                 ),
                 'type' => 'password'
