@@ -558,10 +558,17 @@ class InstallCommand extends CommonCommand
             case '1.9.4':
             case '1.9.6':
             case '1.9.8':
+            case '1.9.10':
+            case '1.9.10.2':
                 $newVersion = '1.9.0';
                 break;
             case '10':
-                $newVersion = '10';
+            case '1.10.0':
+                $newVersion = '1.10.0';
+                break;
+            case '2':
+            case '2.0':
+                $newVersion = '2.0';
                 break;
         }
         return $newVersion;
