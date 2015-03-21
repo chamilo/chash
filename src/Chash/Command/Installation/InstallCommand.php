@@ -90,7 +90,7 @@ class InstallCommand extends CommonCommand
             $output->writeln("<error>Folder ".$configurationPath." must be writable</error>");
             return 0;
         } else {
-            $output->writeln("<comment>Configuration file will be saved here: </comment><info>".$configurationPath." </info>");
+            $output->writeln("<comment>Configuration file will be saved here: </comment><info>".$configurationPath."configuration.php </info>");
         }
 
         $configurationDistExists = false;
@@ -101,7 +101,7 @@ class InstallCommand extends CommonCommand
         }
 
         if ($configurationDistExists == false) {
-            $output->writeln("<error>configuration.dist.php file nof found</error> <comment>The file must exists in install/configuration.dist.php or app/config/parameter.yml");
+            $output->writeln("<error>configuration.dist.php file nof found</error> <comment>The file must exist in install/configuration.dist.php or app/config/parameter.yml");
             return 0;
         }
 
@@ -128,9 +128,9 @@ class InstallCommand extends CommonCommand
         $connectionToHostConnect = $connectionToHost->connect();
 
         if ($connectionToHostConnect) {
-            $output->writeln("<comment>Connection to the database established. </comment>");
+            $output->writeln(sprintf("<comment>Connection to database %s established. </comment>", $databaseSettings['dbname']));
         } else {
-            $output->writeln("<error>No access to the database.</error>");
+            $output->writeln(sprintf("<error>Could not connect to database %s. Please check the database connection parameters.</error>", $databaseSettings['dbname']));
             return 0;
         }
 
@@ -167,11 +167,12 @@ class InstallCommand extends CommonCommand
 
         if ($connect) {
 
-            $output->writeln("<comment>Connection to database '".$databaseSettings['dbname']."' established.</comment>");
+            $output->writeln(sprintf("<comment>Connection to database '%s' established.</comment>", $databaseSettings['dbname']));
             $configurationWasSaved = $this->writeConfiguration($version, $path);
 
             if ($configurationWasSaved) {
 
+                $output->writeln(sprintf("<comment>Configuration file saved to %s. Proceeding with updating and cleaning stuff.</comment>", $path));
                 // Installing database.
                 $result = $this->processInstallation($version, $output);
 
@@ -330,13 +331,45 @@ class InstallCommand extends CommonCommand
         $counter = 1;
         foreach ($params as $key => $value) {
             if (!isset($filledParams[$key])) {
-                $data = $dialog->ask(
-                    $output,
-                    "($counter/$total) Please enter the value of the $key (" . $value['attributes']['data'] . "): ",
-                    $value['attributes']['data']
-                );
-                $counter++;
-                $databaseSettings[$key] = $data;
+                if (!$input->isInteractive() && (in_array($key, array('dbpassword', 'port', 'host', 'driver')))) {
+                    // db password may be empty, so if not provided and the
+                    // --no-interaction mode was configured, forget about it
+                    switch ($key) {
+                        case 'dbpassword':
+                            $databaseSettings[$key] = null;
+                            $output->writeln(
+                                "($counter/$total) <comment>Option: $key was not provided. Using default value null (empty password)</comment>"
+                            );
+                            break;
+                        case 'host':
+                            $databaseSettings[$key] = 'localhost';
+                            $output->writeln(
+                                "($counter/$total) <comment>Option: $key was not provided. Using default value " . $databaseSettings[$key] . "</comment>"
+                            );
+                            break;
+                        case 'port':
+                            $databaseSettings[$key] = '3306';
+                            $output->writeln(
+                                "($counter/$total) <comment>Option: $key was not provided. Using default value " . $databaseSettings[$key] . "</comment>"
+                            );
+                            break;
+                        case 'driver':
+                            $databaseSettings[$key] = 'pdo_mysql';
+                            $output->writeln(
+                                "($counter/$total) <comment>Option: $key was not provided. Using default value " . $databaseSettings[$key] . "</comment>"
+                            );
+                            break;
+                    }
+                    $counter++;
+                } else {
+                    $data = $dialog->ask(
+                        $output,
+                        "($counter/$total) Please enter the value of the $key (" . $value['attributes']['data'] . "): ",
+                        $value['attributes']['data']
+                    );
+                    $counter++;
+                    $databaseSettings[$key] = $data;
+                }
             } else {
                 $output->writeln(
                     "($counter/$total) <comment>Option: $key = '" . $filledParams[$key] . "' was added as an option. </comment>"
@@ -598,7 +631,10 @@ class InstallCommand extends CommonCommand
 
         if (isset($databaseMap[$version])) {
             $dbInfo = $databaseMap[$version];
+            $output->writeln("<comment>Starting creation of database version </comment><info>$version... </info>");
             $sections = $dbInfo['section'];
+
+            $sectionsCount = 0;
 
             foreach ($sections as $sectionData) {
                 foreach ($sectionData as $dbInfo) {
@@ -628,9 +664,10 @@ class InstallCommand extends CommonCommand
 
                         // Getting extra information about the installation.
                         $output->writeln(
-                            "<comment>Database </comment><info>$databaseName </info><comment>process ended!</comment>"
+                            "<comment>Database </comment><info>$databaseName </info><comment>setup process terminated successfully!</comment>"
                         );
                     }
+                    $sectionsCount++;
                 }
             }
 
@@ -640,12 +677,14 @@ class InstallCommand extends CommonCommand
                     $databaseName = $courseInfo['name'];
                     $output->writeln("Inserting course database in Chamilo: <info>$databaseName</info>");
                     $this->createCourse($this->getHelper('db')->getConnection(), $databaseName);
+                    $sectionsCount ++;
                 }
             }
-
-            if ($this->commandLine) {
-                $output->writeln("<comment>Check your installation status with </comment><info>chamilo:status</info>");
+            if ($sectionsCount == 0) {
+                $output->writeln("<comment>No database section found for creation</comment>");
             }
+
+            $output->writeln("<comment>Check your installation status with </comment><info>chamilo:status</info>");
 
             return true;
         } else {
