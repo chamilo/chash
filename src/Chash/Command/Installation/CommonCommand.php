@@ -652,14 +652,17 @@ class CommonCommand extends AbstractCommand
      * Writes the configuration file for the first time (install command)
      * @param string $version
      * @param string $path
+     * @param object $output Output handler to print info messages
      * @return bool
      *
      */
     public function writeConfiguration($version, $path, $output)
     {
+        $output->writeln("<comment>Starting the writeConfiguration process.</comment>");
         $portalSettings = $this->getPortalSettings();
         $databaseSettings = $this->getDatabaseSettings();
         $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($path);
+        $output->writeln("<comment>Recovered all info. Reviewing.</comment>");
 
         // Creates a YML File
 
@@ -689,6 +692,7 @@ class CommonCommand extends AbstractCommand
 
         // Version settings
         $configuration['system_version'] = $version;
+        $output->writeln("<comment>Data reviewed. Checking where to write to...</comment>");
 
         if (file_exists($this->getRootSys().'config/parameters.yml.dist')) {
             $output->writeln("<comment>parameters.yml.dist file found.</comment>");
