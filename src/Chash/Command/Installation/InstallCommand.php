@@ -168,7 +168,7 @@ class InstallCommand extends CommonCommand
         if ($connect) {
 
             $output->writeln(sprintf("<comment>Connection to database '%s' established.</comment>", $databaseSettings['dbname']));
-            $configurationWasSaved = $this->writeConfiguration($version, $path);
+            $configurationWasSaved = $this->writeConfiguration($version, $path, $output);
 
             if ($configurationWasSaved) {
 

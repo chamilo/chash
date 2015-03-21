@@ -84,7 +84,7 @@ class CommonCommand extends AbstractCommand
     public function setDatabaseSettings(array $databaseSettings)
     {
         $user = isset($databaseSettings['dbuser']) ? $databaseSettings['dbuser'] : $databaseSettings['user'];
-        $password = isset($databaseSettings['dbpassword']) ? $databaseSettings['dbpassword'] : $databaseSettings['password'];
+        $password = isset($databaseSettings['dbpassword']) ? $databaseSettings['dbpassword'] : (isset($databaseSettings['password']) ? $databaseSettings['password'] : null);
 
         // Try db_port
         $dbPort = isset($databaseSettings['db_port']) ? $databaseSettings['db_port'] : null;
@@ -655,7 +655,7 @@ class CommonCommand extends AbstractCommand
      * @return bool
      *
      */
-    public function writeConfiguration($version, $path)
+    public function writeConfiguration($version, $path, $output)
     {
         $portalSettings = $this->getPortalSettings();
         $databaseSettings = $this->getDatabaseSettings();
@@ -691,6 +691,8 @@ class CommonCommand extends AbstractCommand
         $configuration['system_version'] = $version;
 
         if (file_exists($this->getRootSys().'config/parameters.yml.dist')) {
+            $output->writeln("<comment>parameters.yml.dist file found.</comment>");
+
             $file = $this->getRootSys().'config/parameters.yml';
             if (!file_exists($file)) {
                 $contents = file_get_contents($file);
@@ -711,6 +713,8 @@ class CommonCommand extends AbstractCommand
             }
         } else {
             // Try the old one
+            $output->writeln("<comment>Looking for main/install/configuration.dist.php.</comment>");
+
             $contents = file_get_contents($this->getRootSys().'main/install/configuration.dist.php');
 
             $config['{DATE_GENERATED}'] = date('r');
@@ -746,7 +750,11 @@ class CommonCommand extends AbstractCommand
             }
 
             $newConfigurationFile = $configurationPath.'configuration.php';
+            $output->writeln(sprintf("<comment>Writing config to %s.</comment>", $newConfigurationFile));
+
             $result = file_put_contents($newConfigurationFile, $contents);
+            $output->writeln("<comment>Config file written.</comment>");
+
         }
 
         return $result;
