@@ -108,7 +108,7 @@ class InstallCommand extends CommonCommand
         if (file_exists($configurationPath.'configuration.php')) {
             if ($this->commandLine) {
                 $output->writeln("<comment>There's a Chamilo portal here:</comment> <info>".$configurationPath."</info>");
-                $output->writeln("<comment>You should run <info>chamilo:wipe $path </info><comment>if you want to start with a fresh install.</comment>");
+                $output->writeln("<comment>You should run <info>chash chash:chamilo_wipe $path </info><comment>if you want to start with a fresh install.</comment>");
                 $output->writeln("<comment>You could also manually delete this file:</comment><info> sudo rm ".$configurationPath."configuration.php</info>");
             } else {
                 $output->writeln("<comment>There's a Chamilo portal here:</comment> <info>".$configurationPath." </info>");
