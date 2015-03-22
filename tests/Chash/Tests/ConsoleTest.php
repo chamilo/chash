@@ -25,9 +25,9 @@ class ConsoleTest extends PHPUnit_Framework_TestCase
             $helperSet->set($helper, $name);
         }
 
-        $application->add(new CleanConfigFilesCommand());
+        //$application->add(new CleanConfigFilesCommand());
 
-        $command = $application->find('files:clean_config_files');
+        //$command = $application->find('files:clean_config_files');
         //$this->assertEquals('Chash\Command\Files\CleanConfigFilesCommand', get_class($command));
 
 /*        $commandTester = new CommandTester($command);
