@@ -119,6 +119,9 @@ Available commands:
 
     Available commands:
       ccf                                   Shortcut to files:clean_course_files
+      dbc                                   Shortcut to db:sql_cli
+      dbcli                                 Shortcut to db:sql_cli
+      fct                                   Shortcut to files:clean_temp_folder
       fsdu                                  Shortcut to files:show_disk_usage
       fudms                                 Shortcut to files:update_directory_max_size
       help                                  Displays help for a command

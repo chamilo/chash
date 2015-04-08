@@ -25,6 +25,7 @@ class RunSQLCommand extends CommonDatabaseCommand
 
         $this
             ->setName('db:sql_cli')
+            ->setAliases(array('dbc', 'dbcli'))
             ->setDescription('Enters to the SQL command line');
         $this->setHelp('Prompts a SQL cli');
 

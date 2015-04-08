@@ -23,6 +23,7 @@ class CleanTempFolderCommand extends CommonDatabaseCommand
         parent::configure();
         $this
             ->setName('files:clean_temp_folder')
+            ->setAliases(array('fct'))
             ->setDescription('Cleans the temp directory.');
     }
 
