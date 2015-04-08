@@ -118,23 +118,25 @@ Available commands:
 ====================
 
     Available commands:
+      ccf                                   Shortcut to files:clean_course_files
+      fsdu                                  Shortcut to files:show_disk_usage
+      fudms                                 Shortcut to files:update_directory_max_size
       help                                  Displays help for a command
       list                                  Lists commands
       selfupdate                            Updates chash to the latest version
-      tasl                                  Creates a sub-language
-      tdl                                   Disables a (enabled) language
-      tel                                   Enables a (disabled) language
-      tl                                    Gets all languages as a list
-      tpl                                   Gets or sets the platform language
-      usl                                   Sets the users language to the one given
-
-    chamilo
-      chamilo:install                       Execute a Chamilo installation to a specified version.
-      chamilo:status                        Show the information of the current Chamilo installation
-      chamilo:upgrade                       Execute a chamilo migration to a specified version or the latest available version
-      chamilo:wipe                          Prepares a portal for a new installation
+      tasl                                  Shortcut to translation:add_sub_language
+      tdl                                   Shortcut to translation:disable
+      tel                                   Shortcut to translation:enable
+      tl                                    Shortcut to translation:list
+      tpl                                   Shortcut to translation:platform_language
+      urla                                  Shortcut to user:url_access
+      usl                                   Shortcut to user:set_language
 
     chash
+      chash:chamilo_install                 Execute a Chamilo installation to a specified version.
+      chash:chamilo_status                  Show the information of the current Chamilo installation
+      chash:chamilo_upgrade                 Execute a chamilo migration to a specified version or the latest available version
+      chash:chamilo_wipe                    Prepares a portal for a new installation
       chash:self-update                     Updates chash to the latest version
       chash:setup                           Setups the migration.yml
 
@@ -156,9 +158,18 @@ Available commands:
       files:clean_course_files              Cleans the courses directory
       files:clean_deleted_documents         Cleans the documents that were deleted but left as _DELETED_
       files:clean_temp_folder               Cleans the temp directory.
+      files:convert_videos                  Converts all videos found in the given directory (recursively) to the given format, using the ffmpeg command line
+      files:delete_courses                  Given an ID, code or category code, deletes one or several courses completely
+      files:delete_multi_url                Deletes one URL out of a multi-url campus
       files:generate_temp_folders           Generate temp folder structure: twig
+      files:replace_url                     Cleans the config files to help you re-install
       files:set_permissions_after_install   Set permissions
+      files:show_disk_usage                 Shows the disk usage vs allowed space, per course
       files:show_mail_conf                  Returns the current mail config
+      files:update_directory_max_size       Increases the max disk space for all the courses reaching a certain threshold.
+    
+    info
+      info:which                            Tells where to find code for Chamilo tools
 
     migrations
       migrations:diff                       Generate a migration by comparing your current database to your mapping information.
@@ -184,6 +195,7 @@ Available commands:
       user:make_admin                       Makes the given user admin on the main portal
       user:reset_login                      Outputs login link for given username
       user:set_language                     Sets the users language to the one given
+      user:url_access                       Show the access per Url
 
 Licensing
 =========
