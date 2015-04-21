@@ -187,6 +187,7 @@ class CommonCommand extends AbstractCommand
     {
 
         $chashFolder = dirname(dirname(dirname(__FILE__)));
+
         return $chashFolder.'/Resources/Database/';
     }
 
@@ -831,14 +832,14 @@ class CommonCommand extends AbstractCommand
                 'name' => 'course1',
                 'sql' => array(
                     'db_course1.sql',
-                ),
+                )
             ),
             array(
                 'name' => 'course2',
                 'sql' => array(
                     'db_course2.sql'
                 )
-            ),
+            )
         );
 
         return array(
@@ -851,8 +852,8 @@ class CommonCommand extends AbstractCommand
                                 'db_main.sql',
                                 'db_stats.sql',
                                 'db_user.sql'
-                            ),
-                        ),
+                            )
+                        )
                     ),
                     'course' => $defaultCourseData
                 ),
@@ -866,8 +867,8 @@ class CommonCommand extends AbstractCommand
                                 'db_main.sql',
                                 'db_stats.sql',
                                 'db_user.sql'
-                            ),
-                        ),
+                            )
+                        )
                     ),
                     'course' => $defaultCourseData
                 ),
@@ -883,20 +884,21 @@ class CommonCommand extends AbstractCommand
                                 'db_stats.sql',
                                 'db_user.sql'
                             ),
-                        ),
-                    ),
+                        )
+                    )
                 )
             ),
             '1.10.0' => array(
                 'section' => array(
+                    'migrations' => 'Version110',
                     'main' => array(
                         array(
                             'name' => 'chamilo',
                             'sql' => array(
-                                'db_main.sql',
+                                //'db_main.sql',
                             ),
-                        ),
-                    ),
+                        )
+                    )
                 )
             ),
             '2.0' => array(
@@ -1231,7 +1233,6 @@ class CommonCommand extends AbstractCommand
     {
         $singleDatabase = isset($_configuration['single_database']) ? $_configuration['single_database'] : false;
         $tablePrefix = isset($_configuration['table_prefix']) ? $_configuration['table_prefix'] : null;
-        //$db_prefix = isset($_configuration['db_prefix']) ? $_configuration['db_prefix'] : null;
 
         if ($singleDatabase) {
             // the $courseDatabase already contains the $db_prefix;
@@ -1324,7 +1325,7 @@ class CommonCommand extends AbstractCommand
 
     /**
      * Copy files from main/inc/conf to the new location config
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      */
     public function copyConfigFilesToNewLocation(OutputInterface $output)
     {

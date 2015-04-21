@@ -19,7 +19,7 @@ class ConfigurationHelper extends Helper
     protected $isLegacy = true;
 
     /**
-     *
+     * Constructor
      */
     public function __construct()
     {
@@ -75,8 +75,9 @@ class ConfigurationHelper extends Helper
             '1.9.4',
             '1.9.6',
             '1.9.8',
-            '10.0.0',
-            '11.0.0'
+            '1.10.0',
+            '1.11.0',
+            '2.0.0'
         );
 
         return $versionList;
@@ -100,11 +101,12 @@ class ConfigurationHelper extends Helper
             $chamiloPath = $path;
         }
 
-        // Chamilo 1.9.x and 1.8.x
+        // Chamilo 1.10.x, 1.9.x and 1.8.x
         if (is_dir($chamiloPath.'/main/inc/conf')) {
             return realpath($chamiloPath.'/main/inc/conf/').'/';
         }
-        // Chamilo 10
+
+        // Chamilo v2
         if (is_dir($chamiloPath.'/app/config')) {
             $this->isLegacy = false;
             return realpath($chamiloPath.'/app/config/').'/';
@@ -195,6 +197,7 @@ class ConfigurationHelper extends Helper
                 $this->configuration = $this->readConfigurationFile($configurationFile);
             }
         }
+
         return $this->configuration;
     }
 
@@ -220,14 +223,13 @@ class ConfigurationHelper extends Helper
             return realpath($configurationPath.'/../../').'/';
         }
 
-        // Old structure (<= v1.9.*)
+        // Old structure (<= v1.9.* and 1.10.x)
         if (file_exists($configurationPath.'/../../../user_portal.php')) {
             return realpath($configurationPath.'/../../../').'/';
         }
 
         return null;
     }
-
 
     /**
      * Reads the Chamilo configuration file and returns the $_configuration array
@@ -273,6 +275,7 @@ class ConfigurationHelper extends Helper
                 }
             }
         }
+
         return array();
     }
 
@@ -360,6 +363,7 @@ class ConfigurationHelper extends Helper
 
         return $finder;
     }
+
     /**
      * Gets the documents and folders marked DELETED
      * @return array
@@ -462,6 +466,7 @@ class ConfigurationHelper extends Helper
         }
         return $finder;
     }
+
     /**
      * Lists the files in the archive/ or data/temp/ directory (depends on Chamilo version)
      * @return Finder

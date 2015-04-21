@@ -12,6 +12,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console;
 use Symfony\Component\Yaml\Dumper;
+use Symfony\Component\ClassLoader\ClassLoader;
+use Symfony\Component\ClassLoader\Psr4ClassLoader;
 
 /**
  * Class InstallCommand
@@ -174,7 +176,7 @@ class InstallCommand extends CommonCommand
 
                 $output->writeln(sprintf("<comment>Configuration file saved to %s. Proceeding with updating and cleaning stuff.</comment>", $path));
                 // Installing database.
-                $result = $this->processInstallation($version, $output);
+                $result = $this->processInstallation($databaseSettings, $version, $output);
 
                 if ($result) {
 
@@ -294,19 +296,12 @@ class InstallCommand extends CommonCommand
             $result = $connectionToDatabase->connect();
 
             $this->askPortalSettings($input, $output);
-
             $this->setDoctrineSettings();
-
             $this->setPortalSettingsInChamilo(
                 $output,
                 $connectionToDatabase
             );
-
-
-
         }
-
-
     }
 
     /**
@@ -475,7 +470,10 @@ class InstallCommand extends CommonCommand
     public function settingParameters(InputInterface $input)
     {
         // Test string
-        // sudo php /var/www/chash/chash.php  chamilo:install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root master /var/www/chamilo-test
+        // Master
+        // sudo php /var/www/chash/chash.php chash:chamilo_install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root master /var/www/chamilo-test
+        // 1.10.x
+        // sudo php /var/www/chash/chash.php chash:chamilo_install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root 1.10.x /var/www/chamilo-test
         if (PHP_SAPI != 'cli') {
             $this->commandLine = false;
         }
@@ -494,7 +492,7 @@ class InstallCommand extends CommonCommand
 
         // @todo move this in the helper
         if ($configurationPath == false) {
-            //  Seems an old installation!
+            // Seems an old installation!
             $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($this->path);
             $this->setRootSys(realpath($configurationPath.'/../../../').'/');
             $this->oldConfigLocation = true;
@@ -549,6 +547,8 @@ class InstallCommand extends CommonCommand
             if ($result == 0) {
                 return 0;
             }
+
+            $this->settingParameters($input);
         }
 
         if ($this->commandLine) {
@@ -606,6 +606,7 @@ class InstallCommand extends CommonCommand
                 $newVersion = '2.0';
                 break;
         }
+
         return $newVersion;
 
     }
@@ -617,7 +618,7 @@ class InstallCommand extends CommonCommand
      * @param $output
      * @return bool
      */
-    public function processInstallation($version, $output)
+    public function processInstallation($databaseSettings, $version, $output)
     {
         $this->setDoctrineSettings();
 
@@ -637,37 +638,39 @@ class InstallCommand extends CommonCommand
             $sectionsCount = 0;
 
             foreach ($sections as $sectionData) {
-                foreach ($sectionData as $dbInfo) {
-                    $databaseName = $dbInfo['name'];
-                    $dbList = $dbInfo['sql'];
+                if (is_array($sectionData)) {
+                    foreach ($sectionData as $dbInfo) {
+                        $databaseName = $dbInfo['name'];
+                        $dbList = $dbInfo['sql'];
 
-                    $output->writeln("<comment>Creating database</comment> <info>$databaseName ... </info>");
+                        $output->writeln("<comment>Creating database</comment> <info>$databaseName ... </info>");
 
-                    if (empty($dbList)) {
-                        $output->writeln("<error>No files to load.</error>");
-                        continue;
-                    } else {
+                        if (empty($dbList)) {
+                            $output->writeln("<error>No files to load.</error>");
+                            continue;
+                        } else {
 
-                        // Fixing db list
-                        foreach ($dbList as &$db) {
-                            $db = $sqlFolder.$db;
+                            // Fixing db list
+                            foreach ($dbList as &$db) {
+                                $db = $sqlFolder . $db;
+                            }
+
+                            $command = $this->getApplication()->find('dbal:import');
+                            // Importing sql files.
+                            $arguments = array(
+                                'command' => 'dbal:import',
+                                'file' => $dbList
+                            );
+                            $input = new ArrayInput($arguments);
+                            $command->run($input, $output);
+
+                            // Getting extra information about the installation.
+                            $output->writeln(
+                                "<comment>Database </comment><info>$databaseName </info><comment>setup process terminated successfully!</comment>"
+                            );
                         }
-
-                        $command = $this->getApplication()->find('dbal:import');
-                        // Importing sql files.
-                        $arguments = array(
-                            'command' => 'dbal:import',
-                            'file' => $dbList
-                        );
-                        $input = new ArrayInput($arguments);
-                        $command->run($input, $output);
-
-                        // Getting extra information about the installation.
-                        $output->writeln(
-                            "<comment>Database </comment><info>$databaseName </info><comment>setup process terminated successfully!</comment>"
-                        );
+                        $sectionsCount++;
                     }
-                    $sectionsCount++;
                 }
             }
 
@@ -680,6 +683,28 @@ class InstallCommand extends CommonCommand
                     $sectionsCount ++;
                 }
             }
+
+            if (isset($sections) && isset($sections['migrations'])) {
+
+                $loader = new Psr4ClassLoader();
+                $loader->addPrefix('Chamilo', $this->getRootSys().'src');
+                $loader->register();
+
+                require_once $this->getRootSys().'/main/inc/lib/api.lib.php';
+                require_once $this->getRootSys().'/main/inc/lib/database.lib.php';
+
+                $database = new \Database();
+                $database->connect($databaseSettings, __DIR__.'/../../../../', $this->getRootSys());
+                $manager = $database->getManager();
+
+                $metadataList = $manager->getMetadataFactory()->getAllMetadata();
+                $schema = $manager->getConnection()->getSchemaManager()->createSchema();
+
+                // Create database schema
+                $tool = new \Doctrine\ORM\Tools\SchemaTool($manager);
+                $tool->createSchema($metadataList);
+            }
+
             if ($sectionsCount == 0) {
                 $output->writeln("<comment>No database section found for creation</comment>");
             }
@@ -722,13 +747,15 @@ class InstallCommand extends CommonCommand
      * If the database doesn't exist we check the creation permissions.
      *
      * @return int      1 when there is no problem;
-     *                  0 when a new database is impossible to be created, then the single/multiple database configuration is impossible too
+     *                  0 when a new database is impossible to be created,
+     * then the single/multiple database configuration is impossible too
      *                 -1 when there is no connection established.
      */
     public function testDatabaseConnection()
     {
         $conn = $this->testUserAccessConnection();
         $connect = $conn->connect();
+
         return $connect;
     }
 
@@ -741,6 +768,7 @@ class InstallCommand extends CommonCommand
         $databaseConnection = $this->getDatabaseSettings();
         $databaseConnection['dbname'] = null;
         $conn = \Doctrine\DBAL\DriverManager::getConnection($databaseConnection, $config);
+
         return $conn;
     }
 
@@ -752,6 +780,7 @@ class InstallCommand extends CommonCommand
         $config = new \Doctrine\DBAL\Configuration();
         $databaseConnection = $this->getDatabaseSettings();
         $conn = \Doctrine\DBAL\DriverManager::getConnection($databaseConnection, $config);
+
         return $conn;
     }
 
