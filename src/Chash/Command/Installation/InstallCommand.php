@@ -614,6 +614,7 @@ class InstallCommand extends CommonCommand
     /**
      * Installation command
      *
+     * @param array $databaseSettings
      * @param string $version
      * @param $output
      * @return bool
@@ -686,23 +687,51 @@ class InstallCommand extends CommonCommand
 
             if (isset($sections) && isset($sections['migrations'])) {
 
-                $loader = new Psr4ClassLoader();
-                $loader->addPrefix('Chamilo', $this->getRootSys().'src');
-                $loader->register();
-
+                require_once $this->getRootSys().'/main/inc/lib/database.constants.inc.php';
                 require_once $this->getRootSys().'/main/inc/lib/api.lib.php';
                 require_once $this->getRootSys().'/main/inc/lib/database.lib.php';
+                require_once $this->getRootSys().'/main/install/install.lib.php';
+
+                $newInstallationPath = $this->getRootSys();
+                $chashPath = __DIR__.'/../../../../';
 
                 $database = new \Database();
-                $database->connect($databaseSettings, __DIR__.'/../../../../', $this->getRootSys());
+                $database->connect($databaseSettings, $chashPath, $newInstallationPath);
                 $manager = $database->getManager();
 
                 $metadataList = $manager->getMetadataFactory()->getAllMetadata();
-                $schema = $manager->getConnection()->getSchemaManager()->createSchema();
+                $manager->getConnection()->getSchemaManager()->createSchema();
 
                 // Create database schema
                 $tool = new \Doctrine\ORM\Tools\SchemaTool($manager);
                 $tool->createSchema($metadataList);
+
+                $data = file_get_contents($newInstallationPath.'main/install/data.sql');
+                $result = $manager->getConnection()->prepare($data);
+                $result->execute();
+                $result->closeCursor();
+
+                $portalSettings = $this->getPortalSettings();
+                $adminSettings = $this->getAdminSettings();
+
+                \finishInstallation(
+                    $manager,
+                    $newInstallationPath,
+                    $portalSettings['encrypt_method'],
+                    $adminSettings['password'],
+                    $adminSettings['lastname'],
+                    $adminSettings['firstname'],
+                    $adminSettings['username'],
+                    $adminSettings['email'],
+                    $adminSettings['phone'],
+                    $adminSettings['language'],
+                    $portalSettings['institution'],
+                    $portalSettings['institution_url'],
+                    $portalSettings['sitename'],
+                    false, //$allowSelfReg,
+                    false //$allowSelfRegProf
+                );
+
             }
 
             if ($sectionsCount == 0) {
