@@ -891,14 +891,11 @@ class CommonCommand extends AbstractCommand
             '1.10.0' => array(
                 'section' => array(
                     'migrations' => 'Version110',
-                    'main' => array(
-                        array(
-                            'name' => 'chamilo',
-                            'sql' => array(
-                                //'db_main.sql',
-                            ),
-                        )
-                    )
+                )
+            ),
+            '1.11.0' => array(
+                'section' => array(
+                    'migrations' => 'Version111',
                 )
             ),
             '2.0' => array(

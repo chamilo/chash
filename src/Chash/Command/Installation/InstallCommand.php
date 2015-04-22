@@ -644,33 +644,41 @@ class InstallCommand extends CommonCommand
                         $databaseName = $dbInfo['name'];
                         $dbList = $dbInfo['sql'];
 
-                        $output->writeln("<comment>Creating database</comment> <info>$databaseName ... </info>");
-
-                        if (empty($dbList)) {
-                            $output->writeln("<error>No files to load.</error>");
-                            continue;
-                        } else {
-
-                            // Fixing db list
-                            foreach ($dbList as &$db) {
-                                $db = $sqlFolder . $db;
-                            }
-
-                            $command = $this->getApplication()->find('dbal:import');
-                            // Importing sql files.
-                            $arguments = array(
-                                'command' => 'dbal:import',
-                                'file' => $dbList
-                            );
-                            $input = new ArrayInput($arguments);
-                            $command->run($input, $output);
-
-                            // Getting extra information about the installation.
+                        if (!empty($dbList)) {
                             $output->writeln(
-                                "<comment>Database </comment><info>$databaseName </info><comment>setup process terminated successfully!</comment>"
+                                "<comment>Creating database</comment> <info>$databaseName ... </info>"
                             );
+
+                            if (empty($dbList)) {
+                                $output->writeln(
+                                    "<error>No files to load.</error>"
+                                );
+                                continue;
+                            } else {
+
+                                // Fixing db list
+                                foreach ($dbList as &$db) {
+                                    $db = $sqlFolder.$db;
+                                }
+
+                                $command = $this->getApplication()->find(
+                                    'dbal:import'
+                                );
+                                // Importing sql files.
+                                $arguments = array(
+                                    'command' => 'dbal:import',
+                                    'file' => $dbList
+                                );
+                                $input = new ArrayInput($arguments);
+                                $command->run($input, $output);
+
+                                // Getting extra information about the installation.
+                                $output->writeln(
+                                    "<comment>Database </comment><info>$databaseName </info><comment>setup process terminated successfully!</comment>"
+                                );
+                            }
+                            $sectionsCount++;
                         }
-                        $sectionsCount++;
                     }
                 }
             }
@@ -685,8 +693,9 @@ class InstallCommand extends CommonCommand
                 }
             }
 
+            // Special migration for chamilo v 1.10
             if (isset($sections) && isset($sections['migrations'])) {
-
+                $sectionsCount = 1;
                 require_once $this->getRootSys().'/main/inc/lib/database.constants.inc.php';
                 require_once $this->getRootSys().'/main/inc/lib/api.lib.php';
                 require_once $this->getRootSys().'/main/inc/lib/database.lib.php';
@@ -700,6 +709,8 @@ class InstallCommand extends CommonCommand
                 $manager = $database->getManager();
 
                 $metadataList = $manager->getMetadataFactory()->getAllMetadata();
+
+                $output->writeln("<comment>Creating database structure</comment>");
                 $manager->getConnection()->getSchemaManager()->createSchema();
 
                 // Create database schema
@@ -708,6 +719,7 @@ class InstallCommand extends CommonCommand
 
                 $data = file_get_contents($newInstallationPath.'main/install/data.sql');
                 $result = $manager->getConnection()->prepare($data);
+                $output->writeln("<comment>Inserting default data</comment>");
                 $result->execute();
                 $result->closeCursor();
 
@@ -732,6 +744,7 @@ class InstallCommand extends CommonCommand
                     false //$allowSelfRegProf
                 );
 
+                $output->writeln("<comment>Remember to run composer install</comment>");
             }
 
             if ($sectionsCount == 0) {
