@@ -1,17 +1,5 @@
 <?php
-/**
- * This script contains the TermsPackage command, made to simplify the live of
- * translators by providing them with a list of the 10,000 most used words in
- * their own language to make sure they can have a strong first impact.
- * To make this work, you will have to have the original 10,000 most used words
- * in English. You can either get them by sending an e-mail to ywarnier@chamilo.org
- * or by starting the langstats scripts (check main/cron/lang/ and
- * main/inc/global.inc.php ~600), then collecting the variables with the scripts
- * in main/cron/lang/
- * The present command serves only at the end of this process, to generate the
- * corresponding language packages in other languages than English
- * @package chamilo.chash.translation
- */
+
 namespace Chash\Command\Translation;
 
 use Chash\Command\Database\CommonDatabaseCommand;
@@ -23,6 +11,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class ExportLanguageCommand
+ *
+ * TermsPackage command, made to simplify the live of
+ * translators by providing them with a list of the 10,000 most used words in
+ * their own language to make sure they can have a strong first impact.
+ * To make this work, you will have to have the original 10,000 most used words
+ * in English. You can either get them by sending an e-mail to ywarnier@chamilo.org
+ * or by starting the langstats scripts (check main/cron/lang/ and
+ * main/inc/global.inc.php ~600), then collecting the variables with the scripts
+ * in main/cron/lang/
+ * The present command serves only at the end of this process, to generate the
+ * corresponding language packages in other languages than English
  * @package Chash\Command\Translation
  */
 class TermsPackageCommand extends CommonDatabaseCommand

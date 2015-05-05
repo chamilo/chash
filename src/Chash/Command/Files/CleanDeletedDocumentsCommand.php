@@ -10,8 +10,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class CleanDeletedDocmentsCommand
- * Clean the courses/[CODE]/documents/ directory, removing all documents and folders marked DELETED
+ * Class CleanDeletedDocumentsCommand
+ * Clean the courses/[CODE]/documents/ directory, removing all documents
+ * and folders marked DELETED
  * @package Chash\Command\Files
  */
 class CleanDeletedDocumentsCommand extends CommonDatabaseCommand

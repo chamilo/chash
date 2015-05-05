@@ -9,6 +9,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Exception\IOException;
+
 /**
  * Class GenerateTempFileStructureCommand
  * @package Chash\Command\Files
@@ -42,12 +44,12 @@ class GenerateTempFileStructureCommand extends CommonDatabaseCommand
     }
 
     /**
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param OutputInterface $output
      * @param array $files
      * @param $permission
      * @return int
      */
-    public function createFolders(\Symfony\Component\Console\Output\OutputInterface $output, $files, $permission)
+    public function createFolders(OutputInterface $output, $files, $permission)
     {
         $dryRun = $this->getConfigurationHelper()->getDryRun();
 

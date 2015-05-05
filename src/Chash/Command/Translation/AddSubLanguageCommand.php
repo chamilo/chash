@@ -1,12 +1,5 @@
 <?php
-/**
- * Definition of command to
- * add sub language
- * Does not support multi-url yet
- */
-/**
- * Necessary namespaces definitions and usage
- */
+
 namespace Chash\Command\Translation;
 
 use Chash\Command\Database\CommonDatabaseCommand;
@@ -19,6 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class AddSubLanguageCommand
  * Definition of the translation:add_sub_language command
+ * Does not support multi-url yet
  * @package Chash\Command\Translation
  */
 class AddSubLanguageCommand extends CommonDatabaseCommand

@@ -134,13 +134,11 @@ class ImportLanguageCommand extends CommonDatabaseCommand
 
                     }
                 }
-
             } else {
                 $output->writeln("<comment>The file is not a valid Chamilo language package<comment>");
             }
         } else {
             $output->writeln("<comment>The file located in '$file' is not accessible<comment>");
         }
-
     }
 }

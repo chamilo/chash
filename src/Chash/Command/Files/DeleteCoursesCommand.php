@@ -92,15 +92,12 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
                 return;
             }
 
-
-
-
             // Check the courses that match the search criteria
             if (!empty($courseId)) {
                 $courseId = intval($courseId);
                 $sql = "SELECT id, code, category_code, creation_date
-                    FROM course
-                    WHERE id = $courseId ";
+                        FROM course
+                        WHERE id = $courseId ";
                 if (!empty($beforeDate)) {
                     $output->writeln('ID-based course search: ' . $courseId . ' and date < ' . $beforeDate);
                     $sql .= " AND creation_date < '$beforeDate' ";
@@ -110,8 +107,8 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
                 $sql .= " ORDER BY creation_date";
             } elseif (!empty($courseCode)) {
                 $sql = "SELECT id, code, category_code, creation_date
-                    FROM course
-                    WHERE code = '$courseCode' ";
+                        FROM course
+                        WHERE code = '$courseCode' ";
                 if (!empty($beforeDate)) {
                     $output->writeln('Code-based course search: ' . $courseCode . ' and date < ' . $beforeDate);
                     $sql .= " AND creation_date < '$beforeDate' ";
@@ -121,8 +118,8 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
                 $sql .= " ORDER BY creation_date";
             } elseif (!empty($courseCategory)) {
                 $sql = "SELECT id, code, category_code, creation_date
-                    FROM course
-                    WHERE category_code = '$courseCategory'";
+                        FROM course
+                        WHERE category_code = '$courseCategory'";
                 if (!empty($beforeDate)) {
                     $output->writeln('Category-based course search: ' . $courseCategory . ' and date < ' . $beforeDate);
                     $sql .= " AND creation_date < '$beforeDate' ";
@@ -133,9 +130,9 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
             } elseif (!empty($beforeDate)) {
                 $output->writeln('Category-based course search: ' . $beforeDate);
                 $sql = "SELECT id, code, category_code, creation_date
-                    FROM course
-                    WHERE creation_date < '$beforeDate'
-                    ORDER BY creation_date";
+                        FROM course
+                        WHERE creation_date < '$beforeDate'
+                        ORDER BY creation_date";
             }
 
             $stmt = $connection->query($sql);
@@ -169,11 +166,11 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
 
 
             // Get courses vs URL match and measure disk usage
-            $sql = "SELECT c.id, u.course_code, u.access_url_id, c.directory "
-                . " FROM access_url_rel_course u, course c "
-                . " WHERE u.course_code = c.code "
-                . " AND c.id IN ($courseIdsString) "
-                . " ORDER BY access_url_id, course_code ASC";
+            $sql = "SELECT c.id, u.course_code, u.access_url_id, c.directory
+                    FROM access_url_rel_course u, course c
+                    WHERE u.course_code = c.code
+                    AND c.id IN ($courseIdsString)
+                    ORDER BY access_url_id, course_code ASC";
             $stmt = $connection->query($sql);
             $urlCourses = array();
             $coursesUrl = array();
@@ -270,9 +267,9 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
     /**
      * Delete all references to a course inside a given URL, but do not delete
      * the course itself
-     * @param   object  Output interface
-     * @param   string  Course code
-     * @param   int     URL ID
+     * @param   OutputInterface $output
+     * @param   string  $courseCode
+     * @param   int     $urlId
      * @return  bool
      */
     private function unlinkCourse(OutputInterface $output, $courseCode, $urlId)
@@ -284,12 +281,12 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
          */
         $connection = $this->getConnection();
         // 1. List the sessions in that URL that include this course
-        $sql = "SELECT src.id_session "
-            . "FROM session_rel_course src "
-            . "JOIN access_url_rel_session aurs "
-            . "ON aurs.session_id = src.id_session "
-            . "WHERE src.course_code = '" . $courseCode . "' "
-            . "  AND aurs.access_url_id = $urlId";
+        $sql = "SELECT src.id_session
+                FROM session_rel_course src
+                JOIN access_url_rel_session aurs
+                ON aurs.session_id = src.id_session
+                WHERE src.course_code = '" . $courseCode . "'
+                AND aurs.access_url_id = $urlId";
         $stmt = $connection->query($sql);
         $sessions = array();
         while ($row = $stmt->fetch()) {
@@ -337,7 +334,7 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
         $sql = "DELETE FROM access_url_rel_course "
             . " WHERE access_url_id = $urlId "
             . " AND course_code = '$courseCode'";
-        $stmt = $connection->query($sql);
+        $connection->query($sql);
     }
 
     /**
@@ -451,7 +448,7 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
         );
         foreach ($tables as $table) {
             $sql = "DELETE FROM $table WHERE c_id = $cid";
-            $stmt = $connection->query($sql);
+            $connection->query($sql);
         }
         $output->writeln(
             'Deleted all references to course ' . $courseCode . ' in c_* tables.'
@@ -463,7 +460,7 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
         $output->writeln('Removed files from ' . $coursePath);
         // Delete the course itself from the course table
         $sql = "DELETE FROM course WHERE id = $cid";
-        $stmt = $connection->query($sql);
+        $connection->query($sql);
         $output->writeln(
             'Deleted course ' . $courseCode . ' reference in course table.'
         );

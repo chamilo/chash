@@ -261,9 +261,9 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
     /**
      * Delete all references to a course inside a given URL, but do not delete
      * the course itself
-     * @param   object  Output interface
-     * @param   string  Course code
-     * @param   int     URL ID
+     * @param   OutputInterface $output
+     * @param   string  $courseCode
+     * @param   int     $urlId
      * @return  bool
      */
     private function unlinkCourse(OutputInterface $output, $courseCode, $urlId)

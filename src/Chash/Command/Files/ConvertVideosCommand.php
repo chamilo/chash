@@ -13,7 +13,8 @@ use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class ConvertVideosCommand
- * Convert all videos found in the given directory (recursively) to the given format, using ffmpeg
+ * Convert all videos found in the given directory (recursively)
+ * to the given format, using ffmpeg
  * @package Chash\Command\Files
  */
 class ConvertVideosCommand extends CommonDatabaseCommand

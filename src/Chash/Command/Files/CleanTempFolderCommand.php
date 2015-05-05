@@ -55,8 +55,4 @@ class CleanTempFolderCommand extends CommonDatabaseCommand
         $files = $this->getConfigurationHelper()->getTempFiles();
         $this->removeFiles($files, $output);
     }
-
-    public function detectTempFolders()
-    {
-    }
 }

@@ -1,12 +1,5 @@
 <?php
-/**
- * Definition of command to
- * enable a language
- * Does not support multi-url yet
- */
-/**
- * Necessary namespaces definitions and usage
- */
+
 namespace Chash\Command\Translation;
 
 use Chash\Command\Database\CommonDatabaseCommand;
@@ -19,6 +12,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class EnableLanguageCommand
  * Definition of the translation:enable command
+ * Definition of command to enable a language.
+ * Does not support multi-url yet.
  * @package Chash\Command\Translation
  */
 class EnableLanguageCommand extends CommonDatabaseCommand

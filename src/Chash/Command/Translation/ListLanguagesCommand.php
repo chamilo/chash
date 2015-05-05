@@ -1,12 +1,5 @@
 <?php
-/**
- * Definition of command to
- * list platform languages
- * Does not support multi-url yet
- */
-/**
- * Necessary namespaces definitions and usage
- */
+
 namespace Chash\Command\Translation;
 
 use Chash\Command\Database\CommonDatabaseCommand;
@@ -19,6 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class ListLanguagesCommand
  * Definition of the translation:list command
+ * Definition of command to list platform languages
  * @package Chash\Command\Translation
  */
 class ListLanguagesCommand extends CommonDatabaseCommand

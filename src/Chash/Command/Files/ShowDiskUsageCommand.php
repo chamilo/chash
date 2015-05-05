@@ -13,7 +13,8 @@ use Symfony\Component\Console\Helper\TableHelper;
 
 /**
  * Class ShowDiskUsageCommand
- * Show the total disk usage per course compared to the maximum space allowed for the corresponding courses
+ * Show the total disk usage per course compared to the maximum space allowed
+ * for the corresponding courses
  * @package Chash\Command\Files
  */
 class ShowDiskUsageCommand extends CommonDatabaseCommand
