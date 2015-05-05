@@ -659,6 +659,7 @@ class CommonCommand extends AbstractCommand
      */
     public function writeConfiguration($version, $path, $output)
     {
+        $output->writeln("");
         $output->writeln("<comment>Starting the writeConfiguration process.</comment>");
         $portalSettings = $this->getPortalSettings();
         $databaseSettings = $this->getDatabaseSettings();
@@ -755,7 +756,7 @@ class CommonCommand extends AbstractCommand
             }
 
             $newConfigurationFile = $configurationPath.'configuration.php';
-            $output->writeln(sprintf("<comment>Writing config to %s.</comment>", $newConfigurationFile));
+            $output->writeln(sprintf("<comment>Writing config to %s</comment>", $newConfigurationFile));
 
             $result = file_put_contents($newConfigurationFile, $contents);
             $output->writeln("<comment>Config file written.</comment>");

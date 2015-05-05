@@ -130,9 +130,19 @@ class InstallCommand extends CommonCommand
         $connectionToHostConnect = $connectionToHost->connect();
 
         if ($connectionToHostConnect) {
-            $output->writeln(sprintf("<comment>Connection to database %s established. </comment>", $databaseSettings['dbname']));
+            $output->writeln(
+                sprintf(
+                    "<comment>Connection to database %s established. </comment>",
+                    $databaseSettings['dbname']
+                )
+            );
         } else {
-            $output->writeln(sprintf("<error>Could not connect to database %s. Please check the database connection parameters.</error>", $databaseSettings['dbname']));
+            $output->writeln(
+                sprintf(
+                    "<error>Could not connect to database %s. Please check the database connection parameters.</error>",
+                    $databaseSettings['dbname']
+                )
+            );
             return 0;
         }
 
@@ -162,19 +172,34 @@ class InstallCommand extends CommonCommand
             $connectionToDatabase = $this->getUserAccessConnectionToDatabase();
             $connect = $connectionToDatabase->connect();
         } catch (\Exception $e) {
-            $output->writeln(sprintf('<error>Could not create database for connection named <comment>%s</comment></error>', $databaseSettings['dbname']));
+            $output->writeln(
+                sprintf(
+                    '<error>Could not create database for connection named <comment>%s</comment></error>',
+                    $databaseSettings['dbname']
+                )
+            );
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
             return 0;
         }
 
         if ($connect) {
 
-            $output->writeln(sprintf("<comment>Connection to database '%s' established.</comment>", $databaseSettings['dbname']));
+            $output->writeln(
+                sprintf(
+                    "<comment>Connection to database '%s' established.</comment>",
+                    $databaseSettings['dbname']
+                )
+            );
             $configurationWasSaved = $this->writeConfiguration($version, $path, $output);
 
             if ($configurationWasSaved) {
 
-                $output->writeln(sprintf("<comment>Configuration file saved to %s. Proceeding with updating and cleaning stuff.</comment>", $path));
+                $output->writeln(
+                    sprintf(
+                        "<comment>Configuration file saved to %s. Proceeding with updating and cleaning stuff.</comment>",
+                        $path
+                    )
+                );
                 // Installing database.
                 $result = $this->processInstallation($databaseSettings, $version, $output);
 
@@ -268,12 +293,6 @@ class InstallCommand extends CommonCommand
      */
     public function install(InputInterface $input, OutputInterface $output)
     {
-        $version = $this->version;
-        $path = $this->path;
-        $silent = $this->silent;
-        $linuxUser = $this->linuxUser;
-        $linuxGroup = $this->linuxGroup;
-        $dialog = $this->getHelperSet()->get('dialog');
         $configurationPath = $this->getConfigurationHelper()->getConfigurationPath();
 
         if (file_exists($configurationPath.'parameters.yml')) {
@@ -292,8 +311,20 @@ class InstallCommand extends CommonCommand
         }
 
         if ($this->commandLine) {
+
+            $databaseSettings = array(
+                'driver' => $configuration['database_driver'],
+                'user' => $configuration['database_user'],
+                'password' => $configuration['database_password'],
+                'port' => $configuration['database_port'],
+                'host' => $configuration['database_host'],
+                'dbname' => $configuration['database_name']
+            );
+
+            $this->setDatabaseSettings($databaseSettings);
+
             $connectionToDatabase = $this->getUserAccessConnectionToDatabase();
-            $result = $connectionToDatabase->connect();
+            $connectionToDatabase->connect();
 
             $this->askPortalSettings($input, $output);
             $this->setDoctrineSettings();
@@ -497,7 +528,7 @@ class InstallCommand extends CommonCommand
             $this->setRootSys(realpath($configurationPath.'/../../../').'/');
             $this->oldConfigLocation = true;
         } else {
-            // Chamilo installations > 10
+            // Chamilo v2 installation.
             $this->oldConfigLocation = false;
             $this->setRootSys(realpath($configurationPath.'/../').'/');
         }
@@ -717,12 +748,6 @@ class InstallCommand extends CommonCommand
                 $tool = new \Doctrine\ORM\Tools\SchemaTool($manager);
                 $tool->createSchema($metadataList);
 
-                $data = file_get_contents($newInstallationPath.'main/install/data.sql');
-                $result = $manager->getConnection()->prepare($data);
-                $output->writeln("<comment>Inserting default data</comment>");
-                $result->execute();
-                $result->closeCursor();
-
                 $portalSettings = $this->getPortalSettings();
                 $adminSettings = $this->getAdminSettings();
 
@@ -820,8 +845,12 @@ class InstallCommand extends CommonCommand
     public function getUserAccessConnectionToDatabase()
     {
         $config = new \Doctrine\DBAL\Configuration();
-        $databaseConnection = $this->getDatabaseSettings();
-        $conn = \Doctrine\DBAL\DriverManager::getConnection($databaseConnection, $config);
+        $dbSettings = $this->getDatabaseSettings();
+
+        $conn = \Doctrine\DBAL\DriverManager::getConnection(
+            $dbSettings,
+            $config
+        );
 
         return $conn;
     }
