@@ -77,7 +77,6 @@ class InstallCommand extends CommonCommand
         $silent = $this->silent;
         $linuxUser = $this->linuxUser;
         $linuxGroup = $this->linuxGroup;
-        $dialog = $this->getHelperSet()->get('dialog');
         $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($path);
 
         if (empty($configurationPath)) {
@@ -85,6 +84,7 @@ class InstallCommand extends CommonCommand
             $output->writeln("<comment>Try setting up a Chamilo path for example: </comment> <info>chamilo:install 1.10.x /var/www/chamilo</info>");
             $output->writeln("<comment>You can also *download* a Chamilo package adding the --download-package option:</comment>");
             $output->writeln("<info>chamilo:install 1.10.x /var/www/chamilo --download-package</info>");
+
             return 0;
         }
 
@@ -525,12 +525,23 @@ class InstallCommand extends CommonCommand
         if ($configurationPath == false) {
             // Seems an old installation!
             $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($this->path);
-            $this->setRootSys(realpath($configurationPath.'/../../../').'/');
-            $this->oldConfigLocation = true;
+
+            if (strpos($configurationPath, 'app/config') === false) {
+                // Version 1.9.x
+                $this->setRootSys(
+                    realpath($configurationPath.'/../../../').'/'
+                );
+                $this->oldConfigLocation = true;
+            } else {
+                // Version 1.10.x
+                // Legacy but with new location app/config
+                $this->setRootSys(realpath($configurationPath.'/../../').'/');
+                $this->oldConfigLocation = true;
+            }
         } else {
             // Chamilo v2 installation.
-            $this->oldConfigLocation = false;
             $this->setRootSys(realpath($configurationPath.'/../').'/');
+            $this->oldConfigLocation = false;
         }
         $this->getConfigurationHelper()->setIsLegacy($this->oldConfigLocation);
         $this->setConfigurationPath($configurationPath);
@@ -832,9 +843,12 @@ class InstallCommand extends CommonCommand
     public function getUserAccessConnectionToHost()
     {
         $config = new \Doctrine\DBAL\Configuration();
-        $databaseConnection = $this->getDatabaseSettings();
-        $databaseConnection['dbname'] = null;
-        $conn = \Doctrine\DBAL\DriverManager::getConnection($databaseConnection, $config);
+        $settings = $this->getDatabaseSettings();
+        $settings['dbname'] = null;
+        $conn = \Doctrine\DBAL\DriverManager::getConnection(
+            $settings,
+            $config
+        );
 
         return $conn;
     }
@@ -845,10 +859,10 @@ class InstallCommand extends CommonCommand
     public function getUserAccessConnectionToDatabase()
     {
         $config = new \Doctrine\DBAL\Configuration();
-        $dbSettings = $this->getDatabaseSettings();
+        $settings = $this->getDatabaseSettings();
 
         $conn = \Doctrine\DBAL\DriverManager::getConnection(
-            $dbSettings,
+            $settings,
             $config
         );
 

@@ -227,12 +227,17 @@ class ConfigurationHelper extends Helper
 
         $configurationPath = dirname($configurationFile);
 
-        // New structure (>= v10)
+        // 2.0.x
         if (file_exists($configurationPath.'/../../web/app.php')) {
             return realpath($configurationPath.'/../../').'/';
         }
 
-        // Old structure (<= v1.9.* and 1.10.x)
+        // 1.10.x
+        if (file_exists($configurationPath.'/../../user_portal.php')) {
+            return realpath($configurationPath.'/../../').'/';
+        }
+
+        // 1.9.x
         if (file_exists($configurationPath.'/../../../user_portal.php')) {
             return realpath($configurationPath.'/../../../').'/';
         }
@@ -299,7 +304,7 @@ class ConfigurationHelper extends Helper
 
     /**
      * Get chamilo config files
-     * @return array
+     * @return Finder
      */
     public function getConfigFiles()
     {
@@ -353,7 +358,7 @@ class ConfigurationHelper extends Helper
     }
 
     /**
-     * @return array
+     * @return Finder
      */
     public function getCoursesFiles()
     {
@@ -365,9 +370,9 @@ class ConfigurationHelper extends Helper
             $finder->directories()->in($sysPath.'courses/');
         }
 
-        if (is_dir($sysPath.'data/courses')) {
-            $finder->files()->in($sysPath.'data/courses/');
-            $finder->directories()->in($sysPath.'data/courses/');
+        if (is_dir($sysPath.'app/courses')) {
+            $finder->files()->in($sysPath.'app/courses/');
+            $finder->directories()->in($sysPath.'app/courses/');
         }
 
         return $finder;
@@ -375,7 +380,7 @@ class ConfigurationHelper extends Helper
 
     /**
      * Gets the documents and folders marked DELETED
-     * @return array
+     * @return Finder
      */
     public function getDeletedDocuments()
     {
@@ -386,8 +391,8 @@ class ConfigurationHelper extends Helper
             $finder->in($sysPath.'courses/')->name('*DELETED*');
         }
 
-        if (is_dir($sysPath.'data/courses')) {
-            $finder->in($sysPath.'data/courses/')->name('*DELETED*');
+        if (is_dir($sysPath.'app/courses')) {
+            $finder->in($sysPath.'app/courses/')->name('*DELETED*');
         }
 
         return $finder;
@@ -404,6 +409,7 @@ class ConfigurationHelper extends Helper
         // Skipping files
         $finder->notPath('vendor');
         $finder->notPath('tests');
+
         return $finder;
     }
 
@@ -417,6 +423,7 @@ class ConfigurationHelper extends Helper
         $finder->files()->in($sysPath);
         $finder->notPath('vendor');
         $finder->notPath('tests');
+
         return $finder;
     }
 
@@ -436,8 +443,8 @@ class ConfigurationHelper extends Helper
             $finder->directories()->depth('== 0')->in($sysPath.'/courses');
         }
 
-        if (is_dir($sysPath.'data/courses')) {
-            $finder->directories()->depth('== 0')->in($sysPath.'/data/courses');
+        if (is_dir($sysPath.'app/courses')) {
+            $finder->directories()->depth('== 0')->in($sysPath.'/app/courses');
         }
 
         return $finder;
@@ -452,49 +459,50 @@ class ConfigurationHelper extends Helper
         $sysPath = $this->getSysPath();
         $finder->directories()->in($sysPath);
         $finder->path('main/inc/conf');
-        $finder->path('data/config');
+        $finder->path('app/config');
+
         return $finder;
     }
 
     /**
-     * Lists the directories in the archive/ or data/temp/ directory (depends on Chamilo version)
+     * Lists the directories in the archive/ or app/cache directory (depends on Chamilo version)
      * @return Finder
      */
     public function getTempFolders()
     {
         $finder = new Finder();
         $sysPath = $this->getSysPath();
-        if ($this->isLegacy()) {
-            if (is_dir($sysPath . 'archive')) {
-                $finder->directories()->in($sysPath . 'archive/');
-            }
-        } else {
-            if (is_dir($sysPath . 'app/cache')) {
-                $finder->directories->in($sysPath . 'app/cache/');
-            }
+
+        if (is_dir($sysPath . 'archive')) {
+            $finder->directories()->in($sysPath.'archive/');
         }
+
+        if (is_dir($sysPath . 'app/cache')) {
+            $finder->directories()->in($sysPath . 'app/cache/');
+        }
+
         return $finder;
     }
 
     /**
-     * Lists the files in the archive/ or data/temp/ directory (depends on Chamilo version)
+     * Lists the files in the archive/ or app/cache directory (depends on Chamilo version)
      * @return Finder
      */
     public function getTempFiles()
     {
         $finder = new Finder();
         $sysPath = $this->getSysPath();
-        if ($this->isLegacy()) {
-            if (is_dir($sysPath . 'archive')) {
-                $finder->in($sysPath . 'archive/');
-                $finder->files()->notName('index.*');
-            }
-        } else {
-            if (is_dir($sysPath . 'app/cache')) {
-                $finder->in($sysPath . 'app/cache/');
-                $finder->files()->notName('index.*');
-            }
+
+        if (is_dir($sysPath . 'app/cache')) {
+            $finder->in($sysPath . 'app/cache/');
+            $finder->files()->notName('index.*');
         }
+
+        if (is_dir($sysPath . 'archive')) {
+            $finder->in($sysPath . 'archive/');
+            $finder->files()->notName('index.*');
+        }
+
         return $finder;
     }
 
@@ -586,26 +594,23 @@ class ConfigurationHelper extends Helper
 
         $dbs[] = $_configuration['main_database'];
 
-        if (isset($_configuration['statistics_database']) && !in_array(
-                $_configuration['statistics_database'],
-                $dbs
-            ) && !empty($_configuration['statistics_database'])
+        if (isset($_configuration['statistics_database']) &&
+            !in_array($_configuration['statistics_database'], $dbs) &&
+            !empty($_configuration['statistics_database'])
         ) {
             $dbs[] = $_configuration['statistics_database'];
         }
 
-        if (isset($_configuration['scorm_database']) && !in_array(
-                $_configuration['scorm_database'],
-                $dbs
-            ) && !empty($_configuration['scorm_database'])
+        if (isset($_configuration['scorm_database']) &&
+            !in_array($_configuration['scorm_database'], $dbs) &&
+            !empty($_configuration['scorm_database'])
         ) {
             $dbs[] = $_configuration['scorm_database'];
         }
 
-        if (isset($_configuration['user_personal_database']) && !in_array(
-                $_configuration['user_personal_database'],
-                $dbs
-            ) && !empty($_configuration['user_personal_database'])
+        if (isset($_configuration['user_personal_database']) &&
+            !in_array($_configuration['user_personal_database'], $dbs) &&
+            !empty($_configuration['user_personal_database'])
         ) {
             $dbs[] = $_configuration['user_personal_database'];
         }
