@@ -26,7 +26,7 @@
         "symfony/filesystem": "~2.3",
         "symfony/finder": "~2.3",
         "doctrine/dbal": "~2.3",
-        "doctrine/orm": "~2.3,<2.5",
+        "doctrine/orm": "~2.4",
         "doctrine/migrations": "dev-master",
         "zendframework/zend-config": "~2.2",
         "zendframework/zend-stdlib": "~2.2",
