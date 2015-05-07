@@ -194,10 +194,11 @@ class InstallCommand extends CommonCommand
 
             if ($configurationWasSaved) {
 
+                $absPath = $this->getConfigurationHelper()->getConfigurationPath($path);
                 $output->writeln(
                     sprintf(
                         "<comment>Configuration file saved to %s. Proceeding with updating and cleaning stuff.</comment>",
-                        $path
+                        $absPath
                     )
                 );
                 // Installing database.
@@ -665,13 +666,12 @@ class InstallCommand extends CommonCommand
     {
         $this->setDoctrineSettings();
 
+        $sqlFolder = $this->getInstallationPath($version);
+        $databaseMap = $this->getDatabaseMap();
         // Fixing the version
         if (!isset($databaseMap[$version])) {
             $version = $this->getVersionToInstall($version);
         }
-
-        $sqlFolder = $this->getInstallationPath($version);
-        $databaseMap = $this->getDatabaseMap();
 
         if (isset($databaseMap[$version])) {
             $dbInfo = $databaseMap[$version];
