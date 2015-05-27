@@ -58,14 +58,18 @@ class DropDatabaseCommand extends CommonDatabaseCommand
         $connection = $this->getConnection();
 
         if ($connection) {
-            $cmd  = 'mysql -h '.$_configuration['db_host'].' -u '.$_configuration['db_user'].' -p'.$_configuration['db_password'].' -e "DROP DATABASE %s"';
+
             $list = $_configuration = $this->getHelper('configuration')->getAllDatabases();
+            $currentDatabases = $connection->getSchemaManager()->listDatabases();
             if (is_array($list)) {
                 $output->writeln('<comment>Starting Chamilo drop database process.</comment>');
                 foreach ($list as $db) {
-                    $c = sprintf($cmd, $db);
-                    $output->writeln("Dropping DB: $db");
-                    $err = @system($c);
+                    if (in_array($db, $currentDatabases)) {
+                        $output->writeln("Dropping DB: $db");
+                        $connection->getSchemaManager()->dropDatabase($db);
+                    } else {
+                        $output->writeln("DB: $db was already dropped.");
+                    }
                 }
                 $output->writeln('<comment>End drop database process.</comment>');
             }

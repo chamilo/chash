@@ -3,6 +3,7 @@
 namespace Chash\Command\Installation;
 
 use Doctrine\DBAL\Migrations\Tools\Console\Command\AbstractCommand;
+use Doctrine\ORM\Tools\Export\ExportException;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -65,6 +66,7 @@ class WipeCommand extends CommonCommand
         $output->writeln("<comment>This command will clean your installation: drop db, removes config files, cache files.</comment>");
 
         // Drop database Chash command.
+
         $command = $this->getApplication()->find('db:drop_databases');
 
         $arguments = array(

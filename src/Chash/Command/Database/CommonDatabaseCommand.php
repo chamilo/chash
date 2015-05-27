@@ -46,7 +46,8 @@ class CommonDatabaseCommand extends CommonCommand
     {
         try {
             return $this->getHelper('db')->getConnection();
-        } catch (Exception $e)  {
+
+        } catch (Exception $e) {
             echo $e->getMessage();
         }
     }

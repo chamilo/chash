@@ -3,6 +3,7 @@
 namespace Chash\Command\Installation;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\DBAL\ConnectionException;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
 use Doctrine\DBAL\Migrations\Tools\Console\Command\AbstractCommand;
@@ -937,29 +938,56 @@ class CommonCommand extends AbstractCommand
         $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache);
         $reader = new AnnotationReader();
 
-        $driverImpl = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver($reader, array());
+        $driverImpl = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver(
+            $reader,
+            array()
+        );
         $config->setMetadataDriverImpl($driverImpl);
         $config->setProxyDir(__DIR__ . '/Proxies');
         $config->setProxyNamespace('Proxies');
+        $settings = $this->getDatabaseSettings();
+        $dbName = $settings['dbname'];
+        unset($settings['dbname']);
 
         $em = \Doctrine\ORM\EntityManager::create(
-            $this->getDatabaseSettings(),
+            $settings ,
             $config
         );
 
-        // Fixes some errors
+        try {
+            $connection = $em->getConnection();
+            $dbList = $connection->getSchemaManager()->listDatabases();
+            // Check in db exists in list.
+            if (in_array($dbName, $dbList)) {
+                $settings['dbname'] = $dbName;
+                $em = \Doctrine\ORM\EntityManager::create(
+                    $settings ,
+                    $config
+                );
+            }
+        } catch (ConnectionException $e) {
+            echo $e->getMessage();
+        }
+
         $platform = $em->getConnection()->getDatabasePlatform();
         $platform->registerDoctrineTypeMapping('enum', 'string');
         $platform->registerDoctrineTypeMapping('set', 'string');
 
         $helpers = array(
-            'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($em->getConnection()),
-            'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper($em)
+            'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper(
+                $em->getConnection()
+            ),
+            'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper(
+                $em
+            )
             //'configuration' => new \Chash\Helpers\ConfigurationHelper()
         );
 
         foreach ($helpers as $name => $helper) {
-            $this->getApplication()->getHelperSet()->set($helper, $name);
+            $this->getApplication()->getHelperSet()->set(
+                $helper,
+                $name
+            );
         }
     }
 

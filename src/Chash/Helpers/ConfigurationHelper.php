@@ -331,10 +331,10 @@ class ConfigurationHelper extends Helper
             $finder->files()->name('db_migration_status_*');
         }
 
-        if (is_dir($sysPath.'config')) {
-            $finder->files()->in($sysPath.'config');
+        if (is_dir($sysPath.'app/config')) {
+            $finder->files()->in($sysPath.'app/config');
             foreach ($configFiles as $config) {
-                if (file_exists($sysPath.'config/'.$config)) {
+                if (file_exists($sysPath.'app/config/'.$config)) {
                     $finder->files()->name($config);
                 }
             }
@@ -620,7 +620,7 @@ class ConfigurationHelper extends Helper
         $singleDatabase = isset($_configuration['single_database']) ? $_configuration['single_database'] : false;
 
         if ($singleDatabase == false) {
-            $sql = 'SELECT db_name from '.$courseTable;
+            /*$sql = 'SELECT db_name from '.$courseTable;
             $res = mysql_query($sql);
             if ($res && mysql_num_rows($res) > 0) {
                 while ($row = mysql_fetch_array($res)) {
@@ -628,7 +628,7 @@ class ConfigurationHelper extends Helper
                         $dbs[] = $row['db_name'];
                     }
                 }
-            }
+            }*/
         }
 
         return $dbs;
