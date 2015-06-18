@@ -44,6 +44,12 @@ class CleanDeletedDocumentsCommand extends CommonDatabaseCommand
                 InputOption::VALUE_NONE,
                 'Also delete items from the c_document table'
             )
+            ->addOption(
+                'category',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Only delete items from courses in this category (given as category code)'
+            )
         ;
     }
 
@@ -55,8 +61,19 @@ class CleanDeletedDocumentsCommand extends CommonDatabaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-
-        $files = $this->getConfigurationHelper()->getDeletedDocuments();
+        $category = $input->getOption('category');
+        $courseDirsList = array();
+        if (!empty($category)) {
+            $courseDirsList = '';
+            $connection = $this->getConnection();
+            // @todo escape the $category properly
+            $sql = "SELECT directory FROM course WHERE category_code = '$category'";
+            $stmt = $connection->query($sql);
+            while ($row = $stmt->fetch()) {
+                $courseDirsList[] = $row['directory'];
+            }
+        }
+        $files = $this->getConfigurationHelper()->getDeletedDocuments($courseDirsList);
         if ($input->isInteractive()) {
             $this->writeCommandHeader($output, 'Cleaning deleted documents.');
             $list = $input->getOption('list'); //1 if the option was set

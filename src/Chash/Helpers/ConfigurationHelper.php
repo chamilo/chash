@@ -380,19 +380,37 @@ class ConfigurationHelper extends Helper
 
     /**
      * Gets the documents and folders marked DELETED
+     * @param   array   $courseDirs If not null, restrict the search to only those directories
      * @return Finder
      */
-    public function getDeletedDocuments()
+    public function getDeletedDocuments($courseDirs = array())
     {
         $finder = new Finder();
         $sysPath = $this->getSysPath();
 
-        if (is_dir($sysPath.'courses')) {
-            $finder->in($sysPath.'courses/')->name('*DELETED*');
-        }
+        if (empty($courseDirs) OR !is_array($courseDirs)) {
+            if (is_dir($sysPath . 'courses')) {
+                $finder->in($sysPath . 'courses/')->name('*DELETED*');
+            }
 
-        if (is_dir($sysPath.'app/courses')) {
-            $finder->in($sysPath.'app/courses/')->name('*DELETED*');
+            if (is_dir($sysPath . 'app/courses')) {
+                $finder->in($sysPath . 'app/courses/')->name('*DELETED*');
+            }
+        } else {
+            $course = is_dir($sysPath . 'courses');
+            $appCourse = is_dir($sysPath . 'app/courses');
+
+            foreach ($courseDirs as $dir) {
+
+                if ($course) {
+                    $finder->in($sysPath . 'courses/' . $dir .'/')->name('*DELETED*');
+                }
+
+                if ($appCourse) {
+                    $finder->in($sysPath . 'app/courses/' . $dir . '/')->name('*DELETED*');
+                }
+            }
+
         }
 
         return $finder;
