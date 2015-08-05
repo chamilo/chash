@@ -742,11 +742,19 @@ class InstallCommand extends CommonCommand
                 require_once $this->getRootSys().'/main/inc/lib/api.lib.php';
                 require_once $this->getRootSys().'/main/inc/lib/database.lib.php';
                 require_once $this->getRootSys().'/main/install/install.lib.php';
+                require_once $this->getRootSys().'/main/inc/lib/hook/interfaces/base/HookEventInterface.php';
+                require_once $this->getRootSys().'/main/inc/lib/hook/interfaces/HookCreateUserEventInterface.php';
+                require_once $this->getRootSys().'/main/inc/lib/hook/interfaces/base/HookManagementInterface.php';
+                require_once $this->getRootSys().'/main/inc/lib/hook/HookEvent.php';
+                require_once $this->getRootSys().'/main/inc/lib/hook/HookCreateUser.php';
+                require_once $this->getRootSys().'/main/inc/lib/hook/HookManagement.php';
+                require_once $this->getRootSys().'/main/inc/lib/usermanager.lib.php';
 
                 $newInstallationPath = $this->getRootSys();
                 $chashPath = __DIR__.'/../../../../';
 
                 $database = new \Database();
+                $database::$utcDateTimeClass = 'Chash\DoctrineExtensions\DBAL\Types\UTCDateTimeType';
                 $database->connect($databaseSettings, $chashPath, $newInstallationPath);
                 $manager = $database->getManager();
 
