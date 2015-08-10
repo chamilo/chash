@@ -748,6 +748,11 @@ class InstallCommand extends CommonCommand
                 require_once $this->getRootSys().'/main/inc/lib/hook/HookEvent.php';
                 require_once $this->getRootSys().'/main/inc/lib/hook/HookCreateUser.php';
                 require_once $this->getRootSys().'/main/inc/lib/hook/HookManagement.php';
+                require_once $this->getRootSys().'/main/inc/lib/model.lib.php';
+                require_once $this->getRootSys().'/main/inc/lib/events.lib.php';
+                require_once $this->getRootSys().'/main/inc/lib/extra_field.lib.php';
+                require_once $this->getRootSys().'/main/inc/lib/extra_field_value.lib.php';
+                require_once $this->getRootSys().'/main/inc/lib/urlmanager.lib.php';
                 require_once $this->getRootSys().'/main/inc/lib/usermanager.lib.php';
 
                 $newInstallationPath = $this->getRootSys();
