@@ -24,6 +24,8 @@ class SetupCommand extends AbstractCommand
     {
         $this
             ->setName('chash:setup')
+            ->addArgument('version', InputArgument::REQUIRED, 'The version to migrate to', null)
+            ->addArgument('chamilo_root', InputArgument::REQUIRED, 'Chamilo root', null)
             ->setDescription('Setups the migration.yml')
             ->addOption('temp-folder', null, InputOption::VALUE_OPTIONAL, 'The temp folder.', '/tmp');
     }
@@ -41,6 +43,27 @@ class SetupCommand extends AbstractCommand
         $tempFolder = $input->getOption('temp-folder');
 
         $fs = new Filesystem();
+
+        $version = $input->getArgument('version');
+        $chamiloRoot = $input->getArgument('chamilo_root');
+
+        if ($version == '1.10.x' || version_compare($version, '1.10', '>=')) {
+            $file = $chamiloRoot.'app/config/migrations.yml';
+            // Use the Migrations included in the chamilo package not in chash
+            $migrations = array(
+                'name' => 'Chamilo Migrations',
+                'migrations_namespace' => 'Application\Migrations\Schema\V110',
+                'table_name' => 'version',
+                'migrations_directory' => $chamiloRoot.'app/Migrations/Schema/V110'
+            );
+            //$migrationsFolder.'migrations.yml';
+
+            require_once $chamiloRoot.'app/Migrations/AbstractMigrationChamilo.php';
+
+            $this->migrationFile = $file;
+
+            return 1;
+        }
 
         $migrationsFolder = $tempFolder.'/Migrations/';
 

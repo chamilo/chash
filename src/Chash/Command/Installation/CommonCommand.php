@@ -530,33 +530,19 @@ class CommonCommand extends AbstractCommand
             ),
             '1.10.0' => array(
                 'require_update' => true,
-                'pre' => 'migrate-db-1.9.0-1.10.0-pre.sql',
-                'post' => 'migrate-db-1.9.0-1.10.0-post.sql',
-                'update_db' => 'update-db-1.9.0-1.10.0.inc.php',
-                'update_files' => 'update-files-1.9.0-1.10.0.inc.php',
-                //'hook_to_doctrine_version' => '10'
+                'hook_to_doctrine_version' => '110'
             ),
             '1.10.x' => array(
                 'require_update' => true,
-                'pre' => 'migrate-db-1.9.0-1.10.0-pre.sql',
-                'post' => 'migrate-db-1.9.0-1.10.0-post.sql',
-                'update_db' => 'update-db-1.9.0-1.10.0.inc.php',
-                'update_files' => 'update-files-1.9.0-1.10.0.inc.php',
-                //'hook_to_doctrine_version' => '10'
+                'hook_to_doctrine_version' => '110'
             ),
             '2.0'  => array(
                 'require_update' => true,
-                'pre' => 'pre.sql',
-                'post' => 'post.sql',
-                'update_db' => 'update.php',
                 'update_files' => null,
                 'hook_to_doctrine_version' => '2'
             ),
             'master'  => array(
                 'require_update' => true,
-                'pre' => 'pre.sql',
-                'post' => 'post.sql',
-                'update_db' => 'update.php',
                 'update_files' => null,
                 'hook_to_doctrine_version' => '2'
             )
@@ -1209,16 +1195,27 @@ class CommonCommand extends AbstractCommand
                         $archive->extract($folderPath);
                         /** @var \Alchemy\Zippy\Archive\Member $member */
                         foreach ($archive as $member) {
-                            if ($member->isDir()) {
-                                $location = $member->getLocation();
-                                $globalFile = $folderPath.'/'.$location.'main/inc/global.inc.php';
-                                if (file_exists($globalFile) && is_file($globalFile)) {
-                                    $location = realpath($folderPath.'/'.$location).'/';
-                                    $output->writeln('<comment>Chamilo file detected:</comment> <info>'.$location.'main/inc/lib/global.inc.php</info>');
-                                    break;
+                            if (isset($member)) {
+
+                                if ($member->isDir()) {
+                                    $location = $member->getLocation();
+                                    $globalFile = $folderPath.'/'.$location.'main/inc/global.inc.php';
+                                    if (file_exists($globalFile) && is_file(
+                                            $globalFile
+                                        )
+                                    ) {
+                                        $location = realpath(
+                                                $folderPath.'/'.$location
+                                            ).'/';
+                                        $output->writeln(
+                                            '<comment>Chamilo file detected:</comment> <info>'.$location.'main/inc/lib/global.inc.php</info>'
+                                        );
+                                        break;
+                                    }
                                 }
                             }
                         }
+
                     } catch (\Alchemy\Zippy\Exception\RunTimeException $e) {
                         $output->writeln("<comment>It seems that this file doesn't contain a Chamilo package:</comment> <info>$updateInstallationOriginal</info>");
 

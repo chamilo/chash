@@ -126,11 +126,11 @@ class SetPermissionsAfterInstallCommand extends CommonDatabaseCommand
                 }
 
                 if (!empty($user)) {
-                    $fs->chown($files, $user, true);
+                    //$fs->chown($files, $user, true);
                 }
 
                 if (!empty($group)) {
-                    $fs->chgrp($files, $group, true);
+                    //$fs->chgrp($files, $group, true);
                 }
             }
         } catch (IOException $e) {

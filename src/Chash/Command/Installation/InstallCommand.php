@@ -294,6 +294,17 @@ class InstallCommand extends CommonCommand
      */
     public function install(InputInterface $input, OutputInterface $output)
     {
+        // Install chamilo in /var/www/html/chamilo-test path
+
+        // Master
+        // sudo php /var/www/html/chash/chash.php chash:chamilo_install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root master /var/www/html/chamilo-test
+
+        // 1.10.x
+        // sudo php /var/www/html/chash/chash.php chash:chamilo_install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root 1.10.x /var/www/html/chamilo-test
+
+        // 1.9.0
+        // sudo php /var/www/html/chash/chash.php chash:chamilo_install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root  --site-url=http://localhost/chamilo-test  1.9.0 /var/www/html/chamilo-test
+
         $configurationPath = $this->getConfigurationHelper()->getConfigurationPath();
 
         if (file_exists($configurationPath.'parameters.yml')) {
@@ -495,17 +506,13 @@ class InstallCommand extends CommonCommand
         $this->setPortalSettings($portalSettings);
     }
 
+
     /**
      * Setting common parameters.
      * @param InputInterface $input
      */
     public function settingParameters(InputInterface $input)
     {
-        // Test string
-        // Master
-        // sudo php /var/www/chash/chash.php chash:chamilo_install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root master /var/www/chamilo-test
-        // 1.10.x
-        // sudo php /var/www/chash/chash.php chash:chamilo_install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root 1.10.x /var/www/chamilo-test
         if (PHP_SAPI != 'cli') {
             $this->commandLine = false;
         }

@@ -63,46 +63,8 @@ class UpgradeCommand extends CommonCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        // chash chash:chamilo_upgrade 1.10.x --linux-user=jmontoya --linux-group=jmontoya --remove-unused-table
         $startTime = time();
-
-        if (PHP_SAPI != 'cli') {
-            $this->commandLine = false;
-        }
-
-        $removeUnusedTables = $input->getOption('remove-unused-table');
-
-        // Setting up Chash
-        $command = $this->getApplication()->find('chash:setup');
-
-        // User options
-        $linuxUser = $input->getOption('linux-user');
-        $linuxGroup = $input->getOption('linux-group');
-
-        $arguments = array(
-            'command' => 'chash:setup'
-        );
-
-        $inputSetup = new ArrayInput($arguments);
-        $command->run($inputSetup, $output);
-        $migrationFile = $command->getMigrationFile();
-
-        if (empty($migrationFile) || !file_exists($migrationFile)) {
-            $output->writeln("<error>Set the --migration-yml-path and --migration-class-path manually.</error>");
-            return 0;
-        }
-
-        // Checking Resources/Database dir. Getting the Resources/Database/1.8.7/db_main.sql.
-        $testFolder = $this->getInstallationFolder().'1.8.7/db_main.sql';
-        $installationFolder = $this->getInstallationFolder();
-
-        if (!file_exists($testFolder)) {
-            $output->writeln("<error>The migration directory was not detected: </error><info>$installationFolder</info>");
-            return 0;
-        } else {
-            $output->writeln("<comment>Reading migrations from directory: </comment><info>$installationFolder</info>");
-        }
-
-        $this->setMigrationConfigurationFile($command->getMigrationFile());
 
         // Arguments and options
         $version = $originalVersion = $input->getArgument('version');
@@ -111,13 +73,26 @@ class UpgradeCommand extends CommonCommand
         $silent = !$input->isInteractive();
         $tempFolder = $input->getOption('temp-folder');
         $downloadPackage = $input->getOption('download-package') == 'true' ? true : false;
-
         $customPackage = $input->getOption('custom-package');
         if (!empty($customPackage)) {
             $downloadPackage = false;
         }
 
         $updateInstallation = $input->getOption('update-installation');
+
+        // Getting supported version number list
+        $versionNameList = $this->getVersionNumberList();
+        $minVersion = $this->getMinVersionSupportedByInstall();
+        $versionList = $this->availableVersions();
+
+        // Checking version.
+        if ($version != 'master') {
+            if (!in_array($version, $versionNameList)) {
+                $output->writeln("<comment>Version '$version' is not available.</comment>");
+                $output->writeln("<comment>Available versions: </comment><info>".implode(', ', $versionNameList)."</info>");
+                return 0;
+            }
+        }
 
         // Setting the configuration path and configuration array
         $_configuration = $this->getConfigurationHelper()->getConfiguration($path);
@@ -151,6 +126,69 @@ class UpgradeCommand extends CommonCommand
             return 0;
         }
 
+        if ($dryRun == false) {
+            if ($downloadPackage) {
+                $output->writeln("<comment>Downloading package ...</comment>");
+                $chamiloLocationPath = $this->getPackage($output, $originalVersion, $updateInstallation, $tempFolder);
+                if (empty($chamiloLocationPath)) {
+                    $output->writeln("<comment>Chash was not able to unzip the downloaded package for version: $originalVersion</comment>");
+                    return 0;
+                }
+
+                $this->copyPackageIntoSystem($output, $chamiloLocationPath, null);
+            } else {
+                if (!empty($customPackage)) {
+                    $chamiloLocationPath = $customPackage;
+                }
+            }
+        }
+
+
+        // Checking Resources/Database dir. Getting the Resources/Database/1.8.7/db_main.sql.
+        $testFolder = $this->getInstallationFolder().'1.8.7/db_main.sql';
+        $installationFolder = $this->getInstallationFolder();
+        $_configuration = $this->getConfigurationHelper()->getConfiguration($path);
+
+        if (PHP_SAPI != 'cli') {
+            $this->commandLine = false;
+        }
+
+        $removeUnusedTables = $input->getOption('remove-unused-table');
+
+        // Setting up Chash
+        $command = $this->getApplication()->find('chash:setup');
+
+        // User options
+        $linuxUser = $input->getOption('linux-user');
+        $linuxGroup = $input->getOption('linux-group');
+        $doctrineVersion = null;
+        $currentVersion = null;
+
+        $arguments = array(
+            'command' => 'chash:setup',
+            'version' => $version,
+            'chamilo_root' => $_configuration['root_sys'],
+        );
+
+        $inputSetup = new ArrayInput($arguments);
+        $command->run($inputSetup, $output);
+        $migrationFile = $command->getMigrationFile();
+
+        if (empty($migrationFile) || !file_exists($migrationFile)) {
+            $output->writeln("<error>Set the --migration-yml-path and --migration-class-path manually.</error>");
+            return 0;
+        }
+
+        if (!file_exists($testFolder)) {
+            $output->writeln("<error>The migration directory was not detected: </error><info>$installationFolder</info>");
+            return 0;
+        } else {
+            $output->writeln("<comment>Reading migrations from directory: </comment><info>$installationFolder</info>");
+        }
+
+        $this->setMigrationConfigurationFile($command->getMigrationFile());
+
+
         // In order to use Doctrine migrations
 
         // Setting configuration variable in order to get the doctrine version:
@@ -161,26 +199,7 @@ class UpgradeCommand extends CommonCommand
         //$doctrineVersion = $configuration->getCurrentVersion();
         // Moves files from main/inc/conf to config/
 
-        $doctrineVersion = null;
-
-        // Getting supported version number list
-        $versionNameList = $this->getVersionNumberList();
-        $minVersion = $this->getMinVersionSupportedByInstall();
-        $versionList = $this->availableVersions();
-
-        // Checking version.
-        if ($version != 'master') {
-            if (!in_array($version, $versionNameList)) {
-                $output->writeln("<comment>Version '$version' is not available.</comment>");
-                $output->writeln("<comment>Available versions: </comment><info>".implode(', ', $versionNameList)."</info>");
-                return 0;
-            }
-        }
-
-        $currentVersion = null;
-
         // Checking system_version.
-
         if (!isset($_configuration['system_version']) || empty($_configuration['system_version'])) {
             $output->writeln("<comment>There is something wrong in your Chamilo installation. Check it with the chamilo:status command</comment>");
             return 0;
@@ -225,21 +244,6 @@ class UpgradeCommand extends CommonCommand
             if ($doctrineVersion == $versionInfoParent['hook_to_doctrine_version']) {
                 $output->writeln("<comment>You already have the latest version. Nothing to update! Doctrine version $doctrineVersion</comment>");
                 return 0;
-            }
-        }
-
-        if ($dryRun == false) {
-            if ($downloadPackage) {
-                $output->writeln("<comment>Downloading package ...</comment>");
-                $chamiloLocationPath = $this->getPackage($output, $originalVersion, $updateInstallation, $tempFolder);
-                if (empty($chamiloLocationPath)) {
-                    $output->writeln("<comment>Chash was not able to unzip the downloaded package for version: $originalVersion</comment>");
-                    return 0;
-                }
-            } else {
-                if (!empty($customPackage)) {
-                    $chamiloLocationPath = $customPackage;
-                }
             }
         }
 
@@ -352,7 +356,7 @@ class UpgradeCommand extends CommonCommand
 
         // Update chamilo files.
         if ($dryRun == false) {
-            $this->copyPackageIntoSystem($output, $chamiloLocationPath, null);
+            //$this->copyPackageIntoSystem($output, $chamiloLocationPath, null);
             if ($version == '10') {
                 $this->removeUnUsedFiles($output, $path);
                 $this->copyConfigFilesToNewLocation($output);
@@ -426,6 +430,7 @@ class UpgradeCommand extends CommonCommand
 
         $versionInfo = $this->getAvailableVersionInfo($toVersion);
         $installPath = $this->getInstallationFolder().$toVersion.'/';
+
 
         $output->writeln("<comment>Reading installation directory for version $toVersion: <info>'$installPath'</info></comment>");
 
