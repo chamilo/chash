@@ -800,12 +800,19 @@ class CommonCommand extends AbstractCommand
         $newConfigurationFile = $configurationPath.'configuration.php';
 
         if ($dryRun == false) {
+            if (version_compare($newValues['system_version'], '1.10', '>=') ||
+                $newValues['system_version'] == '1.10.x'
+            ) {
+                $configurationPath = $_configuration['root_sys'].'app/config/';
+                $newConfigurationFile = $configurationPath.'configuration.php';
+            }
             file_put_contents($newConfigurationFile, $content);
             $output->writeln("<comment>File updated: $newConfigurationFile</comment>");
         } else {
             $output->writeln("<comment>File to be updated (dry-run is on): $newConfigurationFile</comment>");
             $output->writeln($content);
         }
+
         return file_exists($newConfigurationFile);
     }
 

@@ -303,8 +303,15 @@ class InstallCommand extends CommonCommand
         // sudo php /var/www/html/chash/chash.php chash:chamilo_install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root 1.10.x /var/www/html/chamilo-test
 
         // 1.9.0
-        // sudo php /var/www/html/chash/chash.php chash:chamilo_install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root  --site-url=http://localhost/chamilo-test  1.9.0 /var/www/html/chamilo-test
+        // sudo rm /var/www/html/chamilo-test/main/inc/conf/configuration.php
 
+        /*
+            sudo rm -R /var/www/html/chamilo-test/
+            sudo php /var/www/html/chash/chash.php chash:chamilo_install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root  --site_url=http://localhost/chamilo-test  1.9.0 /var/www/html/chamilo-test
+            cd /var/www/html/chamilo-test/
+        */
+
+        // Upgrade
         $configurationPath = $this->getConfigurationHelper()->getConfigurationPath();
 
         if (file_exists($configurationPath.'parameters.yml')) {

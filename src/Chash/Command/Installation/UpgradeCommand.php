@@ -63,7 +63,8 @@ class UpgradeCommand extends CommonCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // chash chash:chamilo_upgrade 1.10.x --linux-user=jmontoya --linux-group=jmontoya --remove-unused-table
+        // sudo php /var/www/html/chash/chash.php chash:chamilo_upgrade 1.10.x --linux-user=jmontoya --linux-group=jmontoya --remove-unused-table
+
         $startTime = time();
 
         // Arguments and options
@@ -100,6 +101,7 @@ class UpgradeCommand extends CommonCommand
         if (empty($_configuration)) {
             $output->writeln("<comment>Chamilo is not installed here! You may add a path as an option:</comment>");
             $output->writeln("<comment>For example: </comment><info>chamilo:upgrade 1.9.0 --path=/var/www/chamilo</info>");
+
             return 0;
         }
 
@@ -112,6 +114,7 @@ class UpgradeCommand extends CommonCommand
         // Checking configuration file.
         if (!is_writable($configurationPath)) {
             $output->writeln("<comment>Folder ".$configurationPath." must have writeable permissions</comment>");
+
             return 0;
         }
 
@@ -142,7 +145,6 @@ class UpgradeCommand extends CommonCommand
                 }
             }
         }
-
 
         // Checking Resources/Database dir. Getting the Resources/Database/1.8.7/db_main.sql.
         $testFolder = $this->getInstallationFolder().'1.8.7/db_main.sql';
@@ -200,7 +202,9 @@ class UpgradeCommand extends CommonCommand
         // Moves files from main/inc/conf to config/
 
         // Checking system_version.
-        if (!isset($_configuration['system_version']) || empty($_configuration['system_version'])) {
+        if (!isset($_configuration['system_version']) ||
+            empty($_configuration['system_version'])
+        ) {
             $output->writeln("<comment>There is something wrong in your Chamilo installation. Check it with the chamilo:status command</comment>");
             return 0;
         }
@@ -229,10 +233,13 @@ class UpgradeCommand extends CommonCommand
 
         if (empty($versionInfo)) {
             $output->writeln("<comment>The current version ($version) is not supported</comment>");
+
             return 0;
         }
 
-        if (isset($versionInfo['hook_to_doctrine_version']) && isset($doctrineVersion)) {
+        if (isset($versionInfo['hook_to_doctrine_version']) &&
+            isset($doctrineVersion)
+        ) {
             if ($doctrineVersion == $versionInfo['hook_to_doctrine_version']) {
                 $output->writeln("<comment>You already have the latest version. Nothing to update! Doctrine version $doctrineVersion</comment>");
                 return 0;
@@ -328,6 +335,7 @@ class UpgradeCommand extends CommonCommand
             $output->writeln("<comment>Connection to the database established.</comment>");
         } else {
             $output->writeln("<comment>Can't connect to the DB with user:</comment><info>".$_configuration['db_user'])."</info>";
+
             return 0;
         }
 
@@ -338,14 +346,40 @@ class UpgradeCommand extends CommonCommand
 
         $oldVersion = $currentVersion;
         foreach ($versionList as $versionItem => $versionInfo) {
-            if (version_compare($versionItem, $currentVersion, '>') && version_compare($versionItem, $version, '<=')) {
+            if (version_compare($versionItem, $currentVersion, '>') &&
+                version_compare($versionItem, $version, '<=')
+            ) {
+                if (version_compare($versionItem, '1.10', '>=') ||
+                    $versionItem == '1.10.x'
+                ) {
+                    require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/SettingsCurrent.php';
+                    require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/SettingsOptions.php';
+                    require_once $_configuration['root_sys'].'app/DoctrineExtensions/DBAL/Types/UTCDateTimeType.php';
+                    require_once $_configuration['root_sys'].'main/inc/lib/api.lib.php';
+                    require_once $_configuration['root_sys'].'main/inc/lib/database.lib.php';
+
+                    if (!is_dir($_configuration['root_sys'].'vendor')) {
+                        $output->writeln("Execute composer update first. Then continue with the upgrade");
+
+                        return 1;
+                    }
+                }
+
                 $output->writeln("----------------------------------------------------------------");
                 $output->writeln("<comment>Starting migration from version: </comment><info>$oldVersion</info><comment> to version </comment><info>$versionItem ");
                 $output->writeln("");
 
                 if (isset($versionInfo['require_update']) && $versionInfo['require_update'] == true) {
                     // Greater than my current version.
-                    $this->startMigration($courseList, $path, $versionItem, $dryRun, $output, $removeUnusedTables, $input);
+                    $this->startMigration(
+                        $courseList,
+                        $path,
+                        $versionItem,
+                        $dryRun,
+                        $output,
+                        $removeUnusedTables,
+                        $input
+                    );
                     $oldVersion = $versionItem;
                     $output->writeln("----------------------------------------------------------------");
                 } else {
@@ -431,7 +465,6 @@ class UpgradeCommand extends CommonCommand
         $versionInfo = $this->getAvailableVersionInfo($toVersion);
         $installPath = $this->getInstallationFolder().$toVersion.'/';
 
-
         $output->writeln("<comment>Reading installation directory for version $toVersion: <info>'$installPath'</info></comment>");
 
         // Filling sqlList array with "pre" db changes.
@@ -440,7 +473,14 @@ class UpgradeCommand extends CommonCommand
             $this->fillQueryList($sqlToInstall, $output, 'pre');
 
             // Processing sql query list depending of the section (course, main, user).
-            $this->processQueryList($courseList, $output, $path, $toVersion, $dryRun, 'pre');
+            $this->processQueryList(
+                $courseList,
+                $output,
+                $path,
+                $toVersion,
+                $dryRun,
+                'pre'
+            );
         }
 
         try {
@@ -451,12 +491,17 @@ class UpgradeCommand extends CommonCommand
             $output->writeln("<comment>You have to select 'yes' for the 'Chamilo Migrations'<comment>");
 
             $command = $this->getApplication()->find('migrations:migrate');
+
             $arguments = array(
                 'command' => 'migrations:migrate',
-                'version' => $versionInfo['hook_to_doctrine_version'],
+                //'version' => $versionInfo['hook_to_doctrine_version'],
                 '--configuration' => $this->getMigrationConfigurationFile(),
                 '--dry-run' => $dryRun
             );
+
+            if ($versionInfo['hook_to_doctrine_version'] != '110') {
+                $arguments['version'] = $versionInfo['hook_to_doctrine_version'];
+            }
 
             $output->writeln(
                 "<comment>Executing migrations:migrate ".$versionInfo['hook_to_doctrine_version']." --configuration=".$this->getMigrationConfigurationFile()."<comment>"
@@ -473,26 +518,6 @@ class UpgradeCommand extends CommonCommand
             $output->writeln("<comment>Migration ended successfully</comment>");
 
         } catch (\Exception $e) {
-            // Reverting changes
-
-            /*$output->writeln("<comment>Reverting changes ... <comment>");
-
-            $command = $this->getApplication()->find('migrations:execute');
-            $arguments = array(
-                'command' => 'migrations:execute',
-                'version' => $versionInfo['hook_to_doctrine_version'],
-                '--down' => true,
-                '--configuration' => $this->getMigrationConfigurationFile(),
-                '--dry-run' => $dryRun
-            );
-
-            $output->writeln("<comment>Executing migrations:migrate ".($versionInfo['hook_to_doctrine_version'] - 1)."<comment>");
-            $input = new ArrayInput($arguments);
-            if ($this->commandLine == false) {
-                $input->setInteractive(false);
-            }
-            $command->run($input, $output);
-            */
             $output->write(sprintf('<error>Migration failed. Error %s</error>', $e->getMessage()));
 
             throw $e;
