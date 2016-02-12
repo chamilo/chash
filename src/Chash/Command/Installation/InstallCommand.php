@@ -300,14 +300,14 @@ class InstallCommand extends CommonCommand
         // sudo php /var/www/html/chash/chash.php chash:chamilo_install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root master /var/www/html/chamilo-test
 
         // 1.10.x
-        // sudo php /var/www/html/chash/chash.php chash:chamilo_install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root 1.10.x /var/www/html/chamilo-test
+        // sudo php /var/www/html/chash/chash.php chash:chamilo_install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root  --site_url=http://localhost/chamilo-test 1.10.x /var/www/html/chamilo-test
 
         // 1.9.0
         // sudo rm /var/www/html/chamilo-test/main/inc/conf/configuration.php
 
         /*
             sudo rm -R /var/www/html/chamilo-test/
-            sudo php /var/www/html/chash/chash.php chash:chamilo_install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root  --site_url=http://localhost/chamilo-test  1.9.0 /var/www/html/chamilo-test
+            sudo php /var/www/html/chash/chash.php chash:chamilo_install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root  --site_url=http://localhost/chamilo-test 1.9.0 /var/www/html/chamilo-test
             cd /var/www/html/chamilo-test/
         */
 
@@ -753,6 +753,8 @@ class InstallCommand extends CommonCommand
             if (isset($sections) && isset($sections['migrations'])) {
                 $sectionsCount = 1;
                 require_once $this->getRootSys().'/main/inc/lib/database.constants.inc.php';
+                require_once $this->getRootSys().'/main/inc/lib/system/session.class.php';
+                require_once $this->getRootSys().'/main/inc/lib/chamilo_session.class.php';
                 require_once $this->getRootSys().'/main/inc/lib/api.lib.php';
                 require_once $this->getRootSys().'/main/inc/lib/database.lib.php';
                 require_once $this->getRootSys().'/main/install/install.lib.php';
