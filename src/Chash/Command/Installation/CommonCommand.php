@@ -943,7 +943,7 @@ class CommonCommand extends AbstractCommand
         unset($settings['dbname']);
 
         $em = \Doctrine\ORM\EntityManager::create(
-            $settings ,
+            $settings,
             $config
         );
 
@@ -982,6 +982,8 @@ class CommonCommand extends AbstractCommand
                 $name
             );
         }
+
+        return $em;
     }
 
     /**
