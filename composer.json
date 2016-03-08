@@ -27,7 +27,7 @@
         "symfony/finder": "~2.6",
         "doctrine/dbal": "~2.3",
         "doctrine/orm": "~2.2,>=2.2.3,<2.5",
-        "doctrine/migrations": "1.2.2",
+        "doctrine/migrations": "1.0.0",
         "zendframework/zend-config": "~2.2",
         "zendframework/zend-stdlib": "~2.2",
         "alchemy/zippy": "~0.2",
