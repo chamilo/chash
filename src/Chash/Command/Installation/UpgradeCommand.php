@@ -485,7 +485,7 @@ class UpgradeCommand extends CommonCommand
 
         try {
             // Doctrine migrations:
-            $this->setDoctrineSettings();
+            $em = $this->setDoctrineSettings();
 
             $output->writeln('');
             $output->writeln("<comment>You have to select 'yes' for the 'Chamilo Migrations'<comment>");
@@ -570,6 +570,28 @@ class UpgradeCommand extends CommonCommand
             $this->fillQueryList($sqlToInstall, $output, 'post');
             // Processing sql query list depending of the section.
             $this->processQueryList($courseList, $output, $path, $toVersion, $dryRun, 'post');
+        }
+
+
+        if ($versionInfo['hook_to_doctrine_version'] == '110') {
+            require_once $this->getRootSys().'/main/inc/lib/database.constants.inc.php';
+            require_once $this->getRootSys().'/main/inc/lib/system/session.class.php';
+            require_once $this->getRootSys().'/main/inc/lib/chamilo_session.class.php';
+            require_once $this->getRootSys().'/main/inc/lib/api.lib.php';
+            require_once $this->getRootSys().'/main/inc/lib/database.lib.php';
+            require_once $this->getRootSys().'/main/install/install.lib.php';
+            require_once $this->getRootSys().'/main/inc/lib/display.lib.php';
+            require_once $this->getRootSys().'/main/inc/lib/group_portal_manager.lib.php';
+            require_once $this->getRootSys().'/main/inc/lib/model.lib.php';
+            require_once $this->getRootSys().'/main/inc/lib/events.lib.php';
+            require_once $this->getRootSys().'/main/inc/lib/extra_field.lib.php';
+            require_once $this->getRootSys().'/main/inc/lib/extra_field_value.lib.php';
+            require_once $this->getRootSys().'/main/inc/lib/urlmanager.lib.php';
+            require_once $this->getRootSys().'/main/inc/lib/usermanager.lib.php';
+            require_once $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraField.php';
+            require_once $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraFieldOptions.php';
+
+            fixIds($em);
         }
 
         return false;
