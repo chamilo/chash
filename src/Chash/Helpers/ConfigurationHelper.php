@@ -101,9 +101,12 @@ class ConfigurationHelper extends Helper
             $chamiloPath = $path;
         }
 
-        // Chamilo 1.9.x and 1.8.x
-        if (is_dir($chamiloPath.'/main/inc/conf')) {
-            return realpath($chamiloPath.'/main/inc/conf/').'/';
+        // Chamilo v2
+        if (is_dir($chamiloPath.'/app/config') &&
+            !is_file($chamiloPath.'/main/inc/local.inc.php')
+        ) {
+            $this->isLegacy = false;
+            return realpath($chamiloPath.'/app/config/').'/';
         }
 
         // Chamilo 1.10.x
@@ -113,10 +116,9 @@ class ConfigurationHelper extends Helper
             return realpath($chamiloPath.'/app/config/').'/';
         }
 
-        // Chamilo v2
-        if (is_dir($chamiloPath.'/app/config')) {
-            $this->isLegacy = false;
-            return realpath($chamiloPath.'/app/config/').'/';
+        // Chamilo 1.9.x and 1.8.x
+        if (is_dir($chamiloPath.'/main/inc/conf')) {
+            return realpath($chamiloPath.'/main/inc/conf/').'/';
         }
 
         return false;

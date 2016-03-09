@@ -39,6 +39,7 @@ class StatusCommand extends CommonDatabaseCommand
         $connection = $this->getConnection();
         $_configuration = $this->getConfigurationArray();
 
+
         $query = "SELECT selected_value FROM settings_current WHERE variable = 'chamilo_database_version'";
         $data = $connection->executeQuery($query);
         $data = $data->fetch();
@@ -91,8 +92,8 @@ class StatusCommand extends CommonDatabaseCommand
         if (empty($chamiloVersion)) {
             $output->writeln("<comment>Please check your Chamilo installation carefully the <info>'chamilo_database_version'</info> admin does not exists.</comment>");
         } else {
-            $output->writeln('<comment>Chamilo database settings:</comment>');
-            $output->writeln("<comment>Chamilo setting_current['".$databaseSetting."']:</comment> <info>".$chamiloVersion."</info>");
+            //$output->writeln('<comment>Chamilo database settings:</comment>');
+            //$output->writeln("<comment>Chamilo setting_current['".$databaseSetting."']:</comment> <info>".$chamiloVersion."</info>");
         }
 
         if (isset($_configuration['system_version'])) {
