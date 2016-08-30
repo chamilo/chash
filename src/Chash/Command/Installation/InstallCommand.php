@@ -757,6 +757,7 @@ class InstallCommand extends CommonCommand
                 require_once $this->getRootSys().'/main/inc/lib/chamilo_session.class.php';
                 require_once $this->getRootSys().'/main/inc/lib/api.lib.php';
                 require_once $this->getRootSys().'/main/inc/lib/database.lib.php';
+                require_once $this->getRootSys().'/main/inc/lib/custom_pages.class.php';
                 require_once $this->getRootSys().'/main/install/install.lib.php';
                 require_once $this->getRootSys().'/main/inc/lib/hook/interfaces/base/HookEventInterface.php';
                 require_once $this->getRootSys().'/main/inc/lib/hook/interfaces/HookCreateUserEventInterface.php';
