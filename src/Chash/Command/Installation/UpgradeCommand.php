@@ -356,6 +356,7 @@ class UpgradeCommand extends CommonCommand
                     require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/SettingsOptions.php';
                     require_once $_configuration['root_sys'].'app/DoctrineExtensions/DBAL/Types/UTCDateTimeType.php';
                     require_once $_configuration['root_sys'].'main/inc/lib/api.lib.php';
+                    require_once $_configuration['root_sys'].'main/inc/lib/custom_pages.class.php';
                     require_once $_configuration['root_sys'].'main/inc/lib/database.lib.php';
 
                     if (!is_dir($_configuration['root_sys'].'vendor')) {
@@ -572,13 +573,13 @@ class UpgradeCommand extends CommonCommand
             $this->processQueryList($courseList, $output, $path, $toVersion, $dryRun, 'post');
         }
 
-
         if ($versionInfo['hook_to_doctrine_version'] == '110') {
             require_once $this->getRootSys().'/main/inc/lib/database.constants.inc.php';
             require_once $this->getRootSys().'/main/inc/lib/system/session.class.php';
             require_once $this->getRootSys().'/main/inc/lib/chamilo_session.class.php';
             require_once $this->getRootSys().'/main/inc/lib/api.lib.php';
             require_once $this->getRootSys().'/main/inc/lib/database.lib.php';
+            require_once $this->getRootSys().'/main/inc/lib/custom_pages.class.php';
             require_once $this->getRootSys().'/main/install/install.lib.php';
             require_once $this->getRootSys().'/main/inc/lib/display.lib.php';
             require_once $this->getRootSys().'/main/inc/lib/group_portal_manager.lib.php';
