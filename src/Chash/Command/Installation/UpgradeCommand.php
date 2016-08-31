@@ -421,6 +421,10 @@ class UpgradeCommand extends CommonCommand
         $input = new ArrayInput($arguments);
         $command->run($input, $output);
 
+        // Update configuration file new system_version
+        $newParams = array('system_version' => $version);
+        $this->updateConfiguration($output, $dryRun, $newParams);
+
         // Fixing permissions.
         $command = $this->getApplication()->find('files:set_permissions_after_install');
         $arguments = array(
@@ -433,10 +437,6 @@ class UpgradeCommand extends CommonCommand
 
         $input = new ArrayInput($arguments);
         $command->run($input, $output);
-
-        // Update configuration file new system_version
-        $newParams = array('system_version' => $version);
-        $this->updateConfiguration($output, $dryRun, $newParams);
 
         $output->writeln("<comment>Hurray!!! You just finished this migration. To check the current status of your platform, run </comment><info>chamilo:status</info>");
         $endTime = time();
