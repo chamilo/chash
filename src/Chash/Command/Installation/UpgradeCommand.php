@@ -382,6 +382,7 @@ class UpgradeCommand extends CommonCommand
                         $input
                     );
                     $oldVersion = $versionItem;
+                    $output->writeln("End database migration");
                     $output->writeln("----------------------------------------------------------------");
                 } else {
                     $output->writeln("<comment>Skip migration for version: </comment><info>'$versionItem'</info>");
@@ -391,18 +392,29 @@ class UpgradeCommand extends CommonCommand
 
         // Update chamilo files.
         if ($dryRun == false) {
+            $output->writeln("Version: $version");
             //$this->copyPackageIntoSystem($output, $chamiloLocationPath, null);
-            if ($version == '10') {
+            if ($version === '10' || $version === '1.10.x') {
                 $this->removeUnUsedFiles($output, $path);
                 $this->copyConfigFilesToNewLocation($output);
             }
+        }
+
+        $configurationPathFromHelper = $this->getConfigurationHelper()->getConfigurationFilePath($path);
+
+        $output->writeln("Reading path in : $path");
+        $output->writeln("Configuration path in : $configurationPathFromHelper");
+
+        if (empty($configurationPathFromHelper)) {
+            $output->writeln("Configuration path is not found. Check that the configuration.php exists here: $path.");
+            exit;
         }
 
         // Generating temp folders.
         $command = $this->getApplication()->find('files:generate_temp_folders');
         $arguments = array(
             'command' => 'files:generate_temp_folders',
-            '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
+            '--conf' => $configurationPathFromHelper,
             '--dry-run' => $dryRun
         );
 
@@ -413,7 +425,7 @@ class UpgradeCommand extends CommonCommand
         $command = $this->getApplication()->find('files:set_permissions_after_install');
         $arguments = array(
             'command' => 'files:set_permissions_after_install',
-            '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
+            '--conf' => $configurationPathFromHelper,
             '--linux-user' => $linuxUser,
             '--linux-group' => $linuxGroup,
             '--dry-run' => $dryRun
