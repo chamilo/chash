@@ -151,13 +151,13 @@ class ConfigurationHelper extends Helper
     }
 
     /**
-     * Converts /var/www/chamilo/main/inc/conf to /var/www/chamilo/config
+     * Converts /var/www/chamilo/main/inc/conf to /var/www/chamilo/app/config
      * @param string $path
      * @return string new path
      */
     public function convertOldConfigurationPathToNewPath($path)
     {
-        return realpath($path.'../../../').'/config/';
+        return realpath($path.'../../../').'/app/config/';
     }
 
     /**
