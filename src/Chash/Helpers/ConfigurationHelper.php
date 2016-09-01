@@ -87,11 +87,11 @@ class ConfigurationHelper extends Helper
      * Gets the configuration file path from the Chamilo installation
      * <code>
      * $configurationPath = $this->getConfigurationPath('/var/www/chamilo');
-     * // $configurationPath value is '/var/www/chamilo/config/'; or
+     * // $configurationPath value is '/var/www/chamilo/app/config/'; or
      * // $configurationPath value is '/var/www/chamilo/inc/conf/'; or
      * </code>
      * @param string $path the path of the Chamilo installation
-     * @return bool|string @example /var/www/chamilo/config/configuration.php
+     * @return bool|string @example /var/www/chamilo/app/config/configuration.php
      */
     public function getConfigurationPath($path = null)
     {
@@ -128,10 +128,10 @@ class ConfigurationHelper extends Helper
      * Get the new configuration file from the Chamilo installation
      * <code>
      * $newConfigurationPath = $this->getNewConfigurationPath('/var/www/chamilo');
-     * // $newConfigurationPath value is '/var/www/chamilo/config/configuration.php';
+     * // $newConfigurationPath value is '/var/www/chamilo/app/config/configuration.php';
      * </code>
      * @param string $path the path of the Chamilo installation
-     * @return bool|string  @example /var/www/chamilo/config/configuration.php
+     * @return bool|string  @example /var/www/chamilo/app/config/configuration.php
      */
     public function getNewConfigurationPath($path = null)
     {
@@ -215,7 +215,7 @@ class ConfigurationHelper extends Helper
     /**
      *
      * <code>
-     * $sysPath = $this->getSysPathFromConfigurationFile('/var/www/chamilo/config/configuration.php');
+     * $sysPath = $this->getSysPathFromConfigurationFile('/var/www/chamilo/app/config/configuration.php');
      * // $sysPath is '/var/www/chamilo/'
      * </code>
      * @param string $configurationFile
@@ -390,7 +390,7 @@ class ConfigurationHelper extends Helper
         $finder = new Finder();
         $sysPath = $this->getSysPath();
 
-        if (empty($courseDirs) OR !is_array($courseDirs)) {
+        if (empty($courseDirs) || !is_array($courseDirs)) {
             if (is_dir($sysPath . 'courses')) {
                 $finder->in($sysPath . 'courses/')->name('*DELETED*');
             }
