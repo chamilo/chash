@@ -81,9 +81,9 @@ class InstallCommand extends CommonCommand
 
         if (empty($configurationPath)) {
             $output->writeln("<error>There was an error while loading the configuration path (looked for at $configurationPath). Are you sure this is a Chamilo path?</error>");
-            $output->writeln("<comment>Try setting up a Chamilo path for example: </comment> <info>chamilo:install 1.10.x /var/www/chamilo</info>");
+            $output->writeln("<comment>Try setting up a Chamilo path for example: </comment> <info>chamilo:install 1.11.x /var/www/chamilo</info>");
             $output->writeln("<comment>You can also *download* a Chamilo package adding the --download-package option:</comment>");
-            $output->writeln("<info>chamilo:install 1.10.x /var/www/chamilo --download-package</info>");
+            $output->writeln("<info>chamilo:install 1.11.x /var/www/chamilo --download-package</info>");
 
             return 0;
         }
@@ -657,6 +657,9 @@ class InstallCommand extends CommonCommand
             case '1.10.0':
             case '1.10.x':
                 $newVersion = '1.10.0';
+                break;
+            case '1.11.x':
+                $newVersion = '1.11.0';
                 break;
             case '2':
             case '2.0':

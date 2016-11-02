@@ -109,16 +109,16 @@ class ConfigurationHelper extends Helper
             return realpath($chamiloPath.'/app/config/').'/';
         }
 
+        // Chamilo 1.9.x and 1.8.x
+        if (is_dir($chamiloPath.'/main/inc/conf')) {
+            return realpath($chamiloPath.'/main/inc/conf/').'/';
+        }
+
         // Chamilo 1.10.x
         if (is_dir($chamiloPath.'/app/config/') &&
             is_file($chamiloPath.'/main/inc/local.inc.php')
         ) {
             return realpath($chamiloPath.'/app/config/').'/';
-        }
-
-        // Chamilo 1.9.x and 1.8.x
-        if (is_dir($chamiloPath.'/main/inc/conf')) {
-            return realpath($chamiloPath.'/main/inc/conf/').'/';
         }
 
         return false;
@@ -174,9 +174,7 @@ class ConfigurationHelper extends Helper
     public function getConfigurationFilePath($path = null)
     {
         $confPath = $this->getConfigurationPath($path);
-
         if (!empty($confPath)) {
-
             if (file_exists($confPath.'configuration.php')) {
                 return $confPath.'configuration.php';
             }

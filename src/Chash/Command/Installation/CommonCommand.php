@@ -174,8 +174,8 @@ class CommonCommand extends AbstractCommand
             return $this->getRootSys().'courses';
         }
 
-        if (is_dir($this->getRootSys().'data/courses')) {
-            return $this->getRootSys().'data/courses';
+        if (is_dir($this->getRootSys().'app/courses')) {
+            return $this->getRootSys().'app/courses';
         }
 
         return null;
@@ -411,7 +411,7 @@ class CommonCommand extends AbstractCommand
      */
     public function getLatestVersion()
     {
-        return '1.10.x';
+        return '1.11.x';
     }
 
     /**
@@ -532,9 +532,45 @@ class CommonCommand extends AbstractCommand
                 'require_update' => true,
                 'hook_to_doctrine_version' => '110'
             ),
+            '1.10.2' => array(
+                'require_update' => false,
+                'parent' => '1.10.0'
+            ),
+            '1.10.4' => array(
+                'require_update' => false,
+                'parent' => '1.10.0'
+            ),
+            '1.10.6' => array(
+                'require_update' => false,
+                'parent' => '1.10.0'
+            ),
+            '1.10.8' => array(
+                'require_update' => false,
+                'parent' => '1.10.0'
+            ),
             '1.10.x' => array(
+                'require_update' => false,
+                'parent' => '1.10.0'
+            ),
+            '1.11.0' => array(
                 'require_update' => true,
-                'hook_to_doctrine_version' => '110'
+                'hook_to_doctrine_version' => '111'
+            ),
+            '1.11.2' => array(
+                'require_update' => false,
+                'parent' => '1.11.0'
+            ),
+            '1.11.4' => array(
+                'require_update' => false,
+                'parent' => '1.11.0'
+            ),
+            '1.11.6' => array(
+               'require_update' => false,
+                'parent' => '1.11.0'
+            ),
+            '1.11.x' => array(
+                'require_update' => false,
+                'parent' => '1.11.0'
             ),
             '2.0'  => array(
                 'require_update' => true,
@@ -591,7 +627,7 @@ class CommonCommand extends AbstractCommand
             $this->setRootSys(realpath($configurationPath.'/../../../').'/');
         } else {
             // Chamilo installations >= 10
-            $this->setRootSys(realpath($configurationPath.'/../').'/');
+            $this->setRootSys(realpath($configurationPath.'/../../').'/');
         }
     }
 
@@ -663,7 +699,6 @@ class CommonCommand extends AbstractCommand
         $configuration['db_password'] = $databaseSettings['dbpassword'];
         $configuration['main_database'] = $databaseSettings['dbname'];
         $configuration['driver'] = $databaseSettings['driver'];
-
         $configuration['root_web'] = $portalSettings['site_url'];
         $configuration['root_sys'] = $this->getRootSys();
         $configuration['security_key'] = md5(uniqid(rand().time()));
@@ -801,7 +836,7 @@ class CommonCommand extends AbstractCommand
 
         if ($dryRun == false) {
             if (version_compare($newValues['system_version'], '1.10', '>=') ||
-                $newValues['system_version'] == '1.10.x'
+                ($newValues['system_version'] == '1.10.x' || $newValues['system_version'] == '1.11.x')
             ) {
                 $configurationPath = $_configuration['root_sys'].'app/config/';
                 $newConfigurationFile = $configurationPath.'configuration.php';
@@ -1127,6 +1162,9 @@ class CommonCommand extends AbstractCommand
                 case '1.10.x':
                     $updateInstallation = "https://github.com/chamilo/chamilo-lms/archive/1.10.x.zip";
                     break;
+                case '1.11.x':
+                    $updateInstallation = "https://github.com/chamilo/chamilo-lms/archive/1.11.x.zip";
+                    break;
             }
         }
 
@@ -1217,7 +1255,7 @@ class CommonCommand extends AbstractCommand
                                                 $folderPath.'/'.$location
                                             ).'/';
                                         $output->writeln(
-                                            '<comment>Chamilo file detected:</comment> <info>'.$location.'main/inc/lib/global.inc.php</info>'
+                                            '<comment>Chamilo global.inc.php file detected:</comment> <info>'.$location.'main/inc/lib/global.inc.php</info>'
                                         );
                                         break;
                                     }
@@ -1282,8 +1320,11 @@ class CommonCommand extends AbstractCommand
      * @param string $destinationPath
      * @return int
      */
-    public function copyPackageIntoSystem(OutputInterface $output, $chamiloLocationPath, $destinationPath)
-    {
+    public function copyPackageIntoSystem(
+        OutputInterface $output,
+        $chamiloLocationPath,
+        $destinationPath
+    ) {
         $fileSystem = new Filesystem();
 
         if (empty($destinationPath)) {

@@ -38,11 +38,9 @@ class CommonDatabaseCommand extends CommonCommand
     }
 
     /**
-     * Get connection to the database
-     * @return \Doctrine\DBAL\Connection
-     *
+     * @inheritdoc
      */
-    public function getConnection()
+    public function getConnection(InputInterface $input)
     {
         try {
             return $this->getHelper('db')->getConnection();

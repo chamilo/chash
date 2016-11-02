@@ -47,16 +47,18 @@ class SetupCommand extends AbstractCommand
         $version = $input->getArgument('version');
         $chamiloRoot = $input->getArgument('chamilo_root');
 
-        if ($version == '1.10.x' || version_compare($version, '1.10', '>=')) {
+        if ($version == '111') {
             $file = $chamiloRoot.'app/config/migrations.yml';
-            // Use the Migrations included in the chamilo package not in chash
-            $migrations = array(
-                'name' => 'Chamilo Migrations',
-                'migrations_namespace' => 'Application\Migrations\Schema\V110',
-                'table_name' => 'version',
-                'migrations_directory' => $chamiloRoot.'app/Migrations/Schema/V110'
-            );
-            //$migrationsFolder.'migrations.yml';
+
+            require_once $chamiloRoot.'app/Migrations/AbstractMigrationChamilo.php';
+
+            $this->migrationFile = $file;
+
+            return 1;
+        }
+
+        if ($version == '110') {
+            $file = $chamiloRoot.'app/config/migrations110.yml';
 
             require_once $chamiloRoot.'app/Migrations/AbstractMigrationChamilo.php';
 
