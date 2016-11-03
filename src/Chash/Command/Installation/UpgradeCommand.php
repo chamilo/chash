@@ -326,27 +326,41 @@ class UpgradeCommand extends CommonCommand
         $output->writeln("<comment>Latest version: </comment><info>$version</info>");
         $oldVersion = $version;
 
+        // Handle 1.10.x as 1.10.1000
+        if ($currentVersion == '1.10.x') {
+            $currentVersion = '1.10.1000';
+        }
+
+        if ($currentVersion == '1.11.x') {
+            $currentVersion = '1.11.1000';
+        }
+
+        if ($version == '1.10.x') {
+            $version = '1.10.1000';
+        }
+
+        if ($version == '1.11.x') {
+            $version = '1.11.1000';
+        }
+
+        if (version_compare($version, '1.10.0', '>=')) {
+            require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/SettingsCurrent.php';
+            require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/SystemTemplate.php';
+            require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/SettingsOptions.php';
+            require_once $_configuration['root_sys'].'app/DoctrineExtensions/DBAL/Types/UTCDateTimeType.php';
+            require_once $_configuration['root_sys'].'main/inc/lib/api.lib.php';
+            require_once $_configuration['root_sys'].'main/inc/lib/custom_pages.class.php';
+            require_once $_configuration['root_sys'].'main/inc/lib/database.lib.php';
+
+            if (!is_dir($_configuration['root_sys'].'vendor')) {
+                $output->writeln("Execute composer update in your chamilo instance first. Then continue with the upgrade");
+
+                return 1;
+            }
+        }
+
         $versionsToRun = [];
         foreach ($versionList as $versionItem => $versionInfo) {
-            // Hack to handle 1.10.x and 1.11.x branches
-            if (version_compare($versionItem, '1.10', '>=') ||
-                ($versionItem == '1.10.x' || $versionItem == '1.11.x')
-            ) {
-                require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/SettingsCurrent.php';
-                require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/SystemTemplate.php';
-                require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/SettingsOptions.php';
-                require_once $_configuration['root_sys'].'app/DoctrineExtensions/DBAL/Types/UTCDateTimeType.php';
-                require_once $_configuration['root_sys'].'main/inc/lib/api.lib.php';
-                require_once $_configuration['root_sys'].'main/inc/lib/custom_pages.class.php';
-                require_once $_configuration['root_sys'].'main/inc/lib/database.lib.php';
-
-                if (!is_dir($_configuration['root_sys'].'vendor')) {
-                    $output->writeln("Execute composer update in your chamilo instance first. Then continue with the upgrade");
-
-                    return 1;
-                }
-            }
-
             if (version_compare($versionItem, $currentVersion, '>') &&
                 version_compare($versionItem, $version, '<=')
             ) {
@@ -361,6 +375,7 @@ class UpgradeCommand extends CommonCommand
             if ($lastItem == $counter) {
                 $runFixIds = true;
             }
+
             if (isset($versionInfo['require_update']) && $versionInfo['require_update'] == true) {
                 $output->writeln("----------------------------------------------------------------");
                 $output->writeln("<comment>Starting migration from version: </comment><info>$currentVersion</info><comment> to version </comment><info>$versionItem ");
@@ -393,7 +408,6 @@ class UpgradeCommand extends CommonCommand
         // Update chamilo files.
         if ($dryRun == false) {
             $output->writeln("Version: $version");
-            //$this->copyPackageIntoSystem($output, $chamiloLocationPath, null);
             if (
                 $version === '10' ||
                 $version === '1.10.x' ||

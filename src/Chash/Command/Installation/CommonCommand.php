@@ -1152,13 +1152,13 @@ class CommonCommand extends AbstractCommand
     public function getPackage(OutputInterface $output, $version, $updateInstallation, $defaultTempFolder)
     {
         $fs = new Filesystem();
+        $versionTag = $version;
 
         // Download the chamilo package from from github:
-        $versionTag = str_replace('.', '_', $version);
         if (empty($updateInstallation)) {
-            $updateInstallation = "https://github.com/chamilo/chamilo-lms/archive/CHAMILO_".$versionTag."_STABLE.zip";
+            $updateInstallation = "https://github.com/chamilo/chamilo-lms/archive/v".$version.".zip";
 
-            switch($version) {
+            switch ($version) {
                 case 'master':
                     $updateInstallation = "https://github.com/chamilo/chamilo-lms/archive/master.zip";
                     break;
@@ -1438,11 +1438,13 @@ class CommonCommand extends AbstractCommand
         $backupConfPath = str_replace('inc/conf', 'inc/conf_old', $confDir);
         if ($confDir != $backupConfPath) {
             if (!is_dir($backupConfPath)) {
-                $output->writeln('<comment>Renaming conf folder: </comment>'.$confDir.' to '.$backupConfPath.'');
                 $fs->rename($confDir, $backupConfPath);
             } else {
-                $output->writeln('<comment>conf old folder already exists: </comment>'.$backupConfPath.'');
+                $output->writeln('<comment>Removing previous old conf :</comment>'.$backupConfPath.'');
+                $fs->remove($backupConfPath);
+                $fs->rename($confDir, $backupConfPath);
             }
+            $output->writeln('<comment>Renaming conf folder: </comment>'.$confDir.' to '.$backupConfPath.'');
         } else {
             $output->writeln('<comment>No need to rename the conf folder: </comment>'.$confDir.' = '.$backupConfPath.'');
         }
