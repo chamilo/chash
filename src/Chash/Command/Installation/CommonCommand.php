@@ -1437,8 +1437,12 @@ class CommonCommand extends AbstractCommand
 
         $backupConfPath = str_replace('inc/conf', 'inc/conf_old', $confDir);
         if ($confDir != $backupConfPath) {
-            $output->writeln('<comment>Renaming conf folder: </comment>'.$confDir.' to '.$backupConfPath.'');
-            $fs->rename($confDir, $backupConfPath);
+            if (!is_dir($backupConfPath)) {
+                $output->writeln('<comment>Renaming conf folder: </comment>'.$confDir.' to '.$backupConfPath.'');
+                $fs->rename($confDir, $backupConfPath);
+            } else {
+                $output->writeln('<comment>conf old folder already exists: </comment>'.$backupConfPath.'');
+            }
         } else {
             $output->writeln('<comment>No need to rename the conf folder: </comment>'.$confDir.' = '.$backupConfPath.'');
         }
