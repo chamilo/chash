@@ -60,13 +60,14 @@ class SetupCommand extends AbstractCommand
         if ($version == '110') {
             $file = $chamiloRoot.'app/config/migrations110.yml';
 
-            require_once $chamiloRoot.'app/Migrations/AbstractMigrationChamilo.php';
+
 
             $this->migrationFile = $file;
 
             return 1;
         }
 
+        require_once $chamiloRoot.'app/Migrations/AbstractMigrationChamilo.php';
         $migrationsFolder = $tempFolder.'/Migrations/';
 
         if (!$fs->exists($migrationsFolder)) {
@@ -75,8 +76,8 @@ class SetupCommand extends AbstractCommand
 
         $migrations = array(
             'name' => 'Chamilo Migrations',
-            'migrations_namespace' => 'Chash\Migrations',
-            'table_name' => 'chamilo_migration_versions',
+            'migrations_namespace' => 'Application\Migrations\Schema\V111',
+            'table_name' => 'version',
             'migrations_directory' => $migrationsFolder
         );
 
