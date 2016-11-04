@@ -498,7 +498,7 @@ class UpgradeCommand extends CommonCommand
         $this->queryList = array();
 
         // Main DB connection.
-        $conn = $this->getConnection($input);
+        $conn = $this->getConnection($mainInput);
         $_configuration = $this->getHelper('configuration')->getConfiguration($path);
         $versionInfo = $this->getAvailableVersionInfo($toVersion);
         $installPath = $this->getInstallationFolder().$toVersion.'/';
