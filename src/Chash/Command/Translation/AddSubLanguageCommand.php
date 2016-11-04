@@ -45,7 +45,7 @@ class AddSubLanguageCommand extends CommonDatabaseCommand
     {
         parent::execute($input, $output);
         $_configuration = $this->getConfigurationArray();
-        $connection = $this->getConnection();
+        $connection = $this->getConnection($input);
 
         $parent = $input->getArgument('parent');
         $lang = $input->getArgument('sublanguage');

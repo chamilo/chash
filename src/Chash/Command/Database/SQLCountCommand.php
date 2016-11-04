@@ -41,7 +41,7 @@ class SQLCountCommand extends CommonDatabaseCommand
         parent::execute($input, $output);
         $table = $input->getArgument('table');
         $_configuration = $this->getConfigurationArray();
-        $connection = $this->getConnection();
+        $connection = $this->getConnection($input);
         $tableExists = $connection->getSchemaManager()->tablesExist($table);
         if ($tableExists) {
             $sql = "SELECT COUNT(*) count FROM $table";

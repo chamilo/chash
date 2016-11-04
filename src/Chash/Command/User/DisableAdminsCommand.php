@@ -36,7 +36,7 @@ class DisableAdminsCommand extends CommonChamiloUserCommand
     {
         parent::execute($input, $output);
         $_configuration = $this->getHelper('configuration')->getConfiguration();
-        $connection = $this->getConnection();
+        $connection = $this->getConnection($input);
         $dialog = $this->getHelperSet()->get('dialog');
         if (!$dialog->askConfirmation(
             $output,

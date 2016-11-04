@@ -183,7 +183,7 @@ class UpgradeCommand extends CommonCommand
         if (!isset($_configuration['system_version']) ||
             empty($_configuration['system_version'])
         ) {
-            $output->writeln("<comment>There is something wrong in your Chamilo installation. Check it with the chamilo:status command</comment>");
+            $output->writeln("<comment>There is something wrong in your Chamilo installation. Check it with the chash:chamilo_status command</comment>");
             return 0;
         }
 
@@ -199,7 +199,7 @@ class UpgradeCommand extends CommonCommand
             } else {
                 $output->writeln("<comment>Please provide a version greater than </comment><info>".$_configuration['system_version']."</info>");
                 $output->writeln("<comment>You selected version: </comment><info>$version</info>");
-                $output->writeln("<comment>You can also check your installation status with </comment><info>chamilo:status");
+                $output->writeln("<comment>You can also check your installation status with </comment><info>chash:chamilo_status");
                 return 0;
             }
         } else {
@@ -259,8 +259,9 @@ class UpgradeCommand extends CommonCommand
             $output->writeln("<comment>When the installation process finishes, PHP files are not going to be updated (--dry-run is on).</comment>");
         }
 
+        $dialog = $this->getHelperSet()->get('dialog');
+
         if ($silent == false) {
-            $dialog = $this->getHelperSet()->get('dialog');
             if (!$dialog->askConfirmation(
                 $output,
                 '<question>Are you sure you want to upgrade the Chamilo located here?</question> <info>'.$_configuration['root_sys'].'</info> (y/N)',
@@ -269,7 +270,6 @@ class UpgradeCommand extends CommonCommand
                 return;
             }
 
-            $dialog = $this->getHelperSet()->get('dialog');
             if (!$dialog->askConfirmation(
                 $output,
                 '<question>Are you sure you want to upgrade from version</question> <info>'.$_configuration['system_version'].'</info> <comment>to version</comment> <info>'.$version.'</info> (y/N)',
@@ -306,7 +306,7 @@ class UpgradeCommand extends CommonCommand
 
         $this->setExtraDatabaseSettings($extraDatabaseSettings);
         $this->setDoctrineSettings();
-        $conn = $this->getConnection();
+        $conn = $this->getConnection($input);
         $conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
 
         if ($conn) {
@@ -356,6 +356,14 @@ class UpgradeCommand extends CommonCommand
                 $output->writeln("Execute composer update in your chamilo instance first. Then continue with the upgrade");
 
                 return 1;
+            } else {
+                if (!$dialog->askConfirmation(
+                    $output,
+                    '<question>Are you sure you run composer before executing this upgrade?</question>(y/N)',
+                    false
+                )) {
+                    return;
+                }
             }
         }
 
@@ -490,7 +498,7 @@ class UpgradeCommand extends CommonCommand
         $this->queryList = array();
 
         // Main DB connection.
-        $conn = $this->getConnection();
+        $conn = $this->getConnection($input);
         $_configuration = $this->getHelper('configuration')->getConfiguration($path);
         $versionInfo = $this->getAvailableVersionInfo($toVersion);
         $installPath = $this->getInstallationFolder().$toVersion.'/';

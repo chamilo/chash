@@ -71,7 +71,7 @@ class UpdateDirectoryMaxSizeCommand extends CommonDatabaseCommand
 
         // Get database and path information
         $coursesPath = $this->getConfigurationHelper()->getSysPath();
-        $connection = $this->getConnection();
+        $connection = $this->getConnection($input);
         $_configuration = $this->getConfigurationHelper()->getConfiguration();
 
         $courseTable = $_configuration['main_database'].'.course';

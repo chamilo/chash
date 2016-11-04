@@ -48,7 +48,7 @@ class ChangePassCommand extends CommonChamiloUserCommand
     {
         parent::execute($input, $output);
         $_configuration = $this->getHelper('configuration')->getConfiguration();
-        $connection = $this->getConnection();
+        $connection = $this->getConnection($input);
         $username = $input->getArgument('username');
         $password = $input->getArgument('password');
         $us = "SELECT * FROM user WHERE username = '".mysql_real_escape_string($username)."'";

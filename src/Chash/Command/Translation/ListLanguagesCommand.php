@@ -40,7 +40,7 @@ class ListLanguagesCommand extends CommonDatabaseCommand
     {
         parent::execute($input, $output);
         $_configuration = $this->getHelper('configuration')->getConfiguration();
-        $connection = $this->getConnection();
+        $connection = $this->getConnection($input);
         $av = mysql_real_escape_string($input->getArgument('availability'));
         $current = 'english';
         $ls = "SELECT selected_value FROM settings_current WHERE variable='platformLanguage'";

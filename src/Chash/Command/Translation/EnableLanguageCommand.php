@@ -44,7 +44,7 @@ class EnableLanguageCommand extends CommonDatabaseCommand
     {
         parent::execute($input, $output);
         $_configuration = $this->getHelper('configuration')->getConfiguration();
-        $connection = $this->getConnection();
+        $connection = $this->getConnection($input);
         $lang = mysql_real_escape_string($input->getArgument('language'));
         $ls = "SELECT id, english_name, available FROM language WHERE english_name = '$lang'";
         $lq = mysql_query($ls);

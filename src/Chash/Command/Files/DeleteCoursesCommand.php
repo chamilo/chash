@@ -84,7 +84,7 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
             $beforeDate = $input->getOption('before-date'); //1 if the option was set
             $confirmDelete = $input->getOption('delete'); //1 if the option was set
             $du = $input->getOption('show-disk-usage'); //1 if the option was set
-            $connection = $this->getConnection();
+            $connection = $this->getConnection($input);
 
             if (empty($courseId) && empty($courseCode) && empty($courseCategory) && empty($beforeDate)) {
                 $output->writeln('At least one search criteria (id, code, category or date) must be provided.');
@@ -251,12 +251,12 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
                     $output->writeln(
                         'Deleting references to course ID ' . $id . ' in URL (url ' . $urlId . ')...'
                     );
-                    $this->unlinkCourse($output, $course['code'], $urlId);
+                    $this->unlinkCourse($input, $output, $course['code'], $urlId);
                 }
                 // Removal of the course linking in all URLs is over. Delete the
                 // course itself
                 $output->writeln('All references clear. Now deleting course ' . $id);
-                $this->deleteCourse($output, $course['code']);
+                $this->deleteCourse($intput, $output, $course['code']);
             }
         }
         $output->writeln('');
@@ -272,14 +272,14 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
      * @param   int     $urlId
      * @return  bool
      */
-    private function unlinkCourse(OutputInterface $output, $courseCode, $urlId)
+    private function unlinkCourse($input, OutputInterface $output, $courseCode, $urlId)
     {
         /* Check tables:
          * session, session_rel_course, session_rel_course_rel_user
          * (if the session has only one course, delete it as well)
          * course_rel_user (if user is only in the given URL)
          */
-        $connection = $this->getConnection();
+        $connection = $this->getConnection($input);
         // 1. List the sessions in that URL that include this course
         $sql = "SELECT src.id_session
                 FROM session_rel_course src
@@ -345,9 +345,9 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
      * @param   string  Course code
      * @return  bool
      */
-    private function deleteCourse(OutputInterface $output, $courseCode)
+    private function deleteCourse($input, OutputInterface $output, $courseCode)
     {
-        $connection = $this->getConnection();
+        $connection = $this->getConnection($input);
         $sql = "SELECT id, directory FROM course WHERE code = '$courseCode'";
         $output->writeln($sql);
         $stmt = $connection->query($sql);

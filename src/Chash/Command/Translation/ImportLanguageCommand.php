@@ -46,7 +46,7 @@ class ImportLanguageCommand extends CommonDatabaseCommand
 
         $file = $input->getArgument('file');
 
-        $connection = $this->getConnection();
+        $connection = $this->getConnection($input);
 
         if (is_file($file) && is_readable($file)) {
             $phar = new \PharData($file);

@@ -55,7 +55,7 @@ class DropDatabaseCommand extends CommonDatabaseCommand
         }
 
         $_configuration = $this->getConfigurationArray();
-        $connection = $this->getConnection();
+        $connection = $this->getConnection($input);
 
         if ($connection) {
 

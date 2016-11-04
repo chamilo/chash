@@ -51,7 +51,7 @@ class ExportLanguageCommand extends CommonDatabaseCommand
 
         $_configuration = $this->getHelper('configuration')->getConfiguration();
 
-        $connection = $this->getConnection();
+        $connection = $this->getConnection($input);
 
         if ($connection) {
             $lang = isset($language) ? $language : null;

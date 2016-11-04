@@ -65,7 +65,7 @@ class CleanDeletedDocumentsCommand extends CommonDatabaseCommand
         $courseDirsList = array();
         if (!empty($category)) {
             $courseDirsList = '';
-            $connection = $this->getConnection();
+            $connection = $this->getConnection($input);
             // @todo escape the $category properly
             $sql = "SELECT directory FROM course WHERE category_code = '$category'";
             $stmt = $connection->query($sql);
@@ -106,7 +106,7 @@ class CleanDeletedDocumentsCommand extends CommonDatabaseCommand
             }
             $deleteFromDb = $input->getOption('from-db');
             if ($deleteFromDb) {
-                $connection = $this->getConnection();
+                $connection = $this->getConnection($input);
                 $sql = "DELETE FROM c_document WHERE path LIKE '%_DELETED%'";
                 $stmt = $connection->query($sql);
                 /*

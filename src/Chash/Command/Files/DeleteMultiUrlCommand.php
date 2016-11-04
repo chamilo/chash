@@ -72,7 +72,7 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
         if ($input->isInteractive()) {
             $this->writeCommandHeader($output, 'Deleting URL');
             $list = $input->getOption('list'); //1 if the option was set
-            $connection = $this->getConnection();
+            $connection = $this->getConnection($input);
             $sql = "SELECT * FROM access_url";
             $stmt = $connection->query($sql);
             $urls = array();
@@ -209,14 +209,14 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                             $output->writeln(
                                 'Deleting only references to given URL (' . $urlId . ')...'
                             );
-                            $this->unlinkCourse($output, $courseCode, $urlId);
+                            $this->unlinkCourse($input, $output, $courseCode, $urlId);
                         } else { // The course is only in the given URL
                             $output->writeln(
                                 'Course ' . $courseCode . ' is only used ' .
                                 'on this portal. Proceeding with deletion...'
                             );
-                            $this->unlinkCourse($output, $courseCode, $urlId);
-                            $this->deleteCourse($output, $courseCode);
+                            $this->unlinkCourse($input, $output, $courseCode, $urlId);
+                            $this->deleteCourse($input, $output, $courseCode);
                         }
                     }
                 }
@@ -239,12 +239,12 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                             // user is in more than one URL, so only remove
                             // reference to this URL
                             $sql = "DELETE FROM access_url_rel_user where access_url_id = $urlId AND user_id = $user";
-                            $stmt = $connection->query($sql);
+                            $connection->query($sql);
                         } else {
                             if ($urls[0] == $urlId) {
                                 $output->writeln('User ' . $user . ' is only in URL ' . $urlId . ', deleting...');
                                 // DELETE user
-                                $this->deleteUser($output, $user);
+                                $this->deleteUser($input, $output, $user);
                             } else {
                                 $output->writeln('User ' . $user . 'is in only one URL, but not this one. Skipping.');
                             }
@@ -253,7 +253,7 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                 }
                 // Everything removed. Delete URL
                 $sql = 'DELETE FROM access_url WHERE id = ' . $urlId;
-                $stmt = $connection->query($sql);
+                $connection->query($sql);
             }
         }
     }
@@ -266,28 +266,33 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
      * @param   int     $urlId
      * @return  bool
      */
-    private function unlinkCourse(OutputInterface $output, $courseCode, $urlId)
+    private function unlinkCourse($input, OutputInterface $output, $courseCode, $urlId)
     {
         /* Check tables:
          * session, session_rel_course, session_rel_course_rel_user
          * (if the session has only one course, delete it as well)
          * course_rel_user (if user is only in the given URL)
          */
-        $connection = $this->getConnection();
+        $connection = $this->getConnection($input);
         // 1. List the sessions in that URL that include this course
-        $sql = "SELECT src.id_session "
-            . "FROM session_rel_course src "
-            . "JOIN access_url_rel_session aurs "
-            . "ON aurs.session_id = src.id_session "
-            . "WHERE src.course_code = '" . $courseCode . "' "
-            . "  AND aurs.access_url_id = $urlId";
+        $sql = "SELECT src.id_session 
+                FROM session_rel_course src 
+                JOIN access_url_rel_session aurs 
+                ON aurs.session_id = src.id_session 
+                WHERE 
+                    src.course_code = '" . $courseCode . "' AND 
+                    aurs.access_url_id = $urlId";
         $stmt = $connection->query($sql);
         $sessions = array();
         while ($row = $stmt->fetch()) {
             $sessions[] = $row['id_session'];
         }
-        $output->writeln('Sessions using course ' . $courseCode . ' in URL ' . $urlId . ': ' . implode(',',
-                $sessions));
+        $output->writeln(
+            'Sessions using course '.$courseCode.' in URL '.$urlId.': '.implode(
+                ',',
+                $sessions
+            )
+        );
 
         // 2. Delete the session_rel_course and session_rel_course_rel_user
         foreach ($sessions as $sessionId) {
@@ -339,9 +344,9 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
      * @param   string  Course code
      * @return  bool
      */
-    private function deleteCourse(OutputInterface $output, $courseCode)
+    private function deleteCourse($input, OutputInterface $output, $courseCode)
     {
-        $connection = $this->getConnection();
+        $connection = $this->getConnection($input);
         $sql = "SELECT id, directory FROM course WHERE code = '$courseCode'";
         $stmt = $connection->query($sql);
         while ($row = $stmt->fetch()) {
@@ -464,11 +469,11 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
      * @return  bool
      * @todo Use UserManager::delete_user() instead
      */
-    private function deleteUser(OutputInterface $output, $userId)
+    private function deleteUser($input, OutputInterface $output, $userId)
     {
         // No validation of permissions or variables is done because Chash is
         // only for sysadmins anyway
-        $connection = $this->getConnection();
+        $connection = $this->getConnection($input);
 
         // Unsubscribe the user from all groups in all his courses
         $sql = "SELECT c.id as courseId FROM course c, course_rel_user cu

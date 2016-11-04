@@ -36,7 +36,7 @@ class StatusCommand extends CommonDatabaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-        $connection = $this->getConnection();
+        $connection = $this->getConnection($input);
         $_configuration = $this->getConfigurationArray();
 
 
