@@ -533,7 +533,8 @@ class CommonCommand extends AbstractCommand
                 'hook_to_doctrine_version' => '20160808110200',
                 'migrations_directory' => 'app/Migrations/Schema/V110',
                 'migrations_namespace' => 'Application\Migrations\Schema\V110',
-                'migrations_yml' => 'V110.yml'
+                'migrations_yml' => 'V110.yml',
+                'update_files' => 'update.php',
             ),
             '1.10.2' => array(
                 'require_update' => false,
@@ -560,7 +561,8 @@ class CommonCommand extends AbstractCommand
                 'hook_to_doctrine_version' => '20161028123400',
                 'migrations_directory' => 'app/Migrations/Schema/V111',
                 'migrations_namespace' => 'Application\Migrations\Schema\V111',
-                'migrations_yml' => 'V111.yml'
+                'migrations_yml' => 'V111.yml',
+                'update_files' => 'update.php',
             ),
             '1.11.2' => array(
                 'require_update' => false,
