@@ -49,6 +49,7 @@ class UpgradeCommand extends CommonCommand
             ->addOption('linux-group', null, InputOption::VALUE_OPTIONAL, 'group', 'www-data')
             ->addOption('custom-package', null, InputOption::VALUE_OPTIONAL, 'Custom zip package location.', '')
             ->addOption('remove-unused-table', null, InputOption::VALUE_NONE, 'Remove unused tables.')
+            ->addOption('only-update-db', null, InputOption::VALUE_NONE, 'Only updates the db.')
         ;
             //->addOption('force', null, InputOption::VALUE_NONE, 'Force the update. Only for tests');
     }
@@ -75,11 +76,19 @@ class UpgradeCommand extends CommonCommand
         $tempFolder = $input->getOption('temp-folder');
         $downloadPackage = $input->getOption('download-package') == 'true' ? true : false;
         $customPackage = $input->getOption('custom-package');
+        $removeUnusedTables = $input->getOption('remove-unused-table');
+        $linuxUser = $input->getOption('linux-user');
+        $linuxGroup = $input->getOption('linux-group');
+        $updateInstallation = $input->getOption('update-installation');
+        $onlyUpdateDatabase = $input->getOption('only-update-db') == 'true' ? true : false;
+
         if (!empty($customPackage)) {
             $downloadPackage = false;
         }
 
-        $updateInstallation = $input->getOption('update-installation');
+        if ($onlyUpdateDatabase) {
+            $downloadPackage = false;
+        }
 
         // Getting supported version number list
         $versionNameList = $this->getVersionNumberList();
@@ -154,14 +163,8 @@ class UpgradeCommand extends CommonCommand
             $this->commandLine = false;
         }
 
-        $removeUnusedTables = $input->getOption('remove-unused-table');
-
-        // User options
-        $linuxUser = $input->getOption('linux-user');
-        $linuxGroup = $input->getOption('linux-group');
         $doctrineVersion = null;
         $currentVersion = null;
-
         if (!file_exists($testFolder)) {
             $output->writeln("<error>The migration directory was not detected: </error><info>$installationFolder</info>");
             return 0;
@@ -398,7 +401,8 @@ class UpgradeCommand extends CommonCommand
                     $output,
                     $removeUnusedTables,
                     $input,
-                    $runFixIds
+                    $runFixIds,
+                    $onlyUpdateDatabase
                 );
                 $currentVersion = $versionItem;
                 $output->writeln("<comment>End database migration</comment>");
@@ -414,7 +418,7 @@ class UpgradeCommand extends CommonCommand
         $version = $oldVersion;
 
         // Update chamilo files.
-        if ($dryRun == false) {
+        if ($dryRun == false && $onlyUpdateDatabase == false) {
             $output->writeln("Version: $version");
             if (
                 $version === '10' ||
@@ -427,42 +431,48 @@ class UpgradeCommand extends CommonCommand
             }
         }
 
-        $configurationPathFromHelper = $this->getConfigurationHelper()->getConfigurationFilePath($path);
-        $output->writeln("Reading path in : $path");
-        $output->writeln("Configuration path in : $configurationPathFromHelper");
+        if ($onlyUpdateDatabase == false) {
+            $configurationPathFromHelper = $this->getConfigurationHelper()->getConfigurationFilePath($path);
+            $output->writeln("Reading path in : $path");
+            $output->writeln("Configuration path in : $configurationPathFromHelper");
 
-        if (empty($configurationPathFromHelper)) {
-            $output->writeln("Configuration path is not found. Check that the configuration.php exists here: $path.");
-            exit;
+            if (empty($configurationPathFromHelper)) {
+                $output->writeln("Configuration path is not found. Check that the configuration.php exists here: $path.");
+                exit;
+            }
+
+            // Generating temp folders.
+            $command = $this->getApplication()->find(
+                'files:generate_temp_folders'
+            );
+            $arguments = array(
+                'command' => 'files:generate_temp_folders',
+                '--conf' => $configurationPathFromHelper,
+                '--dry-run' => $dryRun
+            );
+
+            $input = new ArrayInput($arguments);
+            $command->run($input, $output);
+
+            // Update configuration file new system_version
+            $newParams = array('system_version' => $version);
+            $this->updateConfiguration($output, $dryRun, $newParams);
+
+            // Fixing permissions.
+            $command = $this->getApplication()->find(
+                'files:set_permissions_after_install'
+            );
+            $arguments = array(
+                'command' => 'files:set_permissions_after_install',
+                '--conf' => $configurationPathFromHelper,
+                '--linux-user' => $linuxUser,
+                '--linux-group' => $linuxGroup,
+                '--dry-run' => $dryRun
+            );
+
+            $input = new ArrayInput($arguments);
+            $command->run($input, $output);
         }
-
-        // Generating temp folders.
-        $command = $this->getApplication()->find('files:generate_temp_folders');
-        $arguments = array(
-            'command' => 'files:generate_temp_folders',
-            '--conf' => $configurationPathFromHelper,
-            '--dry-run' => $dryRun
-        );
-
-        $input = new ArrayInput($arguments);
-        $command->run($input, $output);
-
-        // Update configuration file new system_version
-        $newParams = array('system_version' => $version);
-        $this->updateConfiguration($output, $dryRun, $newParams);
-
-        // Fixing permissions.
-        $command = $this->getApplication()->find('files:set_permissions_after_install');
-        $arguments = array(
-            'command' => 'files:set_permissions_after_install',
-            '--conf' => $configurationPathFromHelper,
-            '--linux-user' => $linuxUser,
-            '--linux-group' => $linuxGroup,
-            '--dry-run' => $dryRun
-        );
-
-        $input = new ArrayInput($arguments);
-        $command->run($input, $output);
 
         $output->writeln("<comment>Hurray!!! You just finished this migration. To check the current status of your platform, run </comment><info>chamilo:status</info>");
         $endTime = time();
@@ -492,7 +502,8 @@ class UpgradeCommand extends CommonCommand
         OutputInterface $output,
         $removeUnusedTables = false,
         InputInterface $mainInput,
-        $runFixIds = true
+        $runFixIds = true,
+        $onlyUpdateDatabase = false
     ) {
         // Cleaning query list.
         $this->queryList = array();
@@ -600,7 +611,7 @@ class UpgradeCommand extends CommonCommand
             }
 
             // Processing "update file" changes.
-            if (isset($versionInfo['update_files']) && !empty($versionInfo['update_files'])) {
+            if (isset($versionInfo['update_files']) && !empty($versionInfo['update_files']) && $onlyUpdateDatabase == false) {
                 $sqlToInstall = $installPath.$versionInfo['update_files'];
                 if (is_file($sqlToInstall) && file_exists($sqlToInstall)) {
                     if ($dryRun) {
