@@ -27,9 +27,9 @@
         "symfony/finder": "~2.6",
         "doctrine/dbal": "~2.3",
         "doctrine/orm": "~2.2,>=2.2.3,<2.5",
-        "doctrine/migrations": "1.0.0",
-        "zendframework/zend-config": "~2.2",
-        "zendframework/zend-stdlib": "~2.2",
+        "doctrine/migrations": "~1.0@dev",
+        "zendframework/zend-config": "~2.5.1",
+        "zendframework/zend-stdlib": "~2.5.1",
         "alchemy/zippy": "~0.2",
         "sylius/attribute": "0.13.0",
         "sylius/translation": "0.13.0"
