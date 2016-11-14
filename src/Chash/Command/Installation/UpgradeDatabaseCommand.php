@@ -151,7 +151,7 @@ class UpgradeDatabaseCommand extends CommonCommand
         $result = $conn->executeQuery($query);
         $courseList = $result->fetchAll();
 
-        $output->writeln("<comment>Current version: </comment><info>$fromVersion</info>");
+        $output->writeln("<comment>Current version: </comment><info>$currentVersion</info>");
         $output->writeln("<comment>Latest version: </comment><info>$version</info>");
         $oldVersion = $version;
 
@@ -213,7 +213,7 @@ class UpgradeDatabaseCommand extends CommonCommand
                 // Greater than my current version.
                 $this->startMigration(
                     $courseList,
-                    $path,
+                    null,
                     $versionItem,
                     $dryRun = false,
                     $output,
@@ -231,66 +231,6 @@ class UpgradeDatabaseCommand extends CommonCommand
                 $output->writeln("<comment>Skip migration from version: </comment><info>$currentVersion</info><comment> to version </comment><info>$versionItem ");
             }
             $counter++;
-        }
-
-        // Restore old version
-        $version = $oldVersion;
-
-        // Update chamilo files.
-        if ($dryRun == false && $onlyUpdateDatabase == false) {
-            $output->writeln("Version: $version");
-            if (
-                $version === '10' ||
-                $version === '1.10.x' ||
-                $version === '11' ||
-                $version === '1.11.x'
-            ) {
-                $this->removeUnUsedFiles($output, $path);
-                $this->copyConfigFilesToNewLocation($output);
-            }
-        }
-
-        if ($onlyUpdateDatabase == false) {
-            $configurationPathFromHelper = $this->getConfigurationHelper()->getConfigurationFilePath($path);
-            $output->writeln("Reading path in : $path");
-            $output->writeln("Configuration path in : $configurationPathFromHelper");
-
-            if (empty($configurationPathFromHelper)) {
-                $output->writeln("Configuration path is not found. Check that the configuration.php exists here: $path.");
-                exit;
-            }
-
-            // Generating temp folders.
-            $command = $this->getApplication()->find(
-                'files:generate_temp_folders'
-            );
-            $arguments = array(
-                'command' => 'files:generate_temp_folders',
-                '--conf' => $configurationPathFromHelper,
-                '--dry-run' => $dryRun
-            );
-
-            $input = new ArrayInput($arguments);
-            $command->run($input, $output);
-
-            // Update configuration file new system_version
-            $newParams = array('system_version' => $version);
-            $this->updateConfiguration($output, $dryRun, $newParams);
-
-            // Fixing permissions.
-            $command = $this->getApplication()->find(
-                'files:set_permissions_after_install'
-            );
-            $arguments = array(
-                'command' => 'files:set_permissions_after_install',
-                '--conf' => $configurationPathFromHelper,
-                '--linux-user' => $linuxUser,
-                '--linux-group' => $linuxGroup,
-                '--dry-run' => $dryRun
-            );
-
-            $input = new ArrayInput($arguments);
-            $command->run($input, $output);
         }
 
         $output->writeln("<comment>Hurray!!! You just finished this migration. To check the current status of your platform, run </comment><info>chamilo:status</info>");
@@ -333,22 +273,6 @@ class UpgradeDatabaseCommand extends CommonCommand
 
         $versionInfo = $this->getAvailableVersionInfo($toVersion);
         $installPath = $this->getInstallationFolder().$toVersion.'/';
-
-        // Filling sqlList array with "pre" db changes.
-        if (isset($versionInfo['pre']) && !empty($versionInfo['pre'])) {
-            $sqlToInstall = $installPath.$versionInfo['pre'];
-            $this->fillQueryList($sqlToInstall, $output, 'pre');
-
-            // Processing sql query list depending of the section (course, main, user).
-            $this->processQueryList(
-                $courseList,
-                $output,
-                $path,
-                $toVersion,
-                $dryRun,
-                'pre'
-            );
-        }
 
         try {
             if (isset($versionInfo['hook_to_doctrine_version'])) {
@@ -423,39 +347,11 @@ class UpgradeDatabaseCommand extends CommonCommand
                     require $sqlToInstall;
 
                     if (!empty($update)) {
-                        $update($_configuration, $conn, $courseList, $dryRun, $output, $this, $removeUnusedTables);
+                        $update(null, $conn, $courseList, $dryRun, $output, $this, $removeUnusedTables);
                     }
                 } else {
                     $output->writeln(sprintf("File doesn't exist: '<info>%s</info>'", $sqlToInstall));
                 }
-            }
-
-            // Processing "update file" changes.
-            if (isset($versionInfo['update_files']) && !empty($versionInfo['update_files']) && $onlyUpdateDatabase == false) {
-                $sqlToInstall = $installPath.$versionInfo['update_files'];
-                if (is_file($sqlToInstall) && file_exists($sqlToInstall)) {
-                    if ($dryRun) {
-                        $output->writeln("<comment>Files to be executed but dry-run is on: <info>'$sqlToInstall'</info>");
-                    } else {
-                        $output->writeln("<comment>Executing update files: <info>'$sqlToInstall'</info>");
-
-                        require $sqlToInstall;
-
-                        if (!empty($updateFiles)) {
-                            $updateFiles($_configuration, $conn, $courseList, $dryRun, $output, $this);
-                        }
-                    }
-                } else {
-                    $output->writeln(sprintf("File doesn't exist: '<info>%s</info>'", $sqlToInstall));
-                }
-            }
-
-            // Filling sqlList array with "post" db changes.
-            if (isset($versionInfo['post']) && !empty($versionInfo['post'])) {
-                $sqlToInstall = $installPath.$versionInfo['post'];
-                $this->fillQueryList($sqlToInstall, $output, 'post');
-                // Processing sql query list depending of the section.
-                $this->processQueryList($courseList, $output, $path, $toVersion, $dryRun, 'post');
             }
 
             if ($runFixIds) {
