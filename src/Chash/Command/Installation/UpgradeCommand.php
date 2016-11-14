@@ -308,7 +308,7 @@ class UpgradeCommand extends CommonCommand
         );
 
         $this->setExtraDatabaseSettings($extraDatabaseSettings);
-        $this->setDoctrineSettings();
+        $this->setDoctrineSettings($this->getHelperSet());
         $conn = $this->getConnection($input);
         $conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
 
@@ -533,7 +533,7 @@ class UpgradeCommand extends CommonCommand
         try {
             if (isset($versionInfo['hook_to_doctrine_version'])) {
                 // Doctrine migrations:
-                $em = $this->setDoctrineSettings();
+                $em = $this->setDoctrineSettings($this->getHelperSet());
                 $output->writeln('');
                 $output->writeln(
                     "<comment>You have to select 'yes' for the 'Chamilo Migrations'<comment>"

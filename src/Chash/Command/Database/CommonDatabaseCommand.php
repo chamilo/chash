@@ -111,7 +111,7 @@ class CommonDatabaseCommand extends CommonCommand
 
         // Setting doctrine connection
         $this->setDatabaseSettings($databaseSettings);
-        $this->setDoctrineSettings();
+        $this->setDoctrineSettings($this->getHelperSet());
         //$this->getApplication()->getHelperSet()->set($this->getConfigurationHelper(), 'configuration');
     }
 }

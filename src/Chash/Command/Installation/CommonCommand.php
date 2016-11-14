@@ -4,6 +4,7 @@ namespace Chash\Command\Installation;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\DBAL\ConnectionException;
+use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
 use Doctrine\DBAL\Migrations\Tools\Console\Command\AbstractCommand;
@@ -968,10 +969,10 @@ class CommonCommand extends AbstractCommand
     /**
      * Set Doctrine settings
      */
-    protected function setDoctrineSettings()
+    protected function setDoctrineSettings(HelperSet $helperSet)
     {
         $config = new \Doctrine\ORM\Configuration();
-        $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache);
+        $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache());
         $reader = new AnnotationReader();
 
         $driverImpl = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver(
@@ -997,7 +998,7 @@ class CommonCommand extends AbstractCommand
             if (in_array($dbName, $dbList)) {
                 $settings['dbname'] = $dbName;
                 $em = \Doctrine\ORM\EntityManager::create(
-                    $settings ,
+                    $settings,
                     $config
                 );
             }
@@ -1020,7 +1021,7 @@ class CommonCommand extends AbstractCommand
         );
 
         foreach ($helpers as $name => $helper) {
-            $this->getApplication()->getHelperSet()->set(
+            $helperSet->set(
                 $helper,
                 $name
             );

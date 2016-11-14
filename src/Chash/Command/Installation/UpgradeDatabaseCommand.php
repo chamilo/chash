@@ -41,11 +41,11 @@ class UpgradeDatabaseCommand extends CommonCommand
             ->setDescription('Execute a chamilo migration to a specified version or the latest available version')
             ->addArgument('from-version', InputArgument::REQUIRED, 'The version to migrate to', null)
             ->addArgument('to-version', InputArgument::REQUIRED, 'The version to migrate to', null)
-            ->addOption('host', null, InputOption::VALUE_OPTIONAL, 'host', 'localhost')
-            ->addOption('username', null, InputOption::VALUE_OPTIONAL, 'username', 'root')
-            ->addOption('password', null, InputOption::VALUE_OPTIONAL, 'password', 'root')
-            ->addOption('dbname', null, InputOption::VALUE_OPTIONAL, 'Database name', '')
-            ->addOption('root_sys', null, InputOption::VALUE_OPTIONAL, 'Chamilo root_sys', '')
+            ->addArgument('host', null, InputArgument::REQUIRED, 'host', 'localhost')
+            ->addArgument('username', null, InputArgument::REQUIRED, 'username', 'root')
+            ->addArgument('password', null, InputArgument::REQUIRED, 'password', 'root')
+            ->addArgument('db_name', null, InputArgument::REQUIRED, 'Database name', '')
+            ->addArgument('root_sys', null, InputArgument::REQUIRED, 'Chamilo root_sys', '')
         ;
     }
 
@@ -66,11 +66,11 @@ class UpgradeDatabaseCommand extends CommonCommand
         // Arguments and options
         $currentVersion = $originalVersion = $input->getArgument('from-version');
         $version = $originalVersion = $input->getArgument('to-version');
-        $host = $input->getOption('host');
-        $username = $input->getOption('username');
-        $password = $input->getOption('password');
-        $database = $input->getOption('db_name');
-        $rootSys = $input->getOption('root_sys');
+        $host = $input->getArgument('host');
+        $username = $input->getArgument('username');
+        $password = $input->getArgument('password');
+        $database = $input->getArgument('db_name');
+        $rootSys = $input->getArgument('root_sys');
 
         // Getting supported version number list
         $versionNameList = $this->getVersionNumberList();
@@ -134,7 +134,7 @@ class UpgradeDatabaseCommand extends CommonCommand
         );
 
         $this->setExtraDatabaseSettings($extraDatabaseSettings);
-        $this->setDoctrineSettings();
+        $this->setDoctrineSettings($this->getHelperSet());
         $conn = $this->getConnection($input);
         $conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
 
@@ -277,7 +277,7 @@ class UpgradeDatabaseCommand extends CommonCommand
         try {
             if (isset($versionInfo['hook_to_doctrine_version'])) {
                 // Doctrine migrations:
-                $em = $this->setDoctrineSettings();
+                $em = $this->setDoctrineSettings($this->getHelperSet());
                 $output->writeln('');
                 $output->writeln(
                     "<comment>You have to select 'yes' for the 'Chamilo Migrations'<comment>"

@@ -346,7 +346,7 @@ class InstallCommand extends CommonCommand
             $connectionToDatabase->connect();
 
             $this->askPortalSettings($input, $output);
-            $this->setDoctrineSettings();
+            $this->setDoctrineSettings($this->getHelperSet());
             $this->setPortalSettingsInChamilo(
                 $output,
                 $connectionToDatabase
@@ -681,7 +681,7 @@ class InstallCommand extends CommonCommand
      */
     public function processInstallation($databaseSettings, $version, $output)
     {
-        $this->setDoctrineSettings();
+        $this->setDoctrineSettings($this->getHelperSet());
 
         $sqlFolder = $this->getInstallationPath($version);
         $databaseMap = $this->getDatabaseMap();
