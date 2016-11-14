@@ -279,9 +279,7 @@ class UpgradeDatabaseCommand extends CommonCommand
                 // Doctrine migrations:
                 $em = $this->setDoctrineSettings($this->getHelperSet());
                 $output->writeln('');
-                $output->writeln(
-                    "<comment>You have to select 'yes' for the 'Chamilo Migrations'<comment>"
-                );
+                $output->writeln("<comment>You have to select 'yes' for the 'Chamilo Migrations'<comment>");
 
                 // Setting migrations temporal ymls
                 $tempFolder = '/tmp';
@@ -297,7 +295,7 @@ class UpgradeDatabaseCommand extends CommonCommand
                     'name' => 'Chamilo Migrations',
                     'migrations_namespace' => $versionInfo['migrations_namespace'],
                     'table_name' => 'version',
-                    'migrations_directory' => $versionInfo['migrations_directory'],
+                    'migrations_directory' => $rootSys.$versionInfo['migrations_directory'],
                 );
 
                 $dumper = new Dumper();
@@ -309,7 +307,6 @@ class UpgradeDatabaseCommand extends CommonCommand
                 }
 
                 file_put_contents($file, $yaml);
-                //$command = $this->getApplication()->find('migrations:migrate');
 
                 $command = new \Doctrine\DBAL\Migrations\Tools\Console\Command\MigrateCommand();
                 // Creates the helper set
@@ -329,6 +326,7 @@ class UpgradeDatabaseCommand extends CommonCommand
                     "<comment>Executing migrations:migrate ".$versionInfo['hook_to_doctrine_version']." --configuration=".$file."<comment>"
                 );
                 $input = new ArrayInput($arguments);
+                $input->setInteractive(false);
                 $command->run($input, $output);
                 $output->writeln(
                     "<comment>Migration ended successfully</comment>"
