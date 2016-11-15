@@ -125,7 +125,6 @@ class InstallCommand extends CommonCommand
         }
 
         $databaseSettings = $this->getDatabaseSettings();
-
         $connectionToHost = $this->getUserAccessConnectionToHost();
         $connectionToHostConnect = $connectionToHost->connect();
 
@@ -235,7 +234,6 @@ class InstallCommand extends CommonCommand
                     $arguments = array(
                         'command' => 'files:clean_temp_folder',
                         '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
-                        //'--dry-run' => false
                     );
 
                     $input = new ArrayInput($arguments);
@@ -246,7 +244,6 @@ class InstallCommand extends CommonCommand
                     $arguments = array(
                         'command' => 'files:generate_temp_folders',
                         '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
-                        //'--dry-run' => false
                     );
 
                     $input = new ArrayInput($arguments);
@@ -299,6 +296,9 @@ class InstallCommand extends CommonCommand
         // Master
         // sudo php /var/www/html/chash/chash.php chash:chamilo_install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root master /var/www/html/chamilo-test
 
+        // 1.11.x
+        // sudo php /var/www/html/chash/chash.php chash:chamilo_install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root  --site_url=http://localhost/chamilo-test 1.11.x /var/www/html/chamilo-test
+
         // 1.10.x
         // sudo php /var/www/html/chash/chash.php chash:chamilo_install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root  --site_url=http://localhost/chamilo-test 1.10.x /var/www/html/chamilo-test
 
@@ -311,46 +311,37 @@ class InstallCommand extends CommonCommand
             cd /var/www/html/chamilo-test/
         */
 
-        // Upgrade
-        $configurationPath = $this->getConfigurationHelper()->getConfigurationPath();
+        $this->askDatabaseSettings($input, $output);
 
-        if (file_exists($configurationPath.'parameters.yml')) {
-            $output->writeln("<comment>Parameters file exists. </comment> <info>".$configurationPath.'parameters.yml'."</info>");
-
-            $configuration = $this->getConfigurationHelper()->readConfigurationFile($configurationPath.'parameters.yml');
-            $databaseSettings = array(
-                'driver' => $configuration['database_driver'],
-                'user' => $configuration['database_user'],
-                'password' => $configuration['database_password'],
-                'port' => $configuration['database_port'],
-                'host' => $configuration['database_host'],
-                'dbname' => $configuration['database_name']
-            );
-            $this->setDatabaseSettings($databaseSettings);
+        if (empty($this->databaseSettings)) {
+            $output->writeln("<comment>Cannot get database settings. </comment>");
+            return false;
+        } else {
+            var_dump($this->databaseSettings);
         }
 
         if ($this->commandLine) {
-
-            $databaseSettings = array(
-                'driver' => $configuration['database_driver'],
-                'user' => $configuration['database_user'],
-                'password' => $configuration['database_password'],
-                'port' => $configuration['database_port'],
-                'host' => $configuration['database_host'],
-                'dbname' => $configuration['database_name']
-            );
-
-            $this->setDatabaseSettings($databaseSettings);
-
             $connectionToDatabase = $this->getUserAccessConnectionToDatabase();
             $connectionToDatabase->connect();
+            $version = $this->version;
 
-            $this->askPortalSettings($input, $output);
-            $this->setDoctrineSettings($this->getHelperSet());
-            $this->setPortalSettingsInChamilo(
-                $output,
-                $connectionToDatabase
-            );
+            // Installing database.
+            $result = $this->processInstallation($this->databaseSettings, $version, $output);
+
+            $path = $this->path;
+            $silent = $this->silent;
+            $linuxUser = $this->linuxUser;
+            $linuxGroup = $this->linuxGroup;
+
+            $configurationWasSaved = $this->writeConfiguration($version, $path, $output);
+            if ($configurationWasSaved) {
+                $this->askPortalSettings($input, $output);
+                $this->setDoctrineSettings($this->getHelperSet());
+                $this->setPortalSettingsInChamilo(
+                    $output,
+                    $connectionToDatabase
+                );
+            }
         }
     }
 
@@ -554,10 +545,13 @@ class InstallCommand extends CommonCommand
                 $this->oldConfigLocation = true;
             }
         } else {
-            // Chamilo v2 installation.
-            $this->setRootSys(realpath($configurationPath.'/../').'/');
-            $this->oldConfigLocation = false;
+            // Chamilo v2/v1.x installation.
+            /*$this->setRootSys(realpath($configurationPath.'/../').'/');
+            $this->oldConfigLocation = false;*/
+            $this->setRootSys(realpath($configurationPath.'/../../').'/');
+            $this->oldConfigLocation = true;
         }
+
         $this->getConfigurationHelper()->setIsLegacy($this->oldConfigLocation);
         $this->setConfigurationPath($configurationPath);
     }
@@ -759,6 +753,8 @@ class InstallCommand extends CommonCommand
                 require_once $this->getRootSys().'/main/inc/lib/system/session.class.php';
                 require_once $this->getRootSys().'/main/inc/lib/chamilo_session.class.php';
                 require_once $this->getRootSys().'/main/inc/lib/api.lib.php';
+                require_once $this->getRootSys().'/main/inc/lib/text.lib.php';
+                require_once $this->getRootSys().'/main/inc/lib/display.lib.php';
                 require_once $this->getRootSys().'/main/inc/lib/database.lib.php';
                 require_once $this->getRootSys().'/main/inc/lib/custom_pages.class.php';
                 require_once $this->getRootSys().'/main/install/install.lib.php';
@@ -773,6 +769,7 @@ class InstallCommand extends CommonCommand
                 require_once $this->getRootSys().'/main/inc/lib/extra_field.lib.php';
                 require_once $this->getRootSys().'/main/inc/lib/extra_field_value.lib.php';
                 require_once $this->getRootSys().'/main/inc/lib/urlmanager.lib.php';
+                require_once $this->getRootSys().'/src/Chamilo/UserBundle/Security/Encoder.php';
                 require_once $this->getRootSys().'/main/inc/lib/usermanager.lib.php';
 
                 $newInstallationPath = $this->getRootSys();

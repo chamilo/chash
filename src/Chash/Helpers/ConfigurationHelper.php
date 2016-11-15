@@ -504,24 +504,30 @@ class ConfigurationHelper extends Helper
 
     /**
      * Lists the files in the archive/ or app/cache directory (depends on Chamilo version)
-     * @return Finder
+     * @return bool|Finder
      */
     public function getTempFiles()
     {
         $finder = new Finder();
         $sysPath = $this->getSysPath();
-
+        $filesAdded = false;
         if (is_dir($sysPath . 'app/cache')) {
             $finder->in($sysPath . 'app/cache/');
             $finder->files()->notName('index.*');
+            $filesAdded = true;
         }
 
         if (is_dir($sysPath . 'archive')) {
             $finder->in($sysPath . 'archive/');
             $finder->files()->notName('index.*');
+            $filesAdded = true;
         }
 
-        return $finder;
+        if ($filesAdded) {
+            return $finder;
+        }
+
+        return false;
     }
 
     /**

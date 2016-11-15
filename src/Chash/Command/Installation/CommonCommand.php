@@ -187,7 +187,6 @@ class CommonCommand extends AbstractCommand
      */
     public function getInstallationFolder()
     {
-
         $chashFolder = dirname(dirname(dirname(__FILE__)));
 
         return $chashFolder.'/Resources/Database/';
@@ -791,7 +790,6 @@ class CommonCommand extends AbstractCommand
 
             $result = file_put_contents($newConfigurationFile, $contents);
             $output->writeln("<comment>Config file written.</comment>");
-
         }
 
         return $result;
@@ -1096,11 +1094,17 @@ class CommonCommand extends AbstractCommand
      * @param OutputInterface $output
      * @return int
      */
-    public function removeFiles(Finder $files, OutputInterface $output)
+    public function removeFiles($files, OutputInterface $output)
     {
         $dryRun = $this->getConfigurationHelper()->getDryRun();
 
-        if (count($files) < 1) {
+        if (empty($files)) {
+            $output->writeln('<comment>No files found.</comment>');
+
+            return 0;
+        }
+
+        if ($files->count() < 1) {
             $output->writeln('<comment>No files found.</comment>');
 
             return 0;
