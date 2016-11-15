@@ -769,7 +769,10 @@ class InstallCommand extends CommonCommand
                 require_once $this->getRootSys().'/main/inc/lib/extra_field.lib.php';
                 require_once $this->getRootSys().'/main/inc/lib/extra_field_value.lib.php';
                 require_once $this->getRootSys().'/main/inc/lib/urlmanager.lib.php';
-                require_once $this->getRootSys().'/src/Chamilo/UserBundle/Security/Encoder.php';
+                $encoder = $this->getRootSys().'/src/Chamilo/UserBundle/Security/Encoder.php';
+                if (file_exists($encoder)) {
+                    require_once $encoder;
+                }
                 require_once $this->getRootSys().'/main/inc/lib/usermanager.lib.php';
 
                 $newInstallationPath = $this->getRootSys();
