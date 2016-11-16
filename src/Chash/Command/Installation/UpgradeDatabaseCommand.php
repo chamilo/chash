@@ -156,12 +156,20 @@ class UpgradeDatabaseCommand extends CommonCommand
         $oldVersion = $version;
 
         // Handle 1.10.x as 1.10.1000
+        if ($currentVersion == '1.9.x') {
+            $currentVersion = '1.9.1000';
+        }
+
         if ($currentVersion == '1.10.x') {
             $currentVersion = '1.10.1000';
         }
 
         if ($currentVersion == '1.11.x') {
             $currentVersion = '1.11.1000';
+        }
+
+        if ($version == '1.9.x') {
+            $version = '1.9.1000';
         }
 
         if ($version == '1.10.x') {
@@ -172,20 +180,18 @@ class UpgradeDatabaseCommand extends CommonCommand
             $version = '1.11.1000';
         }
 
-        if (version_compare($version, '1.10.0', '>=')) {
-            require_once $rootSys.'src/Chamilo/CoreBundle/Entity/SettingsCurrent.php';
-            require_once $rootSys.'src/Chamilo/CoreBundle/Entity/SystemTemplate.php';
-            require_once $rootSys.'src/Chamilo/CoreBundle/Entity/SettingsOptions.php';
-            require_once $rootSys.'app/DoctrineExtensions/DBAL/Types/UTCDateTimeType.php';
-            require_once $rootSys.'main/inc/lib/api.lib.php';
-            require_once $rootSys.'main/inc/lib/custom_pages.class.php';
-            require_once $rootSys.'main/inc/lib/database.lib.php';
+        require_once $rootSys.'src/Chamilo/CoreBundle/Entity/SettingsCurrent.php';
+        require_once $rootSys.'src/Chamilo/CoreBundle/Entity/SystemTemplate.php';
+        require_once $rootSys.'src/Chamilo/CoreBundle/Entity/SettingsOptions.php';
+        require_once $rootSys.'app/DoctrineExtensions/DBAL/Types/UTCDateTimeType.php';
+        require_once $rootSys.'main/inc/lib/api.lib.php';
+        require_once $rootSys.'main/inc/lib/custom_pages.class.php';
+        require_once $rootSys.'main/inc/lib/database.lib.php';
 
-            if (!is_dir($rootSys.'vendor')) {
-                $output->writeln("Execute composer update in your chamilo instance first. Then continue with the upgrade");
+        if (!is_dir($rootSys.'vendor')) {
+            $output->writeln("Execute composer update in your chamilo instance first. Then continue with the upgrade");
 
-                return 1;
-            }
+            return 1;
         }
 
         $versionsToRun = [];
@@ -290,7 +296,6 @@ class UpgradeDatabaseCommand extends CommonCommand
                 if (!$fs->exists($migrationsFolder)) {
                     $fs->mkdir($migrationsFolder);
                 }
-
                 $migrations = array(
                     'name' => 'Chamilo Migrations',
                     'migrations_namespace' => $versionInfo['migrations_namespace'],
