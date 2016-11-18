@@ -30,9 +30,7 @@
         "doctrine/migrations": "~1.0@dev",
         "zendframework/zend-config": "~2.5.1",
         "zendframework/zend-stdlib": "~2.5.1",
-        "alchemy/zippy": "~0.2",
-        "sylius/attribute": "0.13.0",
-        "sylius/translation": "0.13.0"
+        "alchemy/zippy": "~0.2"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*",
