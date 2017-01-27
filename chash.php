@@ -74,6 +74,7 @@ $application->addCommands(
         new Chash\Command\Files\ReplaceURLCommand(),
 
         new Chash\Command\Info\WhichCommand(),
+        new Chash\Command\Info\GetInstancesCommand(),
 
         new Chash\Command\Installation\InstallCommand(),
         new Chash\Command\Installation\WipeCommand(),
