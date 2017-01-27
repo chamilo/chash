@@ -29,7 +29,13 @@ class GetInstancesCommand extends CommonCommand
                 'path',
                 InputArgument::REQUIRED,
                 '/var/www/'
-            );
+            )
+            ->addArgument(
+                'folder',
+                InputArgument::OPTIONAL,
+                'www'
+            )
+        ;
     }
 
     /**
@@ -40,15 +46,21 @@ class GetInstancesCommand extends CommonCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $path = $input->getArgument('path');
+        $folderInsidePath = $input->getArgument('folder');
+
         $output->writeln("Checking chamilo portals here: $path");
         $fs = new Filesystem();
         $finder = new Finder();
         $dirs = $finder->directories()->in($path)->depth('== 0');
         $portals = [];
+        if (!empty($folderInsidePath)) {
+            $output->writeln("Checking chamilo portals inside subfolder: $folderInsidePath");
+            $folderInsidePath = '/'.$folderInsidePath;
+        }
 
         /** @var SplFileInfo $dir */
         foreach ($dirs as $dir) {
-            $appPath = $dir->getRealPath();
+            $appPath = $dir->getRealPath().$folderInsidePath;
             $configurationFile = $appPath.'/app/config/configuration.php';
             if ($fs->exists($configurationFile)) {
                 $portal = $this->getPortalInfoFromConfiguration($configurationFile);
