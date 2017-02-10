@@ -42,6 +42,7 @@ class InstallCommand extends CommonCommand
             ->addArgument('version', InputArgument::REQUIRED, 'The version to migrate to.', null)
             ->addArgument('path', InputArgument::OPTIONAL, 'The path to the chamilo folder')
             ->addOption('download-package', null, InputOption::VALUE_NONE, 'Downloads the chamilo package')
+            ->addOption('only-download-package', null, InputOption::VALUE_NONE, 'Only downloads the package')
             ->addOption('temp-folder', null, InputOption::VALUE_OPTIONAL, 'The temp folder.', '/tmp')
             ->addOption('linux-user', null, InputOption::VALUE_OPTIONAL, 'user', 'www-data')
             ->addOption('linux-group', null, InputOption::VALUE_OPTIONAL, 'group', 'www-data')
@@ -600,6 +601,9 @@ class InstallCommand extends CommonCommand
             }
 
             $this->settingParameters($input);
+            if ($input->getOption('only-download-package')) {
+                return 0;
+            }
         }
 
         if ($this->commandLine) {
