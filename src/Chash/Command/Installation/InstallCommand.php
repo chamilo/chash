@@ -610,8 +610,20 @@ class InstallCommand extends CommonCommand
 
         $this->writeCommandHeader($output, $title);
 
-        $isLegacy = $this->getConfigurationHelper()->isLegacy();
+        $versionInfo = $this->availableVersions()[$version];
+        if (isset($versionInfo['parent'])) {
+            $parent = $versionInfo['parent'];
+            if (in_array($parent, ['1.9.0', '1.10.0', '1.11.0'])) {
+                $isLegacy = true;
+            } else {
+                $isLegacy = false;
+            }
+        } else {
+            $output->writeln("<comment>Chamilo $version doesnt have a parent</comment>");
+            return false;
+        }
 
+        //$isLegacy = $this->getConfigurationHelper()->isLegacy();
         if ($isLegacy) {
             $this->installLegacy($input, $output);
         } else {

@@ -583,12 +583,14 @@ class CommonCommand extends AbstractCommand
             '2.0'  => array(
                 'require_update' => true,
                 'update_files' => null,
-                'hook_to_doctrine_version' => '2'
+                'hook_to_doctrine_version' => '2',
+                'parent' => '2.0'
             ),
             'master'  => array(
                 'require_update' => true,
                 'update_files' => null,
-                'hook_to_doctrine_version' => '2'
+                'hook_to_doctrine_version' => '2',
+                'parent' => '2.0'
             )
         );
 
