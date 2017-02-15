@@ -1566,15 +1566,15 @@ class CommonCommand extends AbstractCommand
     public function setAdminSettingsInChamilo(OutputInterface $output, Connection $connection)
     {
         $settings = $this->getAdminSettings();
-
-        $settings['password'] = $this->getEncryptedPassword($settings['password']);
+        // Password already set by the Chamilo
+        //$settings['password'] = $this->getEncryptedPassword($settings['password']);
 
         $connection->update('user', array('auth_source' => 'platform'), array('user_id' => '1'));
         $connection->update('user', array('username' => $settings['username']), array('user_id' => '1'));
         $connection->update('user', array('firstname' => $settings['firstname']), array('user_id' => '1'));
         $connection->update('user', array('lastname' => $settings['lastname']), array('user_id' => '1'));
         $connection->update('user', array('phone' => $settings['phone']), array('user_id' => '1'));
-        $connection->update('user', array('password' => $settings['password']), array('user_id' => '1'));
+        //$connection->update('user', array('password' => $settings['password']), array('user_id' => '1'));
         $connection->update('user', array('email' => $settings['email']), array('user_id' => '1'));
         // Admin user.
         $connection->update('user', array('language' => $settings['language']), array('user_id' => '1'));
