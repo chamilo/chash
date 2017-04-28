@@ -968,6 +968,8 @@ class CommonCommand extends AbstractCommand
 
     /**
      * Set Doctrine settings
+     * @param HelperSet $helperSet
+     * @return \Doctrine\ORM\EntityManager
      */
     protected function setDoctrineSettings(HelperSet $helperSet)
     {

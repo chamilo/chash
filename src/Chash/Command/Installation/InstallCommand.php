@@ -205,9 +205,7 @@ class InstallCommand extends CommonCommand
                 $result = $this->processInstallation($databaseSettings, $version, $output);
 
                 if ($result) {
-
                     // Read configuration file.
-
                     $configurationFile = $this->getConfigurationHelper()->getConfigurationFilePath($this->getRootSys());
                     $configuration = $this->getConfigurationHelper()->readConfigurationFile($configurationFile);
                     $this->setConfigurationArray($configuration);
@@ -227,8 +225,14 @@ class InstallCommand extends CommonCommand
                         $output->writeln("Nothing to update");
                     }
 
-                    $this->setPortalSettingsInChamilo($output, $this->getHelper('db')->getConnection());
-                    $this->setAdminSettingsInChamilo($output, $this->getHelper('db')->getConnection());
+                    $this->setPortalSettingsInChamilo(
+                        $output,
+                        $this->getHelper('db')->getConnection()
+                    );
+                    $this->setAdminSettingsInChamilo(
+                        $output,
+                        $this->getHelper('db')->getConnection()
+                    );
 
                     // Cleaning temp folders.
                     $command = $this->getApplication()->find('files:clean_temp_folder');
@@ -289,6 +293,8 @@ class InstallCommand extends CommonCommand
      * Install Chamilo
      * @param InputInterface $input
      * @param OutputInterface $output
+     *
+     * @return bool
      */
     public function install(InputInterface $input, OutputInterface $output)
     {
@@ -328,20 +334,21 @@ class InstallCommand extends CommonCommand
 
             // Installing database.
             $result = $this->processInstallation($this->databaseSettings, $version, $output);
+            if ($result) {
+                $path = $this->path;
+                $silent = $this->silent;
+                $linuxUser = $this->linuxUser;
+                $linuxGroup = $this->linuxGroup;
 
-            $path = $this->path;
-            $silent = $this->silent;
-            $linuxUser = $this->linuxUser;
-            $linuxGroup = $this->linuxGroup;
-
-            $configurationWasSaved = $this->writeConfiguration($version, $path, $output);
-            if ($configurationWasSaved) {
-                $this->askPortalSettings($input, $output);
-                $this->setDoctrineSettings($this->getHelperSet());
-                $this->setPortalSettingsInChamilo(
-                    $output,
-                    $connectionToDatabase
-                );
+                $configurationWasSaved = $this->writeConfiguration($version, $path, $output);
+                if ($configurationWasSaved) {
+                    $this->askPortalSettings($input, $output);
+                    $this->setDoctrineSettings($this->getHelperSet());
+                    $this->setPortalSettingsInChamilo(
+                        $output,
+                        $connectionToDatabase
+                    );
+                }
             }
         }
     }
@@ -673,6 +680,7 @@ class InstallCommand extends CommonCommand
                 break;
             case '2':
             case '2.0':
+            case 'master':
                 $newVersion = '2.0';
                 break;
         }
@@ -691,7 +699,7 @@ class InstallCommand extends CommonCommand
      */
     public function processInstallation($databaseSettings, $version, $output)
     {
-        $this->setDoctrineSettings($this->getHelperSet());
+        $em = $this->setDoctrineSettings($this->getHelperSet());
 
         $sqlFolder = $this->getInstallationPath($version);
         $databaseMap = $this->getDatabaseMap();
@@ -706,7 +714,6 @@ class InstallCommand extends CommonCommand
             $sections = $dbInfo['section'];
 
             $sectionsCount = 0;
-
             foreach ($sections as $sectionData) {
                 if (is_array($sectionData)) {
                     foreach ($sectionData as $dbInfo) {
@@ -752,6 +759,68 @@ class InstallCommand extends CommonCommand
                 }
             }
 
+            // Run
+            switch ($version) {
+                case '2.0':
+                case 'master':
+                    require_once $this->getRootSys().'/main/inc/lib/database.constants.inc.php';
+                    require_once $this->getRootSys().'/main/inc/lib/api.lib.php';
+                    require_once $this->getRootSys().'/main/inc/lib/text.lib.php';
+                    require_once $this->getRootSys().'/main/inc/lib/display.lib.php';
+                    require_once $this->getRootSys().'/main/inc/lib/database.lib.php';
+                    require_once $this->getRootSys().'/main/inc/lib/custom_pages.class.php';
+                    require_once $this->getRootSys().'/main/install/install.lib.php';
+                    require_once $this->getRootSys().'/main/inc/lib/hook/interfaces/base/HookEventInterface.php';
+                    require_once $this->getRootSys().'/main/inc/lib/hook/interfaces/HookCreateUserEventInterface.php';
+                    require_once $this->getRootSys().'/main/inc/lib/hook/interfaces/base/HookManagementInterface.php';
+                    require_once $this->getRootSys().'/main/inc/lib/hook/HookEvent.php';
+                    require_once $this->getRootSys().'/main/inc/lib/hook/HookCreateUser.php';
+                    require_once $this->getRootSys().'/main/inc/lib/hook/HookManagement.php';
+                    require_once $this->getRootSys().'/main/inc/lib/model.lib.php';
+                    require_once $this->getRootSys().'/main/inc/lib/events.lib.php';
+                    require_once $this->getRootSys().'/main/inc/lib/extra_field.lib.php';
+                    require_once $this->getRootSys().'/main/inc/lib/extra_field_value.lib.php';
+                    require_once $this->getRootSys().'/main/inc/lib/urlmanager.lib.php';
+                    require_once $this->getRootSys().'/vendor/autoload.php';
+                    $encoder = $this->getRootSys().'/src/Chamilo/UserBundle/Security/Encoder.php';
+                    if (file_exists($encoder)) {
+                        require_once $encoder;
+                    }
+
+                    require_once $this->getRootSys().'/main/inc/lib/usermanager.lib.php';
+
+
+                    $newInstallationPath = $this->getRootSys();
+                    $chashPath = __DIR__.'/../../../../';
+
+
+                      // Registering Constraints
+                    AnnotationRegistry::registerAutoloadNamespace(
+                        'APY\DataGridBundle\Grid\Mapping',
+                        $newInstallationPath.'vendor/apy/datagrid-bundle/Grid/Mapping'
+                    );
+
+                    AnnotationRegistry::registerFile(
+                        $newInstallationPath.'vendor/apy/datagrid-bundle/Grid/Mapping/Column.php'
+                    );
+
+                    $database = new \Database();
+                    $database::$utcDateTimeClass = 'Chash\DoctrineExtensions\DBAL\Types\UTCDateTimeType';
+
+                    $database->connect($databaseSettings, $chashPath, $newInstallationPath);
+                    $manager = $database->getManager();
+
+                    $metadataList = $manager->getMetadataFactory()->getAllMetadata();
+
+                    $output->writeln("<comment>Creating database structure</comment>");
+                    $manager->getConnection()->getSchemaManager()->createSchema();
+
+                    // Create database schema
+                    $tool = new \Doctrine\ORM\Tools\SchemaTool($manager);
+                    $tool->createSchema($metadataList);
+                    break;
+            }
+
             if (isset($sections) && isset($sections['course'])) {
                 //@todo fix this
                 foreach ($sections['course'] as $courseInfo) {
@@ -785,11 +854,8 @@ class InstallCommand extends CommonCommand
                 require_once $this->getRootSys().'/main/inc/lib/extra_field.lib.php';
                 require_once $this->getRootSys().'/main/inc/lib/extra_field_value.lib.php';
                 require_once $this->getRootSys().'/main/inc/lib/urlmanager.lib.php';
-
                 require_once $this->getRootSys().'/vendor/autoload.php';
-//
                 $encoder = $this->getRootSys().'/src/Chamilo/UserBundle/Security/Encoder.php';
-
                 if (file_exists($encoder)) {
                     require_once $encoder;
                 }
