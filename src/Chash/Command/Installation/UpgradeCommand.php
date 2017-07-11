@@ -387,7 +387,9 @@ class UpgradeCommand extends CommonCommand
                 $runFixIds = true;
             }
 
-            if (isset($versionInfo['require_update']) && $versionInfo['require_update'] == true) {
+            if (isset($versionInfo['require_update']) &&
+                $versionInfo['require_update'] == true
+            ) {
                 $output->writeln("----------------------------------------------------------------");
                 $output->writeln("<comment>Starting migration from version: </comment><info>$currentVersion</info><comment> to version </comment><info>$versionItem ");
                 $output->writeln("");
@@ -404,6 +406,7 @@ class UpgradeCommand extends CommonCommand
                     $runFixIds,
                     $onlyUpdateDatabase
                 );
+
                 $currentVersion = $versionItem;
                 $output->writeln("<comment>End database migration</comment>");
                 $output->writeln("----------------------------------------------------------------");
@@ -657,6 +660,12 @@ class UpgradeCommand extends CommonCommand
                 require_once $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraField.php';
                 require_once $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraFieldOptions.php';
                 fixIds($em);
+
+                if (method_exists('fixPostGroupIds') &&
+                    $versionInfo['migrations_yml'] == 'V111.yml'
+                ) {
+                    fixPostGroupIds($conn);
+                }
             }
         } catch (\Exception $e) {
             $output->write(sprintf('<error>Migration failed. Error %s</error>', $e->getMessage()));
