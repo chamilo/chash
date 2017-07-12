@@ -493,6 +493,8 @@ class UpgradeCommand extends CommonCommand
      * @param OutputInterface $output
      * @param bool $removeUnusedTables
      * @param InputInterface $mainInput
+     * @param bool $runFixIds
+     * @param bool $onlyUpdateDatabase
      *
      * @return bool
      * @throws \Exception
@@ -568,8 +570,6 @@ class UpgradeCommand extends CommonCommand
                 }
 
                 file_put_contents($file, $yaml);
-                //$command = $this->getApplication()->find('migrations:migrate');
-
                 $command = new \Doctrine\DBAL\Migrations\Tools\Console\Command\MigrateCommand();
                 // Creates the helper set
                 $helperSet = \Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet($em);
@@ -641,32 +641,47 @@ class UpgradeCommand extends CommonCommand
                 $this->processQueryList($courseList, $output, $path, $toVersion, $dryRun, 'post');
             }
 
-            if ($runFixIds) {
-                require_once $this->getRootSys().'/main/inc/lib/database.constants.inc.php';
-                require_once $this->getRootSys().'/main/inc/lib/system/session.class.php';
-                require_once $this->getRootSys().'/main/inc/lib/chamilo_session.class.php';
-                require_once $this->getRootSys().'/main/inc/lib/api.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/database.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/custom_pages.class.php';
-                require_once $this->getRootSys().'/main/install/install.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/display.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/group_portal_manager.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/model.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/events.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/extra_field.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/extra_field_value.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/urlmanager.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/usermanager.lib.php';
-                require_once $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraField.php';
-                require_once $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraFieldOptions.php';
-                fixIds($em);
+            $filesToLoad = [
+                $this->getRootSys().'/main/inc/lib/database.constants.inc.php',
+                $this->getRootSys().'/main/inc/lib/system/session.class.php',
+                $this->getRootSys().'/main/inc/lib/chamilo_session.class.php',
+                $this->getRootSys().'/main/inc/lib/api.lib.php',
+                $this->getRootSys().'/main/inc/lib/database.lib.php',
+                $this->getRootSys().'/main/inc/lib/custom_pages.class.php',
+                $this->getRootSys().'/main/install/install.lib.php',
+                $this->getRootSys().'/main/inc/lib/display.lib.php',
+                $this->getRootSys().'/main/inc/lib/group_portal_manager.lib.php',
+                $this->getRootSys().'/main/inc/lib/model.lib.php',
+                $this->getRootSys().'/main/inc/lib/events.lib.php',
+                $this->getRootSys().'/main/inc/lib/extra_field.lib.php',
+                $this->getRootSys().'/main/inc/lib/extra_field_value.lib.php',
+                $this->getRootSys().'/main/inc/lib/urlmanager.lib.php',
+                $this->getRootSys().'/main/inc/lib/usermanager.lib.php',
+                $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraField.php',
+                $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraFieldOptions.php'
+            ];
 
-                if (method_exists('fixPostGroupIds') &&
-                    $versionInfo['migrations_yml'] == 'V111.yml'
-                ) {
-                    fixPostGroupIds($conn);
+            if ($runFixIds) {
+                foreach ($filesToLoad as $file) {
+                    require_once $file;
                 }
+
+                $output->writeln("<comment>Run fixIds function </info>");
+                fixIds($em);
             }
+
+            if (method_exists('fixPostGroupIds') &&
+                $versionInfo['migrations_yml'] == 'V111.yml'
+            ) {
+                foreach ($filesToLoad as $file) {
+                    require_once $file;
+                }
+                $output->writeln("<comment>Run fixPostGroupIds function </info>");
+                fixPostGroupIds($conn);
+            } else {
+                $output->writeln("<comment>Not found function: fixPostGroupIds</info>");
+            }
+
         } catch (\Exception $e) {
             $output->write(sprintf('<error>Migration failed. Error %s</error>', $e->getMessage()));
 
