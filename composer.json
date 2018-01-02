@@ -28,8 +28,8 @@
         "doctrine/dbal": "~2.3",
         "doctrine/orm": "~2.5",
         "doctrine/migrations": "~1.0@dev",
-        "zendframework/zend-config": "2.4.7|~2.5.1|~2.6",
-        "zendframework/zend-stdlib": "2.4.7|~2.5.1|~2.6",
+        "zendframework/zend-config": "2.4.7|~2.5.1|~2.6|~3.0",
+        "zendframework/zend-stdlib": "2.4.7|~2.5.1|~2.6|~3.0",
         "alchemy/zippy": "~0.2"
     },
     "require-dev": {
