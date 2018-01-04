@@ -729,7 +729,7 @@ class InstallCommand extends CommonCommand
      */
     public function processInstallation($databaseSettings, $version, $output)
     {
-        $em = $this->setDoctrineSettings($this->getHelperSet());
+        $this->setDoctrineSettings($this->getHelperSet());
         $sqlFolder = $this->getInstallationPath($version);
         $databaseMap = $this->getDatabaseMap();
         // Fixing the version
@@ -765,9 +765,9 @@ class InstallCommand extends CommonCommand
                                     $db = $sqlFolder.$db;
                                 }
 
-                                $command = $this->getApplication()->find(
-                                    'dbal:import'
-                                );
+                                $command = $this->getApplication()->find('dbal:import');
+                                // Getting extra information about the installation.
+                                $output->writeln("<comment>Calling file: $dbList</comment>");
                                 // Importing sql files.
                                 $arguments = [
                                     'command' => 'dbal:import',
@@ -788,7 +788,8 @@ class InstallCommand extends CommonCommand
             }
 
             // Run
-            switch ($version) {
+            //switch ($version) {
+            switch (false) {
                 case '2.0':
                 case 'master':
                     require_once $this->getRootSys().'/main/inc/lib/database.constants.inc.php';
@@ -860,31 +861,41 @@ class InstallCommand extends CommonCommand
             // Special migration for chamilo v 1.10
             if (isset($sections) && isset($sections['migrations'])) {
                 $sectionsCount = 1;
-                require_once $this->getRootSys().'/main/inc/lib/database.constants.inc.php';
-                require_once $this->getRootSys().'/main/inc/lib/system/session.class.php';
-                require_once $this->getRootSys().'/main/inc/lib/chamilo_session.class.php';
-                require_once $this->getRootSys().'/main/inc/lib/api.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/text.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/display.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/database.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/custom_pages.class.php';
-                require_once $this->getRootSys().'/main/install/install.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/hook/interfaces/base/HookEventInterface.php';
-                require_once $this->getRootSys().'/main/inc/lib/hook/interfaces/HookCreateUserEventInterface.php';
-                require_once $this->getRootSys().'/main/inc/lib/hook/interfaces/base/HookManagementInterface.php';
-                require_once $this->getRootSys().'/main/inc/lib/hook/HookEvent.php';
-                require_once $this->getRootSys().'/main/inc/lib/hook/HookCreateUser.php';
-                require_once $this->getRootSys().'/main/inc/lib/hook/HookManagement.php';
-                require_once $this->getRootSys().'/main/inc/lib/model.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/events.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/extra_field.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/extra_field_value.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/urlmanager.lib.php';
-                require_once $this->getRootSys().'/vendor/autoload.php';
+                $legacyFiles = [
+                    '/main/inc/lib/database.constants.inc.php',
+                    '/main/inc/lib/system/session.class.php',
+                    '/main/inc/lib/chamilo_session.class.php',
+                    '/main/inc/lib/api.lib.php',
+                    '/main/inc/lib/text.lib.php',
+                    '/main/inc/lib/display.lib.php',
+                    '/main/inc/lib/database.lib.php',
+                    '/main/inc/lib/custom_pages.class.php',
+                    '/main/install/install.lib.php',
+                    '/main/inc/lib/hook/interfaces/base/HookEventInterface.php',
+                    '/main/inc/lib/hook/interfaces/HookCreateUserEventInterface.php',
+                    '/main/inc/lib/hook/interfaces/base/HookManagementInterface.php',
+                    '/main/inc/lib/hook/HookEvent.php',
+                    '/main/inc/lib/hook/HookCreateUser.php',
+                    '/main/inc/lib/hook/HookManagement.php',
+                    '/main/inc/lib/model.lib.php',
+                    '/main/inc/lib/events.lib.php',
+                    '/main/inc/lib/extra_field.lib.php',
+                    '/main/inc/lib/extra_field_value.lib.php',
+                    '/main/inc/lib/urlmanager.lib.php',
+                    '/vendor/autoload.php',
+                ];
+
+                foreach($legacyFiles as $file) {
+                    $file = $this->getRootSys().$file;
+                    $output->writeln("<comment>Calling Chamilo lib: $file </comment>");
+                    require_once $file;
+                }
+
                 $encoder = $this->getRootSys().'/src/Chamilo/UserBundle/Security/Encoder.php';
                 if (file_exists($encoder)) {
                     require_once $encoder;
                 }
+
                 require_once $this->getRootSys().'/main/inc/lib/usermanager.lib.php';
 
                 $newInstallationPath = $this->getRootSys();
@@ -902,11 +913,14 @@ class InstallCommand extends CommonCommand
                 $manager->getConnection()->getSchemaManager()->createSchema();
 
                 // Create database schema
+                $output->writeln("<comment>Creating schema</comment>");
                 $tool = new \Doctrine\ORM\Tools\SchemaTool($manager);
                 $tool->createSchema($metadataList);
 
                 $portalSettings = $this->getPortalSettings();
                 $adminSettings = $this->getAdminSettings();
+
+                $output->writeln("<comment>Calling 'finishInstallation()'</comment>");
 
                 \finishInstallation(
                     $manager,
@@ -925,7 +939,6 @@ class InstallCommand extends CommonCommand
                     false, //$allowSelfReg,
                     false //$allowSelfRegProf
                 );
-
                 $output->writeln("<comment>Remember to run composer install</comment>");
             }
 
