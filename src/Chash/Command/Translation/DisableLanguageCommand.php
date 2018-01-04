@@ -22,7 +22,7 @@ class DisableLanguageCommand extends CommonDatabaseCommand
         parent::configure();
         $this
             ->setName('translation:disable')
-            ->setAliases(array('tdl'))
+            ->setAliases(['tdl'])
             ->setDescription('Disables a (enabled) language')
             ->addArgument(
                 'language',

@@ -101,7 +101,6 @@ class SetPermissionsAfterInstallCommand extends CommonDatabaseCommand
                     }
                 }
             } else {
-
                 if (!empty($permission)) {
                     $output->writeln("<comment>Modifying files permission to: ".decoct($permission)."</comment>");
                 }

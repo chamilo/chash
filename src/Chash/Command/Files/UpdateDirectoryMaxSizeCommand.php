@@ -27,7 +27,7 @@ class UpdateDirectoryMaxSizeCommand extends CommonDatabaseCommand
         parent::configure();
         $this
             ->setName('files:update_directory_max_size')
-            ->setAliases(array('fudms'))
+            ->setAliases(['fudms'])
             ->setDescription('Increases the max disk space for all the courses reaching a certain threshold.')
             ->addOption(
                 'threshold',
@@ -75,13 +75,13 @@ class UpdateDirectoryMaxSizeCommand extends CommonDatabaseCommand
         $_configuration = $this->getConfigurationHelper()->getConfiguration();
 
         $courseTable = $_configuration['main_database'].'.course';
-        $globalCourses = array();
+        $globalCourses = [];
         $sql = "SELECT c.id as cid, c.code as ccode, c.directory as cdir, c.disk_quota as cquota
                 FROM $courseTable c";
         $res = mysql_query($sql);
         if ($res && mysql_num_rows($res) > 0) {
             while ($row = mysql_fetch_assoc($res)) {
-                $globalCourses[$row['cdir']] = array('id' => $row['cid'], 'code' => $row['ccode'], 'quota' => $row['cquota']);
+                $globalCourses[$row['cdir']] = ['id' => $row['cid'], 'code' => $row['ccode'], 'quota' => $row['cquota']];
             }
         }
 
@@ -90,8 +90,8 @@ class UpdateDirectoryMaxSizeCommand extends CommonDatabaseCommand
             foreach ($dirs as $dir) {
                 $file = $dir->getFileName();
                 $res = exec('du -s '.$dir->getRealPath()); // results are returned in KB (under Linux)
-                $res = preg_split('/\s/',$res);
-                $size = round($res[0]/1024,1); // $size is stored in MB
+                $res = preg_split('/\s/', $res);
+                $size = round($res[0]/1024, 1); // $size is stored in MB
                 if (isset($globalCourses[$file]['code'])) {
                     $code = $globalCourses[$file]['code'];
                     $quota = round($globalCourses[$file]['quota']/(1024*1024), 0); //quota is originally in Bytes in DB. Store in MB

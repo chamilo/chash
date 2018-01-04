@@ -25,7 +25,7 @@ class CleanCoursesFilesCommand extends CommonDatabaseCommand
         parent::configure();
         $this
             ->setName('files:clean_courses_files')
-            ->setAliases(array('ccf'))
+            ->setAliases(['ccf'])
             ->setDescription('Cleans the courses directory');
     }
 
@@ -41,7 +41,8 @@ class CleanCoursesFilesCommand extends CommonDatabaseCommand
 
         $helper = $this->getHelperSet()->get('question');
         $question = new ConfirmationQuestion(
-            '<question>Are you sure you want to clean this Chamilo install\'s courses files? (y/N)</question>', false
+            '<question>Are you sure you want to clean this Chamilo install\'s courses files? (y/N)</question>',
+            false
         );
         if (!$helper->ask($input, $output, $question)) {
             return;

@@ -62,7 +62,6 @@ class ExportLanguageCommand extends CommonDatabaseCommand
             $langInfo = mysql_fetch_array($q, MYSQL_ASSOC);
 
             if (!$langInfo) {
-
                 $output->writeln("<comment>Language '$lang' is not registered in the Chamilo Database</comment>");
 
                 $q = mysql_query("SELECT * FROM language WHERE parent_id IS NULL or parent_id = 0");

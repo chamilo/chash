@@ -2,7 +2,6 @@
 /* For licensing terms, see /license.txt */
 
 $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $output, $upgrade, $removeUnusedTables) {
-
     $sysCoursePath = $upgrade->getCourseSysPath();
     $portalSettings = $upgrade->getPortalSettings();
 
@@ -33,7 +32,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
         $result = $result->fetch();
 
         if (empty($result)) {
-            $params = array(
+            $params = [
                 'variable' => 'students_download_folders',
                 'subkey' => '',
                 'type' => 'radio',
@@ -44,22 +43,22 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                 'scope' => '',
                 'subkeytext' => '',
                 'access_url_changeable' => '0'
-            );
+            ];
             $mainConnection->insert('settings_current', $params);
 
             // Adding options
-            $params = array(
+            $params = [
                 'variable' => 'students_download_folders',
                 'value' => 'false',
                 'display_text' => 'No'
-            );
+            ];
             $mainConnection->insert('settings_options', $params);
 
-            $params = array(
+            $params = [
                 'variable' => 'students_download_folders',
                 'value' => 'true',
                 'display_text' => 'Yes'
-            );
+            ];
             $mainConnection->insert('settings_options', $params);
 
             $output->writeln("Option 'students_download_folders' was fixed");
@@ -77,7 +76,6 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
         $output->writeln("<comment>Session mode: $session_mode</comment>");
 
         if ($session_mode == 'true') {
-
             $sql = "UPDATE settings_current SET selected_value = 'true'
                     WHERE variable='use_session_mode' ";
             $mainConnection->executeQuery($sql);
@@ -87,7 +85,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
             $rows = $result->fetchAll();
 
             $classes_added = 0;
-            $mapping_classes = array();
+            $mapping_classes = [];
 
             if (!empty($rows)) {
                 $output->writeln('Moving classes to usergroups ');
@@ -124,10 +122,10 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                         $output->writeln("<comment>Warning: data inconsistency: \$mapping_classes[".$row['class_id']."] was not defined, suggesting that this class ID was still used in class_user although the class had been removed</comment>");
                         continue;
                     }
-                    $values = array(
+                    $values = [
                         'usergroup_id' => $mapping_classes[$row['class_id']],
                         'user_id' => $row['user_id']
-                    );
+                    ];
 
                     if ($dryRun) {
                         $output->writeln("<comment>Values to be saved:</comment>".implode(', ', $values));
@@ -159,10 +157,10 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                         $output->writeln("<comment>Warning: data inconsistency: \$mapping_classes[".$row['class_id']."] was not defined, suggesting that this class ID was still used in course_rel_class although the class had been removed</comment>");
                         continue;
                     }
-                    $values = array(
+                    $values = [
                         'usergroup_id' => $mapping_classes[$row['class_id']],
                         'course_id' => $course_id
-                    );
+                    ];
 
                     if ($dryRun) {
                         $output->writeln("<comment>Values to be saved:</comment>".implode(', ', $values));
@@ -176,7 +174,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
 
         // Moving Stats DB to the main DB.
 
-        $statsTable = array(
+        $statsTable = [
             "track_c_browsers",
             "track_c_countries",
             "track_c_os",
@@ -200,7 +198,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
             "track_e_uploads",
             "track_stored_values",
             "track_stored_values_stack",
-        );
+        ];
 
         if (isset($_configuration['statistics_database'])) {
             $statSchemaManager = $statsConnection->getSchemaManager();
@@ -216,12 +214,12 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
         }
 
         // Moving user database to the main database.
-        $usersTables = array(
+        $usersTables = [
             "personal_agenda",
             "personal_agenda_repeat",
             "personal_agenda_repeat_not",
             "user_course_category"
-        );
+        ];
 
         $userSchemaManager = $userConnection->getSchemaManager();
         if (isset($_configuration['user_personal_database'])) {
@@ -257,18 +255,16 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
         $upgrade->createCourseTables($output, $dryRun);
 
         if (!empty($courseList)) {
-
             $output->writeln("<comment>Moving old course tables to the new structure 1: single database</comment>");
 
             $progress = $upgrade->getHelperSet()->get('progress');
             $progress->start($output, count($courseList));
 
             foreach ($courseList as $row_course) {
-
                 $prefix = $upgrade->getTablePrefix($_configuration, $row_course['db_name']);
 
                 // Course tables to be migrated.
-                $table_list = array(
+                $table_list = [
                     'announcement',
                     'announcement_attachment',
                     'attendance',
@@ -356,7 +352,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                     'wiki_conf',
                     'wiki_discuss',
                     'wiki_mailcue'
-                );
+                ];
 
                 $output->writeln('');
                 $output->writeln('Course DB: '.$row_course['db_name']);
@@ -395,7 +391,6 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                         }
 
                         if ($oldCount > 0) {
-
                             $sql = "SELECT * FROM $old_table";
                             $result = $courseConnection->executeQuery($sql);
                             $rows = $result->fetchAll();
@@ -501,7 +496,6 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
             $user_id = 1;
 
             if ($dryRun == false) {
-
                 foreach ($courseList as $course) {
                     $courseId = $course['id']; //int id
 
@@ -518,7 +512,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
 
                     //2. Looping if there are works with no parents
                     if (!empty($work_list)) {
-                        $work_dir_created = array();
+                        $work_dir_created = [];
 
                         foreach ($work_list as $work) {
                             $session_id = intval($work['session_id']);
@@ -602,7 +596,6 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
             $output->writeln("<comment>End work fix</comment>");
             if ($dryRun) {
                 $output->writeln('<info>Queries were not executed. Because dry-run is on<info>');
-
             } else {
                 $mainConnection->commit();
             }

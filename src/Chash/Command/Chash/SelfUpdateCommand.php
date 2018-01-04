@@ -21,7 +21,7 @@ class SelfUpdateCommand extends AbstractCommand
     {
         $this
             ->setName('chash:self-update')
-            ->setAliases(array('selfupdate'))
+            ->setAliases(['selfupdate'])
             ->addOption('temp-folder', null, InputOption::VALUE_OPTIONAL, 'The temp folder', '/tmp')
             ->addOption('src-destination', null, InputOption::VALUE_OPTIONAL, 'The destination folder')
             ->setDescription('Updates chash to the latest version');
@@ -84,7 +84,7 @@ class SelfUpdateCommand extends AbstractCommand
             return 0;
         }
         $fs = new \Symfony\Component\Filesystem\Filesystem();
-        $fs->mirror($folderPath.'/chash-master', $destinationFolder, null, array('override' => true));
+        $fs->mirror($folderPath.'/chash-master', $destinationFolder, null, ['override' => true]);
         $output->writeln('Copying '.$folderPath.'/chash-master to '.$destinationFolder);
     }
 }

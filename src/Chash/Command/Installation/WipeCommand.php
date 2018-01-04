@@ -61,10 +61,10 @@ class WipeCommand extends CommonCommand
         // Drop database Chash command.
         $command = $this->getApplication()->find('db:drop_databases');
 
-        $arguments = array(
+        $arguments = [
             'command' => 'files:drop_databases',
             '--conf' => $configurationFilePath
-        );
+        ];
 
         $inputDrop = new ArrayInput($arguments);
         $command->run($inputDrop, $output);
@@ -72,30 +72,30 @@ class WipeCommand extends CommonCommand
         // Clean temp Chash command
         $command = $this->getApplication()->find('files:clean_temp_folder');
 
-        $arguments = array(
+        $arguments = [
             'command' => 'files:clean_temp_folder',
             '--conf' => $configurationFilePath
-        );
+        ];
         $input = new ArrayInput($arguments);
         $command->run($input, $output);
 
         // Cleaning courses files
         $command = $this->getApplication()->find('files:clean_courses_files');
 
-        $arguments = array(
+        $arguments = [
             'command' => 'files:clean_courses_files',
             '--conf' => $configurationFilePath
-        );
+        ];
         $input = new ArrayInput($arguments);
         $command->run($input, $output);
 
         // Cleaning config files (last one)
 
         $command = $this->getApplication()->find('files:clean_config_files');
-        $arguments = array(
+        $arguments = [
             'command' => 'files:clean_config_files',
             '--conf' => $configurationFilePath
-        );
+        ];
         $input = new ArrayInput($arguments);
         $command->run($input, $output);
     }

@@ -74,12 +74,12 @@ class SetupCommand extends AbstractCommand
             $fs->mkdir($migrationsFolder);
         }
 
-        $migrations = array(
+        $migrations = [
             'name' => 'Chamilo Migrations',
             'migrations_namespace' => 'Application\Migrations\Schema\V111',
             'table_name' => 'version',
             'migrations_directory' => $migrationsFolder
-        );
+        ];
 
         $dumper = new Dumper();
         $yaml = $dumper->dump($migrations, 1);

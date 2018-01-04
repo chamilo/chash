@@ -1,8 +1,7 @@
 <?php
 /* For licensing terms, see /license.txt */
 
-$update = function($_configuration, \Doctrine\DBAL\Connection $mainConnection, $courseList, $dryRun, $output, $upgrade) {
-
+$update = function ($_configuration, \Doctrine\DBAL\Connection $mainConnection, $courseList, $dryRun, $output, $upgrade) {
     $mainConnection->beginTransaction();
 
     $dbNameForm = $_configuration['main_database'];
@@ -148,9 +147,9 @@ $update = function($_configuration, \Doctrine\DBAL\Connection $mainConnection, $
     $result = $mainConnection->executeQuery($sql);
     $groups = $result->fetchAll();
 
-    $oldGroups = array();
+    $oldGroups = [];
 
-    if (!empty($groups )) {
+    if (!empty($groups)) {
         foreach ($groups as $group) {
             $sql = "INSERT INTO $dbNameForm.usergroup (name, group_type, description, picture, url, visibility, updated_on, created_on)
                     VALUES ('{$group['name']}', '1', '{$group['description']}', '{$group['picture_uri']}', '{$group['url']}', '{$group['visibility']}', '{$group['updated_on']}', '{$group['created_on']}')";
@@ -167,7 +166,6 @@ $update = function($_configuration, \Doctrine\DBAL\Connection $mainConnection, $
         foreach ($oldGroups as $oldId => $newId) {
             $path = GroupPortalManager::get_group_picture_path_by_id($oldId, 'system');
             if (!empty($path)) {
-
                 $newPath = str_replace("groups/$oldId/", "groups/$newId/", $path['dir']);
                 $command = "mv {$path['dir']} $newPath ";
                 system($command);

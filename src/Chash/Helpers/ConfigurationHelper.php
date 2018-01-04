@@ -63,7 +63,7 @@ class ConfigurationHelper extends Helper
      */
     public function chamiloVersions()
     {
-        $versionList = array(
+        $versionList = [
             '1.8.6.2',
             '1.8.7',
             '1.8.8',
@@ -78,7 +78,7 @@ class ConfigurationHelper extends Helper
             '1.10.0',
             '1.11.0',
             '2.0.0'
-        );
+        ];
 
         return $versionList;
     }
@@ -255,7 +255,6 @@ class ConfigurationHelper extends Helper
     public function readConfigurationFile($configurationFile = null)
     {
         if (!empty($configurationFile)) {
-
             if (file_exists($configurationFile)) {
                 $confInfo = pathinfo($configurationFile);
                 switch ($confInfo['extension']) {
@@ -290,7 +289,7 @@ class ConfigurationHelper extends Helper
             }
         }
 
-        return array();
+        return [];
     }
 
     /**
@@ -311,7 +310,7 @@ class ConfigurationHelper extends Helper
         $finder = new Finder();
         $sysPath = $this->getSysPath();
 
-        $configFiles = array(
+        $configFiles = [
             'auth.conf.php',
             'configuration.php',
             'configuration.yml',
@@ -319,7 +318,7 @@ class ConfigurationHelper extends Helper
             'mail.conf.php',
             'portfolio.conf.php',
             'profile.conf.php'
-        );
+        ];
 
         if (is_dir($sysPath.'main/inc/conf')) {
             $finder->files()->in($sysPath.'main/inc/conf');
@@ -383,7 +382,7 @@ class ConfigurationHelper extends Helper
      * @param   array   $courseDirs If not null, restrict the search to only those directories
      * @return Finder
      */
-    public function getDeletedDocuments($courseDirs = array())
+    public function getDeletedDocuments($courseDirs = [])
     {
         $finder = new Finder();
         $sysPath = $this->getSysPath();
@@ -401,7 +400,6 @@ class ConfigurationHelper extends Helper
             $appCourse = is_dir($sysPath . 'app/courses');
 
             foreach ($courseDirs as $dir) {
-
                 if ($course) {
                     $finder->in($sysPath . 'courses/' . $dir .'/')->name('*DELETED*');
                 }
@@ -410,7 +408,6 @@ class ConfigurationHelper extends Helper
                     $finder->in($sysPath . 'app/courses/' . $dir . '/')->name('*DELETED*');
                 }
             }
-
         }
 
         return $finder;
@@ -629,7 +626,7 @@ class ConfigurationHelper extends Helper
     public function getAllDatabases()
     {
         $_configuration = $this->getConfiguration();
-        $dbs = array();
+        $dbs = [];
 
         $dbs[] = $_configuration['main_database'];
 
@@ -690,7 +687,7 @@ class ConfigurationHelper extends Helper
         if (empty($this->configuration)) {
             $this->getConfiguration();
         }
-        list($first, $second) = preg_split('/\./',$this->configuration['system_version']);
+        list($first, $second) = preg_split('/\./', $this->configuration['system_version']);
         return $first.'.'.$second;
     }
 }

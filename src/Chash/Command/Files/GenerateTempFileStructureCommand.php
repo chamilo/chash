@@ -72,7 +72,6 @@ class GenerateTempFileStructureCommand extends CommonDatabaseCommand
                 }
                 $fs->mkdir($files, $permission);
             }
-
         } catch (IOException $e) {
             echo "\n An error occurred while removing the directory: ".$e->getMessage()."\n ";
         }
