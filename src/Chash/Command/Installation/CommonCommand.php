@@ -976,7 +976,6 @@ class CommonCommand extends AbstractCommand
         $config = new \Doctrine\ORM\Configuration();
         $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache());
         $reader = new AnnotationReader();
-
         $driverImpl = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver(
             $reader,
             array()

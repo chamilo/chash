@@ -491,12 +491,16 @@ class ConfigurationHelper extends Helper
         $finder = new Finder();
         $sysPath = $this->getSysPath();
 
-        if (is_dir($sysPath . 'archive')) {
+        if (is_dir($sysPath.'archive')) {
             $finder->directories()->in($sysPath.'archive/');
         }
 
-        if (is_dir($sysPath . 'app/cache')) {
-            $finder->directories()->in($sysPath . 'app/cache/');
+        if (is_dir($sysPath.'app/cache')) {
+            $finder->directories()->in($sysPath.'app/cache/');
+        }
+
+        if (is_dir($sysPath.'var/cache')) {
+            $finder->directories()->in($sysPath.'var/cache/');
         }
 
         return $finder;
@@ -511,17 +515,24 @@ class ConfigurationHelper extends Helper
         $finder = new Finder();
         $sysPath = $this->getSysPath();
         $filesAdded = false;
-        if (is_dir($sysPath . 'app/cache')) {
-            $finder->in($sysPath . 'app/cache/');
+        if (is_dir($sysPath.'app/cache')) {
+            $finder->in($sysPath.'app/cache/');
             $finder->files()->notName('index.*');
             $filesAdded = true;
         }
 
-        if (is_dir($sysPath . 'archive')) {
-            $finder->in($sysPath . 'archive/');
+        if (is_dir($sysPath.'archive')) {
+            $finder->in($sysPath.'archive/');
             $finder->files()->notName('index.*');
             $filesAdded = true;
         }
+
+        if (is_dir($sysPath.'var/cache')) {
+            $finder->in($sysPath.'var/cache/');
+            $finder->files()->notName('index.*');
+            $filesAdded = true;
+        }
+
 
         if ($filesAdded) {
             return $finder;
@@ -549,8 +560,12 @@ class ConfigurationHelper extends Helper
         $sysPath = $this->getSysPath();
 
         $tempPath = 'archive/';
-        if (is_dir($sysPath.'app/config')) {
+        if (is_dir($sysPath.'app/cache')) {
             $tempPath = 'app/cache/';
+        }
+
+        if (is_dir($sysPath.'var/cache')) {
+            $tempPath = 'var/cache/';
         }
 
         $app['temp.paths'] = new \stdClass();

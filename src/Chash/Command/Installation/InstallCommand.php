@@ -151,11 +151,14 @@ class InstallCommand extends CommonCommand
         if ($this->commandLine) {
             $eventManager = $connectionToHost->getSchemaManager();
             $databases = $eventManager->listDatabases();
+            $output->writeln('listDatabases');
             if (in_array($databaseSettings['dbname'], $databases)) {
                 if ($silent == false) {
+                    /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
                     $helper = $this->getHelperSet()->get('question');
                     $question = new ConfirmationQuestion(
-                        '<comment>The database <info>'.$databaseSettings['dbname'].'</info> exists and is going to be dropped!</comment> <question>Are you sure?</question>(y/N)', false
+                        '<comment>The database <info>'.$databaseSettings['dbname'].'</info> exists and is going to be dropped!</comment> <question>Are you sure?</question>(y/N)',
+                        true
                     );
                     if (!$helper->ask($input, $output, $question)) {
                         return 0;
@@ -166,6 +169,7 @@ class InstallCommand extends CommonCommand
 
         // When installing always drop the current database
         try {
+            $output->writeln('Try connecting to drop and create the database.');
             $sm = $connectionToHost->getSchemaManager();
             $sm->dropAndCreateDatabase($databaseSettings['dbname']);
             $connectionToDatabase = $this->getUserAccessConnectionToDatabase();
@@ -182,7 +186,6 @@ class InstallCommand extends CommonCommand
         }
 
         if ($connect) {
-
             $output->writeln(
                 sprintf(
                     "<comment>Connection to database '%s' established.</comment>",
@@ -217,6 +220,7 @@ class InstallCommand extends CommonCommand
                     if (is_dir($customVersion)) {
                         $file = $customVersion.'/update.sql';
                         if (is_file($file) && file_exists($file)) {
+                            $output->writeln("File imported: $file");
                             $this->importSQLFile($file, $output);
                         }
                     } else {
@@ -326,8 +330,41 @@ class InstallCommand extends CommonCommand
         }
 
         if ($this->commandLine) {
-            $connectionToDatabase = $this->getUserAccessConnectionToDatabase();
-            $connectionToDatabase->connect();
+            $connectionToDatabase = $this->getUserAccessConnectionToHost();
+            $connectionToHostConnect = $connectionToHost->connect();
+
+            if ($connectionToHostConnect) {
+                $output->writeln(
+                    sprintf(
+                        "<comment>Connection to database %s established. </comment>",
+                        $databaseSettings['dbname']
+                    )
+                );
+            } else {
+                $output->writeln(
+                    sprintf(
+                        "<error>Could not connect to database %s. Please check the database connection parameters.</error>",
+                        $databaseSettings['dbname']
+                    )
+                );
+                return 0;
+            }
+
+            $eventManager = $connectionToHost->getSchemaManager();
+            $databases = $eventManager->listDatabases();
+            if (in_array($databaseSettings['dbname'], $databases)) {
+                if ($silent == false) {
+                    $helper = $this->getHelperSet()->get('question');
+                    $question = new ConfirmationQuestion(
+                        '<comment>The database <info>'.$databaseSettings['dbname'].'</info> exists and is going to be dropped!</comment> <question>Are you sure?</question>(y/N)',
+                        false
+                    );
+                    if (!$helper->ask($input, $output, $question)) {
+                        return 0;
+                    }
+                }
+            }
+
             $version = $this->version;
 
             // Installing database.
@@ -359,7 +396,6 @@ class InstallCommand extends CommonCommand
     public function askDatabaseSettings(InputInterface $input, OutputInterface $output)
     {
         $helper = $this->getHelperSet()->get('question');
-
         $filledParams = $this->getParamsFromOptions(
             $input,
             $this->getDatabaseSettingsParams()
@@ -630,12 +666,12 @@ class InstallCommand extends CommonCommand
             return false;
         }
 
-        //$isLegacy = $this->getConfigurationHelper()->isLegacy();
-        if ($isLegacy) {
+        $this->installLegacy($input, $output);
+        /*if ($isLegacy) {
             $this->installLegacy($input, $output);
         } else {
             $this->install($input, $output);
-        }
+        }*/
     }
 
     /**
@@ -696,7 +732,6 @@ class InstallCommand extends CommonCommand
     public function processInstallation($databaseSettings, $version, $output)
     {
         $em = $this->setDoctrineSettings($this->getHelperSet());
-
         $sqlFolder = $this->getInstallationPath($version);
         $databaseMap = $this->getDatabaseMap();
         // Fixing the version
@@ -785,20 +820,18 @@ class InstallCommand extends CommonCommand
 
                     require_once $this->getRootSys().'/main/inc/lib/usermanager.lib.php';
 
-
                     $newInstallationPath = $this->getRootSys();
                     $chashPath = __DIR__.'/../../../../';
 
-
-                      // Registering Constraints
-                    AnnotationRegistry::registerAutoloadNamespace(
+                    // Registering Constraints
+                    /*AnnotationRegistry::registerAutoloadNamespace(
                         'APY\DataGridBundle\Grid\Mapping',
                         $newInstallationPath.'vendor/apy/datagrid-bundle/Grid/Mapping'
-                    );
+                    );*/
 
-                    AnnotationRegistry::registerFile(
+                    /*AnnotationRegistry::registerFile(
                         $newInstallationPath.'vendor/apy/datagrid-bundle/Grid/Mapping/Column.php'
-                    );
+                    );*/
 
                     $database = new \Database();
                     $database::$utcDateTimeClass = 'Chash\DoctrineExtensions\DBAL\Types\UTCDateTimeType';
