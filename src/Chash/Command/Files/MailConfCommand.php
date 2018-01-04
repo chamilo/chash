@@ -39,15 +39,15 @@ class MailConfCommand extends CommonDatabaseCommand
 
         $path = $this->getHelper('configuration')->getConfigurationPath();
         $path .= 'mail.conf.php';
-        define('IS_WINDOWS_OS', strtolower(substr(php_uname(), 0, 3 )) == 'win'?true:false);
+        define('IS_WINDOWS_OS', strtolower(substr(php_uname(), 0, 3)) == 'win'?true:false);
         if (isset($path) && is_file($path)) {
             $output->writeln('File: '.$path);
             $lines = file($path);
-            $list = array('SMTP_HOST','SMTP_PORT','SMTP_MAILER','SMTP_AUTH','SMTP_USER','SMTP_PASS');
+            $list = ['SMTP_HOST','SMTP_PORT','SMTP_MAILER','SMTP_AUTH','SMTP_USER','SMTP_PASS'];
             foreach ($lines as $line) {
-                $match = array();
-                if (preg_match("/platform_email\['(.*)'\]/",$line,$match)) {
-                    if (in_array($match[1],$list)) {
+                $match = [];
+                if (preg_match("/platform_email\['(.*)'\]/", $line, $match)) {
+                    if (in_array($match[1], $list)) {
                         eval($line);
                     }
                 }

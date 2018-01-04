@@ -13,8 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @param OutputInterface $output
  * @param $upgrade
  */
-$updateFiles = function($_configuration, $mainConnection, $courseList, $dryRun, $output, $upgrade)
-{
+$updateFiles = function ($_configuration, $mainConnection, $courseList, $dryRun, $output, $upgrade) {
     $sysPath = $upgrade->getRootSys();
     $sysCodePath = $upgrade->getRootSys().'main/';
 

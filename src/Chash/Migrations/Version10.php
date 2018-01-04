@@ -2,8 +2,8 @@
 
 namespace Chash\Migrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration,
-    Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\DBAL\Schema\Schema;
 
 /**
  * Manages the migration to Chamilo 10
@@ -26,7 +26,7 @@ class Version10 extends AbstractMigration
     public function up(Schema $schema)
     {
         $trackDefaultTable = $schema->getTable('track_e_default');
-        $trackDefaultTable->addColumn('session_id', 'integer', array('default' => 0, 'Notnull' => true));
+        $trackDefaultTable->addColumn('session_id', 'integer', ['default' => 0, 'Notnull' => true]);
         $schema->dropTable('php_session');
 
         /*-- ALTER TABLE c_lp_item ADD INDEX idx_c_lp_item_cid_lp_id (c_id, lp_id);

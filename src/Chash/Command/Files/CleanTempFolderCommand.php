@@ -24,7 +24,7 @@ class CleanTempFolderCommand extends CommonDatabaseCommand
         parent::configure();
         $this
             ->setName('files:clean_temp_folder')
-            ->setAliases(array('fct'))
+            ->setAliases(['fct'])
             ->setDescription('Cleans the temp directory.');
     }
 
@@ -40,7 +40,8 @@ class CleanTempFolderCommand extends CommonDatabaseCommand
 
         $helper = $this->getHelperSet()->get('question');
         $question = new ConfirmationQuestion(
-            '<question>Are you sure you want to clean the Chamilo temp files? (y/N)</question>', true
+            '<question>Are you sure you want to clean the Chamilo temp files? (y/N)</question>',
+            true
         );
         if (!$helper->ask($input, $output, $question)) {
             return;

@@ -37,7 +37,8 @@ class DropDatabaseCommand extends CommonDatabaseCommand
 
         $helper = $this->getHelperSet()->get('question');
         $question = new ConfirmationQuestion(
-            '<question>Are you sure you want to drop all database in this portal? (y/N)</question>', false
+            '<question>Are you sure you want to drop all database in this portal? (y/N)</question>',
+            false
         );
         if (!$helper->ask($input, $output, $question)) {
             return;

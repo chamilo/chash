@@ -100,10 +100,9 @@ class StatusCommand extends CommonDatabaseCommand
             $output->writeln('<comment>Chamilo $_configuration[system_version]:</comment> <info>'.$_configuration['system_version'].'</info>');
         }
 
-        if (!version_compare(substr($chamiloVersion, 0, 5), substr($_configuration['system_version'], 0, 5), '==' )) {
+        if (!version_compare(substr($chamiloVersion, 0, 5), substr($_configuration['system_version'], 0, 5), '==')) {
             /*$output->writeln("<error>Please check carefully your Chamilo installation. </error>");
             $output->writeln("<comment>The configuration.php file and the 'chamilo_database_version' setting are not synced.</comment>");*/
         }
     }
-
 }

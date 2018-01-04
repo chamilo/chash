@@ -14,7 +14,7 @@ use Doctrine\DBAL\Types\DateTimeType;
  */
 class UTCDateTimeType extends DateTimeType
 {
-    static private $utc = null;
+    private static $utc = null;
 
     /**
      * {@inheritdoc}

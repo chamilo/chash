@@ -115,23 +115,23 @@ class UpgradeDatabaseCommand extends CommonCommand
         $output->writeln('<comment>Migrating from Chamilo version: </comment><info>'.$currentVersion.'</info><comment> to version <info>'.$version);
 
         // Upgrade always from a mysql driver
-        $databaseSettings = array(
+        $databaseSettings = [
             'driver' => 'pdo_mysql',
             'host' => $host,
             'dbname' => $database,
             'user' => $username,
             'password' => $password,
-        );
+        ];
 
         // Setting DB access.
         $this->setDatabaseSettings($databaseSettings);
 
-        $extraDatabaseSettings = array(
+        $extraDatabaseSettings = [
             'single_database'=> isset($_configuration['single_database']) ? $_configuration['single_database'] : false,
             'table_prefix'=> isset($_configuration['table_prefix']) ? $_configuration['table_prefix'] : null,
             'db_glue' => isset($_configuration['db_glue']) ? $_configuration['db_glue'] : null,
             'db_prefix' => isset($_configuration['db_prefix']) ? $_configuration['db_prefix'] : null,
-        );
+        ];
 
         $this->setExtraDatabaseSettings($extraDatabaseSettings);
         $this->setDoctrineSettings($this->getHelperSet());
@@ -272,7 +272,7 @@ class UpgradeDatabaseCommand extends CommonCommand
         $rootSys = ''
     ) {
         // Cleaning query list.
-        $this->queryList = array();
+        $this->queryList = [];
 
         // Main DB connection.
         $conn = $this->getConnection($mainInput);
@@ -296,12 +296,12 @@ class UpgradeDatabaseCommand extends CommonCommand
                 if (!$fs->exists($migrationsFolder)) {
                     $fs->mkdir($migrationsFolder);
                 }
-                $migrations = array(
+                $migrations = [
                     'name' => 'Chamilo Migrations',
                     'migrations_namespace' => $versionInfo['migrations_namespace'],
                     'table_name' => 'version',
                     'migrations_directory' => $rootSys.$versionInfo['migrations_directory'],
-                );
+                ];
 
                 $dumper = new Dumper();
                 $yaml = $dumper->dump($migrations, 1);
@@ -320,12 +320,12 @@ class UpgradeDatabaseCommand extends CommonCommand
                 $helperSet->set($helper, 'question');
                 $command->setHelperSet($helperSet);
 
-                $arguments = array(
+                $arguments = [
                     //'command' => 'migrations:migrate',
                     '--configuration' => $file,
                     '--dry-run' => $dryRun,
                     'version' => $versionInfo['hook_to_doctrine_version']
-                );
+                ];
 
                 $output->writeln(
                     "<comment>Executing migrations:migrate ".$versionInfo['hook_to_doctrine_version']." --configuration=".$file."<comment>"
@@ -392,10 +392,10 @@ class UpgradeDatabaseCommand extends CommonCommand
      */
     public function getMigrationTypes()
     {
-        return array(
+        return [
             'pre',
             'post'
-        );
+        ];
     }
 
     /**
@@ -418,7 +418,6 @@ class UpgradeDatabaseCommand extends CommonCommand
 
         foreach ($databases as $section => &$dbList) {
             foreach ($dbList as &$dbInfo) {
-
                 $output->writeln("");
                 $output->writeln("<comment>Loading section:</comment> <info>$section</info> <comment>using database key</comment> <info>".$dbInfo['database']."</info>");
                 $output->writeln("--------------------------");
@@ -436,7 +435,6 @@ class UpgradeDatabaseCommand extends CommonCommand
                     $output->writeln("<comment>Loading queries list: '$type' - '$section'</comment>");
 
                     if (!empty($queryList)) {
-
                         try {
                             $lines = 0;
 
@@ -471,7 +469,6 @@ class UpgradeDatabaseCommand extends CommonCommand
                                 $dbInfo['status'] = 'complete';
                                 $this->saveDatabaseList($path, $databases, $version, $type);
                             }
-
                         } catch (\Exception $e) {
                             $conn->rollback();
                             $output->write(sprintf('<error>Migration failed. Error %s</error>', $e->getMessage()));
@@ -487,7 +484,7 @@ class UpgradeDatabaseCommand extends CommonCommand
                 }
             }
         }
-        $this->queryList = array();
+        $this->queryList = [];
 
         return true;
     }
@@ -533,13 +530,13 @@ class UpgradeDatabaseCommand extends CommonCommand
      */
     public function getSections()
     {
-        return array(
+        return [
             'main',
             'user',
             'stats',
             'scorm',
             'course'
-        );
+        ];
     }
 
     /**
@@ -550,49 +547,49 @@ class UpgradeDatabaseCommand extends CommonCommand
      */
     public function generateDatabaseList($courseList)
     {
-        $courseDbList = array();
+        $courseDbList = [];
         $_configuration = $this->getConfigurationArray();
         if (!empty($courseList)) {
             foreach ($courseList as $course) {
                 if (!empty($course['db_name'])) {
-                    $courseDbList[] = array(
+                    $courseDbList[] = [
                         'database' => '_chamilo_course_'.$course['db_name'],
                         'prefix' => $this->getTablePrefix($_configuration, $course['db_name']),
                         'status' => 'waiting'
-                    );
+                    ];
                 }
             }
         } else {
-            $courseDbList = array(
-                array(
+            $courseDbList = [
+                [
                     'database'=> 'main_database',
                     'status' => 'waiting',
                     'prefix' => null
-                )
-            );
+                ]
+            ];
         }
 
-        $databaseSection = array(
-            'main' => array(
-                array(
+        $databaseSection = [
+            'main' => [
+                [
                     'database' => 'main_database',
                     'status' => 'waiting'
-                )
-            ),
-            'user' => array(
-                array(
+                ]
+            ],
+            'user' => [
+                [
                     'database' => 'user_personal_database',
                     'status' => 'waiting'
-                )
-            ),
-            'stats' => array(
-                array(
+                ]
+            ],
+            'stats' => [
+                [
                     'database' => 'statistics_database',
                     'status' => 'waiting'
-                )
-            ),
+                ]
+            ],
             'course'=> $courseDbList
-        );
+        ];
 
         $this->setDatabaseList($databaseSection);
         return $this->databaseList;
@@ -628,7 +625,6 @@ class UpgradeDatabaseCommand extends CommonCommand
 
             return $yaml->parse(file_get_contents($newConfigurationFile));
         } else {
-
             return $this->generateDatabaseList($courseList);
         }
     }
@@ -686,7 +682,7 @@ class UpgradeDatabaseCommand extends CommonCommand
             return false;
         }
 
-        if (!in_array($section, array('main', 'user', 'stats', 'scorm', 'course'))) {
+        if (!in_array($section, ['main', 'user', 'stats', 'scorm', 'course'])) {
             $output->writeln(sprintf("Section is <info>%s</info> not authorized in getSQLContents()", $section));
             return false;
         }
@@ -699,12 +695,12 @@ class UpgradeDatabaseCommand extends CommonCommand
         }
 
         // Prepare the resulting array
-        $sectionContents = array();
+        $sectionContents = [];
         $record = false;
         foreach ($fileContents as $line) {
             if (substr($line, 0, 2) == '--') {
                 //This is a comment. Check if section name, otherwise ignore
-                $result = array();
+                $result = [];
                 if (preg_match('/^-- xx([A-Z]*)xx/', $line, $result)) { //we got a section name here
                     if ($result[1] == strtoupper($section)) {
                         //we have the section we are looking for, start recording
@@ -748,10 +744,10 @@ class UpgradeDatabaseCommand extends CommonCommand
         $sqlFolder = $this->getInstallationPath('1.9.0');
 
         // Importing sql files.
-        $arguments = array(
+        $arguments = [
             'command' => 'dbal:import',
             'file' =>  $sqlFolder.'db_course.sql'
-        );
+        ];
         $input = new ArrayInput($arguments);
         $command->run($input, $output);
     }

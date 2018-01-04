@@ -40,7 +40,8 @@ class CleanConfigFilesCommand extends CommonDatabaseCommand
 
         $helper = $this->getHelperSet()->get('question');
         $question = new ConfirmationQuestion(
-            '<question>Are you sure you want to clean your config files? (y/N)</question>', false
+            '<question>Are you sure you want to clean your config files? (y/N)</question>',
+            false
         );
         if (!$helper->ask($input, $output, $question)) {
             return;

@@ -67,7 +67,8 @@ class ReplaceURLCommand extends CommonDatabaseCommand
 
         $helper = $this->getHelperSet()->get('question');
         $question = new ConfirmationQuestion(
-            '<question>Are you sure you want to replace</question> <comment>'.$search.'</comment> with <comment>'.$replace.'</comment>? (y/N)', false
+            '<question>Are you sure you want to replace</question> <comment>'.$search.'</comment> with <comment>'.$replace.'</comment>? (y/N)',
+            false
         );
         if (!$helper->ask($input, $output, $question)) {
             return;
@@ -160,14 +161,14 @@ class ReplaceURLCommand extends CommonDatabaseCommand
      */
     private function getTables()
     {
-        return array(
-            'c_quiz' => array('description'),
-            'c_quiz_answer' => array('answer', 'comment'),
-            'c_quiz_question' => array('description'),
-            'c_tool_intro' => array('intro_text'),
-            'track_e_attempt' => array('answer'),
-            'c_link' => array('url'),
-            'c_glossary' => array('description')
-        );
+        return [
+            'c_quiz' => ['description'],
+            'c_quiz_answer' => ['answer', 'comment'],
+            'c_quiz_question' => ['description'],
+            'c_tool_intro' => ['intro_text'],
+            'track_e_attempt' => ['answer'],
+            'c_link' => ['url'],
+            'c_glossary' => ['description']
+        ];
     }
 }

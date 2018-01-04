@@ -27,7 +27,7 @@ class UsersPerUrlAccessCommand extends CommonChamiloUserCommand
 
         $this
             ->setName('user:url_access')
-            ->setAliases(array('urla'))
+            ->setAliases(['urla'])
             ->setDescription('Show the access per Url');
     }
 

@@ -9,7 +9,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-
 /**
  * Class ShowConnInfoCommand
  * @package Chash\Command\Database
@@ -39,7 +38,8 @@ class ShowConnInfoCommand extends CommonDatabaseCommand
 
         $helper = $this->getHelperSet()->get('question');
         $question = new ConfirmationQuestion(
-            '<question>Are you sure you want to show the database connection info here? (y/N)</question>', false
+            '<question>Are you sure you want to show the database connection info here? (y/N)</question>',
+            false
         );
         if (!$helper->ask($input, $output, $question)) {
             return;

@@ -22,7 +22,7 @@ class ListLanguagesCommand extends CommonDatabaseCommand
         parent::configure();
         $this
             ->setName('translation:list')
-            ->setAliases(array('tl'))
+            ->setAliases(['tl'])
             ->setDescription('Gets all languages as a list')
             ->addArgument(
                 'availability',
@@ -65,14 +65,16 @@ class ListLanguagesCommand extends CommonDatabaseCommand
             $output->writeln('Error in query: '.mysql_error());
             return null;
         } else {
-            $languages = array();
+            $languages = [];
             $output->writeln("Language          | Enabled | Platform language");
             $output->writeln("-----------------------------------------------");
             while ($lr = mysql_fetch_assoc($lq)) {
                 $pl = '';
                 $l = strlen($lr['english_name']);
-                if ($lr['english_name'] == $current) { $pl = '*'; }
-                $output->writeln($lr['english_name'].str_repeat(' ',18-$l)."| ".$lr['available']."       | ".$pl);
+                if ($lr['english_name'] == $current) {
+                    $pl = '*';
+                }
+                $output->writeln($lr['english_name'].str_repeat(' ', 18-$l)."| ".$lr['available']."       | ".$pl);
             }
         }
         return null;

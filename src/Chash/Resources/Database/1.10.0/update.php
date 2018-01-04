@@ -12,15 +12,14 @@ use Symfony\Component\Finder\Finder;
  * @param \Symfony\Component\Console\Output\OutputInterface $output
  * @param $upgrade
  */
-$updateFiles = function($_configuration, $mainConnection, $courseList, $dryRun, $output, $upgrade)
-{
+$updateFiles = function ($_configuration, $mainConnection, $courseList, $dryRun, $output, $upgrade) {
     $sysPath = $upgrade->getRootSys();
     $sysCodePath = $upgrade->getRootSys().'main/';
     $output->writeln(__DIR__.'update.php');
     try {
         $langPath = $sysCodePath.'lang/';
         // Only erase files from Chamilo languages (not sublanguages defined by the users)
-        $officialLanguages = array(
+        $officialLanguages = [
             'arabic',
             'asturian',
             'basque',
@@ -82,9 +81,9 @@ $updateFiles = function($_configuration, $mainConnection, $courseList, $dryRun, 
             'vietnamese',
             'xhosa',
             'yoruba',
-        );
+        ];
 
-        $filesToDelete = array(
+        $filesToDelete = [
             'accessibility',
             'admin',
             'agenda',
@@ -133,7 +132,7 @@ $updateFiles = function($_configuration, $mainConnection, $courseList, $dryRun, 
             'videoconf',
             'wiki',
             'work',
-        );
+        ];
 
         $output->writeln('Cleaning lang vars');
 
@@ -157,7 +156,7 @@ $updateFiles = function($_configuration, $mainConnection, $courseList, $dryRun, 
         // Remove the "main/conference/" directory that wasn't used since years long
         // past - see rrmdir function declared below
         if ($fs->exists($sysCodePath.'conference')) {
-           $fs->remove($sysCodePath.'conference');
+            $fs->remove($sysCodePath.'conference');
         }
 
         // Other files that we renamed
