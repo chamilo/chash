@@ -885,7 +885,7 @@ class InstallCommand extends CommonCommand
                     '/vendor/autoload.php',
                 ];
 
-                foreach($legacyFiles as $file) {
+                foreach ($legacyFiles as $file) {
                     $file = $this->getRootSys().$file;
                     $output->writeln("<comment>Calling Chamilo lib: $file </comment>");
                     require_once $file;
