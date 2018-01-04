@@ -87,7 +87,6 @@ class UpgradeDatabaseCommand extends CommonCommand
             }
         }
 
-
         if (version_compare($version, $minVersion, '<')) {
             $output->writeln("<comment>Your Chamilo version is not supported! The minimun version is: </comment><info>$minVersion</info>");
             $output->writeln("<comment>You want to upgrade from <info>".$version."</info> <comment>to</comment> <info>$minVersion</info>");
