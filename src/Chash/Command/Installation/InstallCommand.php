@@ -151,7 +151,6 @@ class InstallCommand extends CommonCommand
         if ($this->commandLine) {
             $eventManager = $connectionToHost->getSchemaManager();
             $databases = $eventManager->listDatabases();
-            $output->writeln('listDatabases');
             if (in_array($databaseSettings['dbname'], $databases)) {
                 if ($silent == false) {
                     /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
@@ -762,7 +761,6 @@ class InstallCommand extends CommonCommand
                                 );
                                 continue;
                             } else {
-
                                 // Fixing db list
                                 foreach ($dbList as &$db) {
                                     $db = $sqlFolder.$db;

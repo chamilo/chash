@@ -939,28 +939,12 @@ class CommonCommand extends AbstractCommand
             ),
             '2.0' => array(
                 'section' => array(
-                    'main' => array(
-                        array(
-                            'name' => 'chamilo',
-                            'sql' => array(
-                                //'course.sql',
-                                //'main.sql'
-                            ),
-                        ),
-                    ),
+                    'migrations' => 'Version200',
                 )
             ),
             'master' => array(
                 'section' => array(
-                    'main' => array(
-                        array(
-                            'name' => 'chamilo',
-                            'sql' => array(
-                                //'course.sql',
-                                //'main.sql'
-                            ),
-                        ),
-                    ),
+                    'migrations' => 'Version200',
                 )
             )
         );
