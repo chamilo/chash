@@ -76,7 +76,7 @@ class GetInstancesCommand extends CommonCommand
 
         $table = new Table($output);
         $table
-            ->setHeaders(array('Portal', 'Version', 'Packager', 'Configuration file'))
+            ->setHeaders(['Portal', 'Version', 'Packager', 'Configuration file'])
             ->setRows($portals)
         ;
 

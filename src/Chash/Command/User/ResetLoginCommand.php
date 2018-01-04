@@ -8,7 +8,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
 /**
  * Command functions meant to deal with what the user of this script is calling
  * it for.

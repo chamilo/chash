@@ -31,7 +31,7 @@ class PlatformLanguageCommand extends CommonDatabaseCommand
         parent::configure();
         $this
             ->setName('translation:platform_language')
-            ->setAliases(array('tpl'))
+            ->setAliases(['tpl'])
             ->setDescription('Gets or sets the platform language')
             ->addArgument(
                 'language',
@@ -68,11 +68,11 @@ class PlatformLanguageCommand extends CommonDatabaseCommand
                 $output->writeln('Error in query: '.mysql_error());
                 return null;
             } else {
-                $languages = array();
+                $languages = [];
                 while ($lr = mysql_fetch_assoc($lq)) {
                     $languages[] = $lr['english_name'];
                 }
-                if (!in_array($lang,$languages)) {
+                if (!in_array($lang, $languages)) {
                     $output->writeln($lang.' must be available on your platform before you can set it as default');
                     return null;
                 }

@@ -237,20 +237,20 @@ class InstallCommand extends CommonCommand
 
                     // Cleaning temp folders.
                     $command = $this->getApplication()->find('files:clean_temp_folder');
-                    $arguments = array(
+                    $arguments = [
                         'command' => 'files:clean_temp_folder',
                         '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
-                    );
+                    ];
 
                     $input = new ArrayInput($arguments);
                     $command->run($input, $output);
 
                     // Generating temp folders.
                     $command = $this->getApplication()->find('files:generate_temp_folders');
-                    $arguments = array(
+                    $arguments = [
                         'command' => 'files:generate_temp_folders',
                         '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
-                    );
+                    ];
 
                     $input = new ArrayInput($arguments);
                     $command->run($input, $output);
@@ -259,13 +259,13 @@ class InstallCommand extends CommonCommand
 
                     if (PHP_SAPI == 'cli') {
                         $command = $this->getApplication()->find('files:set_permissions_after_install');
-                        $arguments = array(
+                        $arguments = [
                             'command' => 'files:set_permissions_after_install',
                             '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
                             '--linux-user' => $linuxUser,
                             '--linux-group' => $linuxGroup
                             //'--dry-run' => $dryRun
-                        );
+                        ];
 
                         $input = new ArrayInput($arguments);
                         $command->run($input, $output);
@@ -404,11 +404,11 @@ class InstallCommand extends CommonCommand
         $output->writeln(
             "<comment>Database settings: (" . $total . ")</comment>"
         );
-        $databaseSettings = array();
+        $databaseSettings = [];
         $counter = 1;
         foreach ($params as $key => $value) {
             if (!isset($filledParams[$key])) {
-                if (!$input->isInteractive() && (in_array($key, array('dbpassword', 'port', 'host', 'driver')))) {
+                if (!$input->isInteractive() && (in_array($key, ['dbpassword', 'port', 'host', 'driver']))) {
                     // db password may be empty, so if not provided and the
                     // --no-interaction mode was configured, forget about it
                     switch ($key) {
@@ -484,7 +484,7 @@ class InstallCommand extends CommonCommand
         $output->writeln(
             "<comment>Admin settings: (" . $total . ")</comment>"
         );
-        $adminSettings = array();
+        $adminSettings = [];
         $counter = 1;
 
         foreach ($params as $key => $value) {
@@ -520,7 +520,7 @@ class InstallCommand extends CommonCommand
 
         $params = $this->getPortalSettingsParams();
         $total = count($params);
-        $portalSettings = array();
+        $portalSettings = [];
 
         $output->writeln("<comment>Portal settings (".$total.") </comment>");
 
@@ -717,7 +717,6 @@ class InstallCommand extends CommonCommand
         }
 
         return $newVersion;
-
     }
 
     /**
@@ -770,10 +769,10 @@ class InstallCommand extends CommonCommand
                                     'dbal:import'
                                 );
                                 // Importing sql files.
-                                $arguments = array(
+                                $arguments = [
                                     'command' => 'dbal:import',
                                     'file' => $dbList
-                                );
+                                ];
                                 $input = new ArrayInput($arguments);
                                 $command->run($input, $output);
 
@@ -954,10 +953,10 @@ class InstallCommand extends CommonCommand
         $command = $this->getApplication()->find('dbal:import');
 
         // Importing sql files.
-        $arguments = array(
+        $arguments = [
             'command' => 'dbal:import',
             'file' =>  $file
-        );
+        ];
         $input = new ArrayInput($arguments);
         $command->run($input, $output);
 
@@ -1024,13 +1023,13 @@ class InstallCommand extends CommonCommand
      */
     public function createCourse($connection, $databaseName)
     {
-        $params = array(
+        $params = [
             'code' => $databaseName,
             'db_name' => $databaseName,
             'course_language' => 'english',
             'title' => $databaseName,
             'visual_code' => $databaseName
-        );
+        ];
         $connection->insert('course', $params);
     }
 }

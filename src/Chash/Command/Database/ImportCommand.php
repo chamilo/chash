@@ -19,8 +19,8 @@
 
 namespace Chash\Command\Database;
 
-use Symfony\Component\Console\Input\InputArgument,
-    Symfony\Component\Console;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console;
 
 /**
  * Task for executing arbitrary SQL that can come from a file or directly from
@@ -44,12 +44,15 @@ class ImportCommand extends Console\Command\Command
         $this
             ->setName('dbal:import')
             ->setDescription('Import SQL file(s) directly to Database.')
-            ->setDefinition(array(
+            ->setDefinition([
                     new InputArgument(
-                        'file', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'File path(s) of SQL to be executed.'
+                        'file',
+                        InputArgument::REQUIRED | InputArgument::IS_ARRAY,
+                        'File path(s) of SQL to be executed.'
                     )
-                ))
-            ->setHelp(<<<EOT
+                ])
+            ->setHelp(
+                <<<EOT
 Import SQL file(s) directly to Database.
 EOT
             );
@@ -62,13 +65,13 @@ EOT
     {
         $conn = $this->getHelper('db')->getConnection();
 
-        if (($fileNames = $input->getArgument('file')) !== null)  {
+        if (($fileNames = $input->getArgument('file')) !== null) {
             foreach ((array) $fileNames as $fileName) {
-                if ( ! file_exists($fileName)) {
+                if (! file_exists($fileName)) {
                     throw new \InvalidArgumentException(
                         sprintf("SQL file '<info>%s</info>' does not exist.", $fileName)
                     );
-                } else if ( ! is_readable($fileName)) {
+                } elseif (! is_readable($fileName)) {
                     throw new \InvalidArgumentException(
                         sprintf("SQL file '<info>%s</info>' does not have read permissions.", $fileName)
                     );

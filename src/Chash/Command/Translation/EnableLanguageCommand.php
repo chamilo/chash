@@ -26,7 +26,7 @@ class EnableLanguageCommand extends CommonDatabaseCommand
         parent::configure();
         $this
             ->setName('translation:enable')
-            ->setAliases(array('tel'))
+            ->setAliases(['tel'])
             ->setDescription('Enables a (disabled) language')
             ->addArgument(
                 'language',

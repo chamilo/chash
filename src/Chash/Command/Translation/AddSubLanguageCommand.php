@@ -22,7 +22,7 @@ class AddSubLanguageCommand extends CommonDatabaseCommand
         parent::configure();
         $this
             ->setName('translation:add_sub_language')
-            ->setAliases(array('tasl'))
+            ->setAliases(['tasl'])
             ->setDescription('Creates a sub-language')
             ->addArgument(
                 'parent',
@@ -50,7 +50,7 @@ class AddSubLanguageCommand extends CommonDatabaseCommand
         $parent = $input->getArgument('parent');
         $lang = $input->getArgument('sublanguage');
         $sql = "SELECT english_name FROM language WHERE english_name = ?";
-        $statement = $connection->executeQuery($sql, array($lang));
+        $statement = $connection->executeQuery($sql, [$lang]);
         $count = $statement->rowCount();
 
         if ($count) {
@@ -79,14 +79,16 @@ class AddSubLanguageCommand extends CommonDatabaseCommand
         // Everything is OK so far, insert the sub-language
         /*$sql = "INSERT INTO language ()
                VALUES ('{$parentData['original_name']}-2','$lang','{$parentData['isocode']}','$lang',0,{$parentData['id']})";*/
-        $result = $connection->insert('language', array(
+        $result = $connection->insert(
+            'language',
+            [
                 'original_name' => $parentData['original_name']."-2",
                 'english_name' => $lang,
                 'isocode' => $parentData['isocode'],
                 'dokeos_folder' => $lang,
                 'available' => 0,
                 'parent_id' => $parentData['id']
-            )
+            ]
         );
 
         if ($result) {

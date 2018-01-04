@@ -136,14 +136,14 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
             }
 
             $stmt = $connection->query($sql);
-            $courses = array();
+            $courses = [];
             $courseIdsString = '';
             while ($row = $stmt->fetch()) {
-                $courses[$row['id']] = array(
+                $courses[$row['id']] = [
                     'code' => $row['code'],
                     'category' => $row['category_code'],
                     'date' => $row['creation_date']
-                );
+                ];
                 $courseIdsString .= $row['id'].', ';
             }
             $courseIdsString = substr($courseIdsString, 0, -2);
@@ -172,9 +172,9 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
                     AND c.id IN ($courseIdsString)
                     ORDER BY access_url_id, course_code ASC";
             $stmt = $connection->query($sql);
-            $urlCourses = array();
-            $coursesUrl = array();
-            $coursesDir = array();
+            $urlCourses = [];
+            $coursesUrl = [];
+            $coursesDir = [];
             while ($row = $stmt->fetch()) {
                 $urlCourses[$row['access_url_id']][] = $row['id'];
                 $coursesUrl[$row['id']][] = $row['access_url_id'];
@@ -287,12 +287,14 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
                 WHERE src.course_code = '" . $courseCode . "'
                 AND aurs.access_url_id = $urlId";
         $stmt = $connection->query($sql);
-        $sessions = array();
+        $sessions = [];
         while ($row = $stmt->fetch()) {
             $sessions[] = $row['id_session'];
         }
-        $output->writeln('Sessions using course ' . $courseCode . ' in URL ' . $urlId . ': ' . implode(',',
-                $sessions));
+        $output->writeln('Sessions using course ' . $courseCode . ' in URL ' . $urlId . ': ' . implode(
+            ',',
+                $sessions
+        ));
 
         // 2. Delete the session_rel_course and session_rel_course_rel_user
         foreach ($sessions as $sessionId) {
@@ -354,7 +356,7 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
             $cid = $row['id'];
             $courseDir = $row['directory'];
         }
-        $tables = array(
+        $tables = [
             'c_announcement',
             'c_announcement_attachment',
             'c_attendance',
@@ -444,7 +446,7 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
             'c_wiki_conf',
             'c_wiki_discuss',
             'c_wiki_mailcue',
-        );
+        ];
         foreach ($tables as $table) {
             $sql = "DELETE FROM $table WHERE c_id = $cid";
             $connection->query($sql);

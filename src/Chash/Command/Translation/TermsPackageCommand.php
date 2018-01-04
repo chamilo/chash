@@ -82,13 +82,13 @@ class TermsPackageCommand extends CommonDatabaseCommand
 
         $_configuration = $this->getHelper('configuration')->getConfiguration();
         $baseDir = $_configuration['root_sys'];
-        if (substr($baseDir,-1,1) != '/') {
+        if (substr($baseDir, -1, 1) != '/') {
             $baseDir .= '/';
         }
-        if (substr($source,-1,1) != '/') {
+        if (substr($source, -1, 1) != '/') {
             $source .= '/';
         }
-        if (substr($destination,-1,1) != '/') {
+        if (substr($destination, -1, 1) != '/') {
             $destination .= '/';
         }
 
@@ -97,7 +97,7 @@ class TermsPackageCommand extends CommonDatabaseCommand
             exit;
         }
         // Generate a folder name for saving the *partial* files in the original language - use suffix "_partial
-        $origLang = substr(substr($source,0,-1),strrpos(substr($source,0,-1),'/')).'_partial';
+        $origLang = substr(substr($source, 0, -1), strrpos(substr($source, 0, -1), '/')).'_partial';
 
         if (!is_dir($destination)) {
             $output->writeln('The directory '.$destination.' does not seem to exist. The destination directory must exist in order for this script to write the results in a safe place');
@@ -113,10 +113,14 @@ class TermsPackageCommand extends CommonDatabaseCommand
         }
         $langDir = $baseDir.'main/lang/';
         $listDir = scandir($langDir);
-        $langs = array();
+        $langs = [];
         foreach ($listDir as $lang) {
-            if (substr($lang,0,1) == '.') { continue; }
-            if (!is_dir($langDir.$lang)) { continue; }
+            if (substr($lang, 0, 1) == '.') {
+                continue;
+            }
+            if (!is_dir($langDir.$lang)) {
+                continue;
+            }
             $langs[] = $lang;
         }
         $new = false;
@@ -156,13 +160,15 @@ class TermsPackageCommand extends CommonDatabaseCommand
         $countTranslatedWords = 0;
         $fileString = '<?php'."\n";
         foreach ($listFiles as $file) {
-            if (substr($file,-1,1) == '.') { continue; }
+            if (substr($file, -1, 1) == '.') {
+                continue;
+            }
             $destFileLines = $fileString;
             $origFileLines = $fileString;
             $partialSourceFile = $langDir.$language.'/'.$file;
             $output->writeln('Source File 2 = '.$partialSourceFile);
             $sourceVars = $this->_getLangVars($source.$file);
-            $source2Vars = array();
+            $source2Vars = [];
             if (is_file($partialSourceFile)) {
                 $source2Vars = $this->_getLangVars($partialSourceFile);
             }
@@ -207,8 +213,9 @@ class TermsPackageCommand extends CommonDatabaseCommand
      * @param string $file The asbolute path to the file from which to extract variables
      * @return array Named array of variable => translation
      */
-    private function _getLangVars($file) {
-        $res_list = array();
+    private function _getLangVars($file)
+    {
+        $res_list = [];
         if (!is_readable($file)) {
             return $res_list;
         }

@@ -20,7 +20,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
  */
 class ConvertVideosCommand extends CommonDatabaseCommand
 {
-    public $excluded = array();
+    public $excluded = [];
     public $ext;
     public $origExt;
     /**
@@ -78,7 +78,7 @@ class ConvertVideosCommand extends CommonDatabaseCommand
             $sysPath = $this->getConfigurationHelper()->getSysPathFromConfigurationFile($confPath);
 
             $dir = $input->getArgument('source'); //1 if the option was set
-            if (substr($dir,0,1) != '/') {
+            if (substr($dir, 0, 1) != '/') {
                 $dir = $sysPath . $dir;
             }
             if (!is_dir($dir)) {
@@ -112,10 +112,10 @@ class ConvertVideosCommand extends CommonDatabaseCommand
                 $combinedExt = '.'.$orig.'.'.$ext;
                 $combinedExtLength = strlen($combinedExt);
                 $extLength = strlen('.' . $ext);
-                if (substr($file->getRealPath(),-$combinedExtLength) == $combinedExt) {
+                if (substr($file->getRealPath(), -$combinedExtLength) == $combinedExt) {
                     return false;
                 }
-                if (is_file(substr($file->getRealPath(),0,-$extLength) . $combinedExt)) {
+                if (is_file(substr($file->getRealPath(), 0, -$extLength) . $combinedExt)) {
                     $this->excluded[] = $file;
                     return false;
                 }
@@ -144,7 +144,8 @@ class ConvertVideosCommand extends CommonDatabaseCommand
 
             $helper = $this->getHelperSet()->get('question');
             $question = new ConfirmationQuestion(
-                '<question>All listed videos will be altered and a copy of the original will be taken with a .orig.webm extension. Are you sure you want to proceed? (y/N)</question>', false
+                '<question>All listed videos will be altered and a copy of the original will be taken with a .orig.webm extension. Are you sure you want to proceed? (y/N)</question>',
+                false
             );
             if (!$helper->ask($input, $output, $question)) {
                 return;
@@ -157,15 +158,15 @@ class ConvertVideosCommand extends CommonDatabaseCommand
             foreach ($finder as $file) {
                 $sizeOrig += $file->getSize();
                 $origName = $file->getRealPath();
-                $newName = substr($file->getRealPath(),0,-4).'orig.webm';
+                $newName = substr($file->getRealPath(), 0, -4).'orig.webm';
                 $fs->rename($origName, $newName);
-                $out = array();
-                $newNameCommand = preg_replace('/\s/','\ ',$newName);
-                $newNameCommand = preg_replace('/\(/','\(',$newNameCommand);
-                $newNameCommand = preg_replace('/\)/','\)',$newNameCommand);
-                $origNameCommand = preg_replace('/\s/','\ ',$origName);
-                $origNameCommand = preg_replace('/\(/','\(',$origNameCommand);
-                $origNameCommand = preg_replace('/\)/','\)',$origNameCommand);
+                $out = [];
+                $newNameCommand = preg_replace('/\s/', '\ ', $newName);
+                $newNameCommand = preg_replace('/\(/', '\(', $newNameCommand);
+                $newNameCommand = preg_replace('/\)/', '\)', $newNameCommand);
+                $origNameCommand = preg_replace('/\s/', '\ ', $origName);
+                $origNameCommand = preg_replace('/\(/', '\(', $origNameCommand);
+                $origNameCommand = preg_replace('/\)/', '\)', $origNameCommand);
                 $output->writeln('ffmpeg -i ' . $newNameCommand . ' -b ' . $bitRate . 'k -f ' . $this->ext . ' -vcodec ' . $vcodec . ' -acodec copy -r ' . $fps . ' ' . $origNameCommand);
                 $exec = @system('ffmpeg -i ' . $newNameCommand . ' -b ' . $bitRate . 'k -f ' . $this->ext . ' -vcodec ' . $vcodec . ' -acodec copy -r ' . $fps . ' ' . $origNameCommand, $out);
                 $sizeNew += filesize($origName);

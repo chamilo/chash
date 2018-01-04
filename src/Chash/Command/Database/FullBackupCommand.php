@@ -76,9 +76,9 @@ class FullBackupCommand extends CommonDatabaseCommand
             //Calling command
             $command = $this->getApplication()->find('files:clean_temp_folder');
 
-            $arguments = array(
+            $arguments = [
                 'command' => 'files:clean_temp_folder'
-            );
+            ];
             $input     = new ArrayInput($arguments);
             $command->run($input, $output);
         } else {
@@ -111,6 +111,5 @@ class FullBackupCommand extends CommonDatabaseCommand
         $output->writeln(
             '<comment>End Chamilo backup. File can be found here: '.realpath($resultPath).' </comment>'
         );
-
     }
 }

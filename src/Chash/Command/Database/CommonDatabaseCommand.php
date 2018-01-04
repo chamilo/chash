@@ -44,7 +44,6 @@ class CommonDatabaseCommand extends CommonCommand
     {
         try {
             return $this->getHelper('db')->getConnection();
-
         } catch (Exception $e) {
             echo $e->getMessage();
         }
@@ -92,21 +91,21 @@ class CommonDatabaseCommand extends CommonCommand
         $this->setRootSysDependingConfigurationPath($sysPath);
 
         if ($this->getConfigurationHelper()->isLegacy()) {
-            $databaseSettings = array(
+            $databaseSettings = [
                 'driver' => 'pdo_mysql',
                 'host' => $configuration['db_host'],
                 'dbname' => $configuration['main_database'],
                 'user' => $configuration['db_user'],
                 'password' => $configuration['db_password']
-            );
+            ];
         } else {
-            $databaseSettings = array(
+            $databaseSettings = [
                 'driver' => 'pdo_mysql',
                 'host' => $configuration['database_host'],
                 'dbname' => $configuration['database_name'],
                 'user' => $configuration['database_user'],
                 'password' => $configuration['database_password']
-            );
+            ];
         }
 
         // Setting doctrine connection

@@ -56,7 +56,6 @@ class ImportLanguageCommand extends CommonDatabaseCommand
                     $langInfoFromDB = mysql_fetch_array($q, MYSQL_ASSOC);
                     $langFolderPath = $_configuration['root_sys'].'main/lang/'.$langInfoFromDB['dokeos_folder'];
                     if ($langInfoFromDB && $langFolderPath) {
-
                         $question = new ConfirmationQuestion(
                             '<question>The '.$langInfo['original_name'].' language already exists in Chamilo. Did you want to overwrite the contents? (y/N)</question>',
                             false
@@ -125,7 +124,6 @@ class ImportLanguageCommand extends CommonDatabaseCommand
                         } else {
                             $output->writeln("An error ocurred while tring to create the language");
                         }
-
                     }
                 }
             } else {

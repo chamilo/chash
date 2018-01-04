@@ -27,7 +27,7 @@ class SetLanguageCommand extends CommonChamiloUserCommand
 
         $this
             ->setName('user:set_language')
-            ->setAliases(array('usl'))
+            ->setAliases(['usl'])
             ->setDescription('Sets the users language to the one given')
             ->addArgument(
                 'language',
@@ -67,11 +67,11 @@ class SetLanguageCommand extends CommonChamiloUserCommand
                 $output->writeln('Error in query: '.mysql_error());
                 return null;
             } else {
-                $languages = array();
+                $languages = [];
                 while ($lr = mysql_fetch_assoc($lq)) {
                     $languages[] = $lr['english_name'];
                 }
-                if (!in_array($lang,$languages)) {
+                if (!in_array($lang, $languages)) {
                     $output->writeln($lang.' must be available on your platform before you can use it');
                     return null;
                 }

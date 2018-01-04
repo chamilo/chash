@@ -76,12 +76,12 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
             $connection = $this->getConnection($input);
             $sql = "SELECT * FROM access_url";
             $stmt = $connection->query($sql);
-            $urls = array();
+            $urls = [];
             while ($row = $stmt->fetch()) {
-                $urls[$row['id']] = array(
+                $urls[$row['id']] = [
                     'url' => $row['url'],
                     'active' => $row['active'],
-                );
+                ];
             }
             if ($list) {
                 if (count($urls) > 1) {
@@ -115,9 +115,9 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                 //." WHERE access_url_id != 1 "
                 . " ORDER BY access_url_id, course_code ASC";
             $stmt = $connection->query($sql);
-            $urlCourses = array();
-            $coursesUrl = array();
-            $coursesDir = array();
+            $urlCourses = [];
+            $coursesUrl = [];
+            $coursesDir = [];
             while ($row = $stmt->fetch()) {
                 $urlCourses[$row['access_url_id']][] = $row['course_code'];
                 $coursesUrl[$row['course_code']][] = $row['access_url_id'];
@@ -135,7 +135,7 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                 $count = count($urlCourses);
                 if ($count > 0) {
                     $output->writeln('List of URLs vs courses');
-                    $output->writeln('URL ID' . "\t" . 'Only in this URL?' . "\t" . ($du ? 'Size (KB)' . "\t\t" : '') . 'Course code' );
+                    $output->writeln('URL ID' . "\t" . 'Only in this URL?' . "\t" . ($du ? 'Size (KB)' . "\t\t" : '') . 'Course code');
                     foreach ($urlCourses as $url => $courses) {
                         if (!empty($urlId)) {
                             // if a URL was defined, skip other URLs
@@ -185,7 +185,8 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                 }
                 $helper = $this->getHelperSet()->get('question');
                 $question = new ConfirmationQuestion(
-                    '<question>Are you sure you want to delete URL ' . $urlId . ' and all the courses that are used only in this URL? (y/N)</question>', false
+                    '<question>Are you sure you want to delete URL ' . $urlId . ' and all the courses that are used only in this URL? (y/N)</question>',
+                    false
                 );
                 if (!$helper->ask($input, $output, $question)) {
                     return;
@@ -225,8 +226,8 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                 if ($deleteUsers) {
                     // Check if some users are *only* in the given URL (if so,
                     // remove them)
-                    $urlUsers = array();
-                    $userUrls = array();
+                    $urlUsers = [];
+                    $userUrls = [];
                     $sql = 'SELECT access_url_id, user_id FROM access_url_rel_user ORDER BY access_url_id, user_id';
                     $stmt = $connection->query($sql);
                     while ($row = $stmt->fetch()) {
@@ -282,7 +283,7 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                     src.course_code = '" . $courseCode . "' AND 
                     aurs.access_url_id = $urlId";
         $stmt = $connection->query($sql);
-        $sessions = array();
+        $sessions = [];
         while ($row = $stmt->fetch()) {
             $sessions[] = $row['id_session'];
         }
@@ -352,7 +353,7 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
             $cid = $row['id'];
             $courseDir = $row['directory'];
         }
-        $tables = array(
+        $tables = [
             'c_announcement',
             'c_announcement_attachment',
             'c_attendance',
@@ -442,7 +443,7 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
             'c_wiki_conf',
             'c_wiki_discuss',
             'c_wiki_mailcue',
-        );
+        ];
         foreach ($tables as $table) {
             $sql = "DELETE FROM $table WHERE c_id = $cid";
             $stmt = $connection->query($sql);

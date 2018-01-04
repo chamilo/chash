@@ -1,8 +1,7 @@
 <?php
 /* For licensing terms, see /license.txt */
 
-$update = function($_configuration, $mainConnection, $courseList, $dryRun, $output, $upgrade)
-{
+$update = function ($_configuration, $mainConnection, $courseList, $dryRun, $output, $upgrade) {
     $portalSettings = $upgrade->getPortalSettings();
     $databaseList = $upgrade->generateDatabaseList($courseList);
     $courseDatabaseConnectionList = $databaseList['course']; // main  user stats course
@@ -60,7 +59,7 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
                                 orig_lp_item_id = {$row['lp_item_id']} ";
                         $sub_result = $statsConnection->executeQuery($sql);
                         $sub_rows = $sub_result->fetchAll();
-                        $exe_list = array();
+                        $exe_list = [];
                         foreach ($sub_rows as $sub_row) {
                             $exe_list[] = $sub_row['exe_id'];
                         }
@@ -74,7 +73,7 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
                                         path = {$row['exercise_id']} ";
                         $sub_result = $courseConnection->executeQuery($sql);
                         $sub_rows = $sub_result->fetchAll();
-                        $lp_item_view_id_list = array();
+                        $lp_item_view_id_list = [];
                         foreach ($sub_rows as $sub_row) {
                             $lp_item_view_id_list[] = $sub_row['id'];
                         }
@@ -182,7 +181,6 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
 
         if ($dryRun) {
             $output->writeln('<info>Queries were not executed. Because dry-run is on<info>');
-
         } else {
             $mainConnection->commit();
         }
