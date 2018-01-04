@@ -5,6 +5,7 @@ namespace Chash\Command\Installation;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\DBAL\Migrations\Tools\Console\Command\AbstractCommand;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -903,12 +904,14 @@ class InstallCommand extends CommonCommand
 
                 $database = new \Database();
                 $database::$utcDateTimeClass = 'Chash\DoctrineExtensions\DBAL\Types\UTCDateTimeType';
-
+                $output->writeln("<comment>Connect to database</comment>");
                 $database->connect($databaseSettings, $chashPath, $newInstallationPath);
-                $manager = $database->getManager();
 
+                /** @var EntityManager $manager */
+                $manager = $database->getManager();
                 $metadataList = $manager->getMetadataFactory()->getAllMetadata();
 
+                $output->writeln("Metadata found: ", print_r($metadataList, 1));
                 $output->writeln("<comment>Creating database structure</comment>");
                 $manager->getConnection()->getSchemaManager()->createSchema();
 
