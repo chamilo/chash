@@ -14,6 +14,8 @@ use Symfony\Component\Console;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\ClassLoader\ClassLoader;
 use Symfony\Component\ClassLoader\Psr4ClassLoader;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Question\Question;
 
 /**
  * Class InstallCommand
@@ -151,14 +153,11 @@ class InstallCommand extends CommonCommand
             $databases = $eventManager->listDatabases();
             if (in_array($databaseSettings['dbname'], $databases)) {
                 if ($silent == false) {
-                    $dialog = $this->getHelperSet()->get('dialog');
-
-                    if (!$dialog->askConfirmation(
-                        $output,
-                        '<comment>The database <info>'.$databaseSettings['dbname'].'</info> exists and is going to be dropped!</comment> <question>Are you sure?</question>(y/N)',
-                        false
-                    )
-                    ) {
+                    $helper = $this->getHelperSet()->get('question');
+                    $question = new ConfirmationQuestion(
+                        '<comment>The database <info>'.$databaseSettings['dbname'].'</info> exists and is going to be dropped!</comment> <question>Are you sure?</question>(y/N)', false
+                    );
+                    if (!$helper->ask($input, $output, $question)) {
                         return 0;
                     }
                 }
@@ -193,7 +192,6 @@ class InstallCommand extends CommonCommand
             $configurationWasSaved = $this->writeConfiguration($version, $path, $output);
 
             if ($configurationWasSaved) {
-
                 $absPath = $this->getConfigurationHelper()->getConfigurationPath($path);
                 $output->writeln(
                     sprintf(
@@ -360,7 +358,7 @@ class InstallCommand extends CommonCommand
      */
     public function askDatabaseSettings(InputInterface $input, OutputInterface $output)
     {
-        $dialog = $this->getHelperSet()->get('dialog');
+        $helper = $this->getHelperSet()->get('question');
 
         $filledParams = $this->getParamsFromOptions(
             $input,
@@ -406,11 +404,16 @@ class InstallCommand extends CommonCommand
                     }
                     $counter++;
                 } else {
-                    $data = $dialog->ask(
+                    $question = new Question(
+                        "($counter/$total) Please enter the value of the $key (".$value['attributes']['data']."): "
+                    );
+
+                    $data = $helper->ask($input, $output, $question);
+                    /*$data = $dialog->ask(
                         $output,
                         "($counter/$total) Please enter the value of the $key (" . $value['attributes']['data'] . "): ",
                         $value['attributes']['data']
-                    );
+                    );*/
                     $counter++;
                     $databaseSettings[$key] = $data;
                 }
@@ -433,10 +436,9 @@ class InstallCommand extends CommonCommand
      */
     public function askAdminSettings(InputInterface $input, OutputInterface $output)
     {
-        $dialog = $this->getHelperSet()->get('dialog');
+        $helper = $this->getHelperSet()->get('question');
 
         // Ask for admin settings
-
         $filledParams = $this->getParamsFromOptions(
             $input,
             $this->getAdminSettingsParams()
@@ -452,11 +454,8 @@ class InstallCommand extends CommonCommand
 
         foreach ($params as $key => $value) {
             if (!isset($filledParams[$key])) {
-                $data = $dialog->ask(
-                    $output,
-                    "($counter/$total) Please enter the value of the $key (" . $value['attributes']['data'] . "): ",
-                    $value['attributes']['data']
-                );
+                $question = new Question("($counter/$total) Please enter the value of the $key (" . $value['attributes']['data'] . "): ");
+                $data = $helper->ask($input, $output, $question);
                 $counter++;
                 $adminSettings[$key] = $data;
             } else {
@@ -479,7 +478,7 @@ class InstallCommand extends CommonCommand
      */
     public function askPortalSettings(InputInterface $input, OutputInterface $output)
     {
-        $dialog = $this->getHelperSet()->get('dialog');
+        $helper = $this->getHelperSet()->get('question');
 
         // Ask for portal settings.
         $filledParams = $this->getParamsFromOptions($input, $this->getPortalSettingsParams());
@@ -494,11 +493,8 @@ class InstallCommand extends CommonCommand
         foreach ($params as $key => $value) {
             // If not in array ASK!
             if (!isset($filledParams[$key])) {
-                $data = $dialog->ask(
-                    $output,
-                    "($counter/$total) Please enter the value of the $key (".$value['attributes']['data']."): ",
-                    $value['attributes']['data']
-                );
+                $question = new Question("($counter/$total) Please enter the value of the $key (" . $value['attributes']['data'] . "): ");
+                $data = $helper->ask($input, $output, $question);
                 $counter++;
                 $portalSettings[$key] = $data;
             } else {

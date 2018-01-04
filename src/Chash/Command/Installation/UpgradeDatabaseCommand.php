@@ -11,6 +11,7 @@ use Symfony\Component\Console;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class UpgradeDatabaseCommand
@@ -316,8 +317,8 @@ class UpgradeDatabaseCommand extends CommonCommand
                 $command = new \Doctrine\DBAL\Migrations\Tools\Console\Command\MigrateCommand();
                 // Creates the helper set
                 $helperSet = \Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet($em);
-                $dialog = $this->getHelperSet()->get('dialog');
-                $helperSet->set($dialog, 'dialog');
+                $helper = $this->getHelperSet()->get('question');
+                $helperSet->set($helper, 'question');
                 $command->setHelperSet($helperSet);
 
                 $arguments = array(

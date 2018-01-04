@@ -8,8 +8,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
-
 use Symfony\Component\Console\Helper\TableHelper;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class ShowDiskUsageCommand
@@ -90,14 +90,11 @@ class ShowDiskUsageCommand extends CommonDatabaseCommand
             $this->writeCommandHeader($output, 'Checking courses dir...');
         }
 
-        $dialog = $this->getHelperSet()->get('dialog');
-
-        if (!$csv && !$dialog->askConfirmation(
-            $output,
-            '<question>This operation can take several hours on large volumes. Continue? (y/N)</question>',
-            false
-        )
-        ) {
+        $helper = $this->getHelperSet()->get('question');
+        $question = new ConfirmationQuestion(
+            '<question>This operation can take several hours on large volumes. Continue? (y/N)</question>', false
+        );
+        if (!$helper->ask($input, $output, $question)) {
             return;
         }
 

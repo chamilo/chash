@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class DropDatabaseCommand
@@ -34,23 +35,16 @@ class DropDatabaseCommand extends CommonDatabaseCommand
     {
         parent::execute($input, $output);
 
-        $dialog = $this->getHelperSet()->get('dialog');
-
-        if (!$dialog->askConfirmation(
-            $output,
-            '<question>Are you sure you want to drop all database in this portal? (y/N)</question>',
-            false
-        )
-        ) {
+        $helper = $this->getHelperSet()->get('question');
+        $question = new ConfirmationQuestion(
+            '<question>Are you sure you want to drop all database in this portal? (y/N)</question>', false
+        );
+        if (!$helper->ask($input, $output, $question)) {
             return;
         }
 
-        if (!$dialog->askConfirmation(
-            $output,
-            '<question>Are you really sure? (y/N)</question>',
-            false
-        )
-        ) {
+        $question = new ConfirmationQuestion('<question>Are you really sure? (y/N)</question>', false);
+        if (!$helper->ask($input, $output, $question)) {
             return;
         }
 
@@ -58,7 +52,6 @@ class DropDatabaseCommand extends CommonDatabaseCommand
         $connection = $this->getConnection($input);
 
         if ($connection) {
-
             $list = $_configuration = $this->getHelper('configuration')->getAllDatabases();
             $currentDatabases = $connection->getSchemaManager()->listDatabases();
             if (is_array($list)) {

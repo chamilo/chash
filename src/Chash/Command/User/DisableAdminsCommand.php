@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class DisableAdminsCommand
@@ -37,13 +38,12 @@ class DisableAdminsCommand extends CommonChamiloUserCommand
         parent::execute($input, $output);
         $_configuration = $this->getHelper('configuration')->getConfiguration();
         $connection = $this->getConnection($input);
-        $dialog = $this->getHelperSet()->get('dialog');
-        if (!$dialog->askConfirmation(
-            $output,
+        $helper = $this->getHelperSet()->get('question');
+        $question = new ConfirmationQuestion(
             '<question>This action will make all admins normal teachers. Are you sure? (y/N)</question>',
             false
-        )
-        ) {
+        );
+        if (!$helper->ask($input, $output, $question)) {
             return;
         }
 

@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class ReplaceURLCommand
@@ -62,26 +63,19 @@ class ReplaceURLCommand extends CommonDatabaseCommand
             $output->write('<comment>'.$table.': </comment>');
             $output->writeln(implode(', ', $fields));
         }
-
-        $dialog = $this->getHelperSet()->get('dialog');
-
         $output->writeln('');
 
-        if (!$dialog->askConfirmation(
-            $output,
-            '<question>Are you sure you want to replace</question> <comment>'.$search.'</comment> with <comment>'.$replace.'</comment>? (y/N)',
-            false
-        )
-        ) {
+        $helper = $this->getHelperSet()->get('question');
+        $question = new ConfirmationQuestion(
+            '<question>Are you sure you want to replace</question> <comment>'.$search.'</comment> with <comment>'.$replace.'</comment>? (y/N)', false
+        );
+        if (!$helper->ask($input, $output, $question)) {
             return;
         }
-
         $output->writeln('');
-
         $connection = $this->getConnection();
 
         // Replace URLs from Database:
-
         foreach ($tables as $table => $fields) {
             foreach ($fields as $field) {
                 $sql = "UPDATE $table SET $field = REPLACE ($field, '$search', '$replace')";
@@ -116,12 +110,13 @@ class ReplaceURLCommand extends CommonDatabaseCommand
         $results = $result->fetchAll();
         $coursePath = $this->getCourseSysPath();
         $output->writeln('');
-        if (!$dialog->askConfirmation(
-            $output,
+
+        $helper = $this->getHelperSet()->get('question');
+        $question = new ConfirmationQuestion(
             '<question>Are you sure you want to replace</question> <comment>'.$search.'</comment> with <comment>'.$replace.' in those '.$count.' files</comment> ? (y/N)',
             false
-        )
-        ) {
+        );
+        if (!$helper->ask($input, $output, $question)) {
             return;
         }
 

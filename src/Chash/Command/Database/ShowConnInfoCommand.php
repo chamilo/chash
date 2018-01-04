@@ -7,6 +7,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
+
 
 /**
  * Class ShowConnInfoCommand
@@ -35,17 +37,13 @@ class ShowConnInfoCommand extends CommonDatabaseCommand
     {
         parent::execute($input, $output);
 
-        $dialog = $this->getHelperSet()->get('dialog');
-
-        if (!$dialog->askConfirmation(
-            $output,
-            '<question>Are you sure you want to show the database connection info here? (y/N)</question>',
-            false
-        )
-        ) {
+        $helper = $this->getHelperSet()->get('question');
+        $question = new ConfirmationQuestion(
+            '<question>Are you sure you want to show the database connection info here? (y/N)</question>', false
+        );
+        if (!$helper->ask($input, $output, $question)) {
             return;
         }
-
         $_configuration = $this->getConfigurationArray();
 
         $output->writeln("Database connection details:");

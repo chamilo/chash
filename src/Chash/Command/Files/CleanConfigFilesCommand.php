@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class CleanConfigFilesCommand
@@ -37,19 +38,14 @@ class CleanConfigFilesCommand extends CommonDatabaseCommand
         parent::execute($input, $output);
         $this->writeCommandHeader($output, "Cleaning config files.");
 
-        $dialog = $this->getHelperSet()->get('dialog');
-
-        if (!$dialog->askConfirmation(
-            $output,
-            '<question>Are you sure you want to clean your config files? (y/N)</question>',
-            false
-        )
-        ) {
+        $helper = $this->getHelperSet()->get('question');
+        $question = new ConfirmationQuestion(
+            '<question>Are you sure you want to clean your config files? (y/N)</question>', false
+        );
+        if (!$helper->ask($input, $output, $question)) {
             return;
         }
-
         $files = $this->getConfigurationHelper()->getConfigFiles();
         $this->removeFiles($files, $output);
-
     }
 }

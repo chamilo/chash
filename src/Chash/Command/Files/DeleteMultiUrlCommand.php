@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class DeleteMultiUrlCommand
@@ -182,13 +183,11 @@ class DeleteMultiUrlCommand extends CommonDatabaseCommand
                     );
                     return;
                 }
-                $dialog = $this->getHelperSet()->get('dialog');
-                if (!$dialog->askConfirmation(
-                    $output,
-                    '<question>Are you sure you want to delete URL ' . $urlId . ' and all the courses that are used only in this URL? (y/N)</question>',
-                    false
-                )
-                ) {
+                $helper = $this->getHelperSet()->get('question');
+                $question = new ConfirmationQuestion(
+                    '<question>Are you sure you want to delete URL ' . $urlId . ' and all the courses that are used only in this URL? (y/N)</question>', false
+                );
+                if (!$helper->ask($input, $output, $question)) {
                     return;
                 }
                 // Now get the list of courses for that URL, and check, for each

@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class WipeCommand
@@ -37,36 +38,27 @@ class WipeCommand extends CommonCommand
     {
         // Arguments
         $path = $input->getArgument('path');
-        $dialog = $this->getHelperSet()->get('dialog');
+        $helper = $this->getHelperSet()->get('question');
 
         $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($path);
         $configurationFilePath = $this->getConfigurationHelper()->getConfigurationFilePath($path);
-
         $this->writeCommandHeader($output, 'Wipe command.');
-
         $output->writeln("<comment>This command will clean your Chamilo installation. Removing the database and courses.</comment>");
 
         if ($configurationPath == false) {
             $output->writeln("<comment>A Chamilo installation was not detected. You can add a path: </comment><info>chamilo:wipe /var/www/chamilo </info>");
             return 0;
         } else {
-
-            if (!$dialog->askConfirmation(
-                $output,
+            $question = new ConfirmationQuestion(
                 '<comment>A Chamilo configuration file was found here:</comment><info> '.$configurationPath.' </info> <question>Are you sure you want to continue?</question>(y/N)',
                 false
-            )
-            ) {
+            );
+            if (!$helper->ask($input, $output, $question)) {
                 return 0;
             }
         }
-
-        // $this->setConfigurationPath($configurationPath);
-
         $output->writeln("<comment>This command will clean your installation: drop db, removes config files, cache files.</comment>");
-
         // Drop database Chash command.
-
         $command = $this->getApplication()->find('db:drop_databases');
 
         $arguments = array(

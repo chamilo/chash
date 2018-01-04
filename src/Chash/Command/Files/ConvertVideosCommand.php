@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class ConvertVideosCommand
@@ -141,15 +142,14 @@ class ConvertVideosCommand extends CommonDatabaseCommand
                 return;
             }
 
-            $dialog = $this->getHelperSet()->get('dialog');
-            if (!$dialog->askConfirmation(
-                $output,
-                '<question>All listed videos will be altered and a copy of the original will be taken with a .orig.webm extension. Are you sure you want to proceed? (y/N)</question>',
-                false
-            )
-            ) {
+            $helper = $this->getHelperSet()->get('question');
+            $question = new ConfirmationQuestion(
+                '<question>All listed videos will be altered and a copy of the original will be taken with a .orig.webm extension. Are you sure you want to proceed? (y/N)</question>', false
+            );
+            if (!$helper->ask($input, $output, $question)) {
                 return;
             }
+
             $fs = new Filesystem();
             $time = time();
             $counter = 0;

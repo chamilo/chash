@@ -219,13 +219,12 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
             }
 
             $output->writeln('');
-            $dialog = $this->getHelperSet()->get('dialog');
-            if (!$dialog->askConfirmation(
-                $output,
+            $helper = $this->getHelperSet()->get('question');
+            $question = new ConfirmationQuestion(
                 '<question>Are you sure you want to clean the listed courses? (y/N)</question>',
                 false
-            )
-            ) {
+            );
+            if (!$helper->ask($input, $output, $question)) {
                 return;
             }
 

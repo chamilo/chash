@@ -11,6 +11,7 @@ use Symfony\Component\Console;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class UpgradeCommand
@@ -262,22 +263,24 @@ class UpgradeCommand extends CommonCommand
             $output->writeln("<comment>When the installation process finishes, PHP files are not going to be updated (--dry-run is on).</comment>");
         }
 
-        $dialog = $this->getHelperSet()->get('dialog');
+        $helper = $this->getHelperSet()->get('question');
+
+
 
         if ($silent == false) {
-            if (!$dialog->askConfirmation(
-                $output,
-                '<question>Are you sure you want to upgrade the Chamilo located here?</question> <info>'.$_configuration['root_sys'].'</info> (y/N)',
+            $question = new ConfirmationQuestion(
+                '<question><question>Are you sure you want to upgrade the Chamilo located here?</question> <info>'.$_configuration['root_sys'].'</info> (y/N)',
                 false
-            )) {
+            );
+            if (!$helper->ask($input, $output, $question)) {
                 return;
             }
 
-            if (!$dialog->askConfirmation(
-                $output,
+            $question = new ConfirmationQuestion(
                 '<question>Are you sure you want to upgrade from version</question> <info>'.$_configuration['system_version'].'</info> <comment>to version</comment> <info>'.$version.'</info> (y/N)',
                 false
-            )) {
+            );
+            if (!$helper->ask($input, $output, $question)) {
                 return;
             }
         }
@@ -360,11 +363,10 @@ class UpgradeCommand extends CommonCommand
 
                 return 1;
             } else {
-                if (!$dialog->askConfirmation(
-                    $output,
-                    '<question>Are you sure you run composer before executing this upgrade?</question>(y/N)',
-                    false
-                )) {
+                $question = new ConfirmationQuestion(
+                    '<question>Are you sure you run composer before executing this upgrade?</question>(y/N)', false
+                );
+                if (!$helper->ask($input, $output, $question)) {
                     return;
                 }
             }
@@ -573,8 +575,8 @@ class UpgradeCommand extends CommonCommand
                 $command = new \Doctrine\DBAL\Migrations\Tools\Console\Command\MigrateCommand();
                 // Creates the helper set
                 $helperSet = \Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet($em);
-                $dialog = $this->getHelperSet()->get('dialog');
-                $helperSet->set($dialog, 'dialog');
+                $helper = $this->getHelperSet()->get('question');
+                $helperSet->set($helper, 'question');
                 $command->setHelperSet($helperSet);
 
                 $arguments = array(
