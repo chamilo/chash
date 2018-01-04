@@ -5,3 +5,4 @@
 .idea/dictionaries/*
 .idea/cssxfire.xml
 /vendor
+.php_cs.cache
