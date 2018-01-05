@@ -37,7 +37,6 @@ class CleanTempFolderCommand extends CommonDatabaseCommand
     {
         parent::execute($input, $output);
         $this->writeCommandHeader($output, "Cleaning temp files.");
-
         $helper = $this->getHelperSet()->get('question');
         $question = new ConfirmationQuestion(
             '<question>Are you sure you want to clean the Chamilo temp files? (y/N)</question>',

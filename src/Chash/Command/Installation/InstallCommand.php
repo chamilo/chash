@@ -244,6 +244,7 @@ class InstallCommand extends CommonCommand
                     ];
 
                     $input = new ArrayInput($arguments);
+                    $input->setInteractive(false);
                     $command->run($input, $output);
 
                     // Generating temp folders.
@@ -254,6 +255,7 @@ class InstallCommand extends CommonCommand
                     ];
 
                     $input = new ArrayInput($arguments);
+                    $input->setInteractive(false);
                     $command->run($input, $output);
 
                     // Fixing permissions.
@@ -269,12 +271,11 @@ class InstallCommand extends CommonCommand
                         ];
 
                         $input = new ArrayInput($arguments);
+                        $input->setInteractive(false);
                         $command->run($input, $output);
                     }
-
                     // Generating config files (auth, profile, etc)
                     //$this->generateConfFiles($output);
-
                     $output->writeln("<comment>Chamilo was successfully installed here: ".$this->getRootSys()." </comment>");
                     return 1;
                 } else {
