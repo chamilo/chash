@@ -860,7 +860,7 @@ class InstallCommand extends CommonCommand
                 }
             }
 
-            // Special migration for chamilo v 1.10
+            // Special migration for chamilo using install global.inc.php
             if (isset($sections) && isset($sections['migrations'])) {
                 $sectionsCount = 1;
                 $legacyFiles = [
@@ -911,8 +911,6 @@ class InstallCommand extends CommonCommand
                 /** @var EntityManager $manager */
                 $manager = $database->getManager();
                 $metadataList = $manager->getMetadataFactory()->getAllMetadata();
-
-                $output->writeln("Metadata found: ".print_r($metadataList, 1));
                 $output->writeln("<comment>Creating database structure</comment>");
                 $manager->getConnection()->getSchemaManager()->createSchema();
 
