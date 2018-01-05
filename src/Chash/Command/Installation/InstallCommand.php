@@ -911,7 +911,7 @@ class InstallCommand extends CommonCommand
                 $manager = $database->getManager();
                 $metadataList = $manager->getMetadataFactory()->getAllMetadata();
 
-                $output->writeln("Metadata found: ", print_r($metadataList, 1));
+                $output->writeln("Metadata found: ".print_r($metadataList, 1));
                 $output->writeln("<comment>Creating database structure</comment>");
                 $manager->getConnection()->getSchemaManager()->createSchema();
 
