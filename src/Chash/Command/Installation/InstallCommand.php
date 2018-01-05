@@ -898,6 +898,20 @@ class InstallCommand extends CommonCommand
                     require_once $encoder;
                 }
 
+                $file = $this->getRootSys().'/vendor/sonata-project/user-bundle/src/Entity/BaseUser.php';
+                if (file_exists($file)) {
+                    require_once $file;
+                }
+                $file = $this->getRootSys().'/vendor/sonata-project/user-bundle/src/Model/User.php';
+                if (file_exists($file)) {
+                    require_once $file;
+                }
+
+                $file = $this->getRootSys().'/vendor/friendsofsymfony/user-bundle/Model/User.php';
+                if (file_exists($file)) {
+                    require_once $file;
+                }
+
                 require_once $this->getRootSys().'/main/inc/lib/usermanager.lib.php';
 
                 $newInstallationPath = $this->getRootSys();
