@@ -889,8 +889,16 @@ class InstallCommand extends CommonCommand
 
                 foreach ($legacyFiles as $file) {
                     $file = $this->getRootSys().$file;
-                    $output->writeln("<comment>Calling Chamilo lib: $file </comment>");
-                    require_once $file;
+                    if (file_exists($file)) {
+                        $output->writeln("<comment>Calling Chamilo lib: $file </comment>");
+                        require_once $file;
+                    } else {
+                        $output->writeln(
+                            "<comment>This file is missing: $file. 
+                            Make sure you did composer update. And that the file exists.</comment>"
+                        );
+                        exit;
+                    }
                 }
 
                 $encoder = $this->getRootSys().'/src/Chamilo/UserBundle/Security/Encoder.php';
