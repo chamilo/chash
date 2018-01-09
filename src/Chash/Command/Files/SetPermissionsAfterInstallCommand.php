@@ -51,17 +51,17 @@ class SetPermissionsAfterInstallCommand extends CommonDatabaseCommand
 
         // Data folders
         $files = $this->getConfigurationHelper()->getDataFolders();
-        $this->setPermissions($output, $files, 0777, $linuxUser, $linuxGroup);
+        $this->setPermissions($output, $files, 0777, $linuxUser, $linuxGroup, false);
 
         // Config folders
         $files = $this->getConfigurationHelper()->getConfigFolders();
-        $this->setPermissions($output, $files, 0555, $linuxUser, $linuxGroup);
+        $this->setPermissions($output, $files, 0555, $linuxUser, $linuxGroup, false);
         $files = $this->getConfigurationHelper()->getConfigFiles();
-        $this->setPermissions($output, $files, 0555, $linuxUser, $linuxGroup);
+        $this->setPermissions($output, $files, 0555, $linuxUser, $linuxGroup, false);
 
         // Temp folders
         $files = $this->getConfigurationHelper()->getTempFolders();
-        $this->setPermissions($output, $files, 0777, $linuxUser, $linuxGroup);
+        $this->setPermissions($output, $files, 0777, $linuxUser, $linuxGroup, false);
     }
 
     /**
