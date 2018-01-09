@@ -2,21 +2,15 @@
 
 namespace Chash\Command\Installation;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
-use Doctrine\DBAL\Migrations\Tools\Console\Command\AbstractCommand;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console;
-use Symfony\Component\Yaml\Dumper;
-use Symfony\Component\ClassLoader\ClassLoader;
-use Symfony\Component\ClassLoader\Psr4ClassLoader;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Dotenv\Dotenv;
 
 /**
  * Class InstallCommand
@@ -331,7 +325,7 @@ class InstallCommand extends CommonCommand
         }
 
         if ($this->commandLine) {
-            $connectionToDatabase = $this->getUserAccessConnectionToHost();
+            $connectionToHost = $this->getUserAccessConnectionToHost();
             $connectionToHostConnect = $connectionToHost->connect();
 
             if ($connectionToHostConnect) {
@@ -922,16 +916,42 @@ class InstallCommand extends CommonCommand
 
                 require_once $this->getRootSys().'/main/inc/lib/usermanager.lib.php';
 
+                $portalSettings = $this->getPortalSettings();
+                $adminSettings = $this->getAdminSettings();
                 $newInstallationPath = $this->getRootSys();
-                $chashPath = __DIR__.'/../../../../';
 
-                $database = new \Database();
-                $database::$utcDateTimeClass = 'Chash\DoctrineExtensions\DBAL\Types\UTCDateTimeType';
-                $output->writeln("<comment>Connect to database</comment>");
-                $database->connect($databaseSettings, $chashPath, $newInstallationPath);
+                if ($version == 'master') {
+                    $params = [
+                        '{{DATABASE_HOST}}' => $databaseSettings['host'],
+                        '{{DATABASE_PORT}}' => $databaseSettings['port'],
+                        '{{DATABASE_NAME}}' => $databaseSettings['dbname'],
+                        '{{DATABASE_USER}}' => $databaseSettings['user'],
+                        '{{DATABASE_PASSWORD}}' => $databaseSettings['password'],
+                        '{{APP_INSTALLED}}' => 1,
+                        '{{APP_ENCRYPT_METHOD}}' => $portalSettings['encrypt_method']
+                    ];
+                    $envFile = $this->getRootSys().'.env';
+                    \updateEnvFile($envFile, $params);
+                    (new Dotenv())->load($envFile);
+                    $kernel = new \Chamilo\Kernel('dev', true);
+                    $kernel->boot();
+                    $doctrine = $kernel->getContainer()->get('doctrine');
 
-                /** @var EntityManager $manager */
-                $manager = $database->getManager();
+                    $manager = $doctrine->getManager();
+                    $database = new \Database();
+                    $database->setManager($manager);
+                    $database->setConnection($doctrine->getConnection());
+                } else {
+                    $chashPath = __DIR__.'/../../../../';
+                    $database = new \Database();
+                    $database::$utcDateTimeClass = 'Chash\DoctrineExtensions\DBAL\Types\UTCDateTimeType';
+                    $output->writeln("<comment>Connect to database</comment>");
+                    $database->connect($databaseSettings, $chashPath, $newInstallationPath);
+
+                    /** @var EntityManager $manager */
+                    $manager = $database->getManager();
+                }
+
                 $metadataList = $manager->getMetadataFactory()->getAllMetadata();
                 $output->writeln("<comment>Creating database structure</comment>");
                 $manager->getConnection()->getSchemaManager()->createSchema();
@@ -940,9 +960,6 @@ class InstallCommand extends CommonCommand
                 $output->writeln("<comment>Creating schema</comment>");
                 $tool = new \Doctrine\ORM\Tools\SchemaTool($manager);
                 $tool->createSchema($metadataList);
-
-                $portalSettings = $this->getPortalSettings();
-                $adminSettings = $this->getAdminSettings();
 
                 $output->writeln("<comment>Calling 'finishInstallation()'</comment>");
 
