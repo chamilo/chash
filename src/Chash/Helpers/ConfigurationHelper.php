@@ -462,6 +462,10 @@ class ConfigurationHelper extends Helper
             $finder->directories()->depth('== 0')->in($sysPath.'/app/courses');
         }
 
+        if (is_dir($sysPath.'var/courses')) {
+            $finder->directories()->depth('== 0')->in($sysPath.'/var/courses');
+        }
+
         return $finder;
     }
 
