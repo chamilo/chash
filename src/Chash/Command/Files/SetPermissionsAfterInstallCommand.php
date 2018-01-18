@@ -121,7 +121,11 @@ class SetPermissionsAfterInstallCommand extends CommonDatabaseCommand
                 }
 
                 if (!empty($permission)) {
-                    $fs->chmod($files, $permission, 0000, true);
+                    foreach ($files as $file) {
+                        if ($fs->exists($file)) {
+                            $fs->chmod($file, $permission, 0000, true);
+                        }
+                    }
                 }
 
                 if (!empty($user)) {
