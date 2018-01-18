@@ -472,9 +472,14 @@ class ConfigurationHelper extends Helper
     {
         $finder = new Finder();
         $sysPath = $this->getSysPath();
+
         $finder->directories()->in($sysPath);
-        $finder->path('main/inc/conf');
-        $finder->path('app/config');
+        if (is_dir($sysPath.'main/inc/conf')) {
+            $finder->path('main/inc/conf');
+        }
+        if (is_dir($sysPath.'app/config')) {
+            $finder->path('app/config');
+        }
 
         return $finder;
     }
