@@ -1105,11 +1105,12 @@ class CommonCommand extends AbstractCommand
                     $output->writeln($file->getPathName());
                 }
             } else {
-                $output->writeln('<comment>Removing files:</comment>');
-                foreach ($files as $file) {
+                $output->writeln('<comment>Removing start.</comment>');
+                /* foreach ($files as $file) {
                     $output->writeln($file->getPathName());
-                }
+                }*/
                 $fs->remove($files);
+                $output->writeln('<comment>Removing files end.</comment>');
             }
         } catch (IOException $e) {
             echo "\n An error occurred while removing the directory: ".$e->getMessage()."\n ";
