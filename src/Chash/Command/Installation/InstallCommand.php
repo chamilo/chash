@@ -11,6 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 
 /**
  * Class InstallCommand
@@ -934,36 +935,40 @@ class InstallCommand extends CommonCommand
                     \updateEnvFile($distFile, $envFile, $params);
                     (new Dotenv())->load($envFile);
                     $kernel = new \Chamilo\Kernel('dev', true);
-                    $kernel->boot();
+                    $application = new Application($kernel);
                     $container = $kernel->getContainer();
-                    $doctrine = $kernel->getContainer()->get('doctrine');
-                    $manager = $doctrine->getManager();
-                    $database = new \Database();
-                    $database->setManager($manager);
-                    $database->setConnection($doctrine->getConnection());
 
-                    $output->writeln("<comment>Creating database structure</comment>");
-                    $manager->getConnection()->getSchemaManager()->createSchema();
-                    $output->writeln("<comment>Calling 'finishInstallationWithContainer()'</comment>");
+                    // Create database
+                    $input = new \Symfony\Component\Console\Input\ArrayInput([]);
+                    $command = $application->find('doctrine:schema:create');
+                    $result = $command->run($input, new ConsoleOutput());
+                    // No errors
+                    if ($result == 0) {
+                        $output->writeln("<comment>Creating database structure</comment>");
+                        $manager->getConnection()->getSchemaManager()->createSchema();
+                        $output->writeln("<comment>Calling 'finishInstallationWithContainer()'</comment>");
 
-                    \finishInstallationWithContainer(
-                        $container,
-                        $manager,
-                        $newInstallationPath,
-                        $portalSettings['encrypt_method'],
-                        $adminSettings['password'],
-                        $adminSettings['lastname'],
-                        $adminSettings['firstname'],
-                        $adminSettings['username'],
-                        $adminSettings['email'],
-                        $adminSettings['phone'],
-                        $adminSettings['language'],
-                        $portalSettings['institution'],
-                        $portalSettings['institution_url'],
-                        $portalSettings['sitename'],
-                        false, //$allowSelfReg,
-                        false //$allowSelfRegProf
-                    );
+                        \finishInstallationWithContainer(
+                            $container,
+                            $manager,
+                            $newInstallationPath,
+                            $portalSettings['encrypt_method'],
+                            $adminSettings['password'],
+                            $adminSettings['lastname'],
+                            $adminSettings['firstname'],
+                            $adminSettings['username'],
+                            $adminSettings['email'],
+                            $adminSettings['phone'],
+                            $adminSettings['language'],
+                            $portalSettings['institution'],
+                            $portalSettings['institution_url'],
+                            $portalSettings['sitename'],
+                            false, //$allowSelfReg,
+                            false //$allowSelfRegProf
+                        );
+                    } else {
+                        $output->writeln("<error>Error during the DB creation</error>");
+                    }
                 } else {
                     $chashPath = __DIR__.'/../../../../';
                     $database = new \Database();
