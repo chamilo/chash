@@ -12,6 +12,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class InstallCommand
@@ -932,7 +933,11 @@ class InstallCommand extends CommonCommand
                     ];
                     $envFile = $this->getRootSys().'.env';
                     $distFile = $this->getRootSys().'.env.dist';
+
                     \updateEnvFile($distFile, $envFile, $params);
+
+                    $output->writeln("<comment>Env file created: $envFile</comment>");
+
                     (new Dotenv())->load($envFile);
                     $kernel = new \Chamilo\Kernel('dev', true);
                     $application = new Application($kernel);
