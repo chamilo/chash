@@ -931,16 +931,40 @@ class InstallCommand extends CommonCommand
                         '{{APP_ENCRYPT_METHOD}}' => $portalSettings['encrypt_method']
                     ];
                     $envFile = $this->getRootSys().'.env';
-                    \updateEnvFile($envFile, $params);
+                    $distFile = $this->getRootSys().'.env.dist';
+                    \updateEnvFile($distFile, $envFile, $params);
                     (new Dotenv())->load($envFile);
                     $kernel = new \Chamilo\Kernel('dev', true);
                     $kernel->boot();
+                    $container = $kernel->getContainer();
                     $doctrine = $kernel->getContainer()->get('doctrine');
-
                     $manager = $doctrine->getManager();
                     $database = new \Database();
                     $database->setManager($manager);
                     $database->setConnection($doctrine->getConnection());
+
+                    $output->writeln("<comment>Creating database structure</comment>");
+                    $manager->getConnection()->getSchemaManager()->createSchema();
+                    $output->writeln("<comment>Calling 'finishInstallationWithContainer()'</comment>");
+
+                    \finishInstallationWithContainer(
+                        $container,
+                        $manager,
+                        $newInstallationPath,
+                        $portalSettings['encrypt_method'],
+                        $adminSettings['password'],
+                        $adminSettings['lastname'],
+                        $adminSettings['firstname'],
+                        $adminSettings['username'],
+                        $adminSettings['email'],
+                        $adminSettings['phone'],
+                        $adminSettings['language'],
+                        $portalSettings['institution'],
+                        $portalSettings['institution_url'],
+                        $portalSettings['sitename'],
+                        false, //$allowSelfReg,
+                        false //$allowSelfRegProf
+                    );
                 } else {
                     $chashPath = __DIR__.'/../../../../';
                     $database = new \Database();
@@ -950,36 +974,31 @@ class InstallCommand extends CommonCommand
 
                     /** @var EntityManager $manager */
                     $manager = $database->getManager();
+
+                    // Create database schema
+                    $output->writeln("<comment>Creating schema</comment>");
+                    $tool = new \Doctrine\ORM\Tools\SchemaTool($manager);
+                    $tool->createSchema($metadataList);
+                    $output->writeln("<comment>Calling 'finishInstallation()'</comment>");
+
+                    \finishInstallation(
+                        $manager,
+                        $newInstallationPath,
+                        $portalSettings['encrypt_method'],
+                        $adminSettings['password'],
+                        $adminSettings['lastname'],
+                        $adminSettings['firstname'],
+                        $adminSettings['username'],
+                        $adminSettings['email'],
+                        $adminSettings['phone'],
+                        $adminSettings['language'],
+                        $portalSettings['institution'],
+                        $portalSettings['institution_url'],
+                        $portalSettings['sitename'],
+                        false, //$allowSelfReg,
+                        false //$allowSelfRegProf
+                    );
                 }
-
-                $metadataList = $manager->getMetadataFactory()->getAllMetadata();
-                $output->writeln("<comment>Creating database structure</comment>");
-                $manager->getConnection()->getSchemaManager()->createSchema();
-
-                // Create database schema
-                $output->writeln("<comment>Creating schema</comment>");
-                $tool = new \Doctrine\ORM\Tools\SchemaTool($manager);
-                $tool->createSchema($metadataList);
-
-                $output->writeln("<comment>Calling 'finishInstallation()'</comment>");
-
-                \finishInstallation(
-                    $manager,
-                    $newInstallationPath,
-                    $portalSettings['encrypt_method'],
-                    $adminSettings['password'],
-                    $adminSettings['lastname'],
-                    $adminSettings['firstname'],
-                    $adminSettings['username'],
-                    $adminSettings['email'],
-                    $adminSettings['phone'],
-                    $adminSettings['language'],
-                    $portalSettings['institution'],
-                    $portalSettings['institution_url'],
-                    $portalSettings['sitename'],
-                    false, //$allowSelfReg,
-                    false //$allowSelfRegProf
-                );
                 $output->writeln("<comment>Remember to run composer install</comment>");
             }
 
