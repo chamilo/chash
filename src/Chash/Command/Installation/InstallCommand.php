@@ -859,7 +859,6 @@ class InstallCommand extends CommonCommand
                 $sectionsCount = 1;
                 $legacyFiles = [
                     '/main/inc/lib/database.constants.inc.php',
-                    '/main/inc/lib/system/session.class.php',
                     '/main/inc/lib/chamilo_session.class.php',
                     '/main/inc/lib/api.lib.php',
                     '/main/inc/lib/text.lib.php',
@@ -888,8 +887,8 @@ class InstallCommand extends CommonCommand
                         require_once $file;
                     } else {
                         $output->writeln(
-                            "<comment>This file is missing: $file. 
-                            Make sure you did composer update. And that the file exists.</comment>"
+                            "<error>This file is missing: $file.
+                            Make sure you did composer update. And that the file exists.</error>"
                         );
                         exit;
                     }
