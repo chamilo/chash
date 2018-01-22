@@ -944,15 +944,16 @@ class InstallCommand extends CommonCommand
                     $container = $kernel->getContainer();
 
                     // Create database
+                    $output->writeln("<comment>Creating database structure</comment>");
                     $input = new \Symfony\Component\Console\Input\ArrayInput([]);
                     $command = $application->find('doctrine:schema:create');
                     $result = $command->run($input, new ConsoleOutput());
                     // No errors
                     if ($result == 0) {
-                        $output->writeln("<comment>Creating database structure</comment>");
-                        $manager->getConnection()->getSchemaManager()->createSchema();
-                        $output->writeln("<comment>Calling 'finishInstallationWithContainer()'</comment>");
+                        $doctrine = $container->get('doctrine');
+                        $manager = $doctrine->getManager();
 
+                        $output->writeln("<comment>Calling 'finishInstallationWithContainer()'</comment>");
                         \finishInstallationWithContainer(
                             $container,
                             $manager,
