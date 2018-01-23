@@ -952,15 +952,14 @@ class InstallCommand extends CommonCommand
                     $container = $kernel->getContainer();
 
                     // Create database
-                    $output->writeln("<comment>Creating database structure</comment>");
-                    $input = new \Symfony\Component\Console\Input\ArrayInput([]);
+                    $input = new ArrayInput([]);
                     $command = $application->find('doctrine:schema:create');
                     $result = $command->run($input, new ConsoleOutput());
                     // No errors
                     if ($result == 0) {
+                        $output->writeln("<comment>Database created</comment>");
                         $doctrine = $container->get('doctrine');
                         $manager = $doctrine->getManager();
-
                         $output->writeln("<comment>Calling 'finishInstallationWithContainer()'</comment>");
                         \finishInstallationWithContainer(
                             $container,
@@ -981,7 +980,8 @@ class InstallCommand extends CommonCommand
                             false //$allowSelfRegProf
                         );
                     } else {
-                        $output->writeln("<error>Error during the DB creation</error>");
+                        $output->writeln("<error>Cannot create database</error>");
+                        exit;
                     }
                 } else {
                     $chashPath = __DIR__.'/../../../../';
