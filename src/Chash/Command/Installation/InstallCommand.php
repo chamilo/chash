@@ -937,7 +937,7 @@ class InstallCommand extends CommonCommand
                     //$envContent = file_get_contents($envFile);
                     if (file_exists($envFile)) {
                         $output->writeln("<comment>Env file created: $envFile</comment>");
-                        //$output->writeln($envContent);
+                    //$output->writeln($envContent);
                     } else {
                         $output->writeln("<error>File not created: $envFile</error>");
                         exit;
