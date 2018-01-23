@@ -4,6 +4,7 @@ namespace Chash\Command\Installation;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\DBAL\ConnectionException;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
@@ -31,6 +32,7 @@ class CommonCommand extends AbstractCommand
     public $configuration = [];
     public $extraDatabaseSettings;
     private $migrationConfigurationFile;
+    private $manager;
 
     /**
     * @param array $configuration
@@ -700,9 +702,7 @@ class CommonCommand extends AbstractCommand
         $output->writeln("<comment>Recovered all info. Reviewing.</comment>");
 
         // Creates a YML File
-
         $configuration = [];
-
         $configuration['db_host'] = $databaseSettings['host'];
         $configuration['db_port'] = $databaseSettings['port'];
         $configuration['db_user'] = $databaseSettings['dbuser'];
@@ -1585,5 +1585,21 @@ class CommonCommand extends AbstractCommand
             default:
                 return empty($salt) ? md5($password) : md5($password.$salt);
         }
+    }
+
+    /**
+     * @return EntityManager
+     */
+    public function getManager()
+    {
+        return $this->manager;
+    }
+
+    /**
+     * @param EntityManager $manager
+     */
+    public function setManager($manager)
+    {
+        $this->manager = $manager;
     }
 }

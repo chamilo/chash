@@ -125,16 +125,169 @@ class InstallCommand extends CommonCommand
         }
 
         $databaseSettings = $this->getDatabaseSettings();
-        $connectionToHost = $this->getUserAccessConnectionToHost();
-        $connectionToHostConnect = $connectionToHost->connect();
+        //$connectionToHost = $this->getUserAccessConnectionToHost();
+        //$connectionToHostConnect = $connectionToHost->connect();
 
+        $connectionToHost = true;
+        $connectionToHostConnect  = true;
         if ($connectionToHostConnect) {
-            $output->writeln(
+            /*$output->writeln(
                 sprintf(
                     "<comment>Connection to host database %s established. </comment>",
                     $databaseSettings['dbname']
                 )
-            );
+            );*/
+
+            if ($this->commandLine && false) {
+                $eventManager = $connectionToHost->getSchemaManager();
+                $databases = $eventManager->listDatabases();
+                if (in_array($databaseSettings['dbname'], $databases)) {
+                    if ($silent == false) {
+                        /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
+                        $helper = $this->getHelperSet()->get('question');
+                        $question = new ConfirmationQuestion(
+                            '<comment>The database <info>'.$databaseSettings['dbname'].'</info> exists and is going to be dropped!</comment> <question>Are you sure?</question>(y/N)',
+                            true
+                        );
+                        if (!$helper->ask($input, $output, $question)) {
+                            return 0;
+                        }
+                    }
+                }
+            }
+
+            // When installing always drop the current database
+            try {
+                $output->writeln('Try connecting to drop and create the database: '.$databaseSettings['dbname']);
+                /*
+                $sm = $connectionToHost->getSchemaManager();
+                $sm->dropAndCreateDatabase($databaseSettings['dbname']);
+                $connectionToDatabase = $this->getUserAccessConnectionToDatabase();
+                $connect = $connectionToDatabase->connect();*/
+                $connect = true;
+                if ($connect) {
+                    /*$output->writeln(
+                        sprintf(
+                            "<comment>Connection to database '%s' with user %s established.</comment>",
+                            $databaseSettings['dbname'],
+                            $databaseSettings['user']
+                        )
+                    );*/
+
+                    $configurationWasSaved = $this->writeConfiguration($version, $path, $output);
+
+                    if ($configurationWasSaved) {
+                        $absPath = $this->getConfigurationHelper()->getConfigurationPath($path);
+                        $output->writeln(
+                            sprintf(
+                                "<comment>Configuration file saved to %s. Proceeding with updating and cleaning stuff.</comment>",
+                                $absPath
+                            )
+                        );
+                    } else {
+                        $output->writeln("<comment>Configuration file was not saved</comment>");
+                        return 0;
+                    }
+
+                    // Installing database.
+                    $result = $this->processInstallation($databaseSettings, $version, $output);
+                    if ($result) {
+                        // Read configuration file.
+                        $configurationFile = $this->getConfigurationHelper()->getConfigurationFilePath($this->getRootSys());
+                        $configuration = $this->getConfigurationHelper()->readConfigurationFile($configurationFile);
+                        $this->setConfigurationArray($configuration);
+                        $configPath = $this->getConfigurationPath();
+                        // Only works with 10 >=
+                        $installChamiloPath = str_replace('config', 'main/install', $configPath);
+                        $customVersion = $installChamiloPath.$version;
+
+                        $output->writeln("Checking custom *update.sql* file in dir: ".$customVersion);
+                        if (is_dir($customVersion)) {
+                            $file = $customVersion.'/update.sql';
+                            if (is_file($file) && file_exists($file)) {
+                                $output->writeln("File imported: $file");
+                                $this->importSQLFile($file, $output);
+                            }
+                        } else {
+                            $output->writeln("Nothing to update");
+                        }
+
+                        $manager = $this->getManager();
+                        $connection = $manager->getConnection();
+
+                        $this->setPortalSettingsInChamilo(
+                            $output,
+                            $connection
+                        );
+
+                        $this->setAdminSettingsInChamilo(
+                            $output,
+                            $connection
+                        );
+
+                        // Cleaning temp folders.
+                        $command = $this->getApplication()->find('files:clean_temp_folder');
+                        $arguments = [
+                            'command' => 'files:clean_temp_folder',
+                            '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
+                        ];
+
+                        $input = new ArrayInput($arguments);
+                        $input->setInteractive(false);
+                        $command->run($input, $output);
+
+                        // Generating temp folders.
+                        $command = $this->getApplication()->find('files:generate_temp_folders');
+                        $arguments = [
+                            'command' => 'files:generate_temp_folders',
+                            '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
+                        ];
+
+                        $input = new ArrayInput($arguments);
+                        $input->setInteractive(false);
+                        $command->run($input, $output);
+
+                        // Fixing permissions.
+                        if (PHP_SAPI == 'cli') {
+                            $command = $this->getApplication()->find('files:set_permissions_after_install');
+                            $arguments = [
+                                'command' => 'files:set_permissions_after_install',
+                                '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
+                                '--linux-user' => $linuxUser,
+                                '--linux-group' => $linuxGroup
+                                //'--dry-run' => $dryRun
+                            ];
+
+                            $input = new ArrayInput($arguments);
+                            $input->setInteractive(false);
+                            $command->run($input, $output);
+                        }
+                        // Generating config files (auth, profile, etc)
+                        //$this->generateConfFiles($output);
+                        $output->writeln("<comment>Chamilo was successfully installed here: ".$this->getRootSys()." </comment>");
+                        return 1;
+                    } else {
+                        $output->writeln("<comment>Error during installation.</comment>");
+                        return 0;
+                    }
+                } else {
+                    $output->writeln("<comment>Can't create database '".$databaseSettings['dbname']."' </comment>");
+                    return 0;
+                }
+            } catch (\Exception $e) {
+
+                // Delete configuration.php because installation failed
+                unlink($this->getRootSys().'app/config/configuration.php');
+
+                $output->writeln(
+                    sprintf(
+                        '<error>Could not create database for connection named <comment>%s</comment></error>',
+                        $databaseSettings['dbname']
+                    )
+                );
+                $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
+                return 0;
+            }
         } else {
             $output->writeln(
                 sprintf(
@@ -142,148 +295,6 @@ class InstallCommand extends CommonCommand
                     $databaseSettings['dbname']
                 )
             );
-            return 0;
-        }
-
-        if ($this->commandLine) {
-            $eventManager = $connectionToHost->getSchemaManager();
-            $databases = $eventManager->listDatabases();
-            if (in_array($databaseSettings['dbname'], $databases)) {
-                if ($silent == false) {
-                    /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
-                    $helper = $this->getHelperSet()->get('question');
-                    $question = new ConfirmationQuestion(
-                        '<comment>The database <info>'.$databaseSettings['dbname'].'</info> exists and is going to be dropped!</comment> <question>Are you sure?</question>(y/N)',
-                        true
-                    );
-                    if (!$helper->ask($input, $output, $question)) {
-                        return 0;
-                    }
-                }
-            }
-        }
-
-        // When installing always drop the current database
-        try {
-            $output->writeln('Try connecting to drop and create the database.');
-            $sm = $connectionToHost->getSchemaManager();
-            $sm->dropAndCreateDatabase($databaseSettings['dbname']);
-            $connectionToDatabase = $this->getUserAccessConnectionToDatabase();
-            $connect = $connectionToDatabase->connect();
-        } catch (\Exception $e) {
-            $output->writeln(
-                sprintf(
-                    '<error>Could not create database for connection named <comment>%s</comment></error>',
-                    $databaseSettings['dbname']
-                )
-            );
-            $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
-            return 0;
-        }
-
-        if ($connect) {
-            $output->writeln(
-                sprintf(
-                    "<comment>Connection to database '%s' with user %s established.</comment>",
-                    $databaseSettings['dbname'],
-                    $databaseSettings['user']
-                )
-            );
-            $configurationWasSaved = $this->writeConfiguration($version, $path, $output);
-
-            if ($configurationWasSaved) {
-                $absPath = $this->getConfigurationHelper()->getConfigurationPath($path);
-                $output->writeln(
-                    sprintf(
-                        "<comment>Configuration file saved to %s. Proceeding with updating and cleaning stuff.</comment>",
-                        $absPath
-                    )
-                );
-                // Installing database.
-                $result = $this->processInstallation($databaseSettings, $version, $output);
-
-                if ($result) {
-                    // Read configuration file.
-                    $configurationFile = $this->getConfigurationHelper()->getConfigurationFilePath($this->getRootSys());
-                    $configuration = $this->getConfigurationHelper()->readConfigurationFile($configurationFile);
-                    $this->setConfigurationArray($configuration);
-
-                    $configPath = $this->getConfigurationPath();
-                    // Only works with 10 >=
-                    $installChamiloPath = str_replace('config', 'main/install', $configPath);
-                    $customVersion = $installChamiloPath.$version;
-
-                    $output->writeln("Checking custom *update.sql* file in dir: ".$customVersion);
-                    if (is_dir($customVersion)) {
-                        $file = $customVersion.'/update.sql';
-                        if (is_file($file) && file_exists($file)) {
-                            $output->writeln("File imported: $file");
-                            $this->importSQLFile($file, $output);
-                        }
-                    } else {
-                        $output->writeln("Nothing to update");
-                    }
-
-                    $this->setPortalSettingsInChamilo(
-                        $output,
-                        $this->getHelper('db')->getConnection()
-                    );
-                    $this->setAdminSettingsInChamilo(
-                        $output,
-                        $this->getHelper('db')->getConnection()
-                    );
-
-                    // Cleaning temp folders.
-                    $command = $this->getApplication()->find('files:clean_temp_folder');
-                    $arguments = [
-                        'command' => 'files:clean_temp_folder',
-                        '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
-                    ];
-
-                    $input = new ArrayInput($arguments);
-                    $input->setInteractive(false);
-                    $command->run($input, $output);
-
-                    // Generating temp folders.
-                    $command = $this->getApplication()->find('files:generate_temp_folders');
-                    $arguments = [
-                        'command' => 'files:generate_temp_folders',
-                        '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
-                    ];
-
-                    $input = new ArrayInput($arguments);
-                    $input->setInteractive(false);
-                    $command->run($input, $output);
-
-                    // Fixing permissions.
-                    if (PHP_SAPI == 'cli') {
-                        $command = $this->getApplication()->find('files:set_permissions_after_install');
-                        $arguments = [
-                            'command' => 'files:set_permissions_after_install',
-                            '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
-                            '--linux-user' => $linuxUser,
-                            '--linux-group' => $linuxGroup
-                            //'--dry-run' => $dryRun
-                        ];
-
-                        $input = new ArrayInput($arguments);
-                        $input->setInteractive(false);
-                        $command->run($input, $output);
-                    }
-                    // Generating config files (auth, profile, etc)
-                    //$this->generateConfFiles($output);
-                    $output->writeln("<comment>Chamilo was successfully installed here: ".$this->getRootSys()." </comment>");
-                    return 1;
-                } else {
-                    $output->writeln("<comment>There was an error during installation.</comment>");
-                    return 0;
-                }
-            } else {
-                $output->writeln("<comment>Configuration file was not saved</comment>");
-                return 0;
-            }
-        } else {
-            $output->writeln("<comment>Can't create database '".$databaseSettings['dbname']."' </comment>");
             return 0;
         }
     }
@@ -442,11 +453,6 @@ class InstallCommand extends CommonCommand
                     );
 
                     $data = $helper->ask($input, $output, $question);
-                    /*$data = $dialog->ask(
-                        $output,
-                        "($counter/$total) Please enter the value of the $key (" . $value['attributes']['data'] . "): ",
-                        $value['attributes']['data']
-                    );*/
                     $counter++;
                     $databaseSettings[$key] = $data;
                 }
@@ -727,7 +733,7 @@ class InstallCommand extends CommonCommand
      */
     public function processInstallation($databaseSettings, $version, $output)
     {
-        $this->setDoctrineSettings($this->getHelperSet());
+        //$this->setDoctrineSettings($this->getHelperSet());
         $sqlFolder = $this->getInstallationPath($version);
         $databaseMap = $this->getDatabaseMap();
         // Fixing the version
@@ -739,14 +745,12 @@ class InstallCommand extends CommonCommand
             $dbInfo = $databaseMap[$version];
             $output->writeln("<comment>Starting creation of database version </comment><info>$version... </info>");
             $sections = $dbInfo['section'];
-
             $sectionsCount = 0;
             foreach ($sections as $sectionData) {
                 if (is_array($sectionData)) {
                     foreach ($sectionData as $dbInfo) {
                         $databaseName = $dbInfo['name'];
                         $dbList = $dbInfo['sql'];
-
                         if (!empty($dbList)) {
                             $output->writeln(
                                 "<comment>Creating database</comment> <info>$databaseName ... </info>"
@@ -786,66 +790,6 @@ class InstallCommand extends CommonCommand
             }
 
             // Run
-            //switch ($version) {
-            switch (false) {
-                case '2.0':
-                case 'master':
-                    require_once $this->getRootSys().'/main/inc/lib/database.constants.inc.php';
-                    require_once $this->getRootSys().'/main/inc/lib/api.lib.php';
-                    require_once $this->getRootSys().'/main/inc/lib/text.lib.php';
-                    require_once $this->getRootSys().'/main/inc/lib/display.lib.php';
-                    require_once $this->getRootSys().'/main/inc/lib/database.lib.php';
-                    require_once $this->getRootSys().'/main/inc/lib/custom_pages.class.php';
-                    require_once $this->getRootSys().'/main/install/install.lib.php';
-                    require_once $this->getRootSys().'/main/inc/lib/hook/interfaces/base/HookEventInterface.php';
-                    require_once $this->getRootSys().'/main/inc/lib/hook/interfaces/HookCreateUserEventInterface.php';
-                    require_once $this->getRootSys().'/main/inc/lib/hook/interfaces/base/HookManagementInterface.php';
-                    require_once $this->getRootSys().'/main/inc/lib/hook/HookEvent.php';
-                    require_once $this->getRootSys().'/main/inc/lib/hook/HookCreateUser.php';
-                    require_once $this->getRootSys().'/main/inc/lib/hook/HookManagement.php';
-                    require_once $this->getRootSys().'/main/inc/lib/model.lib.php';
-                    require_once $this->getRootSys().'/main/inc/lib/events.lib.php';
-                    require_once $this->getRootSys().'/main/inc/lib/extra_field.lib.php';
-                    require_once $this->getRootSys().'/main/inc/lib/extra_field_value.lib.php';
-                    require_once $this->getRootSys().'/main/inc/lib/urlmanager.lib.php';
-                    require_once $this->getRootSys().'/vendor/autoload.php';
-                    $encoder = $this->getRootSys().'/src/Chamilo/UserBundle/Security/Encoder.php';
-                    if (file_exists($encoder)) {
-                        require_once $encoder;
-                    }
-
-                    require_once $this->getRootSys().'/main/inc/lib/usermanager.lib.php';
-
-                    $newInstallationPath = $this->getRootSys();
-                    $chashPath = __DIR__.'/../../../../';
-
-                    // Registering Constraints
-                    /*AnnotationRegistry::registerAutoloadNamespace(
-                        'APY\DataGridBundle\Grid\Mapping',
-                        $newInstallationPath.'vendor/apy/datagrid-bundle/Grid/Mapping'
-                    );*/
-
-                    /*AnnotationRegistry::registerFile(
-                        $newInstallationPath.'vendor/apy/datagrid-bundle/Grid/Mapping/Column.php'
-                    );*/
-
-                    $database = new \Database();
-                    $database::$utcDateTimeClass = 'Chash\DoctrineExtensions\DBAL\Types\UTCDateTimeType';
-
-                    $database->connect($databaseSettings, $chashPath, $newInstallationPath);
-                    $manager = $database->getManager();
-
-                    $metadataList = $manager->getMetadataFactory()->getAllMetadata();
-
-                    $output->writeln("<comment>Creating database structure</comment>");
-                    $manager->getConnection()->getSchemaManager()->createSchema();
-
-                    // Create database schema
-                    $tool = new \Doctrine\ORM\Tools\SchemaTool($manager);
-                    $tool->createSchema($metadataList);
-                    break;
-            }
-
             if (isset($sections) && isset($sections['course'])) {
                 //@todo fix this
                 foreach ($sections['course'] as $courseInfo) {
@@ -860,32 +804,15 @@ class InstallCommand extends CommonCommand
             if (isset($sections) && isset($sections['migrations'])) {
                 $sectionsCount = 1;
                 $legacyFiles = [
-                    '/main/inc/lib/database.constants.inc.php',
-                    '/main/inc/lib/chamilo_session.class.php',
-                    '/main/inc/lib/api.lib.php',
-                    '/main/inc/lib/text.lib.php',
-                    '/main/inc/lib/display.lib.php',
-                    '/main/inc/lib/database.lib.php',
-                    '/main/inc/lib/custom_pages.class.php',
-                    '/main/install/install.lib.php',
-                    '/main/inc/lib/hook/interfaces/base/HookEventInterface.php',
-                    '/main/inc/lib/hook/interfaces/HookCreateUserEventInterface.php',
-                    '/main/inc/lib/hook/interfaces/base/HookManagementInterface.php',
-                    '/main/inc/lib/hook/HookEvent.php',
-                    '/main/inc/lib/hook/HookCreateUser.php',
-                    '/main/inc/lib/hook/HookManagement.php',
-                    '/main/inc/lib/model.lib.php',
-                    '/main/inc/lib/events.lib.php',
-                    '/main/inc/lib/extra_field.lib.php',
-                    '/main/inc/lib/extra_field_value.lib.php',
-                    '/main/inc/lib/urlmanager.lib.php',
                     '/vendor/autoload.php',
+                    '/main/inc/lib/database.constants.inc.php',
+                    '/main/install/install.lib.php',
+                    '/public/legacy.php'
                 ];
 
                 foreach ($legacyFiles as $file) {
                     $file = $this->getRootSys().$file;
                     if (file_exists($file)) {
-                        //$output->writeln("<comment>Calling Chamilo lib: $file </comment>");
                         require_once $file;
                     } else {
                         $output->writeln(
@@ -895,7 +822,7 @@ class InstallCommand extends CommonCommand
                     }
                 }
 
-                $encoder = $this->getRootSys().'/src/Chamilo/UserBundle/Security/Encoder.php';
+                /*$encoder = $this->getRootSys().'/src/Chamilo/UserBundle/Security/Encoder.php';
                 if (file_exists($encoder)) {
                     require_once $encoder;
                 }
@@ -912,9 +839,9 @@ class InstallCommand extends CommonCommand
                 $file = $this->getRootSys().'/vendor/friendsofsymfony/user-bundle/Model/User.php';
                 if (file_exists($file)) {
                     require_once $file;
-                }
+                }*/
 
-                require_once $this->getRootSys().'/main/inc/lib/usermanager.lib.php';
+                //require_once $this->getRootSys().'/main/inc/lib/usermanager.lib.php';
 
                 $portalSettings = $this->getPortalSettings();
                 $adminSettings = $this->getAdminSettings();
@@ -934,32 +861,55 @@ class InstallCommand extends CommonCommand
                     $distFile = $this->getRootSys().'.env.dist';
 
                     \updateEnvFile($distFile, $envFile, $params);
-                    //$envContent = file_get_contents($envFile);
+
                     if (file_exists($envFile)) {
                         $output->writeln("<comment>Env file created: $envFile</comment>");
-                        //$output->writeln($envContent);
                     } else {
                         $output->writeln("<error>File not created: $envFile</error>");
                         exit;
                     }
 
                     (new Dotenv())->load($envFile);
+
                     $kernel = new \Chamilo\Kernel('dev', true);
+                    $kernel->boot();
+                    $container = $kernel->getContainer();
+                    $doctrine = $container->get('doctrine');
+
+                    $output->writeln("<comment>Creating Application object:</comment>");
                     $application = new Application($kernel);
+
+                    try {
+                        // Drop database if exists
+                        $command = $application->find('doctrine:database:drop');
+                        $input = new ArrayInput([], $command->getDefinition());
+                        $input->setOption('force', true);
+                        $command->execute($input, new ConsoleOutput());
+                    } catch (\Exception $e) {
+                        error_log($e->getMessage());
+                    }
 
                     // Create database
                     $input = new ArrayInput([]);
+                    $command = $application->find('doctrine:database:create');
+                    $command->run($input, new ConsoleOutput());
+
+                    // Create schema
                     $command = $application->find('doctrine:schema:create');
                     $result = $command->run($input, new ConsoleOutput());
+
                     // No errors
                     if ($result == 0) {
-                        // Boot kernel and get the doctrine from Symfony container
-                        $output->writeln("<comment>Database created</comment>");
                         $kernel->boot();
                         $container = $kernel->getContainer();
-                        $doctrine = $container->get('doctrine');
+
+                        // Boot kernel and get the doctrine from Symfony container
+                        $output->writeln("<comment>Database created</comment>");
                         $settingsManager = $container->get('chamilo.settings.manager');
                         $manager = $doctrine->getManager();
+
+                        $this->setManager($manager);
+
                         \Chamilo\CoreBundle\Framework\Container::setContainer($container);
                         $output->writeln("<comment>Calling 'finishInstallationWithContainer()'</comment>");
                         \finishInstallationWithContainer(
@@ -980,7 +930,6 @@ class InstallCommand extends CommonCommand
                             false, //$allowSelfReg,
                             false //$allowSelfRegProf
                         );
-                        $output->writeln("<comment>Calling 'finishInstallationWithContainer()'</comment>");
                     } else {
                         $output->writeln("<error>Cannot create database</error>");
                         exit;
