@@ -3,7 +3,7 @@
     "type": "library",
     "description" : "Chamilo Shell",
     "homepage": "http://www.chamilo.org",
-    "license": "GPL-3.0",
+    "license": "GPL-3.0-only",
     "support": {
         "forum": "http://www.chamilo.org/forum",
         "irc": "irc://irc.freenode.org/chamilo"
@@ -15,7 +15,7 @@
     },
     "require": {
         "php": ">=5.6",
-        "composer/composer": "dev-master",
+        "composer/composer": "1.6.*",
         "symfony/class-loader": "~2.6|^3.0",
         "symfony/doctrine-bridge": "~3.0",
         "symfony/validator": "~3.0|^4.0",
