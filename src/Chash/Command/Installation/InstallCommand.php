@@ -256,7 +256,6 @@ class InstallCommand extends CommonCommand
                     $command->run($input, $output);
 
                     // Fixing permissions.
-
                     if (PHP_SAPI == 'cli') {
                         $command = $this->getApplication()->find('files:set_permissions_after_install');
                         $arguments = [
@@ -886,12 +885,11 @@ class InstallCommand extends CommonCommand
                 foreach ($legacyFiles as $file) {
                     $file = $this->getRootSys().$file;
                     if (file_exists($file)) {
-                        $output->writeln("<comment>Calling Chamilo lib: $file </comment>");
+                        //$output->writeln("<comment>Calling Chamilo lib: $file </comment>");
                         require_once $file;
                     } else {
                         $output->writeln(
-                            "<error>This file is missing: $file.
-                            Make sure you did composer update. And that the file exists.</error>"
+                            "<error>File is missing: $file. Run composer update. In ".$this->getRootSys()."</error>"
                         );
                         exit;
                     }
@@ -936,11 +934,10 @@ class InstallCommand extends CommonCommand
                     $distFile = $this->getRootSys().'.env.dist';
 
                     \updateEnvFile($distFile, $envFile, $params);
-
-                    $envContent = file_get_contents($envFile);
+                    //$envContent = file_get_contents($envFile);
                     if (file_exists($envFile)) {
-                        $output->writeln("<comment>Env file created: $envFile. See contents: </comment>");
-                        $output->writeln($envContent);
+                        $output->writeln("<comment>Env file created: $envFile</comment>");
+                        //$output->writeln($envContent);
                     } else {
                         $output->writeln("<error>File not created: $envFile</error>");
                         exit;
@@ -949,7 +946,6 @@ class InstallCommand extends CommonCommand
                     (new Dotenv())->load($envFile);
                     $kernel = new \Chamilo\Kernel('dev', true);
                     $application = new Application($kernel);
-                    $container = $kernel->getContainer();
 
                     // Create database
                     $input = new ArrayInput([]);
@@ -957,12 +953,17 @@ class InstallCommand extends CommonCommand
                     $result = $command->run($input, new ConsoleOutput());
                     // No errors
                     if ($result == 0) {
+                        // Boot kernel and get the doctrine from Symfony container
                         $output->writeln("<comment>Database created</comment>");
+                        $kernel->boot();
+                        $container = $kernel->getContainer();
                         $doctrine = $container->get('doctrine');
+                        $settingsManager = $container->get('chamilo.settings.manager');
                         $manager = $doctrine->getManager();
+                        \Chamilo\CoreBundle\Framework\Container::setContainer($container);
                         $output->writeln("<comment>Calling 'finishInstallationWithContainer()'</comment>");
                         \finishInstallationWithContainer(
-                            $container,
+                            $settingsManager,
                             $manager,
                             $newInstallationPath,
                             $portalSettings['encrypt_method'],
@@ -979,6 +980,7 @@ class InstallCommand extends CommonCommand
                             false, //$allowSelfReg,
                             false //$allowSelfRegProf
                         );
+                        $output->writeln("<comment>Calling 'finishInstallationWithContainer()'</comment>");
                     } else {
                         $output->writeln("<error>Cannot create database</error>");
                         exit;
