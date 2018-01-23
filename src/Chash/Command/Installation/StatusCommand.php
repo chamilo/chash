@@ -38,20 +38,16 @@ class StatusCommand extends CommonDatabaseCommand
         parent::execute($input, $output);
         $connection = $this->getConnection($input);
         $_configuration = $this->getConfigurationArray();
-
-
         $query = "SELECT selected_value FROM settings_current WHERE variable = 'chamilo_database_version'";
         $data = $connection->executeQuery($query);
         $data = $data->fetch();
         $chamiloVersion = $data['selected_value'];
-        $databaseSetting = 'chamilo_database_version';
 
         if (empty($chamiloVersion)) {
             $query = "SELECT selected_value FROM settings_current WHERE variable = 'dokeos_database_version'";
             $data = $connection->executeQuery($query);
             $data = $data->fetch();
             $chamiloVersion = $data['selected_value'];
-            $databaseSetting = 'dokeos_database_version';
         }
 
         $output->writeln('<comment>Chamilo $_configuration info:</comment>');

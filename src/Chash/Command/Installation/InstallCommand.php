@@ -131,7 +131,7 @@ class InstallCommand extends CommonCommand
         if ($connectionToHostConnect) {
             $output->writeln(
                 sprintf(
-                    "<comment>Connection to database %s established. </comment>",
+                    "<comment>Connection to host database %s established. </comment>",
                     $databaseSettings['dbname']
                 )
             );
@@ -184,8 +184,9 @@ class InstallCommand extends CommonCommand
         if ($connect) {
             $output->writeln(
                 sprintf(
-                    "<comment>Connection to database '%s' established.</comment>",
-                    $databaseSettings['dbname']
+                    "<comment>Connection to database '%s' with user %s established.</comment>",
+                    $databaseSettings['dbname'],
+                    $databaseSettings['user']
                 )
             );
             $configurationWasSaved = $this->writeConfiguration($version, $path, $output);
@@ -936,7 +937,14 @@ class InstallCommand extends CommonCommand
 
                     \updateEnvFile($distFile, $envFile, $params);
 
-                    $output->writeln("<comment>Env file created: $envFile</comment>");
+                    $envContent = file_get_contents($envFile);
+                    if (file_exists($envFile)) {
+                        $output->writeln("<comment>Env file created: $envFile. See contents: </comment>");
+                        $output->writeln($envContent);
+                    } else {
+                        $output->writeln("<error>File not created: $envFile</error>");
+                        exit;
+                    }
 
                     (new Dotenv())->load($envFile);
                     $kernel = new \Chamilo\Kernel('dev', true);
