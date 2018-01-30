@@ -906,15 +906,11 @@ class InstallCommand extends CommonCommand
 
                         // Boot kernel and get the doctrine from Symfony container
                         $output->writeln("<comment>Database created</comment>");
-                        $settingsManager = $container->get('chamilo.settings.manager');
-                        $siteManager = $container->get('sonata.page.manager.site');
                         $this->setManager($manager);
-                        \Chamilo\CoreBundle\Framework\Container::setContainer($container);
+
                         $output->writeln("<comment>Calling 'finishInstallationWithContainer()'</comment>");
                         \finishInstallationWithContainer(
-                            $siteManager,
-                            $settingsManager,
-                            $manager,
+                            $container,
                             $newInstallationPath,
                             $portalSettings['encrypt_method'],
                             $adminSettings['password'],
