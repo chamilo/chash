@@ -14,6 +14,7 @@ Installation
     composer install
 
 Note: If you don't have Composer installed, check http://getcomposer.org/download/
+Note: To use Chash with PHP 7.0 or lower, please use branch 1.0: `git clone -b 1.0 https://github.com/chamilo/chash.git`
 
 Usage
 ====================
@@ -57,7 +58,7 @@ This procedure is only required once, and is generally for developers. If you up
 
 You need to have curl (in order to download packages required to build chash.phar)
 
-    apt-get install php5-curl
+    apt-get install php-curl
 
 If you don't have composer installed on your computer, you can just do the following to download and install it and run the command above (make sure you have PHP5 enabled on the command line):
 
