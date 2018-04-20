@@ -203,12 +203,17 @@ class UpgradeDatabaseCommand extends CommonCommand
             }
         }
 
-        $lastItem = count($versionsToRun);
         $counter = 0;
-        $runFixIds = false;
         foreach ($versionsToRun as $versionItem => $versionInfo) {
-            if ($lastItem == $counter) {
+            $runFixIds = false;
+            $runLpFix = false;
+
+            if ($versionItem === '1.10.0') {
                 $runFixIds = true;
+            }
+
+            if ($versionItem === '1.11.0') {
+                $runLpFix = true;
             }
 
             if (isset($versionInfo['require_update']) && $versionInfo['require_update'] == true) {
@@ -227,10 +232,12 @@ class UpgradeDatabaseCommand extends CommonCommand
                     $input,
                     $runFixIds,
                     $onlyUpdateDatabase = true,
-                    $rootSys
+                    $rootSys,
+                    $runLpFix
                 );
                 $currentVersion = $versionItem;
-                $output->writeln("<comment>End database migration</comment>");
+                $output->writeln("<comment>Run fixes value: $runFixIds</comment>");
+                $output->writeln("<comment>End database migration of version: $currentVersion</comment>");
                 $output->writeln("----------------------------------------------------------------");
             } else {
                 $currentVersion = $versionItem;
@@ -269,7 +276,8 @@ class UpgradeDatabaseCommand extends CommonCommand
         InputInterface $mainInput,
         $runFixIds = true,
         $onlyUpdateDatabase = false,
-        $rootSys = ''
+        $rootSys = '',
+        $runLpFix = false
     ) {
         // Cleaning query list.
         $this->queryList = array();
@@ -357,32 +365,61 @@ class UpgradeDatabaseCommand extends CommonCommand
                 }
             }
 
+            $filesToLoad = [
+                $this->getRootSys().'/main/inc/lib/database.constants.inc.php',
+                $this->getRootSys().'/main/inc/lib/system/session.class.php',
+                $this->getRootSys().'/main/inc/lib/chamilo_session.class.php',
+                $this->getRootSys().'/main/inc/lib/api.lib.php',
+                $this->getRootSys().'/main/inc/lib/database.lib.php',
+                $this->getRootSys().'/main/inc/lib/custom_pages.class.php',
+                $this->getRootSys().'/main/install/install.lib.php',
+                $this->getRootSys().'/main/inc/lib/display.lib.php',
+                //$this->getRootSys().'/main/inc/lib/group_portal_manager.lib.php',
+                $this->getRootSys().'/main/inc/lib/model.lib.php',
+                $this->getRootSys().'/main/inc/lib/events.lib.php',
+                $this->getRootSys().'/main/inc/lib/extra_field.lib.php',
+                $this->getRootSys().'/main/inc/lib/extra_field_value.lib.php',
+                $this->getRootSys().'/main/inc/lib/urlmanager.lib.php',
+                $this->getRootSys().'/main/inc/lib/usermanager.lib.php',
+
+                $this->getRootSys().'/vendor/sylius/translation/Model/TranslatableInterface.php',
+                $this->getRootSys().'/vendor/sylius/attribute/Model/AttributeTranslationInterface.php',
+                $this->getRootSys().'/vendor/sylius/resource/Model/TimestampableInterface.php',
+                $this->getRootSys().'/vendor/sylius/translation/Model/AbstractTranslatable.php',
+                $this->getRootSys().'/vendor/sylius/attribute/Model/AttributeInterface.php',
+                $this->getRootSys().'/vendor/sylius/attribute/Model/Attribute.php',
+
+                $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraField.php',
+                $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraFieldOptions.php',
+            ];
+
             if ($runFixIds) {
-                require_once $this->getRootSys().'/main/inc/lib/database.constants.inc.php';
-                require_once $this->getRootSys().'/main/inc/lib/system/session.class.php';
-                require_once $this->getRootSys().'/main/inc/lib/chamilo_session.class.php';
-                require_once $this->getRootSys().'/main/inc/lib/api.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/database.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/custom_pages.class.php';
-                require_once $this->getRootSys().'/main/install/install.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/display.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/group_portal_manager.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/model.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/events.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/extra_field.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/extra_field_value.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/urlmanager.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/usermanager.lib.php';
-                require_once $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraField.php';
-                require_once $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraFieldOptions.php';
+                foreach ($filesToLoad as $file) {
+                    if (file_exists($file)) {
+                        require_once $file;
+                    }
+                }
+                $output->writeln("<comment>Run fixIds function </info>");
                 fixIds($em);
+            }
+
+            if ($runLpFix) {
+                foreach ($filesToLoad as $file) {
+                    if (file_exists($file)) {
+                        require_once $file;
+                    }
+                }
+
+                $output->writeln("<comment>Run fixLpId function </info>");
+                fixLpId($em->getConnection(), true);
+            } else {
+                $output->writeln("<comment>fixLpId NOT run</info>");
             }
         } catch (\Exception $e) {
             $output->write(sprintf('<error>Migration failed. Error %s</error>', $e->getMessage()));
 
             throw $e;
         }
-
 
         return false;
     }

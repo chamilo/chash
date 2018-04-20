@@ -381,10 +381,16 @@ class UpgradeCommand extends CommonCommand
 
         $lastItem = count($versionsToRun);
         $counter = 0;
-        $runFixIds = false;
+
         foreach ($versionsToRun as $versionItem => $versionInfo) {
-            if ($lastItem == $counter) {
+            $runFixIds = false;
+            $runLpFix = false;
+            if ($versionItem === '1.10.0') {
                 $runFixIds = true;
+            }
+
+            if ($versionItem === '1.11.0') {
+                $runLpFix = true;
             }
 
             if (isset($versionInfo['require_update']) &&
@@ -404,12 +410,14 @@ class UpgradeCommand extends CommonCommand
                     $removeUnusedTables,
                     $input,
                     $runFixIds,
-                    $onlyUpdateDatabase
+                    $onlyUpdateDatabase,
+                    $runLpFix
                 );
-
-                $currentVersion = $versionItem;
-                $output->writeln("<comment>End database migration</comment>");
+                $output->writeln("<comment>Run fixes value: $runFixIds</comment>");
+                $output->writeln("<comment>End database migration of version: $currentVersion</comment>");
                 $output->writeln("----------------------------------------------------------------");
+                $output->writeln("----------------------------------------------------------------");
+                $currentVersion = $versionItem;
             } else {
                 $currentVersion = $versionItem;
                 $output->writeln("<comment>Skip migration from version: </comment><info>$currentVersion</info><comment> to version </comment><info>$versionItem ");
@@ -486,15 +494,16 @@ class UpgradeCommand extends CommonCommand
     /**
      * Starts a migration
      *
-     * @param array $courseList
-     * @param string $path
-     * @param string $toVersion
-     * @param bool $dryRun
+     * @param array           $courseList
+     * @param string          $path
+     * @param string          $toVersion
+     * @param bool            $dryRun
      * @param OutputInterface $output
-     * @param bool $removeUnusedTables
-     * @param InputInterface $mainInput
-     * @param bool $runFixIds
-     * @param bool $onlyUpdateDatabase
+     * @param bool            $removeUnusedTables
+     * @param InputInterface  $mainInput
+     * @param bool            $runFixIds
+     * @param bool            $onlyUpdateDatabase
+     * @param bool            $runLpFix
      *
      * @return bool
      * @throws \Exception
@@ -508,7 +517,8 @@ class UpgradeCommand extends CommonCommand
         $removeUnusedTables = false,
         InputInterface $mainInput,
         $runFixIds = true,
-        $onlyUpdateDatabase = false
+        $onlyUpdateDatabase = false,
+        $runLpFix = false
     ) {
         // Cleaning query list.
         $this->queryList = array();
@@ -614,7 +624,10 @@ class UpgradeCommand extends CommonCommand
             }
 
             // Processing "update file" changes.
-            if (isset($versionInfo['update_files']) && !empty($versionInfo['update_files']) && $onlyUpdateDatabase == false) {
+            if (isset($versionInfo['update_files']) &&
+                !empty($versionInfo['update_files']) &&
+                $onlyUpdateDatabase == false
+            ) {
                 $sqlToInstall = $installPath.$versionInfo['update_files'];
                 if (is_file($sqlToInstall) && file_exists($sqlToInstall)) {
                     if ($dryRun) {
@@ -650,27 +663,52 @@ class UpgradeCommand extends CommonCommand
                 $this->getRootSys().'/main/inc/lib/custom_pages.class.php',
                 $this->getRootSys().'/main/install/install.lib.php',
                 $this->getRootSys().'/main/inc/lib/display.lib.php',
-                $this->getRootSys().'/main/inc/lib/group_portal_manager.lib.php',
+                //$this->getRootSys().'/main/inc/lib/group_portal_manager.lib.php',
                 $this->getRootSys().'/main/inc/lib/model.lib.php',
                 $this->getRootSys().'/main/inc/lib/events.lib.php',
                 $this->getRootSys().'/main/inc/lib/extra_field.lib.php',
                 $this->getRootSys().'/main/inc/lib/extra_field_value.lib.php',
                 $this->getRootSys().'/main/inc/lib/urlmanager.lib.php',
                 $this->getRootSys().'/main/inc/lib/usermanager.lib.php',
+
+                $this->getRootSys().'/vendor/sylius/translation/Model/TranslatableInterface.php',
+                $this->getRootSys().'/vendor/sylius/attribute/Model/AttributeTranslationInterface.php',
+                $this->getRootSys().'/vendor/sylius/resource/Model/TimestampableInterface.php',
+                $this->getRootSys().'/vendor/sylius/translation/Model/AbstractTranslatable.php',
+                $this->getRootSys().'/vendor/sylius/attribute/Model/AttributeInterface.php',
+                $this->getRootSys().'/vendor/sylius/attribute/Model/Attribute.php',
                 $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraField.php',
-                $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraFieldOptions.php'
+                $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraFieldOptions.php',
             ];
 
             if ($runFixIds) {
                 foreach ($filesToLoad as $file) {
-                    require_once $file;
+                    if (file_exists($file)) {
+                        require_once $file;
+                    }
                 }
 
                 $output->writeln("<comment>Run fixIds function </info>");
                 fixIds($em);
+            } else {
+                $output->writeln("<comment>fixIds NOT run</info>");
             }
 
-            if (method_exists('fixPostGroupIds') &&
+            if ($runLpFix) {
+                foreach ($filesToLoad as $file) {
+                    if (file_exists($file)) {
+                        require_once $file;
+                    }
+
+                }
+
+                $output->writeln("<comment>Run fixLpId function </info>");
+                fixLpId($conn, true);
+            } else {
+                $output->writeln("<comment>fixLpId NOT run</info>");
+            }
+
+            if (function_exists('fixPostGroupIds') &&
                 $versionInfo['migrations_yml'] == 'V111.yml'
             ) {
                 foreach ($filesToLoad as $file) {
@@ -681,13 +719,11 @@ class UpgradeCommand extends CommonCommand
             } else {
                 $output->writeln("<comment>Not found function: fixPostGroupIds</info>");
             }
-
         } catch (\Exception $e) {
             $output->write(sprintf('<error>Migration failed. Error %s</error>', $e->getMessage()));
 
             throw $e;
         }
-
 
         return false;
     }
