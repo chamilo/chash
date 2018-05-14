@@ -558,7 +558,7 @@ class CommonCommand extends AbstractCommand
             ),
             '1.11.0' => array(
                 'require_update' => true,
-                'hook_to_doctrine_version' => '20161028123400',
+                'hook_to_doctrine_version' => '20171227120000',
                 'migrations_directory' => 'app/Migrations/Schema/V111',
                 'migrations_namespace' => 'Application\Migrations\Schema\V111',
                 'migrations_yml' => 'V111.yml',
