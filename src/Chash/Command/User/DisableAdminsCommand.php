@@ -24,7 +24,7 @@ class DisableAdminsCommand extends CommonChamiloUserCommand
 
         $this
             ->setName('user:disable_admins')
-            ->setDescription('Makes the given user admin on the main portal');
+            ->setDescription('Changes all the admin users to teachers on the main portal (possible short term crack defense)');
     }
 
     /**
