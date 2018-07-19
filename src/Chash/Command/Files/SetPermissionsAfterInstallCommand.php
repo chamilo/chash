@@ -43,25 +43,32 @@ class SetPermissionsAfterInstallCommand extends CommonDatabaseCommand
         $linuxGroup = $input->getOption('linux-group');
 
         // All files
+        $this->writeCommandHeader($output, 'System folders...');
         $files = $this->getConfigurationHelper()->getSysFolders();
         $this->setPermissions($output, $files, 0777, $linuxUser, $linuxGroup, false);
 
+        $this->writeCommandHeader($output, 'System files ...');
         $files = $this->getConfigurationHelper()->getSysFiles();
         $this->setPermissions($output, $files, null, $linuxUser, $linuxGroup, false);
 
         // Data folders
+        $this->writeCommandHeader($output, 'Data folders ...');
         $files = $this->getConfigurationHelper()->getDataFolders();
-        $this->setPermissions($output, $files, 0777, $linuxUser, $linuxGroup);
+        $this->setPermissions($output, $files, 0777, $linuxUser, $linuxGroup, false);
 
         // Config folders
+        $this->writeCommandHeader($output, 'Config folders ...');
         $files = $this->getConfigurationHelper()->getConfigFolders();
-        $this->setPermissions($output, $files, 0555, $linuxUser, $linuxGroup);
+        $this->setPermissions($output, $files, 0555, $linuxUser, $linuxGroup, false);
+
+        $this->writeCommandHeader($output, 'Config files...');
         $files = $this->getConfigurationHelper()->getConfigFiles();
-        $this->setPermissions($output, $files, 0555, $linuxUser, $linuxGroup);
+        $this->setPermissions($output, $files, 0555, $linuxUser, $linuxGroup, false);
 
         // Temp folders
+        $this->writeCommandHeader($output, 'Temp files...');
         $files = $this->getConfigurationHelper()->getTempFolders();
-        $this->setPermissions($output, $files, 0777, $linuxUser, $linuxGroup);
+        $this->setPermissions($output, $files, 0777, $linuxUser, $linuxGroup, false);
     }
 
     /**
@@ -101,7 +108,6 @@ class SetPermissionsAfterInstallCommand extends CommonDatabaseCommand
                     }
                 }
             } else {
-
                 if (!empty($permission)) {
                     $output->writeln("<comment>Modifying files permission to: ".decoct($permission)."</comment>");
                 }
@@ -122,7 +128,11 @@ class SetPermissionsAfterInstallCommand extends CommonDatabaseCommand
                 }
 
                 if (!empty($permission)) {
-                    $fs->chmod($files, $permission, 0000, true);
+                    foreach ($files as $file) {
+                        if ($fs->exists($file)) {
+                            $fs->chmod($file, $permission, 0000, true);
+                        }
+                    }
                 }
 
                 if (!empty($user)) {

@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class CleanTempFolderCommand
@@ -23,7 +24,7 @@ class CleanTempFolderCommand extends CommonDatabaseCommand
         parent::configure();
         $this
             ->setName('files:clean_temp_folder')
-            ->setAliases(array('fct'))
+            ->setAliases(['fct'])
             ->setDescription('Cleans the temp directory.');
     }
 
@@ -36,22 +37,14 @@ class CleanTempFolderCommand extends CommonDatabaseCommand
     {
         parent::execute($input, $output);
         $this->writeCommandHeader($output, "Cleaning temp files.");
-
-        $dialog = $this->getHelperSet()->get('dialog');
-
-        if (PHP_SAPI == 'cli') {
-            if ($input->isInteractive()) {
-                if (!$dialog->askConfirmation(
-                    $output,
-                    '<question>Are you sure you want to clean the Chamilo temp files? (y/N)</question>',
-                    false
-                )
-                ) {
-                    return;
-                }
-            }
+        $helper = $this->getHelperSet()->get('question');
+        $question = new ConfirmationQuestion(
+            '<question>Are you sure you want to clean the Chamilo temp files? (y/N)</question>',
+            true
+        );
+        if (!$helper->ask($input, $output, $question)) {
+            return;
         }
-
         $files = $this->getConfigurationHelper()->getTempFiles();
         $this->removeFiles($files, $output);
     }

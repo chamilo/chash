@@ -38,20 +38,16 @@ class StatusCommand extends CommonDatabaseCommand
         parent::execute($input, $output);
         $connection = $this->getConnection($input);
         $_configuration = $this->getConfigurationArray();
-
-
         $query = "SELECT selected_value FROM settings_current WHERE variable = 'chamilo_database_version'";
         $data = $connection->executeQuery($query);
         $data = $data->fetch();
         $chamiloVersion = $data['selected_value'];
-        $databaseSetting = 'chamilo_database_version';
 
         if (empty($chamiloVersion)) {
             $query = "SELECT selected_value FROM settings_current WHERE variable = 'dokeos_database_version'";
             $data = $connection->executeQuery($query);
             $data = $data->fetch();
             $chamiloVersion = $data['selected_value'];
-            $databaseSetting = 'dokeos_database_version';
         }
 
         $output->writeln('<comment>Chamilo $_configuration info:</comment>');
@@ -100,10 +96,9 @@ class StatusCommand extends CommonDatabaseCommand
             $output->writeln('<comment>Chamilo $_configuration[system_version]:</comment> <info>'.$_configuration['system_version'].'</info>');
         }
 
-        if (!version_compare(substr($chamiloVersion, 0, 5), substr($_configuration['system_version'], 0, 5), '==' )) {
+        if (!version_compare(substr($chamiloVersion, 0, 5), substr($_configuration['system_version'], 0, 5), '==')) {
             /*$output->writeln("<error>Please check carefully your Chamilo installation. </error>");
             $output->writeln("<comment>The configuration.php file and the 'chamilo_database_version' setting are not synced.</comment>");*/
         }
     }
-
 }

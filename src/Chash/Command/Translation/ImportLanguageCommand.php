@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class ImportLanguageCommand
@@ -39,15 +40,10 @@ class ImportLanguageCommand extends CommonDatabaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-
-        $dialog = $this->getHelperSet()->get('dialog');
-
+        $helper = $this->getHelperSet()->get('question');
         $_configuration = $this->getHelper('configuration')->getConfiguration();
-
         $file = $input->getArgument('file');
-
         $connection = $this->getConnection($input);
-
         if (is_file($file) && is_readable($file)) {
             $phar = new \PharData($file);
             if ($phar->hasMetadata()) {
@@ -60,13 +56,11 @@ class ImportLanguageCommand extends CommonDatabaseCommand
                     $langInfoFromDB = mysql_fetch_array($q, MYSQL_ASSOC);
                     $langFolderPath = $_configuration['root_sys'].'main/lang/'.$langInfoFromDB['dokeos_folder'];
                     if ($langInfoFromDB && $langFolderPath) {
-                        //Overwrite lang files
-                        if (!$dialog->askConfirmation(
-                            $output,
+                        $question = new ConfirmationQuestion(
                             '<question>The '.$langInfo['original_name'].' language already exists in Chamilo. Did you want to overwrite the contents? (y/N)</question>',
                             false
-                        )
-                        ) {
+                        );
+                        if (!$helper->ask($input, $output, $question)) {
                             return;
                         }
                         if (is_writable($langFolderPath)) {
@@ -82,13 +76,12 @@ class ImportLanguageCommand extends CommonDatabaseCommand
                         //Check if parent_id exists
                         $parentId = '';
                         if (!empty($langInfo['parent_id'])) {
-                            $sql                = "select selected_value from settings_current where variable = 'allow_use_sub_language'";
-                            $result             = mysql_query($sql);
+                            $sql = "select selected_value from settings_current where variable = 'allow_use_sub_language'";
+                            $result = mysql_query($sql);
                             $subLanguageSetting = mysql_fetch_array($result, MYSQL_ASSOC);
                             $subLanguageSetting = $subLanguageSetting['selected_value'];
                             if ($subLanguageSetting == 'true') {
-
-                                $q                    = mysql_query(
+                                $q = mysql_query(
                                     "SELECT * FROM language WHERE id = '{$langInfo['parent_id']}' "
                                 );
                                 $parentLangInfoFromDB = mysql_fetch_array($q, MYSQL_ASSOC);
@@ -131,7 +124,6 @@ class ImportLanguageCommand extends CommonDatabaseCommand
                         } else {
                             $output->writeln("An error ocurred while tring to create the language");
                         }
-
                     }
                 }
             } else {
