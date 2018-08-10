@@ -871,8 +871,13 @@ class InstallCommand extends CommonCommand
 
                     (new Dotenv())->load($envFile);
 
+                    $output->writeln("<comment>File loaded: $envFile</comment>");
+
                     $kernel = new \Chamilo\Kernel('dev', true);
                     $kernel->boot();
+
+                    $output->writeln("<comment>Booting kernel</comment>");
+
                     $container = $kernel->getContainer();
                     $doctrine = $container->get('doctrine');
 
