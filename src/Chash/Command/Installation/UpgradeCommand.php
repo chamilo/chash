@@ -350,6 +350,14 @@ class UpgradeCommand extends CommonCommand
             require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/SettingsCurrent.php';
             require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/SystemTemplate.php';
             require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/SettingsOptions.php';
+
+            require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/Course.php';
+            require_once $_configuration['root_sys'].'src/Chamilo/UserBundle/Entity/User.php';
+            require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/Session.php';
+            require_once $_configuration['root_sys'].'src/Chamilo/CourseBundle/Entity/CGroupInfo.php';
+            require_once $_configuration['root_sys'].'src/Chamilo/CourseBundle/Entity/CItemProperty.php';
+            require_once $_configuration['root_sys'].'src/Chamilo/CourseBundle/Entity/CGroupInfo.php';
+
             require_once $_configuration['root_sys'].'app/DoctrineExtensions/DBAL/Types/UTCDateTimeType.php';
             require_once $_configuration['root_sys'].'main/inc/lib/api.lib.php';
             require_once $_configuration['root_sys'].'main/inc/lib/custom_pages.class.php';
@@ -679,6 +687,12 @@ class UpgradeCommand extends CommonCommand
                 $this->getRootSys().'/vendor/sylius/attribute/Model/Attribute.php',
                 $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraField.php',
                 $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraFieldOptions.php',
+
+                $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/Course.php',
+                $this->getRootSys().'/src/Chamilo/UserBundle/Entity/User.php',
+                $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/Session.php',
+                $this->getRootSys().'/src/Chamilo/CourseBundle/Entity/CGroupInfo.php',
+                $this->getRootSys().'/src/Chamilo/CourseBundle/Entity/CItemProperty.php',
             ];
 
             if ($runFixIds) {
