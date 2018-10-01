@@ -353,6 +353,8 @@ class UpgradeCommand extends CommonCommand
 
             require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/Listener/CourseListener.php';
 
+            require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/CourseRelUser.php';
+
             require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/Course.php';
             require_once $_configuration['root_sys'].'src/Chamilo/UserBundle/Entity/User.php';
             require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/Session.php';
@@ -690,6 +692,8 @@ class UpgradeCommand extends CommonCommand
                 $this->getRootSys().'/vendor/sylius/attribute/Model/Attribute.php',
                 $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraField.php',
                 $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraFieldOptions.php',
+
+                $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/CourseRelUser.php',
 
                 $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/Listener/CourseListener.php',
                 $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/Course.php',
