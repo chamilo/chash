@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Filesystem\Filesystem;
@@ -347,21 +348,26 @@ class UpgradeCommand extends CommonCommand
         }
 
         if (version_compare($version, '1.10.0', '>=')) {
-            require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/SettingsCurrent.php';
-            require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/SystemTemplate.php';
-            require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/SettingsOptions.php';
+            require_once $_configuration['root_sys'].'/vendor/sylius/translation/Model/TranslatableInterface.php';
+            require_once $_configuration['root_sys'].'/vendor/sylius/attribute/Model/AttributeTranslationInterface.php';
+            require_once $_configuration['root_sys'].'/vendor/sylius/resource/Model/TimestampableInterface.php';
+            require_once $_configuration['root_sys'].'/vendor/sylius/translation/Model/AbstractTranslatable.php';
+            require_once $_configuration['root_sys'].'/vendor/sylius/attribute/Model/AttributeInterface.php';
 
-            require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/Listener/CourseListener.php';
+            require_once $_configuration['root_sys'].'/vendor/sylius/attribute/Model/AttributeValueInterface.php';
+            require_once $_configuration['root_sys'].'/vendor/sylius/attribute/Model/AttributeValue.php';
+            require_once $_configuration['root_sys'].'/vendor/sylius/attribute/Model/Attribute.php';
 
-            require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/CourseRelUser.php';
+            $finder = new Finder();
+            $finder->files()->in($_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity');
+            foreach ($finder as $file) {
+                require_once $file->getRealPath();
+            }
 
-            require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/Course.php';
             require_once $_configuration['root_sys'].'src/Chamilo/UserBundle/Entity/User.php';
-            require_once $_configuration['root_sys'].'src/Chamilo/CoreBundle/Entity/Session.php';
             require_once $_configuration['root_sys'].'src/Chamilo/CourseBundle/Entity/CGroupInfo.php';
             require_once $_configuration['root_sys'].'src/Chamilo/CourseBundle/Entity/CItemProperty.php';
-            require_once $_configuration['root_sys'].'src/Chamilo/CourseBundle/Entity/CGroupInfo.php';
-
+            require_once $_configuration['root_sys'].'src/Chamilo/CourseBundle/Entity/CTool.php';
 
             require_once $_configuration['root_sys'].'app/DoctrineExtensions/DBAL/Types/UTCDateTimeType.php';
             require_once $_configuration['root_sys'].'main/inc/lib/api.lib.php';
@@ -683,24 +689,15 @@ class UpgradeCommand extends CommonCommand
                 $this->getRootSys().'/main/inc/lib/extra_field_value.lib.php',
                 $this->getRootSys().'/main/inc/lib/urlmanager.lib.php',
                 $this->getRootSys().'/main/inc/lib/usermanager.lib.php',
-
                 $this->getRootSys().'/vendor/sylius/translation/Model/TranslatableInterface.php',
                 $this->getRootSys().'/vendor/sylius/attribute/Model/AttributeTranslationInterface.php',
                 $this->getRootSys().'/vendor/sylius/resource/Model/TimestampableInterface.php',
                 $this->getRootSys().'/vendor/sylius/translation/Model/AbstractTranslatable.php',
                 $this->getRootSys().'/vendor/sylius/attribute/Model/AttributeInterface.php',
+                $this->getRootSys().'/vendor/sylius/attribute/Model/AttributeValueInterface.php',
+                $this->getRootSys().'/vendor/sylius/attribute/Model/AttributeValue.php',
                 $this->getRootSys().'/vendor/sylius/attribute/Model/Attribute.php',
-                $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraField.php',
-                $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraFieldOptions.php',
-
-                $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/CourseRelUser.php',
-
-                $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/Listener/CourseListener.php',
-                $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/Course.php',
                 $this->getRootSys().'/src/Chamilo/UserBundle/Entity/User.php',
-                $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/Session.php',
-                $this->getRootSys().'/src/Chamilo/CourseBundle/Entity/CGroupInfo.php',
-                $this->getRootSys().'/src/Chamilo/CourseBundle/Entity/CItemProperty.php',
             ];
 
             if ($runFixIds) {
@@ -708,6 +705,36 @@ class UpgradeCommand extends CommonCommand
                     if (file_exists($file)) {
                         require_once $file;
                     }
+                }
+
+                $finder = new Finder();
+                $finder->files()->in($this->getRootSys().'/src/Chamilo/CoreBundle/Entity');
+                foreach ($finder as $file) {
+                    require_once $file->getRealPath();
+                }
+
+                $finder = new Finder();
+                $finder->files()->in($this->getRootSys().'/src/Chamilo/SkillBundle/Entity');
+                foreach ($finder as $file) {
+                    require_once $file->getRealPath();
+                }
+
+                $finder = new Finder();
+                $finder->files()->in($this->getRootSys().'/src/Chamilo/UserBundle/Entity');
+                foreach ($finder as $file) {
+                    require_once $file->getRealPath();
+                }
+
+                $finder = new Finder();
+                $finder->files()->in($this->getRootSys().'/src/Chamilo/CourseBundle/Entity');
+                foreach ($finder as $file) {
+                    require_once $file->getRealPath();
+                }
+
+                $finder = new Finder();
+                $finder->files()->in($this->getRootSys().'/src/Chamilo/UserBundle/Repository');
+                foreach ($finder as $file) {
+                    require_once $file->getRealPath();
                 }
 
                 $output->writeln("<comment>Run fixIds function </info>");
@@ -721,9 +748,7 @@ class UpgradeCommand extends CommonCommand
                     if (file_exists($file)) {
                         require_once $file;
                     }
-
                 }
-
                 $output->writeln("<comment>Run fixLpId function </info>");
                 fixLpId($conn, true);
             } else {
@@ -737,6 +762,12 @@ class UpgradeCommand extends CommonCommand
                     require_once $file;
                 }
                 $output->writeln("<comment>Run fixPostGroupIds function </info>");
+
+                $chashPath = __DIR__.'/../../../../';
+                $newInstallationPath = $this->getRootSys();
+                $database = new \Database();
+                $database::$utcDateTimeClass = 'Chash\DoctrineExtensions\DBAL\Types\UTCDateTimeType';
+                $database->connect($this->databaseSettings, $chashPath, $newInstallationPath);
                 fixPostGroupIds($conn);
             } else {
                 $output->writeln("<comment>Not found function: fixPostGroupIds</info>");
