@@ -697,7 +697,6 @@ class UpgradeCommand extends CommonCommand
                 $this->getRootSys().'/vendor/sylius/attribute/Model/AttributeValueInterface.php',
                 $this->getRootSys().'/vendor/sylius/attribute/Model/AttributeValue.php',
                 $this->getRootSys().'/vendor/sylius/attribute/Model/Attribute.php',
-                $this->getRootSys().'/src/Chamilo/UserBundle/Entity/User.php',
             ];
 
             if ($runFixIds) {
@@ -762,12 +761,6 @@ class UpgradeCommand extends CommonCommand
                     require_once $file;
                 }
                 $output->writeln("<comment>Run fixPostGroupIds function </info>");
-
-                $chashPath = __DIR__.'/../../../../';
-                $newInstallationPath = $this->getRootSys();
-                $database = new \Database();
-                $database::$utcDateTimeClass = 'Chash\DoctrineExtensions\DBAL\Types\UTCDateTimeType';
-                $database->connect($this->databaseSettings, $chashPath, $newInstallationPath);
                 fixPostGroupIds($conn);
             } else {
                 $output->writeln("<comment>Not found function: fixPostGroupIds</info>");
