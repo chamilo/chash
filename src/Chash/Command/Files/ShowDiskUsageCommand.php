@@ -102,7 +102,7 @@ class ShowDiskUsageCommand extends CommonDatabaseCommand
         }
 
         $_configuration = $this->getConfigurationHelper()->getConfiguration();
-        $connection = $this->getConnection();
+        $connection = $this->getConnection($input);
 
         // Check whether we want to use multi-url
         $portals = array(1 => 'http://localhost/');
@@ -111,7 +111,7 @@ class ShowDiskUsageCommand extends CommonDatabaseCommand
             if (!$csv) {
                 $output->writeln('Using multi-url mode');
             }
-            $sql = "SELECT id, url FROM access_url ORDER BY url";
+            $sql = 'SELECT id, url FROM access_url ORDER BY url';
             $stmt = $connection->query($sql);
             while ($row = $stmt->fetch()) {
                 $portals[$row['id']] = $row['url'];
@@ -119,7 +119,7 @@ class ShowDiskUsageCommand extends CommonDatabaseCommand
         }
 
         $globalCourses = array();
-        $sql = "SELECT id, code, directory, disk_quota FROM course ORDER BY code";
+        $sql = 'SELECT id, code, directory, disk_quota FROM course ORDER BY code';
         $stmt = $connection->query($sql);
         while ($row = $stmt->fetch()) {
             $globalCourses[$row['directory']] = array(
@@ -129,9 +129,11 @@ class ShowDiskUsageCommand extends CommonDatabaseCommand
         }
         $globalCoursesSizeSum = array();
         $sql = "SELECT directory, sum(size) as tSize
-            FROM c_document INNER JOIN course ON c_document.c_id = course.id
-            WHERE c_document.path NOT LIKE '%_DELETED'
-            GROUP BY directory";
+                FROM c_document 
+                INNER JOIN course 
+                ON c_document.c_id = course.id
+                WHERE c_document.path NOT LIKE '%_DELETED'
+                GROUP BY directory";
         $stmt = $connection->query($sql);
         while ($row = $stmt->fetch()) {
             $globalCoursesSizeSum[$row['directory']] = $row['tSize'];
@@ -145,24 +147,24 @@ class ShowDiskUsageCommand extends CommonDatabaseCommand
         $dirs = $this->getConfigurationHelper()->getDataFolders();
 
         $isDocumentOnly = $input->getOption('documents-only');
-        $dirDoc = "";
-        $docsOnly = "AllDiskFiles";
+        $dirDoc = '';
+        $docsOnly = 'AllDiskFiles';
         if ($isDocumentOnly) {
-            $dirDoc = "/document";
-            $docsOnly = " DocFilesOnly";
+            $dirDoc = '/document';
+            $docsOnly = 'DocFilesOnly';
         }
         $precision = $input->getOption('precision');
 
-        if (version_compare($_configuration['system_version'], '10.0', '>=')) {
-            $sql = " SELECT access_url_id, c.id as course_id, c.code, directory, disk_quota
-                FROM course c JOIN access_url_rel_course u
-                ON u.c_id = c.id
-                WHERE u.access_url_id = ? ";
+        if (version_compare($_configuration['system_version'], '1.10', '>=')) {
+            $sql = 'SELECT access_url_id, c.id as course_id, c.code, directory, disk_quota
+                    FROM course c INNER JOIN access_url_rel_course u
+                    ON u.c_id = c.id
+                    WHERE u.access_url_id = ? ';
         } else {
-            $sql = " SELECT access_url_id, c.id as course_id, c.code, directory, disk_quota
-                FROM course c JOIN access_url_rel_course u
-                ON u.course_code = c.code
-                WHERE u.access_url_id = ? ";
+            $sql = 'SELECT access_url_id, c.id as course_id, c.code, directory, disk_quota
+                    FROM course c JOIN access_url_rel_course u
+                    ON u.course_code = c.code
+                    WHERE u.access_url_id = ? ';
         }
 
         /** @var TableHelper $table */
