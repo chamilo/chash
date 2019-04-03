@@ -144,7 +144,12 @@ class ConfigurationHelper extends Helper
         if (is_dir($chamiloPath.'/app/config/') &&
             is_file($chamiloPath.'/app/config/parameters.yml.dist')
         ) {
-            return $dir = realpath($chamiloPath.'/app/config/').'/';
+            return realpath($chamiloPath.'/app/config/').'/';
+        }
+
+        if (is_file($chamiloPath.'/.env.dist')
+        ) {
+            return $chamiloPath.'/';
         }
 
         return false;

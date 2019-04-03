@@ -166,14 +166,6 @@ class InstallCommand extends CommonCommand
                 $connect = $connectionToDatabase->connect();*/
                 $connect = true;
                 if ($connect) {
-                    /*$output->writeln(
-                        sprintf(
-                            "<comment>Connection to database '%s' with user %s established.</comment>",
-                            $databaseSettings['dbname'],
-                            $databaseSettings['user']
-                        )
-                    );*/
-
                     $configurationWasSaved = $this->writeConfiguration($version, $path, $output);
 
                     if ($configurationWasSaved) {
@@ -329,12 +321,12 @@ class InstallCommand extends CommonCommand
         */
 
         $this->askDatabaseSettings($input, $output);
+        $databaseSettings = $this->databaseSettings;
+        $silent = $this->silent;
 
         if (empty($this->databaseSettings)) {
             $output->writeln("<comment>Cannot get database settings. </comment>");
             return false;
-        } else {
-            var_dump($this->databaseSettings);
         }
 
         if ($this->commandLine) {
@@ -379,7 +371,6 @@ class InstallCommand extends CommonCommand
             $result = $this->processInstallation($this->databaseSettings, $version, $output);
             if ($result) {
                 $path = $this->path;
-                $silent = $this->silent;
                 $linuxUser = $this->linuxUser;
                 $linuxGroup = $this->linuxGroup;
 
@@ -561,7 +552,7 @@ class InstallCommand extends CommonCommand
         // Arguments
         $this->path = $input->getArgument('path');
         $this->version = $input->getArgument('version');
-        $this->silent = $input->getOption('silent') == true;
+        $this->silent = $input->getOption('silent') === true;
         $this->download = $input->getOption('download-package');
         $this->tempFolder = $input->getOption('temp-folder');
         $this->linuxUser = $input->getOption('linux-user');
@@ -591,7 +582,7 @@ class InstallCommand extends CommonCommand
             // Chamilo v2/v1.x installation.
             /*$this->setRootSys(realpath($configurationPath.'/../').'/');
             $this->oldConfigLocation = false;*/
-            $this->setRootSys(realpath($configurationPath.'/../../').'/');
+            $this->setRootSys(realpath($configurationPath).'/');
             $this->oldConfigLocation = true;
         }
 
@@ -669,12 +660,11 @@ class InstallCommand extends CommonCommand
             return false;
         }
 
-        $this->installLegacy($input, $output);
-        /*if ($isLegacy) {
+        if ($isLegacy) {
             $this->installLegacy($input, $output);
         } else {
             $this->install($input, $output);
-        }*/
+        }
     }
 
     /**
