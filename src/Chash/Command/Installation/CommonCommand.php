@@ -238,52 +238,52 @@ class CommonCommand extends AbstractCommand
             'firstname' => [
                 'attributes' => [
                     'label' => 'Firstname',
-                    'data' =>  'John'
+                    'data' =>  'John',
                 ],
-                'type' => 'text'
+                'type' => 'text',
             ],
             'lastname' =>  [
                 'attributes' => [
                     'label' => 'Lastname',
-                    'data' =>  'Doe'
+                    'data' =>  'Doe',
                 ],
-                'type' => 'text'
+                'type' => 'text',
             ],
             'username' => [
                 'attributes' => [
                     'label' => 'Username',
-                    'data' =>  'admin'
+                    'data' =>  'admin',
                 ],
-                'type' => 'text'
+                'type' => 'text',
             ],
             'password' => [
                 'attributes' => [
                     'label' => 'Password',
-                    'data' =>  'admin'
+                    'data' =>  'admin',
                 ],
-                'type' => 'password'
+                'type' => 'password',
             ],
             'email' => [
                 'attributes' => [
                     'label' => 'Email',
-                    'data' =>  'admin@example.org'
+                    'data' =>  'admin@example.org',
                 ],
-                'type' => 'email'
+                'type' => 'email',
             ],
             'language' => [
                 'attributes' => [
                     'label' => 'Language',
-                    'data' =>  'english'
+                    'data' =>  'english',
                 ],
-                'type' => 'text'
+                'type' => 'text',
             ],
             'phone' => [
                 'attributes' => [
                     'label' => 'Phone',
-                    'data' =>  '123456'
+                    'data' =>  '123456',
                 ],
-                'type' => 'text'
-            ]
+                'type' => 'text',
+            ],
         ];
     }
 
@@ -298,51 +298,51 @@ class CommonCommand extends AbstractCommand
                     'label' => 'Site name',
                     'data' => 'Campus Chamilo',
                 ],
-                'type' => 'text'
+                'type' => 'text',
             ],
             'site_url' => [
                 'attributes' => [
                     'label' => 'URL of site to install',
                     'data' => 'http://localhost/',
                 ],
-                'type' => 'text'
+                'type' => 'text',
             ],
             'institution' => [
                 'attributes' => [
                     'data' => 'Chamilo',
                 ],
-                'type' => 'text'
+                'type' => 'text',
             ],
             'institution_url' => [
                 'attributes' => [
                     'label' => 'Website of the institution',
                     'data' => 'https://chamilo.org/',
                 ],
-                'type' => 'text'
+                'type' => 'text',
             ],
             'encrypt_method' => [
                 'attributes' => [
                     'choices' => [
                         'sha1' => 'sha1',
                         'md5' => 'md5',
-                        'none' => 'none'
+                        'none' => 'none',
                     ],
-                    'data' => 'sha1'
+                    'data' => 'sha1',
                 ],
 
-                'type' => 'choice'
+                'type' => 'choice',
             ],
             'permissions_for_new_directories' => [
                 'attributes' => [
                     'data' => '0777',
                 ],
-                'type' => 'text'
+                'type' => 'text',
             ],
             'permissions_for_new_files' => [
                 'attributes' => [
                     'data' => '0666',
                 ],
-                'type' => 'text'
+                'type' => 'text',
             ],
         ];
     }
@@ -364,47 +364,47 @@ class CommonCommand extends AbstractCommand
                             'pdo_oci' => 'pdo_oci',
                             'ibm_db2' => 'ibm_db2',
                             'pdo_ibm' => 'pdo_ibm',
-                            'pdo_sqlsrv' => 'pdo_sqlsrv'
+                            'pdo_sqlsrv' => 'pdo_sqlsrv',
                         ],
-                    'data' => 'pdo_mysql'
+                    'data' => 'pdo_mysql',
                 ],
-                'type' => 'choice'
+                'type' => 'choice',
             ],
             'host' => [
                 'attributes' => [
                     'label' => 'Host',
                     'data' => 'localhost',
                 ],
-                'type' => 'text'
+                'type' => 'text',
             ],
             'port' => [
                 'attributes' => [
                     'label' => 'Port',
                     'data' => '3306',
                 ],
-                'type' => 'text'
+                'type' => 'text',
             ],
             'dbname' => [
                 'attributes' => [
                     'label' => 'Database name',
                     'data' => 'chamilo',
                 ],
-                'type' => 'text'
+                'type' => 'text',
             ],
             'dbuser' => [
                 'attributes' => [
                     'label' => 'Database user',
                     'data' => 'root',
                 ],
-                'type' => 'text'
+                'type' => 'text',
             ],
             'dbpassword' => [
                 'attributes' => [
                     'label' => 'Database password',
                     'data' => 'root',
                 ],
-                'type' => 'password'
-            ]
+                'type' => 'password',
+            ],
         ];
     }
 
@@ -480,15 +480,15 @@ class CommonCommand extends AbstractCommand
             ],
             '1.8.8.2' => [
                 'require_update' => false,
-                'parent' => '1.8.8'
+                'parent' => '1.8.8',
             ],
             '1.8.8.4' => [
                 'require_update' => false,
-                'parent' => '1.8.8'
+                'parent' => '1.8.8',
             ],
             '1.8.8.6' => [
                 'require_update' => false,
-                'parent' => '1.8.8'
+                'parent' => '1.8.8',
             ],
             '1.9.0' => [
                 'require_update' => true,
@@ -496,39 +496,39 @@ class CommonCommand extends AbstractCommand
                 'post' => null,
                 'update_db' => 'update-db-1.8.8-1.9.0.inc.php',
                 'update_files' => 'update-files-1.8.8-1.9.0.inc.php',
-                'hook_to_doctrine_version' => '9'
+                'hook_to_doctrine_version' => '9',
             ],
             '1.9.2' => [
                 'require_update' => false,
-                'parent' => '1.9.0'
+                'parent' => '1.9.0',
             ],
             '1.9.4' => [
                 'require_update' => false,
-                'parent' => '1.9.0'
+                'parent' => '1.9.0',
             ],
             '1.9.6.1' => [
                 'require_update' => false,
-                'parent' => '1.9.0'
+                'parent' => '1.9.0',
             ],
             '1.9.6' => [
                 'require_update' => false,
-                'parent' => '1.9.0'
+                'parent' => '1.9.0',
             ],
             '1.9.8' => [
                 'require_update' => false,
-                'parent' => '1.9.0'
+                'parent' => '1.9.0',
             ],
             '1.9.10' => [
                 'require_update' => false,
-                'parent' => '1.9.0'
+                'parent' => '1.9.0',
             ],
             '1.9.10.2' => [
                 'require_update' => false,
-                'parent' => '1.9.0'
+                'parent' => '1.9.0',
             ],
             '1.9.x' => [
               'require_update' => false,
-              'parent' => '1.9.0'
+              'parent' => '1.9.0',
             ],
             '1.10.0' => [
                 'require_update' => true,
@@ -540,23 +540,23 @@ class CommonCommand extends AbstractCommand
             ],
             '1.10.2' => [
                 'require_update' => false,
-                'parent' => '1.10.0'
+                'parent' => '1.10.0',
             ],
             '1.10.4' => [
                 'require_update' => false,
-                'parent' => '1.10.0'
+                'parent' => '1.10.0',
             ],
             '1.10.6' => [
                 'require_update' => false,
-                'parent' => '1.10.0'
+                'parent' => '1.10.0',
             ],
             '1.10.8' => [
                 'require_update' => false,
-                'parent' => '1.10.0'
+                'parent' => '1.10.0',
             ],
             '1.10.x' => [
                 'require_update' => false,
-                'parent' => '1.10.0'
+                'parent' => '1.10.0',
             ],
             '1.11.0' => [
                 'require_update' => true,
@@ -568,32 +568,32 @@ class CommonCommand extends AbstractCommand
             ],
             '1.11.2' => [
                 'require_update' => false,
-                'parent' => '1.11.0'
+                'parent' => '1.11.0',
             ],
             '1.11.4' => [
                 'require_update' => false,
-                'parent' => '1.11.0'
+                'parent' => '1.11.0',
             ],
             '1.11.6' => [
                'require_update' => false,
-                'parent' => '1.11.0'
+                'parent' => '1.11.0',
             ],
             '1.11.x' => [
                 'require_update' => false,
-                'parent' => '1.11.0'
+                'parent' => '1.11.0',
             ],
             '2.0'  => [
                 'require_update' => true,
                 'update_files' => null,
                 'hook_to_doctrine_version' => '2',
-                'parent' => '2.0'
+                'parent' => '2.0',
             ],
             'master'  => [
                 'require_update' => true,
                 'update_files' => null,
                 'hook_to_doctrine_version' => '2',
-                'parent' => '2.0'
-            ]
+                'parent' => '2.0',
+            ],
         ];
 
         return $versionList;
@@ -825,7 +825,7 @@ class CommonCommand extends AbstractCommand
             //'url_append',
             'statistics_database',
             'user_personal_database',
-            'scorm_database'
+            'scorm_database',
         ];
 
         foreach ($_configuration as $key => $value) {
@@ -871,14 +871,14 @@ class CommonCommand extends AbstractCommand
                 'name' => 'course1',
                 'sql' => [
                     'db_course1.sql',
-                ]
+                ],
             ],
             [
                 'name' => 'course2',
                 'sql' => [
-                    'db_course2.sql'
-                ]
-            ]
+                    'db_course2.sql',
+                ],
+            ],
         ];
 
         return [
@@ -890,11 +890,11 @@ class CommonCommand extends AbstractCommand
                             'sql' => [
                                 'db_main.sql',
                                 'db_stats.sql',
-                                'db_user.sql'
-                            ]
-                        ]
+                                'db_user.sql',
+                            ],
+                        ],
                     ],
-                    'course' => $defaultCourseData
+                    'course' => $defaultCourseData,
                 ],
             ],
             '1.8.8' => [
@@ -905,11 +905,11 @@ class CommonCommand extends AbstractCommand
                             'sql' => [
                                 'db_main.sql',
                                 'db_stats.sql',
-                                'db_user.sql'
-                            ]
-                        ]
+                                'db_user.sql',
+                            ],
+                        ],
                     ],
-                    'course' => $defaultCourseData
+                    'course' => $defaultCourseData,
                 ],
             ],
             '1.9.0' => [
@@ -921,32 +921,32 @@ class CommonCommand extends AbstractCommand
                                 'db_course.sql',
                                 'db_main.sql',
                                 'db_stats.sql',
-                                'db_user.sql'
+                                'db_user.sql',
                             ],
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ],
             '1.10.0' => [
                 'section' => [
                     'migrations' => 'Version110',
-                ]
+                ],
             ],
             '1.11.0' => [
                 'section' => [
                     'migrations' => 'Version111',
-                ]
+                ],
             ],
             '2.0' => [
                 'section' => [
                     'migrations' => 'Version200',
-                ]
+                ],
             ],
             'master' => [
                 'section' => [
                     'migrations' => 'Version200',
-                ]
-            ]
+                ],
+            ],
         ];
     }
 
@@ -1215,8 +1215,8 @@ class CommonCommand extends AbstractCommand
             }
 
             if (file_exists($updateInstallation)) {
-                $zippy = Zippy::load();
-                $archive = $zippy->open($updateInstallation);
+                $zip = new \ZipArchive();
+                $res = $zip->open($updateInstallation);
 
                 $folderPath = $defaultTempFolder.'/chamilo-v'.$version.'-'.date('y-m-d');
 
@@ -1232,47 +1232,20 @@ class CommonCommand extends AbstractCommand
                     }
                 }
 
-                $location = null;
-
-                if (is_dir($folderPath)) {
+                $chamiloLocationPath = '';
+                if (is_dir($folderPath) && $res) {
                     $output->writeln("<comment>Extracting files here:</comment> <info>$folderPath</info>");
 
-                    try {
-                        $archive->extract($folderPath);
-                        /** @var \Alchemy\Zippy\Archive\Member $member */
-                        foreach ($archive as $member) {
-                            if (isset($member)) {
-                                if ($member->isDir()) {
-                                    $location = $member->getLocation();
-                                    $globalFile = $folderPath.'/'.$location.'main/inc/global.inc.php';
-                                    if (file_exists($globalFile) && is_file(
-                                            $globalFile
-                                        )
-                                    ) {
-                                        $location = realpath(
-                                                $folderPath.'/'.$location
-                                            ).'/';
-                                        $output->writeln(
-                                            '<comment>Chamilo global.inc.php file detected:</comment> <info>'.$location.'main/inc/lib/global.inc.php</info>'
-                                        );
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    } catch (\Alchemy\Zippy\Exception\RunTimeException $e) {
-                        $output->writeln("<comment>It seems that this file doesn't contain a Chamilo package:</comment> <info>$updateInstallationOriginal</info>");
+                    $zip->extractTo($folderPath);
 
-                        unlink($updateInstallation);
-                        $output->writeln("<comment>Removing file</comment>:<info>$updateInstallation</info>");
-                        //$output->writeln("Error:");
-                        //$output->writeln($e->getMessage());
-
-                        return 0;
+                    $finder = new Finder();
+                    $files = $finder->in($folderPath)->depth(0);
+                    /** @var \SplFileInfo  $file */
+                    foreach ($files as $file) {
+                        $chamiloLocationPath = $file->getRealPath();
+                        break;
                     }
                 }
-
-                $chamiloLocationPath = $location;
 
                 if (empty($chamiloLocationPath)) {
                     $output->writeln("<error>Chamilo folder structure not found in package.</error>");
@@ -1369,7 +1342,7 @@ class CommonCommand extends AbstractCommand
             'mail.conf.dist.php',
             'auth.conf.dist.php',
             'profile.conf.dist.php',
-            'course_info.conf.php'
+            'course_info.conf.php',
         ];
     }
 
@@ -1453,7 +1426,7 @@ class CommonCommand extends AbstractCommand
 
         $list = [
             'archive',
-            'config/course_info.conf.php'
+            'config/course_info.conf.php',
         ];
 
         foreach ($list as $file) {
