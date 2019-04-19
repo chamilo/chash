@@ -879,6 +879,7 @@ class InstallCommand extends CommonCommand
                         $command = $application->find('doctrine:database:drop');
                         $input = new ArrayInput([], $command->getDefinition());
                         $input->setOption('force', true);
+                        $input->setOption('if-exists', true);
                         $command->execute($input, new ConsoleOutput());
                     } catch (\Exception $e) {
                         error_log($e->getMessage());
