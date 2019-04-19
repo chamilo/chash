@@ -125,24 +125,15 @@ class InstallCommand extends CommonCommand
         }
 
         $databaseSettings = $this->getDatabaseSettings();
-        //$connectionToHost = $this->getUserAccessConnectionToHost();
-        //$connectionToHostConnect = $connectionToHost->connect();
 
         $connectionToHost = true;
         $connectionToHostConnect  = true;
         if ($connectionToHostConnect) {
-            /*$output->writeln(
-                sprintf(
-                    "<comment>Connection to host database %s established. </comment>",
-                    $databaseSettings['dbname']
-                )
-            );*/
-
             if ($this->commandLine && false) {
                 $eventManager = $connectionToHost->getSchemaManager();
                 $databases = $eventManager->listDatabases();
                 if (in_array($databaseSettings['dbname'], $databases)) {
-                    if ($silent == false) {
+                    if ($silent === false) {
                         /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
                         $helper = $this->getHelperSet()->get('question');
                         $question = new ConfirmationQuestion(
@@ -201,7 +192,7 @@ class InstallCommand extends CommonCommand
                                 $this->importSQLFile($file, $output);
                             }
                         } else {
-                            $output->writeln("Nothing to update");
+                            $output->writeln('Nothing to update');
                         }
 
                         $manager = $this->getManager();
@@ -267,7 +258,6 @@ class InstallCommand extends CommonCommand
                     return 0;
                 }
             } catch (\Exception $e) {
-
                 // Delete configuration.php because installation failed
                 unlink($this->getRootSys().'app/config/configuration.php');
 
@@ -319,8 +309,9 @@ class InstallCommand extends CommonCommand
             sudo php /var/www/html/chash/chash.php chash:chamilo_install --download-package --sitename=Chamilo --institution=Chami --institution_url=http://localhost/chamilo-test --encrypt_method=sha1 --permissions_for_new_directories=0777 --permissions_for_new_files=0777 --firstname=John --lastname=Doe --username=admin --password=admin --email=admin@example.com --language=english --phone=666 --driver=pdo_mysql --host=localhost --port=3306 --dbname=chamilo_test --dbuser=root --dbpassword=root  --site_url=http://localhost/chamilo-test 1.9.0 /var/www/html/chamilo-test
             cd /var/www/html/chamilo-test/
         */
-
         $this->askDatabaseSettings($input, $output);
+        $this->askPortalSettings($input, $output);
+
         $databaseSettings = $this->databaseSettings;
         $silent = $this->silent;
 
@@ -376,11 +367,11 @@ class InstallCommand extends CommonCommand
 
                 $configurationWasSaved = $this->writeConfiguration($version, $path, $output);
                 if ($configurationWasSaved) {
-                    $this->askPortalSettings($input, $output);
+
                     $this->setDoctrineSettings($this->getHelperSet());
                     $this->setPortalSettingsInChamilo(
                         $output,
-                        $connectionToDatabase
+                        $this->getHelper('db')->getConnection()
                     );
                 }
             }
@@ -640,9 +631,9 @@ class InstallCommand extends CommonCommand
         }
 
         if ($this->commandLine) {
-            $title = "Welcome to the Chamilo installation process.";
+            $title = 'Welcome to the Chamilo installation process.';
         } else {
-            $title = "Chamilo installation process.";
+            $title = 'Chamilo installation process.';
         }
 
         $this->writeCommandHeader($output, $title);
@@ -723,7 +714,6 @@ class InstallCommand extends CommonCommand
      */
     public function processInstallation($databaseSettings, $version, $output)
     {
-        //$this->setDoctrineSettings($this->getHelperSet());
         $sqlFolder = $this->getInstallationPath($version);
         $databaseMap = $this->getDatabaseMap();
         // Fixing the version
@@ -812,32 +802,11 @@ class InstallCommand extends CommonCommand
                     }
                 }
 
-                /*$encoder = $this->getRootSys().'/src/Chamilo/UserBundle/Security/Encoder.php';
-                if (file_exists($encoder)) {
-                    require_once $encoder;
-                }
-
-                $file = $this->getRootSys().'/vendor/sonata-project/user-bundle/src/Entity/BaseUser.php';
-                if (file_exists($file)) {
-                    require_once $file;
-                }
-                $file = $this->getRootSys().'/vendor/sonata-project/user-bundle/src/Model/User.php';
-                if (file_exists($file)) {
-                    require_once $file;
-                }
-
-                $file = $this->getRootSys().'/vendor/friendsofsymfony/user-bundle/Model/User.php';
-                if (file_exists($file)) {
-                    require_once $file;
-                }*/
-
-                //require_once $this->getRootSys().'/main/inc/lib/usermanager.lib.php';
-
                 $portalSettings = $this->getPortalSettings();
                 $adminSettings = $this->getAdminSettings();
                 $newInstallationPath = $this->getRootSys();
 
-                if ($version == 'master') {
+                if ($version === 'master') {
                     $params = [
                         '{{DATABASE_HOST}}' => $databaseSettings['host'],
                         '{{DATABASE_PORT}}' => $databaseSettings['port'],
@@ -849,7 +818,6 @@ class InstallCommand extends CommonCommand
                     ];
                     $envFile = $this->getRootSys().'.env';
                     $distFile = $this->getRootSys().'.env.dist';
-
                     \updateEnvFile($distFile, $envFile, $params);
 
                     if (file_exists($envFile)) {
