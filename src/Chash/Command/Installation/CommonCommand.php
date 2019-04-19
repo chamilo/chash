@@ -323,13 +323,13 @@ class CommonCommand extends AbstractCommand
             'encrypt_method' => [
                 'attributes' => [
                     'choices' => [
+                        'bcrypt' => 'bcrypt',
                         'sha1' => 'sha1',
                         'md5' => 'md5',
                         'none' => 'none',
                     ],
                     'data' => 'sha1',
                 ],
-
                 'type' => 'choice',
             ],
             'permissions_for_new_directories' => [
