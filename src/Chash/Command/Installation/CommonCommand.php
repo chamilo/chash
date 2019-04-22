@@ -88,7 +88,7 @@ class CommonCommand extends AbstractCommand
     public function setDatabaseSettings(array $databaseSettings)
     {
         $user = isset($databaseSettings['dbuser']) ? $databaseSettings['dbuser'] : $databaseSettings['user'];
-        $password = isset($databaseSettings['dbpassword']) ? $databaseSettings['dbpassword'] : (isset($databaseSettings['password']) ? $databaseSettings['password'] : null);
+        $password = isset($databaseSettings['dbpassword']) ? $databaseSettings['dbpassword'] : isset($databaseSettings['password']) ? $databaseSettings['password'] : '';
 
         // Try db_port
         $dbPort = isset($databaseSettings['db_port']) ? $databaseSettings['db_port'] : null;
