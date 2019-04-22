@@ -814,7 +814,8 @@ class InstallCommand extends CommonCommand
                         '{{DATABASE_USER}}' => $databaseSettings['user'],
                         '{{DATABASE_PASSWORD}}' => $databaseSettings['password'],
                         '{{APP_INSTALLED}}' => 1,
-                        '{{APP_ENCRYPT_METHOD}}' => $portalSettings['encrypt_method']
+                        '{{APP_ENCRYPT_METHOD}}' => $portalSettings['encrypt_method'],
+                        '{{APP_URL_APPEND}}' => ''
                     ];
                     $envFile = $this->getRootSys().'.env';
                     $distFile = $this->getRootSys().'.env.dist';
