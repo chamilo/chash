@@ -50,6 +50,10 @@ class StatusCommand extends CommonDatabaseCommand
             $chamiloVersion = $data['selected_value'];
         }
 
+        if (!empty($chamiloVersion)) {
+            $output->writeln('<comment>Database connection works.</comment>');
+        }
+
         $output->writeln('<comment>Chamilo $_configuration info:</comment>');
         $output->writeln('');
 
