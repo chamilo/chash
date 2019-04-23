@@ -403,7 +403,7 @@ class InstallCommand extends CommonCommand
                     // --no-interaction mode was configured, forget about it
                     switch ($key) {
                         case 'dbpassword':
-                            $databaseSettings[$key] = null;
+                            $databaseSettings[$key] = '';
                             $output->writeln(
                                 "($counter/$total) <comment>Option: $key was not provided. Using default value null (empty password)</comment>"
                             );
