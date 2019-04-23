@@ -311,6 +311,7 @@ class InstallCommand extends CommonCommand
         */
         $this->askDatabaseSettings($input, $output);
         $this->askPortalSettings($input, $output);
+        $this->askAdminSettings($input, $output);
 
         $databaseSettings = $this->databaseSettings;
         $silent = $this->silent;
