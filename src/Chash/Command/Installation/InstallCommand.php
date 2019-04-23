@@ -386,10 +386,7 @@ class InstallCommand extends CommonCommand
     public function askDatabaseSettings(InputInterface $input, OutputInterface $output)
     {
         $helper = $this->getHelperSet()->get('question');
-        $filledParams = $this->getParamsFromOptions(
-            $input,
-            $this->getDatabaseSettingsParams()
-        );
+        $filledParams = $this->getParamsFromOptions($input, $this->getDatabaseSettingsParams());
         $params = $this->getDatabaseSettingsParams();
         $total = count($params);
         $output->writeln(
@@ -399,7 +396,9 @@ class InstallCommand extends CommonCommand
         $counter = 1;
         foreach ($params as $key => $value) {
             if (!isset($filledParams[$key])) {
-                if (!$input->isInteractive() && (in_array($key, ['dbpassword', 'port', 'host', 'driver']))) {
+                if (!$input->isInteractive() &&
+                    (in_array($key, ['dbpassword', 'port', 'host', 'driver']))
+                ) {
                     // db password may be empty, so if not provided and the
                     // --no-interaction mode was configured, forget about it
                     switch ($key) {
@@ -630,10 +629,9 @@ class InstallCommand extends CommonCommand
             }
         }
 
+        $title = 'Chamilo installation process.';
         if ($this->commandLine) {
             $title = 'Welcome to the Chamilo installation process.';
-        } else {
-            $title = 'Chamilo installation process.';
         }
 
         $this->writeCommandHeader($output, $title);
