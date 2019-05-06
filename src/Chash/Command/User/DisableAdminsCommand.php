@@ -37,8 +37,8 @@ class DisableAdminsCommand extends CommonDatabaseCommand
     {
         parent::execute($input, $output);
         $_configuration = $this->getHelper('configuration')->getConfiguration();
-        $helper = $this->getHelperSet()->get('question');
         $conn = $this->getConnection($input);
+        $helper = $this->getHelperSet()->get('question');
         $question = new ConfirmationQuestion(
             '<question>This action will make all admins normal teachers. Are you sure? (y/N)</question>',
             false
