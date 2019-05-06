@@ -144,6 +144,8 @@ class ImportLanguageCommand extends CommonDatabaseCommand
                         $phar->extractTo($langFolderPath, null, true); // extract all files
                         $output->writeln("<comment>Files were copied here $langFolderPath </comment>");
                     }
+                } else {
+                    $output->writeln('The connection does not seem to be a valid PDO connection');
                 }
             } else {
                 $output->writeln("<comment>The file is not a valid Chamilo language package<comment>");
