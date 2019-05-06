@@ -56,6 +56,11 @@ class AddUserCommand extends CommonDatabaseCommand
                 'role',
                 InputArgument::OPTIONAL,
                 'The user role: anonymous, student (default), teacher, admin'
+            )
+            ->addArgument(
+                'language',
+                InputArgument::OPTIONAL,
+                'The user language (in English). Defaults to "english". Make sure it is available.'
             );
     }
 
@@ -75,6 +80,13 @@ class AddUserCommand extends CommonDatabaseCommand
         $email = $input->getArgument('email');
         $password = $input->getArgument('password');
         $role = $input->getArgument('role');
+        if (empty($role)) {
+            $role = 'student';
+        }
+        $language = $input->getArgument('language');
+        if (empty($language)) {
+            $language = 'english';
+        }
         if ($conn instanceof \Doctrine\DBAL\Connection) {
             try {
                 $userSelect = "SELECT * FROM user WHERE username = ".$conn->quote($username);
@@ -126,6 +138,11 @@ class AddUserCommand extends CommonDatabaseCommand
                 $time = date('Y-m-d h:i:s');
                 $expiration = time()+(60*60*24*366*10);
                 $timeExpiry = date('Y-m-d h:i:s', $expiration);
+                $firstname = $conn->quote($firstname);
+                $lastname = $conn->quote($lastname);
+                $username = $conn->quote($username);
+                $email = $conn->quote($email);
+                $language = $conn->quote($language);
                 $ups = "INSERT INTO user (
                     firstname, 
                     lastname, 
@@ -161,7 +178,7 @@ class AddUserCommand extends CommonDatabaseCommand
                     1,
                     '$time',
                     '$timeExpiry',
-                    'english'
+                    $language
                   )";
                 try {
                     $stmt = $conn->prepare($ups);
