@@ -2,7 +2,7 @@
 
 namespace Chash\Command\User;
 
-use Symfony\Component\Console\Command\Command;
+use Chash\Command\Database\CommonDatabaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -18,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Changes a user password to the one given
  * @package Chash\Command\User
  */
-class AddUserCommand extends CommonChamiloUserCommand
+class AddUserCommand extends CommonDatabaseCommand
 {
     protected function configure()
     {
@@ -67,83 +67,146 @@ class AddUserCommand extends CommonChamiloUserCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
+        $conn = $this->getConnection($input);
         $_configuration = $this->getHelper('configuration')->getConfiguration();
-        $connection = $this->getConnection($input);
         $firstname = $input->getArgument('firstname');
         $lastname = $input->getArgument('lastname');
         $username = $input->getArgument('username');
         $email = $input->getArgument('email');
         $password = $input->getArgument('password');
         $role = $input->getArgument('role');
-        $us = "SELECT * FROM user WHERE username = '".mysql_escape_string($username)."'";
-        $uq = mysql_query($us);
-        $un = mysql_num_rows($uq);
-        if ($un === 0) {
-            $enc = $_configuration['password_encryption'];
-            switch ($enc) {
-                case 'bcrypt':
-                    $password = password_hash($password, PASSWORD_BCRYPT, 4);
-                case 'sha1':
-                    $password = sha1($password);
-                    break;
-                case 'md5':
-                    $password = md5($password);
-                    break;
-                default:
-                    $password = mysql_real_escape_string($password);
-                    break;
+        if ($conn instanceof \Doctrine\DBAL\Connection) {
+            try {
+                $userSelect = "SELECT * FROM user WHERE username = ".$conn->quote($username);
+                $stmt = $conn->prepare($userSelect);
+                $stmt->execute();
+                $un = $stmt->rowCount();
+            } catch (\PDOException $e) {
+                $output->write('SQL error!' . PHP_EOL);
+                throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
-            $numRole = 5;
-            $isAdmin = 0;
-            switch ($role) {
-                case 'anonymous':
-                    $numRole = 6;
-                    break;
-                case 'teacher':
-                    $numRole = 1;
-                    break;
-                case 'admin':
-                    $numRole = 1;
-                    $isAdmin = 1;
-                    break;
-                case 'student':
-                default:
-                    $numRole = 5;
-            }
-            // @TODO make UTC
-            $time = date('Y-m-d h:i:s');
-            $ups = "INSERT INTO user (
-                firstname, 
-                lastname, 
-                username, 
-                email, 
-                password, 
-                status, 
-                active, 
-                auth_source, 
-                creator_id,
-                registration_date
-              ) VALUES (
-                '$firstname', 
-                '$lastname', 
-                '$username', 
-                '$email', 
-                '$password', 
-                $numRole, 
-                1, 
-                'platform',
-                1,
-                '$time'
-              )";
-            $upq = mysql_query($ups);
-            $output->writeln('User '.$username.' has been created.');
-            if ($isAdmin === 1) {
-                $newUserId = mysql_insert_id($upq);
-                $uas = "INSERT INTO admin (user_id) values ($newUserId)";
-                $uaq = mysql_query($uas);
+
+            if ($un === 0) {
+                $enc = $_configuration['password_encryption'];
+                $salt = sha1(uniqid(null, true));
+                switch ($enc) {
+                    case 'bcrypt':
+                        $password = $conn->quote(password_hash($password, PASSWORD_BCRYPT, ['cost' => 4, 'salt' => $salt]));
+                        break;
+                    case 'sha1':
+                        $password = $conn->quote(sha1($password));
+                        break;
+                    case 'md5':
+                        $password = $conn->quote(md5($password));
+                        break;
+                    default:
+                        $password = $conn->quote($password);
+                        break;
+                }
+                $numRole = 5;
+                $isAdmin = 0;
+                $stringRoles = '';
+                switch ($role) {
+                    case 'anonymous':
+                        $numRole = 6;
+                        break;
+                    case 'teacher':
+                        $numRole = 1;
+                        break;
+                    case 'admin':
+                        $numRole = 1;
+                        $isAdmin = 1;
+                        $stringRoles = 'a:1:{i:0;s:16:"ROLE_SUPER_ADMIN";}';
+                        break;
+                    case 'student':
+                    default:
+                        $numRole = 5;
+                }
+                // @TODO make UTC
+                $time = date('Y-m-d h:i:s');
+                $expiration = time()+(60*60*24*366*10);
+                $timeExpiry = date('Y-m-d h:i:s', $expiration);
+                $ups = "INSERT INTO user (
+                    firstname, 
+                    lastname, 
+                    username,
+                    username_canonical,
+                    email,
+                    email_canonical,
+                    salt,
+                    password, 
+                    status,
+                    roles,
+                    enabled,
+                    active, 
+                    auth_source, 
+                    creator_id,
+                    registration_date,
+                    expiration_date,
+                    language
+                  ) VALUES (
+                    '$firstname', 
+                    '$lastname', 
+                    '$username', 
+                    '$username', 
+                    '$email',
+                    '$email',
+                    '$salt', 
+                    $password, 
+                    $numRole,
+                    '$stringRoles',
+                    1, 
+                    1, 
+                    'platform',
+                    1,
+                    '$time',
+                    '$timeExpiry',
+                    'english'
+                  )";
+                try {
+                    $stmt = $conn->prepare($ups);
+                    $stmt->execute();
+                    $newUserId = $conn->lastInsertId();
+                } catch (\PDOException $e) {
+                    $output->write('SQL error!' . PHP_EOL);
+                    throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+                }
+
+                $output->writeln('User '.$username.' has been created.');
+                if ($isAdmin === 1) {
+                    $uas = "INSERT INTO admin (user_id) values ($newUserId)";
+                    try {
+                        $stmt = $conn->prepare($uas);
+                        $stmt->execute();
+                    } catch (\PDOException $e) {
+                        $output->write('SQL error!' . PHP_EOL);
+                        throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+                    }
+                }
+                // Add user to access_url_rel_user
+                $uas = "INSERT INTO access_url_rel_user (access_url_id, user_id) values (1, $newUserId)";
+                try {
+                    $stmt = $conn->prepare($uas);
+                    $stmt->execute();
+                } catch (\PDOException $e) {
+                    $output->write('SQL error!' . PHP_EOL);
+                    throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+                }
+                $uas = "UPDATE user SET user_id = id WHERE id = $newUserId";
+                try {
+                    $stmt = $conn->prepare($uas);
+                    $stmt->execute();
+                } catch (\PDOException $e) {
+                    $output->write('SQL error!' . PHP_EOL);
+                    throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+                }
+
+
+            } else {
+                $output->writeln('A user with username '.$username.' already exists');
             }
         } else {
-            $output->writeln('A user with username ' . $username . ' already exists');
+            $output->writeln('The connection does not seem to be a valid PDO connection');
         }
         return null;
     }

@@ -2,7 +2,7 @@
 
 namespace Chash\Command\User;
 
-use Symfony\Component\Console\Command\Command;
+use Chash\Command\Database\CommonDatabaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -14,20 +14,14 @@ use Symfony\Component\Console\Formatter\OutputFormatterStyle;
  * Class CommonChamiloUserCommand
  * @package Chash\Command\User
  */
-class CommonChamiloUserCommand extends Command
+class CommonChamiloUserCommand extends CommonDatabaseCommand
 {
     /**
      *
      */
     protected function configure()
     {
-        $this
-            ->addOption(
-                'conf',
-                null,
-                InputOption::VALUE_NONE,
-                'Set a configuration file'
-            );
+        parent::configure();
     }
 
     /**
@@ -37,7 +31,7 @@ class CommonChamiloUserCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $configuration = $input->getOption('conf');
-        $this->getHelper('configuration')->readConfigurationFile($configuration);
+        parent::execute($input, $output);
     }
+
 }
