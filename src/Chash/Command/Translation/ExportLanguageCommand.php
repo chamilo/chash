@@ -23,7 +23,7 @@ class ExportLanguageCommand extends CommonDatabaseCommand
         parent::configure();
         $this
             ->setName('translation:export_language')
-            ->setDescription('Exports a Chamilo language package')
+            ->setDescription('Exports a Chamilo language package in .tar in /tmp/[language].tar or somewhere else')
             ->addArgument(
                 'language',
                 InputArgument::REQUIRED,
@@ -32,7 +32,7 @@ class ExportLanguageCommand extends CommonDatabaseCommand
             ->addOption(
                 'tmp',
                 null,
-                InputOption::VALUE_OPTIONAL,
+                InputArgument::OPTIONAL,
                 'Allows you to specify in which temporary directory the backup files should be placed (optional, defaults to /tmp)'
             );
     }
@@ -51,44 +51,67 @@ class ExportLanguageCommand extends CommonDatabaseCommand
 
         $_configuration = $this->getHelper('configuration')->getConfiguration();
 
-        $connection = $this->getConnection($input);
+        $conn = $this->getConnection($input);
 
-        if ($connection) {
+        if ($conn instanceof \Doctrine\DBAL\Connection) {
             $lang = isset($language) ? $language : null;
+            $langQuoted = $conn->quote($lang);
 
-            $lang = mysql_real_escape_string($lang);
-
-            $q        = mysql_query("SELECT * FROM language WHERE english_name = '$lang' ");
-            $langInfo = mysql_fetch_array($q, MYSQL_ASSOC);
-
+            $q = "SELECT * FROM language WHERE english_name = $langQuoted ";
+            try {
+                $stmt = $conn->prepare($q);
+                $stmt->execute();
+            } catch (\PDOException $e) {
+                $output->write('SQL error!'.PHP_EOL);
+                throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+            }
+            $langInfo = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (!$langInfo) {
 
-                $output->writeln("<comment>Language '$lang' is not registered in the Chamilo Database</comment>");
+                $output->writeln("<comment>Language $langQuoted is not registered in the Chamilo Database</comment>");
 
-                $q = mysql_query("SELECT * FROM language WHERE parent_id IS NULL or parent_id = 0");
-                $output->writeln("<comment>Available languages are: </comment>");
-                while ($langRow = mysql_fetch_array($q, MYSQL_ASSOC)) {
-                    $output->write($langRow['english_name'].", ");
+                $q = "SELECT * FROM language WHERE parent_id IS NULL or parent_id = 0";
+                try {
+                    $stmt2 = $conn->prepare($q);
+                    $stmt2->execute();
+                } catch (\PDOException $e) {
+                    $output->write('SQL error!'.PHP_EOL);
+                    throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
+                $output->writeln("<comment>Available languages are: </comment>");
+                $list = '';
+                while ($langRow = $stmt2->fetch(\PDO::FETCH_ASSOC)) {
+                    $list .= $langRow['english_name'].", ";
+                }
+                $output->write(substr($list, 0, -2));
                 $output->writeln(' ');
 
-                $q = mysql_query("SELECT * FROM language WHERE parent_id <> 0");
-                $output->writeln("<comment>Available sub languages are: </comment>");
-                while ($langRow = mysql_fetch_array($q, MYSQL_ASSOC)) {
-                    $output->write($langRow['english_name'].", ");
+                $q = "SELECT * FROM language WHERE parent_id <> 0";
+                try {
+                    $stmt3 = $conn->prepare($q);
+                    $stmt3->execute();
+                } catch (\PDOException $e) {
+                    $output->write('SQL error!'.PHP_EOL);
+                    throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
+                $output->writeln("<comment>Available sub languages are: </comment>");
+                $list = '';
+                while ($langRow = $stmt3->fetch(\PDO::FETCH_ASSOC)) {
+                    $list .= $langRow['english_name'].", ";
+                }
+                $output->write(substr($list, 0, -2));
                 $output->writeln(' ');
                 exit;
             } else {
                 $output->writeln(
-                    "<comment>Language</comment> <info>'$lang'</info> <comment>is registered in the Chamilo installation with iso code: </comment><info>{$langInfo['isocode']} </info>"
+                    "<comment>Language</comment> <info>$langQuoted</info> <comment>is registered in the Chamilo installation with iso code: </comment><info>{$langInfo['isocode']} </info>"
                 );
             }
 
             $langFolder = $_configuration['root_sys'].'main/lang/'.$lang;
 
             if (!is_dir($langFolder)) {
-                $output->writeln("<comment>Language '$lang' does not exist in the path: $langFolder</comment>");
+                $output->writeln("<comment>Language $langQuoted does not exist in the path: $langFolder</comment>");
             }
 
             if (empty($tmpFolder)) {
