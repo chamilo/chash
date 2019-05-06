@@ -2,7 +2,7 @@
 
 namespace Chash\Command\User;
 
-use Symfony\Component\Console\Command\Command;
+use Chash\Command\Database\CommonDatabaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Remove the "admin" role from *ALL* users on all portals of this instance
  * @package Chash\Command\User
  */
-class DisableAdminsCommand extends CommonChamiloUserCommand
+class DisableAdminsCommand extends CommonDatabaseCommand
 {
     /**
      *
@@ -36,7 +36,7 @@ class DisableAdminsCommand extends CommonChamiloUserCommand
     {
         parent::execute($input, $output);
         $_configuration = $this->getHelper('configuration')->getConfiguration();
-        $connection = $this->getConnection($input);
+        $conn = $this->getConnection($input);
         $dialog = $this->getHelperSet()->get('dialog');
         if (!$dialog->askConfirmation(
             $output,
@@ -47,12 +47,17 @@ class DisableAdminsCommand extends CommonChamiloUserCommand
             return;
         }
 
-        $us = "DELETE FROM admin";
-        $uq = mysql_query($us);
-        if ($uq === false) {
-            $output->writeln('Could not delete admins.');
-        } else {
-            $output->writeln('All admins disabled.');
+        if ($conn instanceof \Doctrine\DBAL\Connection) {
+            try {
+                $us = "DELETE FROM admin";
+                $stmt = $conn->prepare($us);
+                $stmt->execute();
+            } catch (\PDOException $e) {
+                $output->writeln('Could not delete admins.');
+                $output->write('SQL error!'.PHP_EOL);
+                throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+            }
+            $output->writeln('All admins have been disabled. Use user:make-admin to add one back.');
         }
         return null;
     }
