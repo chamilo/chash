@@ -49,40 +49,47 @@ class PlatformLanguageCommand extends CommonDatabaseCommand
     {
         parent::execute($input, $output);
         $_configuration = $this->getHelper('configuration')->getConfiguration();
-        $connection = $this->getConnection($input);
-        $lang = mysql_real_escape_string($input->getArgument('language'));
-        if (empty($lang)) {
-            $ls = "SELECT selected_value FROM settings_current WHERE variable='platformLanguage'";
-            $lq = mysql_query($ls);
-            if ($lq === false) {
-                $output->writeln('Error in query: '.mysql_error());
-                return null;
-            } else {
-                $lr = mysql_fetch_assoc($lq);
+        $conn = $this->getConnection($input);
+        $lang = $input->getArgument('language');
+        if ($conn instanceof \Doctrine\DBAL\Connection) {
+            if (empty($lang)) {
+                $ls = "SELECT selected_value FROM settings_current WHERE variable='platformLanguage'";
+                try {
+                    $stmt = $conn->prepare($ls);
+                    $stmt->execute();
+                } catch (\PDOException $e) {
+                    $output->write('SQL error!'.PHP_EOL);
+                    throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+                }
+                $lr = $stmt->fetch(\PDO::FETCH_ASSOC);
                 $output->writeln('Current default language is: '.$lr['selected_value']);
-            }
-        } else {
-            $ls = "SELECT english_name FROM language ORDER BY english_name";
-            $lq = mysql_query($ls);
-            if ($lq === false) {
-                $output->writeln('Error in query: '.mysql_error());
-                return null;
             } else {
+                $ls = "SELECT english_name FROM language ORDER BY english_name";
+                try {
+                    $stmt = $conn->prepare($ls);
+                    $stmt->execute();
+                } catch (\PDOException $e) {
+                    $output->write('SQL error!'.PHP_EOL);
+                    throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+                }
                 $languages = [];
-                while ($lr = mysql_fetch_assoc($lq)) {
+                while ($lr = $stmt->fetch(\PDO::FETCH_ASSOC)) {
                     $languages[] = $lr['english_name'];
                 }
                 if (!in_array($lang, $languages)) {
                     $output->writeln($lang.' must be available on your platform before you can set it as default');
                     return null;
                 }
-                $lu = "UPDATE settings_current set selected_value = '$lang' WHERE variable = 'platformLanguage'";
-                $lq = mysql_query($lu);
-                if ($lq === false) {
-                    $output->writeln('Error in query: '.mysql_error());
-                } else {
-                    $output->writeln('Language set to '.$lang);
+                $lang = $conn->quote($lang);
+                $lu = "UPDATE settings_current set selected_value = $lang WHERE variable = 'platformLanguage'";
+                try {
+                    $stmt = $conn->prepare($lu);
+                    $stmt->execute();
+                } catch (\PDOException $e) {
+                    $output->write('SQL error!'.PHP_EOL);
+                    throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
+                $output->writeln('Language set to '.$lang);
             }
         }
         return null;
