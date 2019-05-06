@@ -29,16 +29,14 @@ class UpdateDirectoryMaxSizeCommand extends CommonDatabaseCommand
             ->setName('files:update_directory_max_size')
             ->setAliases(array('fudms'))
             ->setDescription('Increases the max disk space for all the courses reaching a certain threshold.')
-            ->addOption(
+            ->addArgument(
                 'threshold',
-                null,
-                InputOption::VALUE_NONE,
+                InputArgument::REQUIRED,
                 'Sets the threshold, in %, above which a course size should be automatically increased'
             )
-            ->addOption(
-                'add-size',
-                null,
-                InputOption::VALUE_NONE,
+            ->addArgument(
+                'size',
+                InputArgument::REQUIRED,
                 'Number of MB to add to the max size of the course'
             )
         ;
@@ -52,7 +50,9 @@ class UpdateDirectoryMaxSizeCommand extends CommonDatabaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-        $add = $input->getOption('add-size'); //1 if the option was set
+        $conn = $this->getConnection($input);
+
+        $add = $input->getArgument('size'); //1 if the option was set
         if (empty($add)) {
             $add = 100;
         }
@@ -62,66 +62,89 @@ class UpdateDirectoryMaxSizeCommand extends CommonDatabaseCommand
             return;
         }
 
-        $threshold = $input->getOption('threshold');
-        if (empty($threshold)) {
-            $threshold = 75;
-        }
-        $this->writeCommandHeader($output, 'Using threshold: '.$threshold);
-        $this->writeCommandHeader($output, 'Checking courses dir...');
+        if ($conn instanceof \Doctrine\DBAL\Connection) {
 
-        // Get database and path information
-        $coursesPath = $this->getConfigurationHelper()->getSysPath();
-        $connection = $this->getConnection($input);
-        $_configuration = $this->getConfigurationHelper()->getConfiguration();
-
-        $courseTable = $_configuration['main_database'].'.course';
-        $globalCourses = array();
-        $sql = "SELECT c.id as cid, c.code as ccode, c.directory as cdir, c.disk_quota as cquota
-                FROM $courseTable c";
-        $res = mysql_query($sql);
-        if ($res && mysql_num_rows($res) > 0) {
-            while ($row = mysql_fetch_assoc($res)) {
-                $globalCourses[$row['cdir']] = array('id' => $row['cid'], 'code' => $row['ccode'], 'quota' => $row['cquota']);
+            $threshold = $input->getArgument('threshold');
+            if (empty($threshold)) {
+                $threshold = 75;
             }
-        }
+            $this->writeCommandHeader($output, 'Using threshold: '.$threshold);
+            $this->writeCommandHeader($output, 'Checking courses dir...');
 
-        $dirs = $this->getConfigurationHelper()->getDataFolders();
-        if (count($dirs) > 0) {
-            foreach ($dirs as $dir) {
-                $file = $dir->getFileName();
-                $res = exec('du -s '.$dir->getRealPath()); // results are returned in KB (under Linux)
-                $res = preg_split('/\s/',$res);
-                $size = round($res[0]/1024,1); // $size is stored in MB
-                if (isset($globalCourses[$file]['code'])) {
-                    $code = $globalCourses[$file]['code'];
-                    $quota = round($globalCourses[$file]['quota']/(1024*1024), 0); //quota is originally in Bytes in DB. Store in MB
-                    $rate = '-';
-                    if ($quota > 0) {
-                        $newAllowedSize = $quota;
-                        $rate = round(($size/$newAllowedSize)*100, 0); //rate is a percentage of disk use vs allowed quota, in MB
-                        $increase = false;
-                        while ($rate > $threshold) { // Typically 80 > 75 -> increase quota
-                            //$output->writeln('...Rate '.$rate.' is larger than '.$threshold.', so increase allowed size');
-                            // Current disk usage goes beyond threshold. Increase allowed size by 100MB
-                            $newAllowedSize += $add;
-                            //$output->writeln('....New allowed size is '.$newAllowedSize);
-                            $rate = round(($size/$newAllowedSize)*100, 0);
-                            //$output->writeln('...Rate is now '.$rate);
-                            $increase = true;
+            // Get database and path information
+            $coursesPath = $this->getConfigurationHelper()->getSysPath();
+            $connection = $this->getConnection($input);
+            $_configuration = $this->getConfigurationHelper()->getConfiguration();
+
+            $courseTable = $_configuration['main_database'].'.course';
+            $globalCourses = array();
+            $sql = "SELECT c.id as cid, c.code as ccode, c.directory as cdir, c.disk_quota as cquota
+                    FROM $courseTable c";
+            try {
+                $stmt = $conn->prepare($sql);
+                $stmt->execute();
+            } catch (\PDOException $e) {
+                $output->write('SQL error!'.PHP_EOL);
+                throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+            }
+            if ($stmt->rowCount() > 0) {
+                while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                    $globalCourses[$row['cdir']] = array(
+                        'id' => $row['cid'],
+                        'code' => $row['ccode'],
+                        'quota' => $row['cquota']
+                    );
+                }
+            }
+
+            $dirs = $this->getConfigurationHelper()->getDataFolders();
+            if (count($dirs) > 0) {
+                foreach ($dirs as $dir) {
+                    $file = $dir->getFileName();
+                    $res = exec('du -s '.$dir->getRealPath()); // results are returned in KB (under Linux)
+                    $res = preg_split('/\s/', $res);
+                    $size = round($res[0] / 1024, 1); // $size is stored in MB
+                    if (isset($globalCourses[$file]['code'])) {
+                        $code = $globalCourses[$file]['code'];
+                        $quota = round($globalCourses[$file]['quota'] / (1024 * 1024),
+                            0); //quota is originally in Bytes in DB. Store in MB
+                        $rate = '-';
+                        if ($quota > 0) {
+                            $newAllowedSize = $quota;
+                            $rate = round(($size / $newAllowedSize) * 100,
+                                0); //rate is a percentage of disk use vs allowed quota, in MB
+                            $increase = false;
+                            while ($rate > $threshold) { // Typically 80 > 75 -> increase quota
+                                //$output->writeln('...Rate '.$rate.' is larger than '.$threshold.', so increase allowed size');
+                                // Current disk usage goes beyond threshold. Increase allowed size by 100MB
+                                $newAllowedSize += $add;
+                                //$output->writeln('....New allowed size is '.$newAllowedSize);
+                                $rate = round(($size / $newAllowedSize) * 100, 0);
+                                //$output->writeln('...Rate is now '.$rate);
+                                $increase = true;
+                            }
+                            $newAllowedSize = $newAllowedSize * 1024 * 1024;
+                            //$output->writeln('Allowed size is '.$newAllowedSize.' Bytes, or '.round($newAllowedSize/(1024*1024)));
+                            $sql = "UPDATE $courseTable SET disk_quota = $newAllowedSize WHERE id = ".$globalCourses[$file]['id'];
+                            try {
+                                $stmt2 = $conn->prepare($sql);
+                                $stmt2->execute();
+                            } catch (\PDOException $e) {
+                                $output->write('SQL error!'.PHP_EOL);
+                                throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+                            }
+                            if ($increase) {
+                                $output->writeln('Increased max size of '.$globalCourses[$file]['code'].'('.$globalCourses[$file]['id'].') to '.$newAllowedSize);
+                            }
+                        } else {
+                            //Quota is 0 (unlimited?)
                         }
-                        $newAllowedSize = $newAllowedSize*1024*1024;
-                        //$output->writeln('Allowed size is '.$newAllowedSize.' Bytes, or '.round($newAllowedSize/(1024*1024)));
-                        $sql = "UPDATE $courseTable SET disk_quota = $newAllowedSize WHERE id = ".$globalCourses[$file]['id'];
-                        $res = mysql_query($sql);
-                        if ($increase) {
-                            $output->writeln('Increased max size of '.$globalCourses[$file]['code'].'('.$globalCourses[$file]['id'].') to '.$newAllowedSize);
-                        }
-                    } else {
-                        //Quota is 0 (unlimited?)
                     }
                 }
             }
+            $output->writeln('Done increasing disk space');
+        } else {
+            $output->writeln('The connection does not seem to be a valid PDO connection');
         }
-        $output->writeln('Done increasing disk space');
     }
 }
