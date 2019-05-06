@@ -45,61 +45,72 @@ class AddSubLanguageCommand extends CommonDatabaseCommand
     {
         parent::execute($input, $output);
         $_configuration = $this->getConfigurationArray();
-        $connection = $this->getConnection($input);
+        $conn = $this->getConnection($input);
 
         $parent = $input->getArgument('parent');
         $lang = $input->getArgument('sublanguage');
-        $sql = "SELECT english_name FROM language WHERE english_name = ?";
-        $statement = $connection->executeQuery($sql, [$lang]);
-        $count = $statement->rowCount();
+        if ($conn instanceof \Doctrine\DBAL\Connection) {
+            $langQuoted = $conn->quote($lang);
+            $sql = "SELECT english_name FROM language WHERE english_name = $langQuoted";
+            try {
+                $stmt = $conn->prepare($sql);
+                $stmt->execute();
+            } catch (\PDOException $e) {
+                $output->write('SQL error!'.PHP_EOL);
+                throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+            }
 
-        if ($count) {
-            $output->writeln($lang.' already exists in the database. Pick another English name.');
-            return null;
-        }
+            $count = $stmt->rowCount();
+            if ($count) {
+                $output->writeln($lang.' already exists in the database. Pick another English name.');
+                return null;
+            }
 
-        $sql = "SELECT id, original_name, english_name, isocode, dokeos_folder
-                FROM language WHERE english_name = ?";
-        $statement = $connection->prepare($sql);
-        $statement->bindValue('1', $parent);
-        $statement->execute();
-        $count = $statement->rowCount();
-        $parentData = $statement->fetch();
+            $parentQuoted = $conn->quote($parent);
+            $sql = "SELECT id, original_name, english_name, isocode, dokeos_folder
+                    FROM language WHERE english_name = $parentQuoted";
+            try {
+                $stmt2 = $conn->prepare($sql);
+                $stmt2->execute();
+            } catch (\PDOException $e) {
+                $output->write('SQL error!'.PHP_EOL);
+                throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+            }
+            $count = $stmt2->rowCount();
+            $parentData = $stmt2->fetch();
 
-        if ($count < 1) {
-            $output->writeln('The parent language '.$parent.' does not exist. Please choose a valid parent.');
-            return null;
-        }
+            if ($count < 1) {
+                $output->writeln("The parent language $parentQuoted does not exist. Please choose a valid parent.");
+                return null;
+            }
 
-        if (is_dir($_configuration['root_sys'].'main/lang/'.$lang)) {
-            $output->writeln('The destination directory ('.$_configuration['root_sys'].'main/lang/'.$lang.') already exists. Please choose another sub-language name.');
-            return null;
-        }
+            if (is_dir($_configuration['root_sys'].'main/lang/'.$lang)) {
+                $output->writeln('The destination directory ('.$_configuration['root_sys'].'main/lang/'.$lang.') already exists. Please choose another sub-language name.');
+                return null;
+            }
 
-        // Everything is OK so far, insert the sub-language
-        /*$sql = "INSERT INTO language ()
-               VALUES ('{$parentData['original_name']}-2','$lang','{$parentData['isocode']}','$lang',0,{$parentData['id']})";*/
-        $result = $connection->insert(
-            'language',
-            [
-                'original_name' => $parentData['original_name']."-2",
-                'english_name' => $lang,
-                'isocode' => $parentData['isocode'],
-                'dokeos_folder' => $lang,
-                'available' => 0,
-                'parent_id' => $parentData['id']
-            ]
-        );
-
-        if ($result) {
-            $output->writeln('Error in query: '.mysql_error());
-        } else {
-            //permissions gathering, copied from main_api.lib.php::api_get_permissions_for_new_directories()
+            // Everything is OK so far, insert the sub-language
+            try {
+                $conn->insert('language', array(
+                    'original_name' => $parentData['original_name']."-2",
+                    'english_name' => $lang,
+                    'isocode' => $parentData['isocode'],
+                    'dokeos_folder' => $lang,
+                    'available' => 0,
+                    'parent_id' => $parentData['id']
+                ));
+            } catch (\PDOException $e) {
+                $output->write('SQL error!'.PHP_EOL);
+                throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+            }
+            //Permissions gathering, copied from main_api.lib.php::api_get_permissions_for_new_directories()
             //require_once $_configuration['root_sys'].'main/inc/lib/main_api.lib.php';
             //$perm = api_get_permissions_for_new_directories();
             // @todo Improve permissions to force creating as user www-data
             $r = @mkdir($_configuration['root_sys'].'main/lang/'.$lang, 0777);
             $output->writeln('Sub-language '.$lang.' of language '.$parent.' has been created but is disabled. Fill it, then enable to make available to users. Make sure you check the permissions for the newly created directory as well ('.$_configuration['root_sys'].'main/lang/'.$lang.')');
+        } else {
+            $output->writeln('The connection does not seem to be a valid PDO connection');
         }
         return null;
     }
