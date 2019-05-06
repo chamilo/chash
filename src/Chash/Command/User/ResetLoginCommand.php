@@ -44,18 +44,29 @@ class ResetLoginCommand extends CommonChamiloUserCommand
     {
         parent::execute($input, $output);
         $_configuration = $this->getHelper('configuration')->getConfiguration();
-        $connection = $this->getConnection($input);
         $username = $input->getArgument('username');
-        $us = "SELECT * FROM user WHERE username = '".mysql_real_escape_string($username)."'";
-        $uq = mysql_query($us);
-        $un = mysql_num_rows($uq);
-        if ($un >= 1) {
-            $user = mysql_fetch_assoc($uq);
-            $link = $_configuration['root_web'].'main/auth/lostPassword.php?reset='.md5($_configuration['security_key'].$user['email']).'&id='.$user['user_id'];
-            $output->writeln('Follow this link to login as '.$username);
-            $output->writeln($link);
+        $conn = $this->getConnection($input);
+        if ($conn instanceof \Doctrine\DBAL\Connection) {
+            try {
+                $us = "SELECT id, email FROM user WHERE username = ".$conn->quote($username);
+                $stmt = $conn->prepare($us);
+                $stmt->execute();
+            } catch (\PDOException $e) {
+                $output->write('SQL error!'.PHP_EOL);
+                throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+            }
+            $un = $stmt->rowCount();
+            if ($un >= 1) {
+                $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $link = $_configuration['root_web'].'main/auth/lostPassword.php?reset=';
+                $link .= sha1($user['email']).'&id='.$user['id'];
+                $output->writeln('Follow this link to login as '.$username);
+                $output->writeln($link);
+            } else {
+                $output->writeln('Could not find user '.$username);
+            }
         } else {
-            $output->writeln('Could not find user '.$username);
+            $output->writeln('The connection does not seem to be a valid PDO connection');
         }
         return null;
     }
