@@ -40,6 +40,7 @@ class MailConfCommand extends CommonDatabaseCommand
         $path = $this->getHelper('configuration')->getConfigurationPath();
         $path .= 'mail.conf.php';
         define('IS_WINDOWS_OS', strtolower(substr(php_uname(), 0, 3)) == 'win'?true:false);
+        $platform_email = [];
         if (isset($path) && is_file($path)) {
             $output->writeln('File: '.$path);
             $lines = file($path);
