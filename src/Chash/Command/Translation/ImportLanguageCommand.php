@@ -43,17 +43,25 @@ class ImportLanguageCommand extends CommonDatabaseCommand
         $helper = $this->getHelperSet()->get('question');
         $_configuration = $this->getHelper('configuration')->getConfiguration();
         $file = $input->getArgument('file');
-        $connection = $this->getConnection($input);
+
+        $conn = $this->getConnection($input);
+
         if (is_file($file) && is_readable($file)) {
             $phar = new \PharData($file);
             if ($phar->hasMetadata()) {
                 $langInfo = $phar->getMetadata();
 
-                if ($connection) {
-                    $q = mysql_query(
-                        "SELECT * FROM language WHERE dokeos_folder = '{$langInfo['dokeos_folder']}' "
-                    );
-                    $langInfoFromDB = mysql_fetch_array($q, MYSQL_ASSOC);
+                if ($conn instanceof \Doctrine\DBAL\Connection) {
+                    $folder = $conn->quote($langInfo['dokeos_folder']);
+                    $ls = "SELECT * FROM language WHERE dokeos_folder = ".$folder;
+                    try {
+                        $stmt = $conn->prepare($ls);
+                        $stmt->execute($ls);
+                    } catch (\PDOException $e) {
+                        $output->write('SQL error!'.PHP_EOL);
+                        throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+                    }
+                    $langInfoFromDB = $stmt->fetch(\PDO::FETCH_ASSOC);
                     $langFolderPath = $_configuration['root_sys'].'main/lang/'.$langInfoFromDB['dokeos_folder'];
                     if ($langInfoFromDB && $langFolderPath) {
                         $question = new ConfirmationQuestion(
@@ -69,7 +77,7 @@ class ImportLanguageCommand extends CommonDatabaseCommand
                             $output->writeln("Files were copied.");
                         } else {
                             $output->writeln(
-                                "<error>Make sure that this folder $langFolderPath has writable permissions or execute the script with sudo </error>"
+                                "<error>Make sure that the $langFolderPath folder has writable permissions, or execute the script with sudo </error>"
                             );
                         }
                     } else {
@@ -77,14 +85,25 @@ class ImportLanguageCommand extends CommonDatabaseCommand
                         $parentId = '';
                         if (!empty($langInfo['parent_id'])) {
                             $sql = "select selected_value from settings_current where variable = 'allow_use_sub_language'";
-                            $result = mysql_query($sql);
-                            $subLanguageSetting = mysql_fetch_array($result, MYSQL_ASSOC);
+                            try {
+                                $stmt2 = $conn->prepare($sql);
+                                $stmt2->execute();
+                            } catch (\PDOException $e) {
+                                $output->write('SQL error!'.PHP_EOL);
+                                throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+                            }
+                            $subLanguageSetting = $stmt2->fetch(\PDO::FETCH_ASSOC);
                             $subLanguageSetting = $subLanguageSetting['selected_value'];
                             if ($subLanguageSetting == 'true') {
-                                $q = mysql_query(
-                                    "SELECT * FROM language WHERE id = '{$langInfo['parent_id']}' "
-                                );
-                                $parentLangInfoFromDB = mysql_fetch_array($q, MYSQL_ASSOC);
+                                $sql = "SELECT * FROM language WHERE id = ".(int) $langInfo['parent_id'];
+                                try {
+                                    $stmt3 = $conn->prepare($sql);
+                                    $stmt3->execute();
+                                } catch (\PDOException $e) {
+                                    $output->write('SQL error!'.PHP_EOL);
+                                    throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+                                }
+                                $parentLangInfoFromDB = $stmt3->fetch(\PDO::FETCH_ASSOC);
                                 if ($parentLangInfoFromDB) {
                                     $output->writeln(
                                         "Setting parent language: ".$parentLangInfoFromDB['original_name']
@@ -106,24 +125,24 @@ class ImportLanguageCommand extends CommonDatabaseCommand
                             $output->writeln("Parent language was not provided");
                         }
 
-                        $q = mysql_query(
-                            "INSERT INTO language (original_name, english_name, isocode, dokeos_folder, available, parent_id) VALUES (
+                        $q = "INSERT INTO language (original_name, english_name, isocode, dokeos_folder, available, parent_id) VALUES (
                                 '".$langInfo['original_name']."',
                                 '".$langInfo['english_name']."',
                                 '".$langInfo['isocode']."',
                                 '".$langInfo['dokeos_folder']."',
-                                '1',
-                                '".$parentId."')"
-                        );
-
-                        if ($q) {
-                            $output->writeln("Language inserted in the DB");
-                            $langFolderPath = $_configuration['root_sys'].'main/lang/'.$langInfo['dokeos_folder'];
-                            $phar->extractTo($langFolderPath, null, true); // extract all files
-                            $output->writeln("<comment>Files were copied here $langFolderPath </comment>");
-                        } else {
-                            $output->writeln("An error ocurred while tring to create the language");
+                                1,
+                                '$parentId')";
+                        try {
+                            $stmt4 = $conn->prepare($q);
+                            $stmt4->execute();
+                        } catch (\PDOException $e) {
+                            $output->write('SQL error!'.PHP_EOL);
+                            throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                         }
+                        $output->writeln("Language inserted in the DB");
+                        $langFolderPath = $_configuration['root_sys'].'main/lang/'.$langInfo['dokeos_folder'];
+                        $phar->extractTo($langFolderPath, null, true); // extract all files
+                        $output->writeln("<comment>Files were copied here $langFolderPath </comment>");
                     }
                 }
             } else {
