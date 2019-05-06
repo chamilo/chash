@@ -137,6 +137,8 @@ class ExportLanguageCommand extends CommonDatabaseCommand
                 $phar->setMetadata($langInfo);
                 $output->writeln("<comment>File created:</comment> <info>{$fileName}</info>");
             }
+        } else {
+            $output->writeln('The connection does not seem to be a valid PDO connection');
         }
     }
 }
