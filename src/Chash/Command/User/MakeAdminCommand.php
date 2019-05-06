@@ -2,7 +2,7 @@
 
 namespace Chash\Command\User;
 
-use Symfony\Component\Console\Command\Command;
+use Chash\Command\Database\CommonDatabaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Makes the given user an admin on the main portal
  */
-class MakeAdminCommand extends CommonChamiloUserCommand
+class MakeAdminCommand extends CommonDatabaseCommand
 {
     protected function configure()
     {
@@ -35,30 +35,46 @@ class MakeAdminCommand extends CommonChamiloUserCommand
     {
         parent::execute($input, $output);
         $_configuration = $this->getHelper('configuration')->getConfiguration();
-        $connection = $this->getConnection($input);
+        $conn = $this->getConnection($input);
         $username = $input->getArgument('username');
-        $us = "SELECT * FROM user WHERE username = '".mysql_real_escape_string($username)."'";
-        $uq = mysql_query($us);
-        $un = mysql_num_rows($uq);
-        if ($un >= 1) {
-            $user = mysql_fetch_assoc($uq);
-            $as = "SELECT * FROM admin WHERE user_id = ".$user['user_id'];
-            $aq = mysql_query($as);
-            $an = mysql_num_rows($aq);
-            if ($an < 1) {
-                //$output->writeln('User '.$username.' is not an admin. Making him one.');
-                $ms = "INSERT INTO admin (user_id) VALUES (".$user['user_id'].")";
-                $mq = mysql_query($ms);
-                if ($mq === false) {
-                    $output->writeln('Error making '.$username.' an admin.');
-                } else {
+        if ($conn instanceof \Doctrine\DBAL\Connection) {
+            try {
+                $stmt = $conn->prepare("SELECT id FROM user WHERE username = ".$conn->quote($username));
+                $stmt->execute();
+                $un = $stmt->rowCount();
+            } catch (\PDOException $e) {
+                $output->write('SQL error!'.PHP_EOL);
+                throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+            }
+            if ($un >= 1) {
+                try {
+                    $user = $stmt->fetch(\PDO::FETCH_OBJ);
+                    $stmt2 = $conn->prepare("SELECT id FROM admin WHERE user_id = ".$user->id);
+                    $stmt2->execute();
+                    $an = $stmt2->rowCount();
+                } catch (\PDOException $e) {
+                    $output->writeln('Error looking for the user in the admin table.');
+                    $output->write('SQL error!'.PHP_EOL);
+                    throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+                }
+                if ($an < 1) {
+                    try {
+                        $stmt3 = $conn->prepare("INSERT INTO admin (user_id) VALUES (".$user->id.")");
+                        $stmt3->execute();
+                    } catch (\PDOException $e) {
+                        $output->writeln('Error making '.$username.' an admin.');
+                        $output->write('SQL error!'.PHP_EOL);
+                        throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+                    }
                     $output->writeln('User '.$username.' is now an admin.');
+                } else {
+                    $output->writeln('User '.$username.' is already an admin.');
                 }
             } else {
-                $output->writeln('User '.$username.' is alreay an admin.');
+                $output->writeln('Could not find user '.$username);
             }
         } else {
-            $output->writeln('Could not find user '.$username);
+            $output->writeln('The connection does not seem to be a valid PDO connection');
         }
         return null;
     }
