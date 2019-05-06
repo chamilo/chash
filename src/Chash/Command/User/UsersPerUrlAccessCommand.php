@@ -39,21 +39,22 @@ class UsersPerUrlAccessCommand extends CommonChamiloUserCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-        $connection = $this->getConnection($input);
+        $conn = $this->getConnection($input);
 
-        if (!empty($dbh)) {
+        if ($conn instanceof \Doctrine\DBAL\Connection) {
             $ls = "SELECT url, count(user_id) as users FROM access_url a
                     INNER JOIN access_url_rel_user r ON a.id = r.access_url_id
                     order by url";
-            $lq = mysql_query($ls);
-            if ($lq === false) {
-                $output->writeln('Error in query: '.mysql_error());
-                return null;
-            } else {
-                $output->writeln("Url\t\t\t\t| Number of users");
-                while ($lr = mysql_fetch_assoc($lq)) {
-                    $output->writeln($lr['url'] . "\t\t| " . $lr['users']);
-                }
+            try {
+                $stmt = $conn->prepare($ls);
+                $stmt->execute();
+            } catch (\PDOException $e) {
+                $output->writeln('SQL Error!'.PHP_EOL);
+                throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+            }
+            $output->writeln("Url\t\t\t\t| Number of users");
+            while ($lr = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $output->writeln($lr['url'] . "\t\t| " . $lr['users']);
             }
         }
         return null;
