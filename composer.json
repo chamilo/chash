@@ -35,6 +35,7 @@
         "alchemy/zippy": "dev-master"
     },
     "require-dev": {
+        "phpunit/phpunit": "3.7.*",
         "mikey179/vfsstream": ">=1.2"
     }
 }
