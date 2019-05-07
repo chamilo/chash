@@ -97,6 +97,7 @@ $application->addCommands(
         new Chash\Command\User\ResetLoginCommand(),
         new Chash\Command\User\SetLanguageCommand(),
         new Chash\Command\User\UsersPerUrlAccessCommand(),
+        new Chash\Command\Email\SendEmailCommand(),
     ]
 );
 $application->run();
