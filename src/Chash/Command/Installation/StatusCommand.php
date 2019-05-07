@@ -22,6 +22,12 @@ class StatusCommand extends CommonDatabaseCommand
         $this
             ->setName('chash:chamilo_status')
             ->setDescription('Show the information of the current Chamilo installation')
+            ->addOption(
+                'show-pass',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Set a value to show the chamilo database password'
+            )
         ;
     }
 
@@ -38,6 +44,7 @@ class StatusCommand extends CommonDatabaseCommand
         parent::execute($input, $output);
         $connection = $this->getConnection($input);
         $_configuration = $this->getConfigurationArray();
+        $showPass = $input->getOption('show-pass');
         $query = "SELECT selected_value FROM settings_current WHERE variable = 'chamilo_database_version'";
         $data = $connection->executeQuery($query);
         $data = $data->fetch();
@@ -66,7 +73,12 @@ class StatusCommand extends CommonDatabaseCommand
         $output->writeln('<comment>Chamilo $_configuration[main_database]:</comment> <info>'.$_configuration['main_database'].'</info>');
         $output->writeln('<comment>Chamilo $_configuration[db_host]:</comment> <info>'.$_configuration['db_host'].'</info>');
         $output->writeln('<comment>Chamilo $_configuration[db_user]:</comment> <info>'.$_configuration['db_user'].'</info>');
-        $output->writeln('<comment>Chamilo $_configuration[db_password]:</comment> <info>'.$_configuration['db_password'].'</info>');
+        $dbPassword = $_configuration['db_password'];
+        if (empty($showPass)) {
+            $dbPassLen = strlen($dbPassword);
+            $dbPassword = str_repeat('*', $dbPassLen);
+        }
+        $output->writeln('<comment>Chamilo $_configuration[db_password]:</comment> <info>'.$dbPassword.'</info>');
 
         if (isset($_configuration['db_port'])) {
             $output->writeln('<comment>Chamilo $_configuration[db_port]:</comment> <info>'.$_configuration['db_port'].'</info>');
@@ -90,7 +102,7 @@ class StatusCommand extends CommonDatabaseCommand
         $output->writeln('');
 
         if (empty($chamiloVersion)) {
-            $output->writeln("<comment>Please check your Chamilo installation carefully the <info>'chamilo_database_version'</info> admin does not exists.</comment>");
+            $output->writeln("<comment>Please check your Chamilo installation carefully the <info>'chamilo_database_version'</info> setting does not exist.</comment>");
         } else {
             //$output->writeln('<comment>Chamilo database settings:</comment>');
             //$output->writeln("<comment>Chamilo setting_current['".$databaseSetting."']:</comment> <info>".$chamiloVersion."</info>");
