@@ -66,7 +66,7 @@ class UpgradeDatabaseCommand extends CommonCommand
 
         // Arguments and options
         $currentVersion = $originalVersion = $input->getArgument('from-version');
-        $version = $originalVersion = $input->getArgument('to-version');
+        $version = $input->getArgument('to-version');
         $host = $input->getArgument('host');
         $username = $input->getArgument('username');
         $password = $input->getArgument('password');
@@ -203,14 +203,7 @@ class UpgradeDatabaseCommand extends CommonCommand
             }
         }
 
-        $lastItem = count($versionsToRun);
-        $counter = 0;
-        $runFixIds = false;
         foreach ($versionsToRun as $versionItem => $versionInfo) {
-            if ($lastItem == $counter) {
-                $runFixIds = true;
-            }
-
             if (isset($versionInfo['require_update']) && $versionInfo['require_update'] == true) {
                 $output->writeln("----------------------------------------------------------------");
                 $output->writeln("<comment>Starting migration from version: </comment><info>$currentVersion</info><comment> to version </comment><info>$versionItem ");
@@ -225,7 +218,7 @@ class UpgradeDatabaseCommand extends CommonCommand
                     $output,
                     $removeUnusedTables = false,
                     $input,
-                    $runFixIds,
+                    false,
                     $onlyUpdateDatabase = true,
                     $rootSys
                 );
@@ -236,7 +229,32 @@ class UpgradeDatabaseCommand extends CommonCommand
                 $currentVersion = $versionItem;
                 $output->writeln("<comment>Skip migration from version: </comment><info>$currentVersion</info><comment> to version </comment><info>$versionItem ");
             }
-            $counter++;
+
+            /*
+             * If the migration from 1.9.x to 1.10.x is finished then we fix the IDs and extra fields
+             */
+            if ($originalVersion === '1.9.x' && $currentVersion === '1.10.x') {
+                require_once $rootSys.'main/inc/lib/database.constants.inc.php';
+                require_once $rootSys.'main/inc/lib/system/session.class.php';
+                require_once $rootSys.'main/inc/lib/chamilo_session.class.php';
+                require_once $rootSys.'main/inc/lib/api.lib.php';
+                require_once $rootSys.'main/inc/lib/database.lib.php';
+                require_once $rootSys.'main/inc/lib/custom_pages.class.php';
+                require_once $rootSys.'main/install/install.lib.php';
+                require_once $rootSys.'main/inc/lib/display.lib.php';
+                //require_once $rootSys.'main/inc/lib/group_portal_manager.lib.php';
+                require_once $rootSys.'main/inc/lib/model.lib.php';
+                require_once $rootSys.'main/inc/lib/events.lib.php';
+                require_once $rootSys.'main/inc/lib/extra_field.lib.php';
+                require_once $rootSys.'main/inc/lib/extra_field_value.lib.php';
+                require_once $rootSys.'main/inc/lib/urlmanager.lib.php';
+                require_once $rootSys.'main/inc/lib/usermanager.lib.php';
+                require_once $rootSys.'src/Chamilo/CoreBundle/Entity/ExtraField.php';
+                require_once $rootSys.'src/Chamilo/CoreBundle/Entity/ExtraFieldOptions.php';
+
+                $em = $this->setDoctrineSettings($this->getHelperSet());
+                fixIds($em);
+            }
         }
 
         $output->writeln("<comment>Hurray!!! You just finished this migration. To check the current status of your platform, run </comment><info>chamilo:status</info>");
@@ -355,27 +373,6 @@ class UpgradeDatabaseCommand extends CommonCommand
                 } else {
                     $output->writeln(sprintf("File doesn't exist: '<info>%s</info>'", $sqlToInstall));
                 }
-            }
-
-            if ($runFixIds) {
-                require_once $this->getRootSys().'/main/inc/lib/database.constants.inc.php';
-                require_once $this->getRootSys().'/main/inc/lib/system/session.class.php';
-                require_once $this->getRootSys().'/main/inc/lib/chamilo_session.class.php';
-                require_once $this->getRootSys().'/main/inc/lib/api.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/database.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/custom_pages.class.php';
-                require_once $this->getRootSys().'/main/install/install.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/display.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/group_portal_manager.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/model.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/events.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/extra_field.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/extra_field_value.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/urlmanager.lib.php';
-                require_once $this->getRootSys().'/main/inc/lib/usermanager.lib.php';
-                require_once $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraField.php';
-                require_once $this->getRootSys().'/src/Chamilo/CoreBundle/Entity/ExtraFieldOptions.php';
-                fixIds($em);
             }
         } catch (\Exception $e) {
             $output->write(sprintf('<error>Migration failed. Error %s</error>', $e->getMessage()));
