@@ -40,6 +40,7 @@ class UsersPerUrlAccessCommand extends CommonChamiloUserCommand
     {
         parent::execute($input, $output);
         $conn = $this->getConnection($input);
+        $table = $this->getHelperSet()->get('table');
 
         if ($conn instanceof \Doctrine\DBAL\Connection) {
             $ls = "SELECT url, count(user_id) as users FROM access_url a
@@ -52,10 +53,13 @@ class UsersPerUrlAccessCommand extends CommonChamiloUserCommand
                 $output->writeln('SQL Error!'.PHP_EOL);
                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
-            $output->writeln("Url\t\t\t\t| Number of users");
-            while ($lr = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-                $output->writeln($lr['url'] . "\t\t| " . $lr['users']);
+            $table->setHeaders(array('Url', 'Number of Users'));
+            $usersPerUrl = array();
+            while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $usersPerUrl[] = array($row['url'], $row['users']);
             }
+            $table->setRows($usersPerUrl);
+            $table->render($output);
         }
         return null;
     }
