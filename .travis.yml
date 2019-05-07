@@ -11,5 +11,5 @@ php:
   - 7.3
 
 before_script:
-  - COMPOSER_MEMORY_LIMIT=2G composer install --dev --no-interaction
+  - COMPOSER_MEMORY_LIMIT=2G composer install --no-interaction
 script: vendor/bin/phpunit
