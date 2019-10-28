@@ -816,8 +816,8 @@ class InstallCommand extends CommonCommand
                         '{{APP_ENCRYPT_METHOD}}' => $portalSettings['encrypt_method'],
                         '{{APP_URL_APPEND}}' => ''
                     ];
-                    $envFile = $this->getRootSys().'.env';
-                    $distFile = $this->getRootSys().'.env.dist';
+                    $envFile = $this->getRootSys().'.env.local';
+                    $distFile = $this->getRootSys().'.env';
                     \updateEnvFile($distFile, $envFile, $params);
 
                     if (file_exists($envFile)) {

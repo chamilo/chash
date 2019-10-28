@@ -84,11 +84,11 @@ class CommonDatabaseCommand extends CommonCommand
                 $showError = true;
                 // Try 2.x
                 $currentPath = getcwd();
-                if (file_exists($currentPath.'/.env')) {
+                if (file_exists($currentPath.'/.env.local')) {
                     $showError = false;
-                    $io->note('File: .env found '.$currentPath.'/.env');
+                    $io->note('File: .env found '.$currentPath.'/.env.local');
                     $dotenv = new Dotenv();
-                    $data = file_get_contents($currentPath.'/.env');
+                    $data = file_get_contents($currentPath.'/.env.local');
                     $values = $dotenv->parse($data);
                     $result = [];
                     foreach ($values as $key => $value) {

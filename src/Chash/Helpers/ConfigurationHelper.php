@@ -147,8 +147,7 @@ class ConfigurationHelper extends Helper
             return realpath($chamiloPath.'/app/config/').'/';
         }
 
-        if (is_file($chamiloPath.'/.env.dist')
-        ) {
+        if (is_file($chamiloPath.'/.env')) {
             return $chamiloPath.'/';
         }
 
@@ -551,7 +550,7 @@ class ConfigurationHelper extends Helper
 
         return false;
     }
-    
+
     /**
      * Lists the lib folder
      * @return Finder
@@ -562,7 +561,7 @@ class ConfigurationHelper extends Helper
         if (is_dir($sysPath . 'main/inc/lib/')) {
             return $sysPath . 'main/inc/lib/';
         }
-        
+
         return false;
     }
     /**
@@ -577,7 +576,7 @@ class ConfigurationHelper extends Helper
         if (is_dir($sysPath . 'main/inc/conf')) {
             $finder->files()->name($fileName)->in($sysPath . 'main/inc/conf');
         }
-        
+
         foreach ($finder as $file) {
             return $file;
         }
@@ -596,7 +595,7 @@ class ConfigurationHelper extends Helper
         if (is_dir($sysPath . 'main/inc/lib')) {
             $finder->files()->name($fileName)->in($sysPath . 'main/inc/lib');
         }
-        
+
         foreach ($finder as $file) {
             return $file;
         }
