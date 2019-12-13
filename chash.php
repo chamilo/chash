@@ -18,6 +18,13 @@ if (PHP_SAPI != 'cli') {
 
 require __DIR__.'/vendor/autoload.php';
 
+use Doctrine\DBAL\Tools\Console\Command\RunSqlCommand;
+use Doctrine\Migrations\Tools\Console\Command\DiffCommand;
+use Doctrine\Migrations\Tools\Console\Command\ExecuteCommand;
+use Doctrine\Migrations\Tools\Console\Command\GenerateCommand;
+use Doctrine\Migrations\Tools\Console\Command\MigrateCommand;
+use Doctrine\Migrations\Tools\Console\Command\StatusCommand;
+use Doctrine\Migrations\Tools\Console\Command\VersionCommand;
 use Symfony\Component\Console\Application;
 
 $helpers = [
@@ -34,16 +41,17 @@ foreach ($helpers as $name => $helper) {
 $application->addCommands(
     [
         // DBAL Commands.
-        new \Doctrine\DBAL\Tools\Console\Command\RunSqlCommand(),
+        new RunSqlCommand(),
         //new \Doctrine\DBAL\Tools\Console\Command\ImportCommand(),
 
         // Migrations Commands.
-        new \Doctrine\DBAL\Migrations\Tools\Console\Command\DiffCommand(),
-        new \Doctrine\DBAL\Migrations\Tools\Console\Command\ExecuteCommand(),
-        new \Doctrine\DBAL\Migrations\Tools\Console\Command\GenerateCommand(),
-        new \Doctrine\DBAL\Migrations\Tools\Console\Command\MigrateCommand(),
-        new \Doctrine\DBAL\Migrations\Tools\Console\Command\StatusCommand(),
-        new \Doctrine\DBAL\Migrations\Tools\Console\Command\VersionCommand(),
+
+        new DiffCommand(),
+        new ExecuteCommand(),
+        new GenerateCommand(),
+        new MigrateCommand(),
+        new StatusCommand(),
+        new VersionCommand(),
 
         // Chash commands
 
