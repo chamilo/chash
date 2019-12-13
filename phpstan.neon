@@ -1,0 +1,12 @@
+parameters:
+	excludes_analyse:
+		- %rootDir%/../../../public/main/admin/db.php
+		- %rootDir%/../../../public/main/extra/*
+		- %rootDir%/../../../public/main/cron/*
+		- %rootDir%/../../../public/main/inc/lib/pear/*
+		- %rootDir%/../../../public/main/inc/lib/nusoap/*
+		- %rootDir%/../../../public/main/inc/lib/search/*
+		- %rootDir%/../../../public/main/webservices/*
+		- %rootDir%/../../../src/CoreBundle/Migrations/Schema/*
+		- %rootDir%/../../../tests/*
+	level: max

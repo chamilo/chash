@@ -11,4 +11,6 @@ php:
 
 before_script:
   - COMPOSER_MEMORY_LIMIT=2G composer install --no-interaction
-script: vendor/bin/phpunit
+script:
+  - vendor/bin/phpunit
+  - composer analyse
