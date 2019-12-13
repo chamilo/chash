@@ -102,11 +102,11 @@ class ConfigurationHelper extends Helper
         }
 
         // Chamilo v2
-        if (is_dir($chamiloPath.'/app/config') &&
+        if (is_dir($chamiloPath.'/config') &&
             !is_file($chamiloPath.'/main/inc/local.inc.php')
         ) {
             $this->isLegacy = false;
-            return realpath($chamiloPath.'/app/config/').'/';
+            return realpath($chamiloPath.'/config/').'/';
         }
 
         // Chamilo 1.9.x and 1.8.x

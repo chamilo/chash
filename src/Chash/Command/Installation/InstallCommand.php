@@ -553,7 +553,7 @@ class InstallCommand extends CommonCommand
         $configurationPath = $this->getConfigurationHelper()->getNewConfigurationPath($this->path);
 
         // @todo move this in the helper
-        if ($configurationPath == false) {
+        if ($configurationPath === false) {
             // Seems an old installation!
             $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($this->path);
 
@@ -598,6 +598,7 @@ class InstallCommand extends CommonCommand
         );
 
         $this->settingParameters($input);
+        $output->writeln('Root sys value: '.$this->rootSys);
 
         $version = $this->version;
         $download = $this->download;

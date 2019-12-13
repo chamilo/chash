@@ -203,7 +203,7 @@ class CommonCommand extends AbstractCommand
      */
     public function getInstallationPath($version)
     {
-        if ($version == 'master') {
+        if ($version === 'master') {
             $version = $this->getLatestVersion();
         }
         return $this->getInstallationFolder().$version.'/';
