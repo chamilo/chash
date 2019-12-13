@@ -45,7 +45,6 @@ $application->addCommands(
         //new \Doctrine\DBAL\Tools\Console\Command\ImportCommand(),
 
         // Migrations Commands.
-
         new DiffCommand(),
         new ExecuteCommand(),
         new GenerateCommand(),
@@ -54,7 +53,6 @@ $application->addCommands(
         new VersionCommand(),
 
         // Chash commands
-
         new Chash\Command\Chash\SetupCommand(),
         new Chash\Command\Chash\SelfUpdateCommand(),
 

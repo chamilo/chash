@@ -32,7 +32,7 @@
         "doctrine/migrations": "~2.2",
         "zendframework/zend-config": "~3.0",
         "zendframework/zend-stdlib": "~3.0",
-        "alchemy/zippy": "dev-master",
+        "alchemy/zippy": "dev-master"
     },
     "require-dev": {
         "phpstan/phpstan": "^0.11",

@@ -2,7 +2,9 @@
 
 namespace Chash\Command\Installation;
 
+use Chash\Helpers\ConfigurationHelper;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -10,13 +12,13 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
- * Class InstallCommand
- * @package Chash\Command\Installation
+ * Class InstallCommand.
  */
 class InstallCommand extends CommonCommand
 {
@@ -45,7 +47,8 @@ class InstallCommand extends CommonCommand
             ->addOption('temp-folder', null, InputOption::VALUE_OPTIONAL, 'The temp folder.', '/tmp')
             ->addOption('linux-user', null, InputOption::VALUE_OPTIONAL, 'user', 'www-data')
             ->addOption('linux-group', null, InputOption::VALUE_OPTIONAL, 'group', 'www-data')
-            ->addOption('silent', null, InputOption::VALUE_NONE, 'Execute the migration with out asking questions.');
+            ->addOption('silent', null, InputOption::VALUE_NONE, 'Execute the migration with out asking questions.')
+            ;
 
         $params = $this->getPortalSettingsParams();
 
@@ -529,7 +532,6 @@ class InstallCommand extends CommonCommand
         $this->setPortalSettings($portalSettings);
     }
 
-
     /**
      * Setting common parameters.
      * @param InputInterface $input
@@ -589,11 +591,11 @@ class InstallCommand extends CommonCommand
      *
      * @return int|null|void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
+     protected function execute(InputInterface $input, OutputInterface $output)
+     {
         // Setting configuration helper.
         $this->getApplication()->getHelperSet()->set(
-            new \Chash\Helpers\ConfigurationHelper(),
+            new ConfigurationHelper(),
             'configuration'
         );
 

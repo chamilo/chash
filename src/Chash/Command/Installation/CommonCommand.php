@@ -7,7 +7,9 @@ use Doctrine\DBAL\ConnectionException;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Yaml\Parser;
-use Doctrine\Migrations\Tools\Console\Command\AbstractCommand;
+//use Doctrine\Migrations\Tools\Console\Command\AbstractCommand;
+//use Doctrine\ORM\Tools\Console\Command\SchemaTool\AbstractCommand;
+use Symfony\Component\Console\Command\Command as AbstractCommand;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,8 +28,8 @@ class CommonCommand extends AbstractCommand
     public $databaseSettings;
     public $adminSettings;
     public $rootSys;
-    public $configurationPath = null;
-    public $configuration = [];
+    public $configurationPath;
+    public $configuration;
     public $extraDatabaseSettings;
     private $migrationConfigurationFile;
     private $manager;
@@ -639,47 +641,6 @@ class CommonCommand extends AbstractCommand
             // Chamilo installations >= 10
             $this->setRootSys(realpath($configurationPath.'/../../').'/');
         }
-    }
-
-    /**
-     * Writes an .htaccess file with the right RewriteBase path.
-     * @param string $path
-     * @return bool
-     *
-     */
-    public function writeHtaccess($path)
-    {
-        $portalSettings = $this->getPortalSettings();
-
-        /* This (almost) always returns a valid RewriteBase path.
-         *
-         * A few examples:
-         * http://localhost/    -> /
-         * http://localhost/chm -> /chm
-         *
-         * "Invalid" cases:
-         * http://localhost     -> null
-         * http://localhost///  -> ///
-         *
-         * We'll make sure that the path is never NULL, but we can't
-         * do much if the admin has allowed a bogus URL like any of the
-         * last two.
-         *
-         * There's another check for this in
-         * $app->match('/portal-settings', ...)
-         * in main/install/index.php.
-         */
-        $baseUrl = parse_url($portalSettings['site_url'], PHP_URL_PATH);
-
-        // The second case should never happen, but let's play safe.
-        if ($baseUrl == null or substr($baseUrl, 0, 1) != '/') {
-            $baseUrl = '/';
-        }
-
-        $htaccessSrc = file_get_contents($path.'/htaccess-dist');
-        $htaccessFixed = str_replace('{BASE_URL}', $baseUrl, $htaccessSrc);
-
-        return file_put_contents($path.'/.htaccess', $htaccessFixed);
     }
 
     /**
