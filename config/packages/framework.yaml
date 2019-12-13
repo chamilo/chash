@@ -1,0 +1,6 @@
+framework:
+    #form: true
+    secret: 'secret'
+    #csrf_protection: true
+    #esi: ~
+    #fragments: ~

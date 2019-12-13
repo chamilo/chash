@@ -15,9 +15,6 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
  */
 class DropDatabaseCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
     protected function configure(): void
     {
         parent::configure();

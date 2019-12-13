@@ -8,9 +8,11 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
-         syntaxCheck="false"
-         bootstrap="tests/bootstrap.php"
->
+         bootstrap="vendor/autoload.php">
+    <php>
+        <server name="KERNEL_CLASS" value="Chash\Kernel"/>
+    </php>
+
     <testsuites>
         <testsuite name="Chash Test Suite">
             <directory>./tests/Chash/</directory>
