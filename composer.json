@@ -32,10 +32,11 @@
         "doctrine/migrations": "~2.2",
         "zendframework/zend-config": "~3.0",
         "zendframework/zend-stdlib": "~3.0",
-        "alchemy/zippy": "dev-master"
+        "alchemy/zippy": "dev-master",
     },
     "require-dev": {
-        "phpunit/phpunit": "5.*",
+        "phpstan/phpstan": "^0.11",
+        "phpunit/phpunit": "^7.0",
         "mikey179/vfsstream": ">=1.2"
     }
 }
