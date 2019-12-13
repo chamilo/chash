@@ -784,8 +784,7 @@ class InstallCommand extends CommonCommand
                 $sectionsCount = 1;
                 $legacyFiles = [
                     '/vendor/autoload.php',
-                    '/main/inc/lib/database.constants.inc.php',
-                    '/main/install/install.lib.php',
+                    '/public/main/install/install.lib.php',
                     '/public/legacy.php'
                 ];
 
