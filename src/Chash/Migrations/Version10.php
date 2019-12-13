@@ -2,8 +2,8 @@
 
 namespace Chash\Migrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Manages the migration to Chamilo 10
@@ -23,7 +23,7 @@ class Version10 extends AbstractMigration
      * Chamilo upgrade
      * @param Schema $schema
      */
-    public function up(Schema $schema)
+    public function up(Schema $schema): void
     {
         $trackDefaultTable = $schema->getTable('track_e_default');
         $trackDefaultTable->addColumn('session_id', 'integer', ['default' => 0, 'Notnull' => true]);
@@ -386,7 +386,7 @@ class Version10 extends AbstractMigration
      * Chamilo downgrade
      * @param Schema $schema
      */
-    public function down(Schema $schema)
+    public function down(Schema $schema): void
     {
         $this->addSql(
             "UPDATE settings_current SET selected_value = '1.9.0' WHERE variable = 'chamilo_database_version'"
@@ -396,14 +396,14 @@ class Version10 extends AbstractMigration
     /**
      * @param Schema $schema
      */
-    public function preUp(Schema $schema)
+    public function preUp(Schema $schema): void
     {
     }
 
     /**
      * @param Schema $schema
      */
-    public function postUp(Schema $schema)
+    public function postUp(Schema $schema): void
     {
         $this->addSql("DROP TABLE IF EXISTS track_c_referers");
         $this->addSql("DROP TABLE IF EXISTS track_c_providers");
@@ -562,14 +562,14 @@ class Version10 extends AbstractMigration
     /**
      * @param Schema $schema
      */
-    public function preDown(Schema $schema)
+    public function preDown(Schema $schema): void
     {
     }
 
     /**
      * @param Schema $schema
      */
-    public function postDown(Schema $schema)
+    public function postDown(Schema $schema): void
     {
     }
 }

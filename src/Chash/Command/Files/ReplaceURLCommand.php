@@ -3,24 +3,18 @@
 namespace Chash\Command\Files;
 
 use Chash\Command\Database\CommonDatabaseCommand;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class ReplaceURLCommand
  * Clean the archives directory, leaving only index.html, twig and Serializer
- * @package Chash\Command\Files
  */
 class ReplaceURLCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

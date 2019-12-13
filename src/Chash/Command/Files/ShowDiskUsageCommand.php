@@ -19,10 +19,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
  */
 class ShowDiskUsageCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

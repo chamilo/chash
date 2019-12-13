@@ -23,10 +23,8 @@ class ConvertVideosCommand extends CommonDatabaseCommand
     public $excluded = [];
     public $ext;
     public $origExt;
-    /**
-     *
-     */
-    protected function configure()
+
+    protected function configure(): void
     {
         parent::configure();
         $this

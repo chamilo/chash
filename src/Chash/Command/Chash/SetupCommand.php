@@ -2,7 +2,7 @@
 
 namespace Chash\Command\Chash;
 
-use Doctrine\DBAL\Migrations\Tools\Console\Command\AbstractCommand;
+use Doctrine\Migrations\Tools\Console\Command\AbstractCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console;
@@ -20,7 +20,7 @@ class SetupCommand extends AbstractCommand
     /**
      *
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('chash:setup')

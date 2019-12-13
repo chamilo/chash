@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ChangePassCommand extends CommonDatabaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
 

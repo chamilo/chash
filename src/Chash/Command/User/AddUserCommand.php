@@ -20,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class AddUserCommand extends CommonDatabaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
 

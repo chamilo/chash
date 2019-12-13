@@ -2,6 +2,7 @@
 
 namespace Chash\Command\Installation;
 
+use Doctrine\Migrations\Tools\Console\Command\MigrateCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -32,10 +33,7 @@ class UpgradeCommand extends CommonCommand
         return $this->getHelper('db')->getConnection();
     }
 
-    /**
-     *
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('chash:chamilo_upgrade')
@@ -573,7 +571,7 @@ class UpgradeCommand extends CommonCommand
                 }
 
                 file_put_contents($file, $yaml);
-                $command = new \Doctrine\DBAL\Migrations\Tools\Console\Command\MigrateCommand();
+                $command = new MigrateCommand();
                 // Creates the helper set
                 $helperSet = \Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet($em);
                 $helper = $this->getHelperSet()->get('question');

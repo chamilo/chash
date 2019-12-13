@@ -89,7 +89,7 @@ class WhichCommand extends CommonInfoCommand
 
         ],
     ];
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
 

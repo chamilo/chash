@@ -17,10 +17,7 @@ use Symfony\Component\Filesystem\Exception\IOException;
  */
 class GenerateTempFileStructureCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

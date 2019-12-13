@@ -16,10 +16,7 @@ use Symfony\Component\Console\Formatter\OutputFormatterStyle;
  */
 class CommonInfoCommand extends Command
 {
-    /**
-     *
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->addOption(

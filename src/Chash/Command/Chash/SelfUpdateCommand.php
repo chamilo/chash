@@ -2,12 +2,10 @@
 
 namespace Chash\Command\Chash;
 
-use Doctrine\DBAL\Migrations\Tools\Console\Command\AbstractCommand;
-use Symfony\Component\Console\Input\InputArgument;
+use Doctrine\Migrations\Tools\Console\Command\AbstractCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console;
 use Composer\Util\RemoteFilesystem;
-use Symfony\Component\Yaml\Dumper;
 use Composer\IO\NullIO;
 use Alchemy\Zippy\Zippy;
 
@@ -17,7 +15,7 @@ use Alchemy\Zippy\Zippy;
  */
 class SelfUpdateCommand extends AbstractCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('chash:self-update')

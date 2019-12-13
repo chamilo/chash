@@ -16,10 +16,7 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class SetPermissionsAfterInstallCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

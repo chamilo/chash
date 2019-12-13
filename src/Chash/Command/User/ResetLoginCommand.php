@@ -20,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ResetLoginCommand extends CommonChamiloUserCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
 

@@ -39,7 +39,7 @@ class ImportCommand extends Console\Command\Command
     /**
      * @see Console\Command\Command
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('dbal:import')

@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class UsersPerUrlAccessCommand extends CommonChamiloUserCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
 

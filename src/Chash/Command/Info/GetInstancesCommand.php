@@ -20,7 +20,7 @@ use Symfony\Component\Console\Helper\Table;
  */
 class GetInstancesCommand extends CommonCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('info:get_instances')

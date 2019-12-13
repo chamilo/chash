@@ -2,15 +2,13 @@
 
 namespace Chash\Command\Database;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Chash\Command\Installation\CommonCommand;
-use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Dotenv\Dotenv;
+use Exception;
 
 /**
  * Class CommonDatabaseCommand
@@ -18,10 +16,7 @@ use Symfony\Component\Dotenv\Dotenv;
  */
 class CommonDatabaseCommand extends CommonCommand
 {
-    /**
-     *
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->addOption(

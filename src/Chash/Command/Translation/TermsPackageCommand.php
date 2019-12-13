@@ -29,7 +29,7 @@ class TermsPackageCommand extends CommonDatabaseCommand
     /**
      * Set the input variables and what will be shown in command helper
      */
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

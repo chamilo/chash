@@ -16,10 +16,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
  */
 class ImportLanguageCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

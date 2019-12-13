@@ -33,7 +33,7 @@ class InstallCommand extends CommonCommand
     /**
      * Configure command.
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('chash:chamilo_install')

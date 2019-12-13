@@ -2,14 +2,10 @@
 
 namespace Chash\Command\Installation;
 
-use Doctrine\DBAL\Migrations\Tools\Console\Command\AbstractCommand;
-use Doctrine\ORM\Tools\Export\ExportException;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
@@ -18,7 +14,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
  */
 class WipeCommand extends CommonCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('chash:chamilo_wipe')

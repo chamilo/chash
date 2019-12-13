@@ -19,10 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class UpdateDirectoryMaxSizeCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

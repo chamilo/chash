@@ -18,7 +18,7 @@ class ShowConnInfoCommand extends CommonDatabaseCommand
     /**
      *
      */
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
 

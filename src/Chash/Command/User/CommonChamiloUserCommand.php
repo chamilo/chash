@@ -16,10 +16,7 @@ use Symfony\Component\Console\Formatter\OutputFormatterStyle;
  */
 class CommonChamiloUserCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
     }

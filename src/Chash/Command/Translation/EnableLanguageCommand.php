@@ -18,10 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class EnableLanguageCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this

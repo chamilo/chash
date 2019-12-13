@@ -19,7 +19,7 @@ class CommonChamiloEmailCommand extends Command
     /**
      *
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->addOption(

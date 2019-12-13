@@ -3,11 +3,10 @@
 namespace Chash\Command\Files;
 
 use Chash\Command\Database\CommonDatabaseCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -15,7 +14,6 @@ use Symfony\Component\Filesystem\Filesystem;
  * Clean the files and database from one URL of the multi-URLs list, avoiding
  * all resources used by more than one URL, but trying to disassociate them
  * progressively
- * @package Chash\Command\Files
  * @todo Add support for version 2.*
  */
 class DeleteCoursesCommand extends CommonDatabaseCommand
@@ -23,7 +21,7 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
     /**
      * Define options for the command
      */
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this
@@ -255,7 +253,7 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
                 // Removal of the course linking in all URLs is over. Delete the
                 // course itself
                 $output->writeln('All references clear. Now deleting course ' . $id);
-                $this->deleteCourse($intput, $output, $course['code']);
+                $this->deleteCourse($input, $output, $course['code']);
             }
         }
         $output->writeln('');

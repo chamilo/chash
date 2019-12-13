@@ -2,7 +2,7 @@
 
 namespace Chash\Migrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
@@ -14,7 +14,7 @@ class Version9 extends AbstractMigration
     /**
      * @param Schema $schema
      */
-    public function up(Schema $schema)
+    public function up(Schema $schema): void
     {
         $sql = 'UPDATE settings_current SET selected_value = "1.9.0.18715"
                 WHERE variable = "chamilo_database_version"';
@@ -24,7 +24,7 @@ class Version9 extends AbstractMigration
     /**
      * @param Schema $schema
      */
-    public function down(Schema $schema)
+    public function down(Schema $schema): void
     {
         $sql = 'UPDATE settings_current SET selected_value = "1.8.8.14911"
                 WHERE variable = "chamilo_database_version"';

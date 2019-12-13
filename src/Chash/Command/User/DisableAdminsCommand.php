@@ -16,10 +16,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
  */
 class DisableAdminsCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
 
