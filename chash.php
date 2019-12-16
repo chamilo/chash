@@ -33,7 +33,7 @@ $helpers = [
 
 $application = new Application('Chamilo Command Line Interface', '1.0');
 $helpers = [
-    'configuration' => new Chash\Helpers\ConfigurationHelper()
+    'configuration' => new Chash\Helpers\ConfigurationHelper(),
 ];
 $helperSet = $application->getHelperSet();
 foreach ($helpers as $name => $helper) {
