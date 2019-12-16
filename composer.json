@@ -44,9 +44,7 @@
     },
     "scripts": {
         "analyse": [
-            "@php vendor/bin/ecs check src",
-            "@php vendor/bin/phpstan analyse --ansi -c phpstan.neon -l max src",
-            "@php vendor/bin/psalm"
+            "@php vendor/bin/ecs check src"
         ],
         "fix": [
             "@php vendor/bin/ecs check src --fix"
