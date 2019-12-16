@@ -2,13 +2,13 @@
 
 namespace Chash\Helpers;
 
-use Guzzle\Tests\Batch\ExceptionBufferingBatchTest;
 use Symfony\Component\Console\Helper\Helper;
-use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Yaml\Parser;
 
 /**
- * Class ConfigurationHelper
+ * Class ConfigurationHelper.
+ *
  * @package Chash\Helpers
  */
 class ConfigurationHelper extends Helper
@@ -19,7 +19,7 @@ class ConfigurationHelper extends Helper
     protected $isLegacy = true;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {
@@ -58,7 +58,8 @@ class ConfigurationHelper extends Helper
     }
 
     /**
-     * Get chamilo versions
+     * Get chamilo versions.
+     *
      * @return array
      */
     public function chamiloVersions()
@@ -77,7 +78,7 @@ class ConfigurationHelper extends Helper
             '1.9.8',
             '1.10.0',
             '1.11.0',
-            '2.0.0'
+            '2.0.0',
         ];
 
         return $versionList;
@@ -89,8 +90,10 @@ class ConfigurationHelper extends Helper
      * $configurationPath = $this->getConfigurationPath('/var/www/chamilo');
      * // $configurationPath value is '/var/www/chamilo/app/config/'; or
      * // $configurationPath value is '/var/www/chamilo/inc/conf/'; or
-     * </code>
+     * </code>.
+     *
      * @param string $path the path of the Chamilo installation
+     *
      * @return bool|string @example /var/www/chamilo/app/config/configuration.php
      */
     public function getConfigurationPath($path = null)
@@ -106,6 +109,7 @@ class ConfigurationHelper extends Helper
             !is_file($chamiloPath.'/main/inc/local.inc.php')
         ) {
             $this->isLegacy = false;
+
             return realpath($chamiloPath.'/config/').'/';
         }
 
@@ -129,9 +133,11 @@ class ConfigurationHelper extends Helper
      * <code>
      * $newConfigurationPath = $this->getNewConfigurationPath('/var/www/chamilo');
      * // $newConfigurationPath value is '/var/www/chamilo/app/config/configuration.php';
-     * </code>
+     * </code>.
+     *
      * @param string $path the path of the Chamilo installation
-     * @return bool|string  @example /var/www/chamilo/app/config/configuration.php
+     *
+     * @return bool|string @example /var/www/chamilo/app/config/configuration.php
      */
     public function getNewConfigurationPath($path = null)
     {
@@ -155,8 +161,10 @@ class ConfigurationHelper extends Helper
     }
 
     /**
-     * Converts /var/www/chamilo/main/inc/conf to /var/www/chamilo/app/config
+     * Converts /var/www/chamilo/main/inc/conf to /var/www/chamilo/app/config.
+     *
      * @param string $path
+     *
      * @return string new path
      */
     public function convertOldConfigurationPathToNewPath($path)
@@ -170,10 +178,11 @@ class ConfigurationHelper extends Helper
      * $configurationPath = $this->getConfigurationFilePath('/var/www/chamilo')
      * // $configurationPath value is '/var/www/chamilo/config/configuration.php'; or
      * // $configurationPath value is '/var/www/chamilo/main/inc/conf/configuration.php';
-     * </code>
-     * @param string $path the path of the Chamilo installation
-     * @return bool|string returns
+     * </code>.
      *
+     * @param string $path the path of the Chamilo installation
+     *
+     * @return bool|string returns
      */
     public function getConfigurationFilePath($path = null)
     {
@@ -191,13 +200,13 @@ class ConfigurationHelper extends Helper
         return false;
     }
 
-
     /**
      * Returns the $configuration array
      * <code>
      * $configuration = $this->getConfiguration('/var/www/chamilo');
      * // $configuration contains the $_configuration array
-     * </code>
+     * </code>.
+     *
      * @param string $path
      *
      * @return array|bool|mixed
@@ -215,12 +224,13 @@ class ConfigurationHelper extends Helper
     }
 
     /**
-     *
      * <code>
      * $sysPath = $this->getSysPathFromConfigurationFile('/var/www/chamilo/app/config/configuration.php');
      * // $sysPath is '/var/www/chamilo/'
-     * </code>
+     * </code>.
+     *
      * @param string $configurationFile
+     *
      * @return string
      */
     public function getSysPathFromConfigurationFile($configurationFile)
@@ -251,9 +261,10 @@ class ConfigurationHelper extends Helper
 
     /**
      * Reads the Chamilo configuration file and returns the $_configuration array
-     * Merges the configuration.php with the configuration.yml if it exists
+     * Merges the configuration.php with the configuration.yml if it exists.
      *
      * @param string $configurationFile
+     *
      * @return array|bool|mixed
      */
     public function readConfigurationFile($configurationFile = null)
@@ -275,6 +286,7 @@ class ConfigurationHelper extends Helper
                             if (isset($userPasswordCrypted)) {
                                 $_configuration['password_encryption'] = $userPasswordCrypted;
                             }
+
                             return $_configuration;
                         }
                         break;
@@ -297,7 +309,8 @@ class ConfigurationHelper extends Helper
     }
 
     /**
-     * Sets the configuration variable
+     * Sets the configuration variable.
+     *
      * @param $configuration
      */
     public function setConfiguration($configuration)
@@ -306,7 +319,8 @@ class ConfigurationHelper extends Helper
     }
 
     /**
-     * Get chamilo config files
+     * Get chamilo config files.
+     *
      * @return Finder
      */
     public function getConfigFiles()
@@ -321,7 +335,7 @@ class ConfigurationHelper extends Helper
             'events.conf.php',
             'mail.conf.php',
             'portfolio.conf.php',
-            'profile.conf.php'
+            'profile.conf.php',
         ];
 
         if (is_dir($sysPath.'main/inc/conf')) {
@@ -382,8 +396,10 @@ class ConfigurationHelper extends Helper
     }
 
     /**
-     * Gets the documents and folders marked DELETED
-     * @param   array   $courseDirs If not null, restrict the search to only those directories
+     * Gets the documents and folders marked DELETED.
+     *
+     * @param array $courseDirs If not null, restrict the search to only those directories
+     *
      * @return Finder
      */
     public function getDeletedDocuments($courseDirs = [])
@@ -392,24 +408,24 @@ class ConfigurationHelper extends Helper
         $sysPath = $this->getSysPath();
 
         if (empty($courseDirs) || !is_array($courseDirs)) {
-            if (is_dir($sysPath . 'courses')) {
-                $finder->in($sysPath . 'courses/')->name('*DELETED*');
+            if (is_dir($sysPath.'courses')) {
+                $finder->in($sysPath.'courses/')->name('*DELETED*');
             }
 
-            if (is_dir($sysPath . 'app/courses')) {
-                $finder->in($sysPath . 'app/courses/')->name('*DELETED*');
+            if (is_dir($sysPath.'app/courses')) {
+                $finder->in($sysPath.'app/courses/')->name('*DELETED*');
             }
         } else {
-            $course = is_dir($sysPath . 'courses');
-            $appCourse = is_dir($sysPath . 'app/courses');
+            $course = is_dir($sysPath.'courses');
+            $appCourse = is_dir($sysPath.'app/courses');
 
             foreach ($courseDirs as $dir) {
                 if ($course) {
-                    $finder->in($sysPath . 'courses/' . $dir .'/')->name('*DELETED*');
+                    $finder->in($sysPath.'courses/'.$dir.'/')->name('*DELETED*');
                 }
 
                 if ($appCourse) {
-                    $finder->in($sysPath . 'app/courses/' . $dir . '/')->name('*DELETED*');
+                    $finder->in($sysPath.'app/courses/'.$dir.'/')->name('*DELETED*');
                 }
             }
         }
@@ -493,7 +509,8 @@ class ConfigurationHelper extends Helper
     }
 
     /**
-     * Lists the directories in the archive/ or app/cache directory (depends on Chamilo version)
+     * Lists the directories in the archive/ or app/cache directory (depends on Chamilo version).
+     *
      * @return Finder
      */
     public function getTempFolders()
@@ -517,7 +534,8 @@ class ConfigurationHelper extends Helper
     }
 
     /**
-     * Lists the files in the archive/ or app/cache directory (depends on Chamilo version)
+     * Lists the files in the archive/ or app/cache directory (depends on Chamilo version).
+     *
      * @return bool|Finder
      */
     public function getTempFiles()
@@ -543,7 +561,6 @@ class ConfigurationHelper extends Helper
             $filesAdded = true;
         }
 
-
         if ($filesAdded) {
             return $finder;
         }
@@ -552,29 +569,33 @@ class ConfigurationHelper extends Helper
     }
 
     /**
-     * Lists the lib folder
+     * Lists the lib folder.
+     *
      * @return Finder
      */
     public function getLibFolder()
     {
         $sysPath = $this->getSysPath();
-        if (is_dir($sysPath . 'main/inc/lib/')) {
-            return $sysPath . 'main/inc/lib/';
+        if (is_dir($sysPath.'main/inc/lib/')) {
+            return $sysPath.'main/inc/lib/';
         }
 
         return false;
     }
+
     /**
-     * Lists the files in the main/inc/conf
+     * Lists the files in the main/inc/conf.
+     *
      * @param fileName
+     *
      * @return Finder
      */
     public function getConfFile($fileName)
     {
         $finder = new Finder();
         $sysPath = $this->getSysPath();
-        if (is_dir($sysPath . 'main/inc/conf')) {
-            $finder->files()->name($fileName)->in($sysPath . 'main/inc/conf');
+        if (is_dir($sysPath.'main/inc/conf')) {
+            $finder->files()->name($fileName)->in($sysPath.'main/inc/conf');
         }
 
         foreach ($finder as $file) {
@@ -583,17 +604,20 @@ class ConfigurationHelper extends Helper
 
         return false;
     }
+
     /**
-     * Lists the files in the main/inc/lib
+     * Lists the files in the main/inc/lib.
+     *
      * @param fileName
+     *
      * @return Finder
      */
     public function getLibFile($fileName)
     {
         $finder = new Finder();
         $sysPath = $this->getSysPath();
-        if (is_dir($sysPath . 'main/inc/lib')) {
-            $finder->files()->name($fileName)->in($sysPath . 'main/inc/lib');
+        if (is_dir($sysPath.'main/inc/lib')) {
+            $finder->files()->name($fileName)->in($sysPath.'main/inc/lib');
         }
 
         foreach ($finder as $file) {
@@ -604,7 +628,8 @@ class ConfigurationHelper extends Helper
     }
 
     /**
-     * Sets the system's root path (e.g. /var/www/chamilo/)
+     * Sets the system's root path (e.g. /var/www/chamilo/).
+     *
      * @param $sysPath
      */
     public function setSysPath($sysPath)
@@ -684,8 +709,10 @@ class ConfigurationHelper extends Helper
     }
 
     /**
-     * Gets an array with all the databases (particularly useful for Chamilo <1.9)
+     * Gets an array with all the databases (particularly useful for Chamilo <1.9).
+     *
      * @todo use connection instead of mysql_*
+     *
      * @return mixed Array of databases
      */
     public function getAllDatabases()
@@ -744,8 +771,9 @@ class ConfigurationHelper extends Helper
     }
 
     /**
-     * Gets the current install's major version. Requires getConfiguration() to be called first
-     * @return  string  The major version (two-parts version number, e.g. "1.9")
+     * Gets the current install's major version. Requires getConfiguration() to be called first.
+     *
+     * @return string The major version (two-parts version number, e.g. "1.9")
      */
     public function getMajorVersion()
     {
@@ -753,6 +781,7 @@ class ConfigurationHelper extends Helper
             $this->getConfiguration();
         }
         list($first, $second) = preg_split('/\./', $this->configuration['system_version']);
+
         return $first.'.'.$second;
     }
 }

@@ -5,7 +5,6 @@ namespace Chash\Command\User;
 use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -14,7 +13,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 /**
  * Class AddUserCommand
- * Changes a user password to the one given
+ * Changes a user password to the one given.
+ *
  * @package Chash\Command\User
  */
 class AddUserCommand extends DatabaseCommand
@@ -64,9 +64,7 @@ class AddUserCommand extends DatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return null|void
+     * @return void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -93,7 +91,7 @@ class AddUserCommand extends DatabaseCommand
                 $stmt->execute();
                 $un = $stmt->rowCount();
             } catch (\PDOException $e) {
-                $output->write('SQL error!' . PHP_EOL);
+                $output->write('SQL error!'.PHP_EOL);
                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
 
@@ -135,7 +133,7 @@ class AddUserCommand extends DatabaseCommand
                 }
                 // @TODO make UTC
                 $time = date('Y-m-d h:i:s');
-                $expiration = time()+(60*60*24*366*10);
+                $expiration = time() + (60 * 60 * 24 * 366 * 10);
                 $timeExpiry = date('Y-m-d h:i:s', $expiration);
                 $firstname = $conn->quote($firstname);
                 $lastname = $conn->quote($lastname);
@@ -184,7 +182,7 @@ class AddUserCommand extends DatabaseCommand
                     $stmt->execute();
                     $newUserId = $conn->lastInsertId();
                 } catch (\PDOException $e) {
-                    $output->write('SQL error!' . PHP_EOL);
+                    $output->write('SQL error!'.PHP_EOL);
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
 
@@ -195,7 +193,7 @@ class AddUserCommand extends DatabaseCommand
                         $stmt = $conn->prepare($uas);
                         $stmt->execute();
                     } catch (\PDOException $e) {
-                        $output->write('SQL error!' . PHP_EOL);
+                        $output->write('SQL error!'.PHP_EOL);
                         throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                     }
                 }
@@ -205,7 +203,7 @@ class AddUserCommand extends DatabaseCommand
                     $stmt = $conn->prepare($uas);
                     $stmt->execute();
                 } catch (\PDOException $e) {
-                    $output->write('SQL error!' . PHP_EOL);
+                    $output->write('SQL error!'.PHP_EOL);
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
                 $uas = "UPDATE user SET user_id = id WHERE id = $newUserId";
@@ -213,7 +211,7 @@ class AddUserCommand extends DatabaseCommand
                     $stmt = $conn->prepare($uas);
                     $stmt->execute();
                 } catch (\PDOException $e) {
-                    $output->write('SQL error!' . PHP_EOL);
+                    $output->write('SQL error!'.PHP_EOL);
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
             } else {
@@ -222,6 +220,7 @@ class AddUserCommand extends DatabaseCommand
         } else {
             $output->writeln('The connection does not seem to be a valid PDO connection');
         }
+
         return null;
     }
 }

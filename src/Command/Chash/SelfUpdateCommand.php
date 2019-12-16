@@ -2,15 +2,15 @@
 
 namespace Chash\Command\Chash;
 
-use Doctrine\Migrations\Tools\Console\Command\AbstractCommand;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console;
-use Composer\Util\RemoteFilesystem;
-use Composer\IO\NullIO;
 use Alchemy\Zippy\Zippy;
+use Composer\IO\NullIO;
+use Composer\Util\RemoteFilesystem;
+use Doctrine\Migrations\Tools\Console\Command\AbstractCommand;
+use Symfony\Component\Console;
+use Symfony\Component\Console\Input\InputOption;
 
 /**
- * Class SelfUpdateCommand
+ * Class SelfUpdateCommand.
  */
 class SelfUpdateCommand extends AbstractCommand
 {
@@ -25,12 +25,9 @@ class SelfUpdateCommand extends AbstractCommand
     }
 
     /**
-     * Executes a command via CLI
+     * Executes a command via CLI.
      *
-     * @param Console\Input\InputInterface $input
-     * @param Console\Output\OutputInterface $output
-     *
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(Console\Input\InputInterface $input, Console\Output\OutputInterface $output)
     {
@@ -38,16 +35,18 @@ class SelfUpdateCommand extends AbstractCommand
         $destinationFolder = $input->getOption('src-destination');
 
         if (empty($destinationFolder)) {
-            $destinationFolder =  realpath(__DIR__.'/../../../chash/');
+            $destinationFolder = realpath(__DIR__.'/../../../chash/');
         }
 
         if (!is_writable($destinationFolder)) {
             $output->writeln('Chash update failed: the "'.$destinationFolder.'" directory used to update the Chash file could not be written');
+
             return 0;
         }
 
         if (!is_writable($tempFolder)) {
             $output->writeln('Chash update failed: the "'.$tempFolder.'" directory used to download the temp file could not be written');
+
             return 0;
         }
 
@@ -62,7 +61,8 @@ class SelfUpdateCommand extends AbstractCommand
         $rfs->copy('github.com', 'https://github.com/chamilo/chash/archive/master.zip', $tempFile);
 
         if (!file_exists($tempFile)) {
-            $output->writeln('Chash update failed: the "'.$tempFile. '" file could not be written');
+            $output->writeln('Chash update failed: the "'.$tempFile.'" file could not be written');
+
             return 0;
         }
 
@@ -78,6 +78,7 @@ class SelfUpdateCommand extends AbstractCommand
         } catch (\Alchemy\Zippy\Exception\RunTimeException $e) {
             $output->writeln("<comment>Chash update failed during unzip.");
             $output->writeln($e->getMessage());
+
             return 0;
         }
         $fs = new \Symfony\Component\Filesystem\Filesystem();

@@ -3,18 +3,17 @@
 namespace Chash\Command\Files;
 
 use Chash\Command\Common\DatabaseCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Helper\TableHelper;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class ShowDiskUsageCommand
  * Show the total disk usage per course compared to the maximum space allowed
- * for the corresponding courses
+ * for the corresponding courses.
+ *
  * @package Chash\Command\Files
  */
 class ShowDiskUsageCommand extends DatabaseCommand
@@ -61,16 +60,14 @@ class ShowDiskUsageCommand extends DatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return bool|int|null|void
+     * @return bool|int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
 
         $kb = $input->getOption('KB'); //1 if the option was set
-        $div = 1024*1024;
+        $div = 1024 * 1024;
         $div2 = 1024;
         $unit = 'MB';
 
@@ -119,7 +116,7 @@ class ShowDiskUsageCommand extends DatabaseCommand
         while ($row = $stmt->fetch()) {
             $globalCourses[$row['directory']] = [
                 'code' => $row['code'],
-                'quota' => $row['disk_quota']
+                'quota' => $row['disk_quota'],
             ];
         }
         $globalCoursesSizeSum = [];
@@ -166,9 +163,9 @@ class ShowDiskUsageCommand extends DatabaseCommand
             [
                 'Portal',
                 'Code',
-                $docsOnly. '(' . $unit . ')',
-                'DBDocs(' . $unit . ')',
-                'DBQuota(' . $unit . ')',
+                $docsOnly.'('.$unit.')',
+                'DBDocs('.$unit.')',
+                'DBQuota('.$unit.')',
                 'UsedDiskVsDBQuota',
             ]
         );
@@ -211,36 +208,36 @@ class ShowDiskUsageCommand extends DatabaseCommand
                             [
                                 $portalName,
                                 $globalCourses[$file]['code'],
-                                round($size/$div2, $precision),
-                                round($dbSize/$div2, $precision),
+                                round($size / $div2, $precision),
+                                round($dbSize / $div2, $precision),
                                 $finalList[$globalCourses[$file]['code']]['quota'],
-                                $finalList[$globalCourses[$file]['code']]['rate']
+                                $finalList[$globalCourses[$file]['code']]['rate'],
                             ]
                         );
                         $localSize += $size;
                         $localDbSize += $dbSize;
                     } else {
-                        $res = exec('du -s ' . $dir->getRealPath() . $dirDoc);
+                        $res = exec('du -s '.$dir->getRealPath().$dirDoc);
                         $res = preg_split('/\s/', $res);
                         $size = $res[0];
 
                         if (isset($localCourses[$file]['code'])) {
                             $localSize += $size; //always add size to local portal (but only add to total size if new)
                             $code = $localCourses[$file]['code'];
-                            $dbSize = round($localCourses[$file]['dbSize']/$div2, $precision);
+                            $dbSize = round($localCourses[$file]['dbSize'] / $div2, $precision);
                             $localDbSize += $dbSize;
-                            $quota = round($localCourses[$file]['quota']/$div, 0);
+                            $quota = round($localCourses[$file]['quota'] / $div, 0);
                             $rate = '-';
                             if ($quota > 0) {
-                                $rate = round((round($size/$div2, 2)/$quota)*100, 0);
+                                $rate = round((round($size / $div2, 2) / $quota) * 100, 0);
                             }
                             $finalList[$code] = [
-                                'code'  => $code,
-                                'dir'   => $file,
-                                'size'  => $size,
-                                'dbSize'=> $dbSize,
+                                'code' => $code,
+                                'dir' => $file,
+                                'size' => $size,
+                                'dbSize' => $dbSize,
                                 'quota' => $quota,
-                                'rateVsDisk'  => $rate,
+                                'rateVsDisk' => $rate,
                             ];
                             //$finalListOrder[$code] = $size;
                             $totalSize += $size; //only add to total if new course
@@ -250,10 +247,10 @@ class ShowDiskUsageCommand extends DatabaseCommand
                                 [
                                     $portalName,
                                     $code,
-                                    round($size/$div2, $precision),
-                                    round($dbSize/$div2, $precision),
+                                    round($size / $div2, $precision),
+                                    round($dbSize / $div2, $precision),
                                     $finalList[$code]['quota'],
-                                    $rate
+                                    $rate,
                                 ]
                             );
                         } elseif (!isset($globalCourses[$file]['code']) && !isset($orphanList[$file])) {
@@ -268,8 +265,8 @@ class ShowDiskUsageCommand extends DatabaseCommand
                 [
                     $portalName,
                     'SubtotalWithoutOrphans',
-                    round($localSize/$div2, $precision),
-                    round($localDbSize/$div2, $precision),
+                    round($localSize / $div2, $precision),
+                    round($localDbSize / $div2, $precision),
                 ]
             );
         }
@@ -280,21 +277,21 @@ class ShowDiskUsageCommand extends DatabaseCommand
                 [
                     'Portal',
                     'Code',
-                    $docsOnly . '(' . $unit . ')',
-                    'DBDocs(' . $unit . ')',
-                    'Quota(' . $unit . ')',
-                    'UsedRatio'
+                    $docsOnly.'('.$unit.')',
+                    'DBDocs('.$unit.')',
+                    'Quota('.$unit.')',
+                    'UsedRatio',
                 ]
             );
             //$output->writeln('CCC Code;Size' . $docsOnly . '(' . $unit . ');Quota(' . $unit . ');UsedRatio');
             foreach ($orphanList as $key => $orphan) {
                 $size = $orphan['size'];
-                $sizeToShow = !empty($orphan['size']) ? round($orphan['size']/$div2, $precision) : 0;
+                $sizeToShow = !empty($orphan['size']) ? round($orphan['size'] / $div2, $precision) : 0;
                 //$output->writeln($portalName . ';ORPHAN-DIR: ' . $key . ';' . $sizeToShow . ';;;');
                 $table->addRow([
                     $portalName,
-                    'ORPHAN-DIR: ' . $key,
-                    $sizeToShow
+                    'ORPHAN-DIR: '.$key,
+                    $sizeToShow,
                 ]);
                 $totalSize += $size;
             }
@@ -304,8 +301,8 @@ class ShowDiskUsageCommand extends DatabaseCommand
             [
                 $portalName,
                 'Total size',
-                round($totalSize/$div2, $precision),
-                round($totalDbSize/$div2, $precision)
+                round($totalSize / $div2, $precision),
+                round($totalDbSize / $div2, $precision),
             ]
         );
 

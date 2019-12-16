@@ -8,7 +8,7 @@ use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\DateTimeType;
 
 /**
- * Save datetime values in UTC in the database
+ * Save datetime values in UTC in the database.
  *
  * @package Chamilo\CoreBundle\DoctrineExtensions\DBAL\Types
  */

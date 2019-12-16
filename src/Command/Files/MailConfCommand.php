@@ -3,15 +3,13 @@
 namespace Chash\Command\Files;
 
 use Chash\Command\Common\DatabaseCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class MailConfCommand
- * Returns the current mail configuration
+ * Returns the current mail configuration.
+ *
  * @package Chash\Command\Files
  */
 class MailConfCommand extends DatabaseCommand
@@ -25,9 +23,7 @@ class MailConfCommand extends DatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -36,12 +32,12 @@ class MailConfCommand extends DatabaseCommand
 
         $path = $this->getHelper('configuration')->getConfigurationPath();
         $path .= 'mail.conf.php';
-        define('IS_WINDOWS_OS', strtolower(substr(php_uname(), 0, 3)) == 'win'?true:false);
+        define('IS_WINDOWS_OS', strtolower(substr(php_uname(), 0, 3)) == 'win' ? true : false);
         $platform_email = [];
         if (isset($path) && is_file($path)) {
             $output->writeln('File: '.$path);
             $lines = file($path);
-            $list = ['SMTP_HOST','SMTP_PORT','SMTP_MAILER','SMTP_AUTH','SMTP_USER','SMTP_PASS'];
+            $list = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_MAILER', 'SMTP_AUTH', 'SMTP_USER', 'SMTP_PASS'];
             foreach ($lines as $line) {
                 $match = [];
                 if (preg_match("/platform_email\['(.*)'\]/", $line, $match)) {

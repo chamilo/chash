@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
- * Class WipeCommand
+ * Class WipeCommand.
  */
 class WipeCommand extends CommonCommand
 {
@@ -23,12 +23,9 @@ class WipeCommand extends CommonCommand
     }
 
     /**
-     * Executes a command via CLI
+     * Executes a command via CLI.
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -43,6 +40,7 @@ class WipeCommand extends CommonCommand
 
         if ($configurationPath == false) {
             $output->writeln("<comment>A Chamilo installation was not detected. You can add a path: </comment><info>chamilo:wipe /var/www/chamilo </info>");
+
             return 0;
         } else {
             $question = new ConfirmationQuestion(
@@ -59,7 +57,7 @@ class WipeCommand extends CommonCommand
 
         $arguments = [
             'command' => 'files:drop_databases',
-            '--conf' => $configurationFilePath
+            '--conf' => $configurationFilePath,
         ];
 
         $inputDrop = new ArrayInput($arguments);
@@ -70,7 +68,7 @@ class WipeCommand extends CommonCommand
 
         $arguments = [
             'command' => 'files:clean_temp_folder',
-            '--conf' => $configurationFilePath
+            '--conf' => $configurationFilePath,
         ];
         $input = new ArrayInput($arguments);
         $command->run($input, $output);
@@ -80,7 +78,7 @@ class WipeCommand extends CommonCommand
 
         $arguments = [
             'command' => 'files:clean_courses_files',
-            '--conf' => $configurationFilePath
+            '--conf' => $configurationFilePath,
         ];
         $input = new ArrayInput($arguments);
         $command->run($input, $output);
@@ -90,7 +88,7 @@ class WipeCommand extends CommonCommand
         $command = $this->getApplication()->find('files:clean_config_files');
         $arguments = [
             'command' => 'files:clean_config_files',
-            '--conf' => $configurationFilePath
+            '--conf' => $configurationFilePath,
         ];
         $input = new ArrayInput($arguments);
         $command->run($input, $output);

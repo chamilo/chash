@@ -6,13 +6,13 @@ use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class ListLanguagesCommand
  * Definition of the translation:list command
- * Definition of command to list platform languages
+ * Definition of command to list platform languages.
+ *
  * @package Chash\Command\Translation
  */
 class ListLanguagesCommand extends DatabaseCommand
@@ -37,9 +37,7 @@ class ListLanguagesCommand extends DatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -106,6 +104,7 @@ class ListLanguagesCommand extends DatabaseCommand
                 $output->writeln($resultLine);
             }
         }
+
         return null;
     }
 }

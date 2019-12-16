@@ -163,7 +163,6 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
             $result = $mainConnection->executeQuery($sql);
             $rows = $result->fetchAll();
             foreach ($rows as $row) {
-
                 // Adding course to default URL just in case.
                 // Check if already exists
                 $sql = "SELECT course_code FROM access_url_rel_course

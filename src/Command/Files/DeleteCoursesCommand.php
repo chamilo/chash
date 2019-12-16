@@ -13,13 +13,14 @@ use Symfony\Component\Filesystem\Filesystem;
  * Class DeleteMultiUrlCommand
  * Clean the files and database from one URL of the multi-URLs list, avoiding
  * all resources used by more than one URL, but trying to disassociate them
- * progressively
+ * progressively.
+ *
  * @todo Add support for version 2.*
  */
 class DeleteCoursesCommand extends DatabaseCommand
 {
     /**
-     * Define options for the command
+     * Define options for the command.
      */
     protected function configure(): void
     {
@@ -66,9 +67,7 @@ class DeleteCoursesCommand extends DatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return bool|int|null|void
+     * @return bool|int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -87,6 +86,7 @@ class DeleteCoursesCommand extends DatabaseCommand
             if (empty($courseId) && empty($courseCode) && empty($courseCategory) && empty($beforeDate)) {
                 $output->writeln('At least one search criteria (id, code, category or date) must be provided.');
                 $output->writeln('Use "--help" param for details.');
+
                 return;
             }
 
@@ -97,10 +97,10 @@ class DeleteCoursesCommand extends DatabaseCommand
                         FROM course
                         WHERE id = $courseId ";
                 if (!empty($beforeDate)) {
-                    $output->writeln('ID-based course search: ' . $courseId . ' and date < ' . $beforeDate);
+                    $output->writeln('ID-based course search: '.$courseId.' and date < '.$beforeDate);
                     $sql .= " AND creation_date < '$beforeDate' ";
                 } else {
-                    $output->writeln('ID-based course search: ' . $courseId);
+                    $output->writeln('ID-based course search: '.$courseId);
                 }
                 $sql .= " ORDER BY creation_date";
             } elseif (!empty($courseCode)) {
@@ -108,10 +108,10 @@ class DeleteCoursesCommand extends DatabaseCommand
                         FROM course
                         WHERE code = '$courseCode' ";
                 if (!empty($beforeDate)) {
-                    $output->writeln('Code-based course search: ' . $courseCode . ' and date < ' . $beforeDate);
+                    $output->writeln('Code-based course search: '.$courseCode.' and date < '.$beforeDate);
                     $sql .= " AND creation_date < '$beforeDate' ";
                 } else {
-                    $output->writeln('Code-based course search: ' . $courseCode);
+                    $output->writeln('Code-based course search: '.$courseCode);
                 }
                 $sql .= " ORDER BY creation_date";
             } elseif (!empty($courseCategory)) {
@@ -119,14 +119,14 @@ class DeleteCoursesCommand extends DatabaseCommand
                         FROM course
                         WHERE category_code = '$courseCategory'";
                 if (!empty($beforeDate)) {
-                    $output->writeln('Category-based course search: ' . $courseCategory . ' and date < ' . $beforeDate);
+                    $output->writeln('Category-based course search: '.$courseCategory.' and date < '.$beforeDate);
                     $sql .= " AND creation_date < '$beforeDate' ";
                 } else {
-                    $output->writeln('Category-based course search: ' . $courseCategory);
+                    $output->writeln('Category-based course search: '.$courseCategory);
                 }
                 $sql .= " ORDER BY creation_date";
             } elseif (!empty($beforeDate)) {
-                $output->writeln('Category-based course search: ' . $beforeDate);
+                $output->writeln('Category-based course search: '.$beforeDate);
                 $sql = "SELECT id, code, category_code, creation_date
                         FROM course
                         WHERE creation_date < '$beforeDate'
@@ -140,28 +140,27 @@ class DeleteCoursesCommand extends DatabaseCommand
                 $courses[$row['id']] = [
                     'code' => $row['code'],
                     'category' => $row['category_code'],
-                    'date' => $row['creation_date']
+                    'date' => $row['creation_date'],
                 ];
                 $courseIdsString .= $row['id'].', ';
             }
             $courseIdsString = substr($courseIdsString, 0, -2);
 
             if (count($courses) >= 1) {
-                $output->writeln('ID' . "\t" . 'Code         ' . "\t\t" . 'Category' . "\t" . 'Creation date');
+                $output->writeln('ID'."\t".'Code         '."\t\t".'Category'."\t".'Creation date');
                 foreach ($courses as $id => $course) {
                     $output->writeln(
-                        $id . "\t" .
-                        $course['code'] . "\t\t" .
-                        (empty($course['category'])?'--none--':$course['category']) . "\t" .
+                        $id."\t".
+                        $course['code']."\t\t".
+                        (empty($course['category']) ? '--none--' : $course['category'])."\t".
                         $course['date']
                     );
                 }
             } else {
                 $output->writeln('No course found with that criteria. Bye bye.');
+
                 return;
             }
-
-
 
             // Get courses vs URL match and measure disk usage
             $sql = "SELECT c.id, u.course_code, u.access_url_id, c.directory
@@ -200,10 +199,10 @@ class DeleteCoursesCommand extends DatabaseCommand
                             if (!is_dir($courseDir)) {
                                 $size = 'N/A';
                             } else {
-                                $res = @exec('du -s ' . $courseDir);
+                                $res = @exec('du -s '.$courseDir);
                                 $res = preg_split('/\s/', $res);
                                 $size = $res[0];
-                                $output->writeln($id . ":\t" . $size);
+                                $output->writeln($id.":\t".$size);
                                 if ($unique == 'yes') {
                                     $totalDiskUsage += $size;
                                 }
@@ -240,34 +239,35 @@ class DeleteCoursesCommand extends DatabaseCommand
                 $cUrls = $coursesUrl[$id];
                 if (count($cUrls) > 1) {
                     $output->writeln(
-                        'Course ' . $course['code'] . ' is used ' .
-                        'by more than one URL (' . implode(',', $coursesUrl[$id]) . ').'
+                        'Course '.$course['code'].' is used '.
+                        'by more than one URL ('.implode(',', $coursesUrl[$id]).').'
                     );
                 }
                 foreach ($cUrls as $urlId) {
                     $output->writeln(
-                        'Deleting references to course ID ' . $id . ' in URL (url ' . $urlId . ')...'
+                        'Deleting references to course ID '.$id.' in URL (url '.$urlId.')...'
                     );
                     $this->unlinkCourse($input, $output, $course['code'], $urlId);
                 }
                 // Removal of the course linking in all URLs is over. Delete the
                 // course itself
-                $output->writeln('All references clear. Now deleting course ' . $id);
+                $output->writeln('All references clear. Now deleting course '.$id);
                 $this->deleteCourse($input, $output, $course['code']);
             }
         }
         $output->writeln('');
-        $output->writeln('All done. ' . $totalDiskUsage . 'KB have been freed. Bye bye.');
+        $output->writeln('All done. '.$totalDiskUsage.'KB have been freed. Bye bye.');
         $output->writeln('');
     }
 
     /**
      * Delete all references to a course inside a given URL, but do not delete
-     * the course itself
-     * @param   OutputInterface $output
-     * @param   string  $courseCode
-     * @param   int     $urlId
-     * @return  bool
+     * the course itself.
+     *
+     * @param string $courseCode
+     * @param int    $urlId
+     *
+     * @return bool
      */
     private function unlinkCourse($input, OutputInterface $output, $courseCode, $urlId)
     {
@@ -282,14 +282,14 @@ class DeleteCoursesCommand extends DatabaseCommand
                 FROM session_rel_course src
                 JOIN access_url_rel_session aurs
                 ON aurs.session_id = src.id_session
-                WHERE src.course_code = '" . $courseCode . "'
+                WHERE src.course_code = '".$courseCode."'
                 AND aurs.access_url_id = $urlId";
         $stmt = $connection->query($sql);
         $sessions = [];
         while ($row = $stmt->fetch()) {
             $sessions[] = $row['id_session'];
         }
-        $output->writeln('Sessions using course ' . $courseCode . ' in URL ' . $urlId . ': ' . implode(
+        $output->writeln('Sessions using course '.$courseCode.' in URL '.$urlId.': '.implode(
             ',',
             $sessions
         ));
@@ -297,18 +297,18 @@ class DeleteCoursesCommand extends DatabaseCommand
         // 2. Delete the session_rel_course and session_rel_course_rel_user
         foreach ($sessions as $sessionId) {
             $sql = "DELETE FROM session_rel_course_rel_user "
-                . "WHERE id_session = $sessionId "
-                . " AND course_code = '$courseCode' ";
+                ."WHERE id_session = $sessionId "
+                ." AND course_code = '$courseCode' ";
             $stmt = $connection->query($sql);
             $sql = "DELETE FROM session_rel_course "
-                . "WHERE id_session = $sessionId "
-                . " AND course_code = '$courseCode' ";
+                ."WHERE id_session = $sessionId "
+                ." AND course_code = '$courseCode' ";
             $stmt = $connection->query($sql);
             $sql = "SELECT count(*) as courseCount FROM session_rel_course WHERE id_session = $sessionId";
             $stmt = $connection->query($sql);
             while ($row = $stmt->fetch()) {
                 if ($row['courseCount'] === 0) {
-                    $output->writeln('No course left in session ' . $sessionId . ' so deleting the session');
+                    $output->writeln('No course left in session '.$sessionId.' so deleting the session');
                     // No course within this session => delete the session
                     // @todo: use sessionmanager::delete_session($sessionId)
                     $sqlDelete = "DELETE FROM session WHERE id = $sessionId";
@@ -331,8 +331,8 @@ class DeleteCoursesCommand extends DatabaseCommand
 
         // 3. Delete the access_url_rel_course reference
         $sql = "DELETE FROM access_url_rel_course "
-            . " WHERE access_url_id = $urlId "
-            . " AND course_code = '$courseCode'";
+            ." WHERE access_url_id = $urlId "
+            ." AND course_code = '$courseCode'";
         $connection->query($sql);
     }
 
@@ -340,9 +340,11 @@ class DeleteCoursesCommand extends DatabaseCommand
      * Delete a course completely
      * This operation follows the "unlink course" operation so that it just
      * completes it, but only in case the course is used only once.
+     *
      * @param   object  Output interface
      * @param   string  Course code
-     * @return  bool
+     *
+     * @return bool
      */
     private function deleteCourse($input, OutputInterface $output, $courseCode)
     {
@@ -450,19 +452,20 @@ class DeleteCoursesCommand extends DatabaseCommand
             $connection->query($sql);
         }
         $output->writeln(
-            'Deleted all references to course ' . $courseCode . ' in c_* tables.'
+            'Deleted all references to course '.$courseCode.' in c_* tables.'
         );
         $sysPath = $this->getConfigurationHelper()->getSysPath();
-        $coursePath = $sysPath . 'courses/' . $courseDir;
+        $coursePath = $sysPath.'courses/'.$courseDir;
         $fs = new Filesystem();
         $fs->remove($coursePath);
-        $output->writeln('Removed files from ' . $coursePath);
+        $output->writeln('Removed files from '.$coursePath);
         // Delete the course itself from the course table
         $sql = "DELETE FROM course WHERE id = $cid";
         $connection->query($sql);
         $output->writeln(
-            'Deleted course ' . $courseCode . ' reference in course table.'
+            'Deleted course '.$courseCode.' reference in course table.'
         );
+
         return true;
     }
 }

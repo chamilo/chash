@@ -9,7 +9,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class CleanCoursesFilesCommand
- * Clean the courses directory, leaving only index.html, twig and Serializer
+ * Clean the courses directory, leaving only index.html, twig and Serializer.
  */
 class CleanCoursesFilesCommand extends DatabaseCommand
 {
@@ -23,9 +23,7 @@ class CleanCoursesFilesCommand extends DatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return bool|int|null|void
+     * @return bool|int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

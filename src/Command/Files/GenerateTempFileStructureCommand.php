@@ -3,47 +3,22 @@
 namespace Chash\Command\Files;
 
 use Chash\Command\Common\DatabaseCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
- * Class GenerateTempFileStructureCommand
+ * Class GenerateTempFileStructureCommand.
+ *
  * @package Chash\Command\Files
  */
 class GenerateTempFileStructureCommand extends DatabaseCommand
 {
-    protected function configure(): void
-    {
-        parent::configure();
-        $this
-            ->setName('files:generate_temp_folders')
-            ->setDescription('Generate temp folder structure: twig');
-    }
-
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        parent::execute($input, $output);
-        $this->writeCommandHeader($output, 'Generating temp folders.');
-
-        // Data folders
-        $files = $this->getConfigurationHelper()->getTempFolderList();
-        $this->createFolders($output, $files, 0777);
-    }
-
-    /**
-     * @param OutputInterface $output
      * @param array $files
      * @param $permission
+     *
      * @return int
      */
     public function createFolders(OutputInterface $output, $files, $permission)
@@ -52,6 +27,7 @@ class GenerateTempFileStructureCommand extends DatabaseCommand
 
         if (empty($files)) {
             $output->writeln('<comment>No files found.</comment>');
+
             return 0;
         }
 
@@ -72,5 +48,26 @@ class GenerateTempFileStructureCommand extends DatabaseCommand
         } catch (IOException $e) {
             echo "\n An error occurred while removing the directory: ".$e->getMessage()."\n ";
         }
+    }
+
+    protected function configure(): void
+    {
+        parent::configure();
+        $this
+            ->setName('files:generate_temp_folders')
+            ->setDescription('Generate temp folder structure: twig');
+    }
+
+    /**
+     * @return int|void|null
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        parent::execute($input, $output);
+        $this->writeCommandHeader($output, 'Generating temp folders.');
+
+        // Data folders
+        $files = $this->getConfigurationHelper()->getTempFolderList();
+        $this->createFolders($output, $files, 0777);
     }
 }

@@ -7,21 +7,23 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class DeleteMultiUrlCommand
  * Clean the files and database from one URL of the multi-URLs list, avoiding
  * all resources used by more than one URL, but trying to disassociate them
- * progressively
+ * progressively.
+ *
  * @package Chash\Command\Files
+ *
  * @todo Add support for version 2.*
  */
 class DeleteMultiUrlCommand extends DatabaseCommand
 {
     /**
-     * Define options for the command
+     * Define options for the command.
      */
     protected function configure(): void
     {
@@ -61,9 +63,7 @@ class DeleteMultiUrlCommand extends DatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return bool|int|null|void
+     * @return bool|int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -84,7 +84,7 @@ class DeleteMultiUrlCommand extends DatabaseCommand
             }
             if ($list) {
                 if (count($urls) > 1) {
-                    $output->writeln('ID' . "\t" . 'Active?' . "\t" . 'URL');
+                    $output->writeln('ID'."\t".'Active?'."\t".'URL');
                     $preventDelete = '';
                     foreach ($urls as $id => $url) {
                         if ($id == 1) {
@@ -93,14 +93,15 @@ class DeleteMultiUrlCommand extends DatabaseCommand
                             $preventDelete = '';
                         }
                         $output->writeln(
-                            $id . "\t" .
-                            $url['active'] . "\t" .
-                            $url['url'] . "\t" .
+                            $id."\t".
+                            $url['active']."\t".
+                            $url['url']."\t".
                             $preventDelete
                         );
                     }
                 } else {
                     $output->writeln('Only one URL. Please use another command to delete');
+
                     return;
                 }
             }
@@ -109,10 +110,10 @@ class DeleteMultiUrlCommand extends DatabaseCommand
 
             // Get all courses by URL
             $sql = "SELECT u.course_code, u.access_url_id, c.directory "
-                . " FROM access_url_rel_course u, course c "
-                . " WHERE u.course_code = c.code "
+                ." FROM access_url_rel_course u, course c "
+                ." WHERE u.course_code = c.code "
                 //." WHERE access_url_id != 1 "
-                . " ORDER BY access_url_id, course_code ASC";
+                ." ORDER BY access_url_id, course_code ASC";
             $stmt = $connection->query($sql);
             $urlCourses = [];
             $coursesUrl = [];
@@ -134,7 +135,7 @@ class DeleteMultiUrlCommand extends DatabaseCommand
                 $count = count($urlCourses);
                 if ($count > 0) {
                     $output->writeln('List of URLs vs courses');
-                    $output->writeln('URL ID' . "\t" . 'Only in this URL?' . "\t" . ($du ? 'Size (KB)' . "\t\t" : '') . 'Course code');
+                    $output->writeln('URL ID'."\t".'Only in this URL?'."\t".($du ? 'Size (KB)'."\t\t" : '').'Course code');
                     foreach ($urlCourses as $url => $courses) {
                         if (!empty($urlId)) {
                             // if a URL was defined, skip other URLs
@@ -151,7 +152,7 @@ class DeleteMultiUrlCommand extends DatabaseCommand
                                 if (!is_dir($courseDir)) {
                                     $size = 'N/A';
                                 } else {
-                                    $res = @exec('du -s ' . $courseDir);
+                                    $res = @exec('du -s '.$courseDir);
                                     $res = preg_split('/\s/', $res);
                                     $size = $res[0];
                                     if ($unique == 'yes') {
@@ -159,7 +160,7 @@ class DeleteMultiUrlCommand extends DatabaseCommand
                                     }
                                 }
                             }
-                            $output->writeln($url . "\t" . $unique . "\t\t\t" . ($du ? $size . "\t\t" : '') . $code);
+                            $output->writeln($url."\t".$unique."\t\t\t".($du ? $size."\t\t" : '').$code);
                         }
                     }
                 }
@@ -172,19 +173,21 @@ class DeleteMultiUrlCommand extends DatabaseCommand
                 $output->writeln('');
                 if ($urlId == 1) {
                     $output->writeln('URL 1 cannot be deleted as it is the main URL');
+
                     return;
                 }
-                $output->writeln('Selected URL: ' . $urlId . ' (' . $urls[$urlId]['url'] . ')');
+                $output->writeln('Selected URL: '.$urlId.' ('.$urls[$urlId]['url'].')');
                 if (!in_array($urlId, array_keys($urls))) {
                     $output->writeln(
-                        'URL ' . $urlId . ' does not exist. ' .
+                        'URL '.$urlId.' does not exist. '.
                         'Please use the --list param to see the list of available URLs'
                     );
+
                     return;
                 }
                 $helper = $this->getHelperSet()->get('question');
                 $question = new ConfirmationQuestion(
-                    '<question>Are you sure you want to delete URL ' . $urlId . ' and all the courses that are used only in this URL? (y/N)</question>',
+                    '<question>Are you sure you want to delete URL '.$urlId.' and all the courses that are used only in this URL? (y/N)</question>',
                     false
                 );
                 if (!$helper->ask($input, $output, $question)) {
@@ -200,18 +203,18 @@ class DeleteMultiUrlCommand extends DatabaseCommand
                     foreach ($urlCourses[$urlId] as $courseCode) {
                         if (count($coursesUrl[$courseCode]) > 1) {
                             $output->writeln(
-                                'Course ' . $courseCode . ' is used ' .
-                                'by more than one URL (' .
-                                implode(',', $coursesUrl[$courseCode]) .
+                                'Course '.$courseCode.' is used '.
+                                'by more than one URL ('.
+                                implode(',', $coursesUrl[$courseCode]).
                                 ').'
                             );
                             $output->writeln(
-                                'Deleting only references to given URL (' . $urlId . ')...'
+                                'Deleting only references to given URL ('.$urlId.')...'
                             );
                             $this->unlinkCourse($input, $output, $courseCode, $urlId);
                         } else { // The course is only in the given URL
                             $output->writeln(
-                                'Course ' . $courseCode . ' is only used ' .
+                                'Course '.$courseCode.' is only used '.
                                 'on this portal. Proceeding with deletion...'
                             );
                             $this->unlinkCourse($input, $output, $courseCode, $urlId);
@@ -241,17 +244,17 @@ class DeleteMultiUrlCommand extends DatabaseCommand
                             $connection->query($sql);
                         } else {
                             if ($urls[0] == $urlId) {
-                                $output->writeln('User ' . $user . ' is only in URL ' . $urlId . ', deleting...');
+                                $output->writeln('User '.$user.' is only in URL '.$urlId.', deleting...');
                                 // DELETE user
                                 $this->deleteUser($input, $output, $user);
                             } else {
-                                $output->writeln('User ' . $user . 'is in only one URL, but not this one. Skipping.');
+                                $output->writeln('User '.$user.'is in only one URL, but not this one. Skipping.');
                             }
                         }
                     }
                 }
                 // Everything removed. Delete URL
-                $sql = 'DELETE FROM access_url WHERE id = ' . $urlId;
+                $sql = 'DELETE FROM access_url WHERE id = '.$urlId;
                 $connection->query($sql);
             }
         }
@@ -259,11 +262,12 @@ class DeleteMultiUrlCommand extends DatabaseCommand
 
     /**
      * Delete all references to a course inside a given URL, but do not delete
-     * the course itself
-     * @param   OutputInterface $output
-     * @param   string  $courseCode
-     * @param   int     $urlId
-     * @return  bool
+     * the course itself.
+     *
+     * @param string $courseCode
+     * @param int    $urlId
+     *
+     * @return bool
      */
     private function unlinkCourse($input, OutputInterface $output, $courseCode, $urlId)
     {
@@ -279,7 +283,7 @@ class DeleteMultiUrlCommand extends DatabaseCommand
                 JOIN access_url_rel_session aurs 
                 ON aurs.session_id = src.id_session 
                 WHERE 
-                    src.course_code = '" . $courseCode . "' AND 
+                    src.course_code = '".$courseCode."' AND 
                     aurs.access_url_id = $urlId";
         $stmt = $connection->query($sql);
         $sessions = [];
@@ -296,18 +300,18 @@ class DeleteMultiUrlCommand extends DatabaseCommand
         // 2. Delete the session_rel_course and session_rel_course_rel_user
         foreach ($sessions as $sessionId) {
             $sql = "DELETE FROM session_rel_course_rel_user "
-                . "WHERE id_session = $sessionId "
-                . " AND course_code = '$courseCode' ";
+                ."WHERE id_session = $sessionId "
+                ." AND course_code = '$courseCode' ";
             $stmt = $connection->query($sql);
             $sql = "DELETE FROM session_rel_course "
-                . "WHERE id_session = $sessionId "
-                . " AND course_code = '$courseCode' ";
+                ."WHERE id_session = $sessionId "
+                ." AND course_code = '$courseCode' ";
             $stmt = $connection->query($sql);
             $sql = "SELECT count(*) as courseCount FROM session_rel_course WHERE id_session = $sessionId";
             $stmt = $connection->query($sql);
             while ($row = $stmt->fetch()) {
                 if ($row['courseCount'] === 0) {
-                    $output->writeln('No course left in session ' . $sessionId . ' so deleting the session');
+                    $output->writeln('No course left in session '.$sessionId.' so deleting the session');
                     // No course within this session => delete the session
                     // @todo: use sessionmanager::delete_session($sessionId)
                     $sqlDelete = "DELETE FROM session WHERE id = $sessionId";
@@ -330,8 +334,8 @@ class DeleteMultiUrlCommand extends DatabaseCommand
 
         // 3. Delete the access_url_rel_course reference
         $sql = "DELETE FROM access_url_rel_course "
-            . " WHERE access_url_id = $urlId "
-            . " AND course_code = '$courseCode'";
+            ." WHERE access_url_id = $urlId "
+            ." AND course_code = '$courseCode'";
         $stmt = $connection->query($sql);
     }
 
@@ -339,9 +343,11 @@ class DeleteMultiUrlCommand extends DatabaseCommand
      * Delete a course completely
      * This operation follows the "unlink course" operation so that it just
      * completes it, but only in case the course is used only once.
+     *
      * @param   object  Output interface
      * @param   string  Course code
-     * @return  bool
+     *
+     * @return bool
      */
     private function deleteCourse($input, OutputInterface $output, $courseCode)
     {
@@ -448,13 +454,14 @@ class DeleteMultiUrlCommand extends DatabaseCommand
             $stmt = $connection->query($sql);
         }
         $output->writeln(
-            'Deleted all references to course ' . $courseCode . ' in c_* tables.'
+            'Deleted all references to course '.$courseCode.' in c_* tables.'
         );
         $sysPath = $this->getConfigurationHelper()->getSysPath();
-        $coursePath = $sysPath . 'courses/' . $courseDir;
+        $coursePath = $sysPath.'courses/'.$courseDir;
         $fs = new Filesystem();
         $fs->remove($coursePath);
-        $output->writeln('Removed files from ' . $coursePath);
+        $output->writeln('Removed files from '.$coursePath);
+
         return true;
     }
 
@@ -463,9 +470,12 @@ class DeleteMultiUrlCommand extends DatabaseCommand
      * very dangerous function that should only be accessible by
      * super-admins. Other roles should only be able to disable a user,
      * which removes access to the platform but doesn't delete anything.
+     *
      * @param   object  Output interface
      * @param   int     User ID
-     * @return  bool
+     *
+     * @return bool
+     *
      * @todo Use UserManager::delete_user() instead
      */
     private function deleteUser($input, OutputInterface $output, $userId)
@@ -516,9 +526,9 @@ class DeleteMultiUrlCommand extends DatabaseCommand
         $stmt = $connection->query($sql);
         $row = $stmt->fetch();
         if ($row['selected_value'] == 'true') {
-            $sub = substr($userId, 0, 1) . '/';
+            $sub = substr($userId, 0, 1).'/';
         }
-        $img_path = $sysPath . 'main/upload/users/'. $sub . $userId;
+        $img_path = $sysPath.'main/upload/users/'.$sub.$userId;
         if (file_exists($img_path)) {
             unlink($img_path);
         }
@@ -562,7 +572,8 @@ class DeleteMultiUrlCommand extends DatabaseCommand
         //$user_id_manager = api_get_user_id();
         //event_system(LOG_USER_DELETE, LOG_USER_ID, $userId, api_get_utc_datetime(), $user_id_manager, null, $user_info);
         //event_system(LOG_USER_DELETE, LOG_USER_OBJECT, $user_info, api_get_utc_datetime(), $user_id_manager, null, $user_info);
-        $output->writeln('Removed user ' . $userId);
+        $output->writeln('Removed user '.$userId);
+
         return true;
     }
 }

@@ -11,7 +11,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 /**
  * Class CleanDeletedDocumentsCommand
  * Clean the courses/[CODE]/documents/ directory, removing all documents
- * and folders marked DELETED
+ * and folders marked DELETED.
  */
 class CleanDeletedDocumentsCommand extends DatabaseCommand
 {
@@ -49,9 +49,7 @@ class CleanDeletedDocumentsCommand extends DatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return bool|int|null|void
+     * @return bool|int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -79,6 +77,7 @@ class CleanDeletedDocumentsCommand extends DatabaseCommand
                     }
                 } else {
                     $output->writeln('No file to be deleted in courses/ directory');
+
                     return;
                 }
             }
@@ -88,7 +87,7 @@ class CleanDeletedDocumentsCommand extends DatabaseCommand
                 foreach ($files as $file) {
                     $size += $file->getSize();
                 }
-                $output->writeln('Total size used by deleted documents: '.round(((float)$size/1024)/1024, 2).'MB');
+                $output->writeln('Total size used by deleted documents: '.round(((float) $size / 1024) / 1024, 2).'MB');
             }
 
             $helper = $this->getHelperSet()->get('question');

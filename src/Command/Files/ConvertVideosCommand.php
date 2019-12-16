@@ -3,19 +3,19 @@
 namespace Chash\Command\Files;
 
 use Chash\Command\Common\DatabaseCommand;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 
 /**
  * Class ConvertVideosCommand
  * Convert all videos found in the given directory (recursively)
- * to the given format, using ffmpeg
+ * to the given format, using ffmpeg.
+ *
  * @package Chash\Command\Files
  */
 class ConvertVideosCommand extends DatabaseCommand
@@ -62,9 +62,7 @@ class ConvertVideosCommand extends DatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return bool|int|null|void
+     * @return bool|int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -77,10 +75,11 @@ class ConvertVideosCommand extends DatabaseCommand
 
             $dir = $input->getArgument('source'); //1 if the option was set
             if (substr($dir, 0, 1) != '/') {
-                $dir = $sysPath . $dir;
+                $dir = $sysPath.$dir;
             }
             if (!is_dir($dir)) {
-                $output->writeln($dir. ' was not confirmed as a directory (if not starting with /, it is considered as relative to Chamilo\'s root folder)');
+                $output->writeln($dir.' was not confirmed as a directory (if not starting with /, it is considered as relative to Chamilo\'s root folder)');
+
                 return;
             }
             $this->ext = $input->getOption('ext');
@@ -109,12 +108,13 @@ class ConvertVideosCommand extends DatabaseCommand
             $filter = function (\SplFileInfo $file, $ext, $orig) {
                 $combinedExt = '.'.$orig.'.'.$ext;
                 $combinedExtLength = strlen($combinedExt);
-                $extLength = strlen('.' . $ext);
+                $extLength = strlen('.'.$ext);
                 if (substr($file->getRealPath(), -$combinedExtLength) == $combinedExt) {
                     return false;
                 }
-                if (is_file(substr($file->getRealPath(), 0, -$extLength) . $combinedExt)) {
+                if (is_file(substr($file->getRealPath(), 0, -$extLength).$combinedExt)) {
                     $this->excluded[] = $file;
+
                     return false;
                 }
             };
@@ -137,6 +137,7 @@ class ConvertVideosCommand extends DatabaseCommand
                     }
                 }
                 $output->writeln('No video left to convert');
+
                 return;
             }
 
@@ -165,17 +166,17 @@ class ConvertVideosCommand extends DatabaseCommand
                 $origNameCommand = preg_replace('/\s/', '\ ', $origName);
                 $origNameCommand = preg_replace('/\(/', '\(', $origNameCommand);
                 $origNameCommand = preg_replace('/\)/', '\)', $origNameCommand);
-                $output->writeln('ffmpeg -i ' . $newNameCommand . ' -b ' . $bitRate . 'k -f ' . $this->ext . ' -vcodec ' . $vcodec . ' -acodec copy -r ' . $fps . ' ' . $origNameCommand);
-                $exec = @system('ffmpeg -i ' . $newNameCommand . ' -b ' . $bitRate . 'k -f ' . $this->ext . ' -vcodec ' . $vcodec . ' -acodec copy -r ' . $fps . ' ' . $origNameCommand, $out);
+                $output->writeln('ffmpeg -i '.$newNameCommand.' -b '.$bitRate.'k -f '.$this->ext.' -vcodec '.$vcodec.' -acodec copy -r '.$fps.' '.$origNameCommand);
+                $exec = @system('ffmpeg -i '.$newNameCommand.' -b '.$bitRate.'k -f '.$this->ext.' -vcodec '.$vcodec.' -acodec copy -r '.$fps.' '.$origNameCommand, $out);
                 $sizeNew += filesize($origName);
-                $counter ++;
+                $counter++;
             }
         }
         $output->writeln('');
         $output->writeln('Done converting all videos from '.$dir);
-        $output->writeln('Total videos converted: ' . $counter . ' videos in ' . (time() - $time) .' seconds');
-        $output->writeln('Total size of old videos combined: ' . round($sizeOrig/(1024*1024)).'M');
-        $output->writeln('Total size of all new videos combined: ' . round($sizeNew/(1024*1024)).'M');
+        $output->writeln('Total videos converted: '.$counter.' videos in '.(time() - $time).' seconds');
+        $output->writeln('Total size of old videos combined: '.round($sizeOrig / (1024 * 1024)).'M');
+        $output->writeln('Total size of all new videos combined: '.round($sizeNew / (1024 * 1024)).'M');
         //$this->removeFiles($files, $output);
     }
 }

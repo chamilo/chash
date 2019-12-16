@@ -36,9 +36,7 @@ class SetLanguageCommand extends DatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -77,6 +75,7 @@ class SetLanguageCommand extends DatabaseCommand
                 }
                 if (!in_array($lang, $languages)) {
                     $output->writeln($lang.' must be available on your platform before you can use it');
+
                     return null;
                 }
                 if (empty($username)) {
@@ -105,6 +104,7 @@ class SetLanguageCommand extends DatabaseCommand
                 }
             }
         }
+
         return null;
     }
 }

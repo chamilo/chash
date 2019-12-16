@@ -37,9 +37,7 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return bool|int|null|void
+     * @return bool|int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -53,6 +51,7 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
 
         if ($add == 1) {
             $this->writeCommandHeader($output, 'Max space needs to be of at least 1MB for each course first');
+
             return;
         }
 
@@ -85,7 +84,7 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
                     $globalCourses[$row['cdir']] = [
                         'id' => $row['cid'],
                         'code' => $row['ccode'],
-                        'quota' => $row['cquota']
+                        'quota' => $row['cquota'],
                     ];
                 }
             }

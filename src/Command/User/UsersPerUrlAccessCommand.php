@@ -8,7 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class UsersPerUrlAccessCommand
- * Changes the language for all platform users
+ * Changes the language for all platform users.
  *
  * Command functions meant to deal with what the user of this script is calling it for.
  */
@@ -25,9 +25,7 @@ class UsersPerUrlAccessCommand extends ChamiloUserCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -54,6 +52,7 @@ class UsersPerUrlAccessCommand extends ChamiloUserCommand
             $table->setRows($usersPerUrl);
             $table->render($output);
         }
+
         return null;
     }
 }

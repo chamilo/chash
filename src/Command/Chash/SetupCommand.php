@@ -3,18 +3,28 @@
 namespace Chash\Command\Chash;
 
 use Doctrine\Migrations\Tools\Console\Command\AbstractCommand;
+use Symfony\Component\Console;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console;
-use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Yaml\Dumper;
 
 /**
- * Class SetupCommand
+ * Class SetupCommand.
  */
 class SetupCommand extends AbstractCommand
 {
     public $migrationFile;
+
+    /**
+     * Gets the migration file path.
+     *
+     * @return string
+     */
+    public function getMigrationFile()
+    {
+        return $this->migrationFile;
+    }
 
     protected function configure(): void
     {
@@ -27,12 +37,9 @@ class SetupCommand extends AbstractCommand
     }
 
     /**
-     * Executes a command via CLI
+     * Executes a command via CLI.
      *
-     * @param Console\Input\InputInterface $input
-     * @param Console\Output\OutputInterface $output
-     *
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(Console\Input\InputInterface $input, Console\Output\OutputInterface $output)
     {
@@ -56,8 +63,6 @@ class SetupCommand extends AbstractCommand
         if ($version == '110') {
             $file = $chamiloRoot.'app/config/migrations110.yml';
 
-
-
             $this->migrationFile = $file;
 
             return 1;
@@ -74,7 +79,7 @@ class SetupCommand extends AbstractCommand
             'name' => 'Chamilo Migrations',
             'migrations_namespace' => 'Application\Migrations\Schema\V111',
             'table_name' => 'version',
-            'migrations_directory' => $migrationsFolder
+            'migrations_directory' => $migrationsFolder,
         ];
 
         $dumper = new Dumper();
@@ -89,14 +94,5 @@ class SetupCommand extends AbstractCommand
         // migrations_directory
         $output->writeln("<comment>Chash migrations.yml saved: $file</comment>");
         $this->migrationFile = $file;
-    }
-
-    /**
-     * Gets the migration file path
-     * @return string
-     */
-    public function getMigrationFile()
-    {
-        return $this->migrationFile;
     }
 }

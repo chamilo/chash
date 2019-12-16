@@ -3,21 +3,21 @@
 namespace Chash\Command\Common;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ConnectionException;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\Console\Helper\HelperSet;
-use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Console\Command\Command as AbstractCommand;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Exception\IOException;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
-use Doctrine\DBAL\Connection;
+use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Class CommonCommand
+ * Class CommonCommand.
  */
 class CommonCommand extends AbstractCommand
 {
@@ -31,17 +31,14 @@ class CommonCommand extends AbstractCommand
     private $migrationConfigurationFile;
     private $manager;
 
-    /**
-    * @param array $configuration
-    */
     public function setConfigurationArray(array $configuration)
     {
         $this->configuration = $configuration;
     }
 
     /**
-    * @return array
-    */
+     * @return array
+     */
     public function getConfigurationArray()
     {
         return $this->configuration;
@@ -63,9 +60,6 @@ class CommonCommand extends AbstractCommand
         return $this->configurationPath;
     }
 
-    /**
-     * @param array $portalSettings
-     */
     public function setPortalSettings(array $portalSettings)
     {
         $this->portalSettings = $portalSettings;
@@ -79,9 +73,6 @@ class CommonCommand extends AbstractCommand
         return $this->portalSettings;
     }
 
-    /**
-     * @param array $databaseSettings
-     */
     public function setDatabaseSettings(array $databaseSettings)
     {
         $user = isset($databaseSettings['dbuser']) ? $databaseSettings['dbuser'] : $databaseSettings['user'];
@@ -117,9 +108,6 @@ class CommonCommand extends AbstractCommand
         return $this->databaseSettings;
     }
 
-    /**
-    * @param array $databaseSettings
-    */
     public function setExtraDatabaseSettings(array $databaseSettings)
     {
         $this->extraDatabaseSettings = $databaseSettings;
@@ -133,9 +121,6 @@ class CommonCommand extends AbstractCommand
         return $this->extraDatabaseSettings;
     }
 
-    /**
-     * @param array $adminSettings
-     */
     public function setAdminSettings(array $adminSettings)
     {
         $this->adminSettings = $adminSettings;
@@ -192,7 +177,7 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Gets the installation version path
+     * Gets the installation version path.
      *
      * @param string $version
      *
@@ -203,11 +188,12 @@ class CommonCommand extends AbstractCommand
         if ($version === 'master') {
             $version = $this->getLatestVersion();
         }
+
         return $this->getInstallationFolder().$version.'/';
     }
 
     /**
-     * Gets the version name folders located in main/install
+     * Gets the version name folders located in main/install.
      *
      * @return array
      */
@@ -235,49 +221,49 @@ class CommonCommand extends AbstractCommand
             'firstname' => [
                 'attributes' => [
                     'label' => 'Firstname',
-                    'data' =>  'John',
+                    'data' => 'John',
                 ],
                 'type' => 'text',
             ],
-            'lastname' =>  [
+            'lastname' => [
                 'attributes' => [
                     'label' => 'Lastname',
-                    'data' =>  'Doe',
+                    'data' => 'Doe',
                 ],
                 'type' => 'text',
             ],
             'username' => [
                 'attributes' => [
                     'label' => 'Username',
-                    'data' =>  'admin',
+                    'data' => 'admin',
                 ],
                 'type' => 'text',
             ],
             'password' => [
                 'attributes' => [
                     'label' => 'Password',
-                    'data' =>  'admin',
+                    'data' => 'admin',
                 ],
                 'type' => 'password',
             ],
             'email' => [
                 'attributes' => [
                     'label' => 'Email',
-                    'data' =>  'admin@example.org',
+                    'data' => 'admin@example.org',
                 ],
                 'type' => 'email',
             ],
             'language' => [
                 'attributes' => [
                     'label' => 'Language',
-                    'data' =>  'english',
+                    'data' => 'english',
                 ],
                 'type' => 'text',
             ],
             'phone' => [
                 'attributes' => [
                     'label' => 'Phone',
-                    'data' =>  '123456',
+                    'data' => '123456',
                 ],
                 'type' => 'text',
             ],
@@ -345,7 +331,8 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Database parameters that are going to be parsed during the console/browser installation
+     * Database parameters that are going to be parsed during the console/browser installation.
+     *
      * @return array
      */
     public function getDatabaseSettingsParams()
@@ -353,8 +340,7 @@ class CommonCommand extends AbstractCommand
         return [
             'driver' => [
                 'attributes' => [
-                    'choices' =>
-                        [
+                    'choices' => [
                             'pdo_mysql' => 'pdo_mysql',
                             'pdo_sqlite' => 'pdo_sqlite',
                             'pdo_pgsql' => 'pdo_pgsql',
@@ -414,7 +400,7 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Gets the content of a version from the available versions
+     * Gets the content of a version from the available versions.
      *
      * @param string $version
      *
@@ -433,7 +419,8 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Gets the min version available to migrate with this command
+     * Gets the min version available to migrate with this command.
+     *
      * @return mixed
      */
     public function getMinVersionSupportedByInstall()
@@ -442,7 +429,8 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Gets an array with the supported versions to migrate
+     * Gets an array with the supported versions to migrate.
+     *
      * @return array
      */
     public function getVersionNumberList()
@@ -457,7 +445,7 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Gets an array with the settings for every supported version
+     * Gets an array with the settings for every supported version.
      *
      * @return array
      */
@@ -473,7 +461,7 @@ class CommonCommand extends AbstractCommand
                 'post' => null,
                 'update_db' => 'update-db-1.8.7-1.8.8.inc.php',
                 //'update_files' => 'update-files-1.8.7-1.8.8.inc.php',
-                'hook_to_doctrine_version' => '8' //see ChamiloLMS\Migrations\Version8.php file
+                'hook_to_doctrine_version' => '8', //see ChamiloLMS\Migrations\Version8.php file
             ],
             '1.8.8.2' => [
                 'require_update' => false,
@@ -579,13 +567,13 @@ class CommonCommand extends AbstractCommand
                 'require_update' => false,
                 'parent' => '1.11.0',
             ],
-            '2.0'  => [
+            '2.0' => [
                 'require_update' => true,
                 'update_files' => null,
                 'hook_to_doctrine_version' => '2',
                 'parent' => '2.0',
             ],
-            'master'  => [
+            'master' => [
                 'require_update' => true,
                 'update_files' => null,
                 'hook_to_doctrine_version' => '2',
@@ -597,7 +585,8 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Gets the Doctrine configuration file path
+     * Gets the Doctrine configuration file path.
+     *
      * @return string
      */
     public function getMigrationConfigurationFile()
@@ -614,7 +603,6 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     *
      * @return \Chash\Helpers\ConfigurationHelper
      */
     public function getConfigurationHelper()
@@ -624,6 +612,7 @@ class CommonCommand extends AbstractCommand
 
     /**
      * @todo move to configurationhelper
+     *
      * @param string $path
      */
     public function setRootSysDependingConfigurationPath($path)
@@ -641,12 +630,13 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Writes the configuration file for the first time (install command)
+     * Writes the configuration file for the first time (install command).
+     *
      * @param string $version
      * @param string $path
-     * @param object $output Output handler to print info messages
-     * @return bool
+     * @param object $output  Output handler to print info messages
      *
+     * @return bool
      */
     public function writeConfiguration($version, $path, $output)
     {
@@ -754,11 +744,11 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Updates the configuration.yml file
+     * Updates the configuration.yml file.
      *
-     * @param OutputInterface $output
-     * @param bool $dryRun
+     * @param bool  $dryRun
      * @param array $newValues
+     *
      * @return bool
      */
     public function updateConfiguration(OutputInterface $output, $dryRun, $newValues)
@@ -817,7 +807,8 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Gets the SQL files relation with versions
+     * Gets the SQL files relation with versions.
+     *
      * @return array
      */
     public function getDatabaseMap()
@@ -907,134 +898,8 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Set Doctrine settings
-     * @param HelperSet $helperSet
-     * @return \Doctrine\ORM\EntityManager
-     */
-    protected function setDoctrineSettings(HelperSet $helperSet)
-    {
-        $config = new \Doctrine\ORM\Configuration();
-        $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache());
-        $reader = new AnnotationReader();
-        $driverImpl = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver(
-            $reader,
-            []
-        );
-        $config->setMetadataDriverImpl($driverImpl);
-        $config->setProxyDir(__DIR__ . '/Proxies');
-        $config->setProxyNamespace('Proxies');
-        $settings = $this->getDatabaseSettings();
-        $dbName = $settings['dbname'];
-        unset($settings['dbname']);
-
-        $em = \Doctrine\ORM\EntityManager::create(
-            $settings,
-            $config
-        );
-
-        try {
-            $connection = $em->getConnection();
-            $dbList = $connection->getSchemaManager()->listDatabases();
-            // Check in db exists in list.
-            if (in_array($dbName, $dbList)) {
-                $settings['dbname'] = $dbName;
-                $em = \Doctrine\ORM\EntityManager::create(
-                    $settings,
-                    $config
-                );
-            }
-        } catch (ConnectionException $e) {
-            echo $e->getMessage();
-        }
-
-        $platform = $em->getConnection()->getDatabasePlatform();
-        $platform->registerDoctrineTypeMapping('enum', 'string');
-        $platform->registerDoctrineTypeMapping('set', 'string');
-
-        $helpers = [
-            'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper(
-                $em->getConnection()
-            ),
-            'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper(
-                $em
-            )
-            //'configuration' => new \Chash\Helpers\ConfigurationHelper()
-        ];
-
-        foreach ($helpers as $name => $helper) {
-            $helperSet->set(
-                $helper,
-                $name
-            );
-        }
-
-        return $em;
-    }
-
-    /**
-     * @param string $version
-     * @param string $path
-     * @param array $databaseList
-     */
-    protected function setConnections($version, $path, $databaseList)
-    {
-        $_configuration = $this->getHelper('configuration')->getConfiguration($path);
-
-        $config = new \Doctrine\ORM\Configuration();
-        $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache);
-        $reader = new AnnotationReader();
-
-        $driverImpl = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver($reader, []);
-        $config->setMetadataDriverImpl($driverImpl);
-        $config->setProxyDir(__DIR__ . '/Proxies');
-        $config->setProxyNamespace('Proxies');
-
-        foreach ($databaseList as $section => &$dbList) {
-            foreach ($dbList as &$dbInfo) {
-                $params = $this->getDatabaseSettings();
-
-                if (isset($_configuration['single_database']) && $_configuration['single_database'] == true) {
-                    $em = \Doctrine\ORM\EntityManager::create($params, $config);
-                } else {
-                    if ($section == 'course') {
-                        if (version_compare($version, '10', '<=')) {
-                            if (strpos($dbInfo['database'], '_chamilo_course_') === false) {
-                                //$params['dbname'] = $params['dbname'];
-                            } else {
-                                $params['dbname'] = str_replace('_chamilo_course_', '', $dbInfo['database']);
-                            }
-                        }
-                        $em = \Doctrine\ORM\EntityManager::create($params, $config);
-                    } else {
-                        $databaseName = $params['dbname'];
-                        switch ($dbInfo['database']) {
-                            case 'statistics_database':
-                                $databaseName = isset($_configuration['statistics_database']) ? $_configuration['statistics_database'] : $databaseName;
-                                break;
-                            case 'user_personal_database':
-                                $databaseName = isset($_configuration['user_personal_database']) ? $_configuration['user_personal_database'] : $databaseName;
-                                break;
-                        }
-                        $params['dbname'] = $databaseName;
-                        $em = \Doctrine\ORM\EntityManager::create($params, $config);
-                    }
-                }
-
-                if (!empty($em)) {
-                    $platform = $em->getConnection()->getDatabasePlatform();
-                    $platform->registerDoctrineTypeMapping('enum', 'string');
-                    $platform->registerDoctrineTypeMapping('set', 'string');
-                }
-
-                $helper = new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($em->getConnection());
-                $this->getApplication()->getHelperSet()->set($helper, $dbInfo['database']);
-            }
-        }
-    }
-
-    /**
      * @param Finder $files
-     * @param OutputInterface $output
+     *
      * @return int
      */
     public function removeFiles($files, OutputInterface $output)
@@ -1076,8 +941,6 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param array $params
      * @return array
      */
     public function getParamsFromOptions(InputInterface $input, array $params)
@@ -1093,11 +956,11 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * @param OutputInterface $output
      * @param string $version
      * @param string $updateInstallation
      * @param string $defaultTempFolder
-     * @return int|null|String
+     *
+     * @return int|string|null
      */
     public function getPackage(OutputInterface $output, $version, $updateInstallation, $defaultTempFolder)
     {
@@ -1127,7 +990,6 @@ class CommonCommand extends AbstractCommand
         $updateInstallationOriginal = $updateInstallation;
 
         if (!empty($updateInstallation)) {
-
             // Check temp folder
             if (!is_writable($defaultTempFolder)) {
                 $output->writeln("<comment>We don't have permissions to write in the temp folder: $defaultTempFolder</comment>");
@@ -1196,7 +1058,7 @@ class CommonCommand extends AbstractCommand
 
                     $finder = new Finder();
                     $files = $finder->in($folderPath)->depth(0);
-                    /** @var \SplFileInfo  $file */
+                    /** @var \SplFileInfo $file */
                     foreach ($files as $file) {
                         $chamiloLocationPath = $file->getRealPath();
                         break;
@@ -1221,9 +1083,10 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * @param array $_configuration
+     * @param array  $_configuration
      * @param string $courseDatabase
-     * @return null|string
+     *
+     * @return string|null
      */
     public function getTablePrefix($_configuration, $courseDatabase = null)
     {
@@ -1241,9 +1104,9 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * @param OutputInterface $output
      * @param string $chamiloLocationPath
      * @param string $destinationPath
+     *
      * @return int
      */
     public function copyPackageIntoSystem(
@@ -1259,6 +1122,7 @@ class CommonCommand extends AbstractCommand
 
         if (empty($chamiloLocationPath)) {
             $output->writeln("<error>The chamiloLocationPath variable is empty<error>");
+
             return 0;
         }
 
@@ -1266,16 +1130,17 @@ class CommonCommand extends AbstractCommand
 
         if (empty($destinationPath)) {
             $output->writeln("<error>The root path was not set.<error>");
+
             return 0;
         } else {
             $fileSystem->mirror($chamiloLocationPath, $destinationPath, null, ['override' => true]);
             $output->writeln("<comment>Copy finished.<comment>");
+
             return 1;
         }
     }
 
     /**
-     * @param OutputInterface $output
      * @param string $title
      */
     public function writeCommandHeader(OutputInterface $output, $title)
@@ -1286,7 +1151,8 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Returns the config file list
+     * Returns the config file list.
+     *
      * @return array
      */
     public function getConfigFiles()
@@ -1302,9 +1168,6 @@ class CommonCommand extends AbstractCommand
         ];
     }
 
-    /**
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     */
     public function generateConfFiles(OutputInterface $output)
     {
         $confDir = $this->getConfigurationPath();
@@ -1323,8 +1186,7 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Copy files from main/inc/conf to the new location config
-     * @param OutputInterface $output
+     * Copy files from main/inc/conf to the new location config.
      */
     public function copyConfigFilesToNewLocation(OutputInterface $output)
     {
@@ -1372,7 +1234,6 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * @param OutputInterface $output
      * @param $path
      */
     public function removeUnUsedFiles(OutputInterface $output, $path)
@@ -1394,10 +1255,6 @@ class CommonCommand extends AbstractCommand
         }
     }
 
-    /**
-     * @param OutputInterface $output
-     * @param Connection $connection
-     */
     public function setPortalSettingsInChamilo(OutputInterface $output, Connection $connection)
     {
         // Admin settings
@@ -1470,10 +1327,6 @@ class CommonCommand extends AbstractCommand
         );
     }
 
-    /**
-     * @param OutputInterface $output
-     * @param Connection $connection
-     */
     public function setAdminSettingsInChamilo(OutputInterface $output, Connection $connection)
     {
         $settings = $this->getAdminSettings();
@@ -1498,6 +1351,7 @@ class CommonCommand extends AbstractCommand
      *
      * @param string $password
      * @param string $salt
+     *
      * @return string
      */
     public function getEncryptedPassword($password, $salt = null)
@@ -1530,5 +1384,131 @@ class CommonCommand extends AbstractCommand
     public function setManager($manager)
     {
         $this->manager = $manager;
+    }
+
+    /**
+     * Set Doctrine settings.
+     *
+     * @return \Doctrine\ORM\EntityManager
+     */
+    protected function setDoctrineSettings(HelperSet $helperSet)
+    {
+        $config = new \Doctrine\ORM\Configuration();
+        $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache());
+        $reader = new AnnotationReader();
+        $driverImpl = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver(
+            $reader,
+            []
+        );
+        $config->setMetadataDriverImpl($driverImpl);
+        $config->setProxyDir(__DIR__.'/Proxies');
+        $config->setProxyNamespace('Proxies');
+        $settings = $this->getDatabaseSettings();
+        $dbName = $settings['dbname'];
+        unset($settings['dbname']);
+
+        $em = \Doctrine\ORM\EntityManager::create(
+            $settings,
+            $config
+        );
+
+        try {
+            $connection = $em->getConnection();
+            $dbList = $connection->getSchemaManager()->listDatabases();
+            // Check in db exists in list.
+            if (in_array($dbName, $dbList)) {
+                $settings['dbname'] = $dbName;
+                $em = \Doctrine\ORM\EntityManager::create(
+                    $settings,
+                    $config
+                );
+            }
+        } catch (ConnectionException $e) {
+            echo $e->getMessage();
+        }
+
+        $platform = $em->getConnection()->getDatabasePlatform();
+        $platform->registerDoctrineTypeMapping('enum', 'string');
+        $platform->registerDoctrineTypeMapping('set', 'string');
+
+        $helpers = [
+            'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper(
+                $em->getConnection()
+            ),
+            'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper(
+                $em
+            ),
+            //'configuration' => new \Chash\Helpers\ConfigurationHelper()
+        ];
+
+        foreach ($helpers as $name => $helper) {
+            $helperSet->set(
+                $helper,
+                $name
+            );
+        }
+
+        return $em;
+    }
+
+    /**
+     * @param string $version
+     * @param string $path
+     * @param array  $databaseList
+     */
+    protected function setConnections($version, $path, $databaseList)
+    {
+        $_configuration = $this->getHelper('configuration')->getConfiguration($path);
+
+        $config = new \Doctrine\ORM\Configuration();
+        $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache());
+        $reader = new AnnotationReader();
+
+        $driverImpl = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver($reader, []);
+        $config->setMetadataDriverImpl($driverImpl);
+        $config->setProxyDir(__DIR__.'/Proxies');
+        $config->setProxyNamespace('Proxies');
+
+        foreach ($databaseList as $section => &$dbList) {
+            foreach ($dbList as &$dbInfo) {
+                $params = $this->getDatabaseSettings();
+
+                if (isset($_configuration['single_database']) && $_configuration['single_database'] == true) {
+                    $em = \Doctrine\ORM\EntityManager::create($params, $config);
+                } else {
+                    if ($section == 'course') {
+                        if (version_compare($version, '10', '<=')) {
+                            if (strpos($dbInfo['database'], '_chamilo_course_') === false) {
+                                //$params['dbname'] = $params['dbname'];
+                            } else {
+                                $params['dbname'] = str_replace('_chamilo_course_', '', $dbInfo['database']);
+                            }
+                        }
+                        $em = \Doctrine\ORM\EntityManager::create($params, $config);
+                    } else {
+                        $databaseName = $params['dbname'];
+                        switch ($dbInfo['database']) {
+                            case 'statistics_database':
+                                $databaseName = isset($_configuration['statistics_database']) ? $_configuration['statistics_database'] : $databaseName;
+                                break;
+                            case 'user_personal_database':
+                                $databaseName = isset($_configuration['user_personal_database']) ? $_configuration['user_personal_database'] : $databaseName;
+                                break;
+                        }
+                        $params['dbname'] = $databaseName;
+                        $em = \Doctrine\ORM\EntityManager::create($params, $config);
+                    }
+                }
+
+                if (!empty($em)) {
+                    $platform = $em->getConnection()->getDatabasePlatform();
+                    $platform->registerDoctrineTypeMapping('enum', 'string');
+                    $platform->registerDoctrineTypeMapping('set', 'string');
+                }
+
+                $helper = new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($em->getConnection());
+                $this->getApplication()->getHelperSet()->set($helper, $dbInfo['database']);
+            }
+        }
     }
 }

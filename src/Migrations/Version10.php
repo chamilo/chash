@@ -6,7 +6,8 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Manages the migration to Chamilo 10
+ * Manages the migration to Chamilo 10.
+ *
  * @package ChamiloLMS\Controller\Migrations
  */
 class Version10 extends AbstractMigration
@@ -20,8 +21,7 @@ class Version10 extends AbstractMigration
     }*/
 
     /**
-     * Chamilo upgrade
-     * @param Schema $schema
+     * Chamilo upgrade.
      */
     public function up(Schema $schema): void
     {
@@ -59,7 +59,6 @@ class Version10 extends AbstractMigration
         $this->addSql("CREATE TABLE IF NOT EXISTS branch_transaction (id bigint unsigned not null AUTO_INCREMENT, transaction_id bigint unsigned, branch_id int unsigned not null default 0,  action char(20),  item_id char(36),  orig_id char(36),  dest_id char(36),  info char(20), status_id tinyint not null default 0,  time_insert datetime NOT NULL DEFAULT '0000-00-00 00:00:00',  time_update datetime NOT NULL DEFAULT '0000-00-00 00:00:00', message VARCHAR(255) default '' , PRIMARY KEY (id, transaction_id, branch_id))");
         $this->addSql("CREATE TABLE IF NOT EXISTS access_url_rel_usergroup (access_url_id int unsigned NOT NULL, usergroup_id int unsigned NOT NULL, PRIMARY KEY (access_url_id, usergroup_id))");
         $this->addSql("CREATE TABLE IF NOT EXISTS access_url_rel_course_category (access_url_id int unsigned NOT NULL, course_category_id int unsigned NOT NULL, PRIMARY KEY (access_url_id, course_category_id))");
-
 
         $this->addSql("ALTER TABLE c_student_publication ADD COLUMN filename varchar(255) DEFAULT NULL");
         $this->addSql("ALTER TABLE course ADD COLUMN add_teachers_to_sessions_courses tinyint NOT NULL default 0");
@@ -383,8 +382,7 @@ class Version10 extends AbstractMigration
     }
 
     /**
-     * Chamilo downgrade
-     * @param Schema $schema
+     * Chamilo downgrade.
      */
     public function down(Schema $schema): void
     {
@@ -393,16 +391,10 @@ class Version10 extends AbstractMigration
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function preUp(Schema $schema): void
     {
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function postUp(Schema $schema): void
     {
         $this->addSql("DROP TABLE IF EXISTS track_c_referers");
@@ -432,7 +424,6 @@ class Version10 extends AbstractMigration
 
         -- ALTER TABLE session DROP COLUMN date_start;
         -- ALTER TABLE session DROP COLUMN date_end;*/
-
 
         $this->addSql("DELETE FROM settings_current WHERE variable = 'session_tutor_reports_visibility'");
         $this->addSql("DELETE FROM settings_options WHERE variable = 'session_tutor_reports_visibility'");
@@ -559,16 +550,10 @@ class Version10 extends AbstractMigration
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function preDown(Schema $schema): void
     {
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function postDown(Schema $schema): void
     {
     }

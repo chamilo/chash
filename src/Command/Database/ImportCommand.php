@@ -19,16 +19,16 @@
 
 namespace Chash\Command\Database;
 
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console;
+use Symfony\Component\Console\Input\InputArgument;
 
 /**
  * Task for executing arbitrary SQL that can come from a file or directly from
  * the command line.
  *
- *
- * @link    www.doctrine-project.org
+ * @see    www.doctrine-project.org
  * @since   2.0
+ *
  * @author  Benjamin Eberlei <kontakt@beberlei.de>
  * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
  * @author  Jonathan Wage <jonwage@gmail.com>
@@ -49,7 +49,7 @@ class ImportCommand extends Console\Command\Command
                         'file',
                         InputArgument::REQUIRED | InputArgument::IS_ARRAY,
                         'File path(s) of SQL to be executed.'
-                    )
+                    ),
                 ])
             ->setHelp(
                 <<<EOT
@@ -67,14 +67,10 @@ EOT
 
         if (($fileNames = $input->getArgument('file')) !== null) {
             foreach ((array) $fileNames as $fileName) {
-                if (! file_exists($fileName)) {
-                    throw new \InvalidArgumentException(
-                        sprintf("SQL file '<info>%s</info>' does not exist.", $fileName)
-                    );
-                } elseif (! is_readable($fileName)) {
-                    throw new \InvalidArgumentException(
-                        sprintf("SQL file '<info>%s</info>' does not have read permissions.", $fileName)
-                    );
+                if (!file_exists($fileName)) {
+                    throw new \InvalidArgumentException(sprintf("SQL file '<info>%s</info>' does not exist.", $fileName));
+                } elseif (!is_readable($fileName)) {
+                    throw new \InvalidArgumentException(sprintf("SQL file '<info>%s</info>' does not have read permissions.", $fileName));
                 }
 
                 $output->write(sprintf("Processing file '<info>%s</info>'... ", $fileName));
@@ -96,9 +92,9 @@ EOT
                             $lines++;
                         } while ($stmt->nextRowset());
 
-                        $output->write(sprintf('%d statements executed!', $lines) . PHP_EOL);
+                        $output->write(sprintf('%d statements executed!', $lines).PHP_EOL);
                     } catch (\PDOException $e) {
-                        $output->write('error!' . PHP_EOL);
+                        $output->write('error!'.PHP_EOL);
 
                         throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                     }
@@ -108,11 +104,11 @@ EOT
                     $rs = $stmt->execute();
 
                     if ($rs) {
-                        $output->writeln('OK!' . PHP_EOL);
+                        $output->writeln('OK!'.PHP_EOL);
                     } else {
                         $error = $stmt->errorInfo();
 
-                        $output->write('error!' . PHP_EOL);
+                        $output->write('error!'.PHP_EOL);
 
                         throw new \RuntimeException($error[2], $error[0]);
                     }

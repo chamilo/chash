@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class ExportLanguageCommand
+ * Class ExportLanguageCommand.
  *
  * TermsPackage command, made to simplify the live of
  * translators by providing them with a list of the 10,000 most used words in
@@ -22,12 +22,13 @@ use Symfony\Component\Console\Output\OutputInterface;
  * in main/cron/lang/
  * The present command serves only at the end of this process, to generate the
  * corresponding language packages in other languages than English
+ *
  * @package Chash\Command\Translation
  */
 class TermsPackageCommand extends DatabaseCommand
 {
     /**
-     * Set the input variables and what will be shown in command helper
+     * Set the input variables and what will be shown in command helper.
      */
     protected function configure(): void
     {
@@ -66,16 +67,14 @@ class TermsPackageCommand extends DatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
 
-        $source  = $input->getArgument('source');
-        $language  = $input->getArgument('language');
+        $source = $input->getArgument('source');
+        $language = $input->getArgument('language');
         $destination = $input->getArgument('dest');
         $tgz = $input->getOption('tgz');
         $allowNew = $input->getOption('new');
@@ -191,7 +190,7 @@ class TermsPackageCommand extends DatabaseCommand
             $w = file_put_contents($destination.$origLang.'/'.$file, $origFileLines);
         }
         $output->writeln('Written translation files for packaging in '.$destination.$language.'.');
-        $output->writeln('Found '.$countVars.' variables, of which '.$countTranslatedVars.' were already translated (and '.($countVars-$countTranslatedVars).' are missing).');
+        $output->writeln('Found '.$countVars.' variables, of which '.$countTranslatedVars.' were already translated (and '.($countVars - $countTranslatedVars).' are missing).');
         $output->writeln('In words, there are '.$countWords.' words in total, of which only '.($countWords - $countTranslatedWords).' still need translating.');
         if ($tgz) {
             $output->writeln('Compressing as .tar.gz...');
@@ -209,8 +208,10 @@ class TermsPackageCommand extends DatabaseCommand
 
     /**
      * Gets all the variables in a language file as a hash
-     * This is a copy of the get_all_language_variable_in_file method in main/admin/sub_language.class.php
+     * This is a copy of the get_all_language_variable_in_file method in main/admin/sub_language.class.php.
+     *
      * @param string $file The asbolute path to the file from which to extract variables
+     *
      * @return array Named array of variable => translation
      */
     private function _getLangVars($file)
@@ -231,6 +232,7 @@ class TermsPackageCommand extends DatabaseCommand
             $var = substr($var, 1);
             $res_list[$var] = $val;
         }
+
         return $res_list;
     }
 }

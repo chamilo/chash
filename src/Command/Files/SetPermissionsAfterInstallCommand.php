@@ -3,78 +3,25 @@
 namespace Chash\Command\Files;
 
 use Chash\Command\Common\DatabaseCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
- * Class SetPermissionsAfterInstallCommand
+ * Class SetPermissionsAfterInstallCommand.
+ *
  * @package Chash\Command\Files
  */
 class SetPermissionsAfterInstallCommand extends DatabaseCommand
 {
-    protected function configure(): void
-    {
-        parent::configure();
-        $this
-            ->setName('files:set_permissions_after_install')
-            ->setDescription('Set permissions')
-            ->addOption('linux-user', null, InputOption::VALUE_OPTIONAL, 'user', 'www-data')
-            ->addOption('linux-group', null, InputOption::VALUE_OPTIONAL, 'group', 'www-data');
-    }
-
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        parent::execute($input, $output);
-        $this->writeCommandHeader($output, 'Setting permissions ...');
-
-        $linuxUser = $input->getOption('linux-user');
-        $linuxGroup = $input->getOption('linux-group');
-
-        // All files
-        $this->writeCommandHeader($output, 'System folders...');
-        $files = $this->getConfigurationHelper()->getSysFolders();
-        $this->setPermissions($output, $files, 0777, $linuxUser, $linuxGroup, false);
-
-        $this->writeCommandHeader($output, 'System files ...');
-        $files = $this->getConfigurationHelper()->getSysFiles();
-        $this->setPermissions($output, $files, null, $linuxUser, $linuxGroup, false);
-
-        // Data folders
-        $this->writeCommandHeader($output, 'Data folders ...');
-        $files = $this->getConfigurationHelper()->getDataFolders();
-        $this->setPermissions($output, $files, 0777, $linuxUser, $linuxGroup, false);
-
-        // Config folders
-        $this->writeCommandHeader($output, 'Config folders ...');
-        $files = $this->getConfigurationHelper()->getConfigFolders();
-        $this->setPermissions($output, $files, 0555, $linuxUser, $linuxGroup, false);
-
-        $this->writeCommandHeader($output, 'Config files...');
-        $files = $this->getConfigurationHelper()->getConfigFiles();
-        $this->setPermissions($output, $files, 0555, $linuxUser, $linuxGroup, false);
-
-        // Temp folders
-        $this->writeCommandHeader($output, 'Temp files...');
-        $files = $this->getConfigurationHelper()->getTempFolders();
-        $this->setPermissions($output, $files, 0777, $linuxUser, $linuxGroup, false);
-    }
-
-    /**
-     * @param OutputInterface $output
      * @param array $files
      * @param $permission
      * @param $user
      * @param $group
      * @param bool $listFiles
+     *
      * @return int
      */
     public function setPermissions(
@@ -89,6 +36,7 @@ class SetPermissionsAfterInstallCommand extends DatabaseCommand
 
         if (empty($files)) {
             $output->writeln('<comment>No files found.</comment>');
+
             return 0;
         }
 
@@ -143,5 +91,55 @@ class SetPermissionsAfterInstallCommand extends DatabaseCommand
         } catch (IOException $e) {
             echo "\n An error occurred while removing the directory: ".$e->getMessage()."\n ";
         }
+    }
+
+    protected function configure(): void
+    {
+        parent::configure();
+        $this
+            ->setName('files:set_permissions_after_install')
+            ->setDescription('Set permissions')
+            ->addOption('linux-user', null, InputOption::VALUE_OPTIONAL, 'user', 'www-data')
+            ->addOption('linux-group', null, InputOption::VALUE_OPTIONAL, 'group', 'www-data');
+    }
+
+    /**
+     * @return int|void|null
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        parent::execute($input, $output);
+        $this->writeCommandHeader($output, 'Setting permissions ...');
+
+        $linuxUser = $input->getOption('linux-user');
+        $linuxGroup = $input->getOption('linux-group');
+
+        // All files
+        $this->writeCommandHeader($output, 'System folders...');
+        $files = $this->getConfigurationHelper()->getSysFolders();
+        $this->setPermissions($output, $files, 0777, $linuxUser, $linuxGroup, false);
+
+        $this->writeCommandHeader($output, 'System files ...');
+        $files = $this->getConfigurationHelper()->getSysFiles();
+        $this->setPermissions($output, $files, null, $linuxUser, $linuxGroup, false);
+
+        // Data folders
+        $this->writeCommandHeader($output, 'Data folders ...');
+        $files = $this->getConfigurationHelper()->getDataFolders();
+        $this->setPermissions($output, $files, 0777, $linuxUser, $linuxGroup, false);
+
+        // Config folders
+        $this->writeCommandHeader($output, 'Config folders ...');
+        $files = $this->getConfigurationHelper()->getConfigFolders();
+        $this->setPermissions($output, $files, 0555, $linuxUser, $linuxGroup, false);
+
+        $this->writeCommandHeader($output, 'Config files...');
+        $files = $this->getConfigurationHelper()->getConfigFiles();
+        $this->setPermissions($output, $files, 0555, $linuxUser, $linuxGroup, false);
+
+        // Temp folders
+        $this->writeCommandHeader($output, 'Temp files...');
+        $files = $this->getConfigurationHelper()->getTempFolders();
+        $this->setPermissions($output, $files, 0777, $linuxUser, $linuxGroup, false);
     }
 }

@@ -3,10 +3,10 @@
 namespace Chash\Command\Email;
 
 use Chash\Command\Common\ChamiloEmailCommand;
+use Exception;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Exception;
 
 /**
  * Class SendEmailCommand
@@ -64,9 +64,7 @@ class SendEmailCommand extends ChamiloEmailCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return null|void
+     * @return void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -100,13 +98,13 @@ class SendEmailCommand extends ChamiloEmailCommand
 
             if ($conn instanceof \Doctrine\DBAL\Connection) {
                 $sql = "SELECT email, CONCAT(lastname, firstname) as name FROM $userTable u "
-                     . "LEFT JOIN $adminTable a ON a.user_id = u.user_id "
-                     . "ORDER BY u.user_id LIMIT 1";
+                     ."LEFT JOIN $adminTable a ON a.user_id = u.user_id "
+                     ."ORDER BY u.user_id LIMIT 1";
                 try {
                     $stmt = $conn->prepare($sql);
                     $stmt->execute();
                 } catch (\PDOException $e) {
-                    $output->write('SQL error!' . PHP_EOL);
+                    $output->write('SQL error!'.PHP_EOL);
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
                 $row = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -134,6 +132,7 @@ class SendEmailCommand extends ChamiloEmailCommand
                 $output->writeln('The connection does not seem to be a valid PDO connection');
             }
         }
+
         return null;
     }
 }

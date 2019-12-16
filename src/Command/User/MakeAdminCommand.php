@@ -5,7 +5,6 @@ namespace Chash\Command\User;
 use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -13,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * it for.
  */
 /**
- * Makes the given user an admin on the main portal
+ * Makes the given user an admin on the main portal.
  */
 class MakeAdminCommand extends DatabaseCommand
 {
@@ -76,6 +75,7 @@ class MakeAdminCommand extends DatabaseCommand
         } else {
             $output->writeln('The connection does not seem to be a valid PDO connection');
         }
+
         return null;
     }
 }

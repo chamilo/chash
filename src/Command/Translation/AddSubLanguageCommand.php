@@ -6,13 +6,13 @@ use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class AddSubLanguageCommand
  * Definition of the translation:add_sub_language command
- * Does not support multi-url yet
+ * Does not support multi-url yet.
+ *
  * @package Chash\Command\Translation
  */
 class AddSubLanguageCommand extends DatabaseCommand
@@ -37,9 +37,7 @@ class AddSubLanguageCommand extends DatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -63,6 +61,7 @@ class AddSubLanguageCommand extends DatabaseCommand
             $count = $stmt->rowCount();
             if ($count) {
                 $output->writeln($lang.' already exists in the database. Pick another English name.');
+
                 return null;
             }
 
@@ -81,11 +80,13 @@ class AddSubLanguageCommand extends DatabaseCommand
 
             if ($count < 1) {
                 $output->writeln("The parent language $parentQuoted does not exist. Please choose a valid parent.");
+
                 return null;
             }
 
             if (is_dir($_configuration['root_sys'].'main/lang/'.$lang)) {
                 $output->writeln('The destination directory ('.$_configuration['root_sys'].'main/lang/'.$lang.') already exists. Please choose another sub-language name.');
+
                 return null;
             }
 
@@ -97,7 +98,7 @@ class AddSubLanguageCommand extends DatabaseCommand
                     'isocode' => $parentData['isocode'],
                     'dokeos_folder' => $lang,
                     'available' => 0,
-                    'parent_id' => $parentData['id']
+                    'parent_id' => $parentData['id'],
                 ]);
             } catch (\PDOException $e) {
                 $output->write('SQL error!'.PHP_EOL);
@@ -112,6 +113,7 @@ class AddSubLanguageCommand extends DatabaseCommand
         } else {
             $output->writeln('The connection does not seem to be a valid PDO connection');
         }
+
         return null;
     }
 }

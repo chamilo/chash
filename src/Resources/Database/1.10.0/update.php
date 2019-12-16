@@ -138,12 +138,12 @@ $updateFiles = function ($_configuration, $mainConnection, $courseList, $dryRun,
 
         $list = scandir($langPath);
         foreach ($list as $entry) {
-            if (is_dir($langPath . $entry) &&
+            if (is_dir($langPath.$entry) &&
                 in_array($entry, $officialLanguages)
             ) {
                 foreach ($filesToDelete as $file) {
-                    if (is_file($langPath . $entry . '/' . $file . '.inc.php')) {
-                        unlink($langPath . $entry . '/' . $file . '.inc.php');
+                    if (is_file($langPath.$entry.'/'.$file.'.inc.php')) {
+                        unlink($langPath.$entry.'/'.$file.'.inc.php');
                     }
                 }
             }
@@ -171,12 +171,12 @@ $updateFiles = function ($_configuration, $mainConnection, $courseList, $dryRun,
 
         // Move dirs into new structures.
         $movePathList = [
-            $sysCodePath.'upload/users/groups' => $sysPath . 'app/upload/groups',
-            $sysCodePath.'upload/users' => $sysPath . 'app/upload/users',
-            $sysCodePath.'upload/badges' => $sysPath . 'app/upload/badges',
-            $sysPath.'courses' => $sysPath . 'app/courses',
-            $sysPath.'searchdb' => $sysPath . 'app/upload/plugins/xapian/',
-            $sysPath.'home' => $sysPath . 'app/home'
+            $sysCodePath.'upload/users/groups' => $sysPath.'app/upload/groups',
+            $sysCodePath.'upload/users' => $sysPath.'app/upload/users',
+            $sysCodePath.'upload/badges' => $sysPath.'app/upload/badges',
+            $sysPath.'courses' => $sysPath.'app/courses',
+            $sysPath.'searchdb' => $sysPath.'app/upload/plugins/xapian/',
+            $sysPath.'home' => $sysPath.'app/home',
         ];
 
         $output->writeln('Moving folders');

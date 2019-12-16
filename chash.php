@@ -1,7 +1,7 @@
 <?php
 /**
  * Command-line tool to do things more swiftly in Chamilo.
- * To add support for a new command see the Console Component read:
+ * To add support for a new command see the Console Component read:.
  *
  * https://speakerdeck.com/hhamon/symfony-extending-the-console-component
  * http://symfony.com/doc/2.0/components/console/introduction.html
@@ -28,11 +28,13 @@ use Doctrine\Migrations\Tools\Console\Command\VersionCommand;
 use Symfony\Component\Console\Application;
 
 $helpers = [
-    'configuration' => new Chash\Helpers\ConfigurationHelper()
+    'configuration' => new Chash\Helpers\ConfigurationHelper(),
 ];
 
 $application = new Application('Chamilo Command Line Interface', '1.0');
-
+$helpers = [
+    'configuration' => new Chash\Helpers\ConfigurationHelper()
+];
 $helperSet = $application->getHelperSet();
 foreach ($helpers as $name => $helper) {
     $helperSet->set($helper, $name);

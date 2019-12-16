@@ -22,7 +22,6 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
     $mainConnection->beginTransaction();
 
     try {
-
         // Checking if option "students_download_folders" exists see BT#7678&
         $output->writeln("Checking option 'students_download_folders'");
         $sql = "SELECT selected_value FROM settings_current
@@ -42,7 +41,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                 'comment' => 'AllowStudentsDownloadFoldersComment',
                 'scope' => '',
                 'subkeytext' => '',
-                'access_url_changeable' => '0'
+                'access_url_changeable' => '0',
             ];
             $mainConnection->insert('settings_current', $params);
 
@@ -50,14 +49,14 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
             $params = [
                 'variable' => 'students_download_folders',
                 'value' => 'false',
-                'display_text' => 'No'
+                'display_text' => 'No',
             ];
             $mainConnection->insert('settings_options', $params);
 
             $params = [
                 'variable' => 'students_download_folders',
                 'value' => 'true',
-                'display_text' => 'Yes'
+                'display_text' => 'Yes',
             ];
             $mainConnection->insert('settings_options', $params);
 
@@ -72,7 +71,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
         $output->writeln($sql);
 
         $result = $result->fetch();
-        $session_mode  = $result['selected_value'];
+        $session_mode = $result['selected_value'];
         $output->writeln("<comment>Session mode: $session_mode</comment>");
 
         if ($session_mode == 'true') {
@@ -103,7 +102,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
 
                     if (is_numeric($new_user_group_id)) {
                         $mapping_classes[$old_id] = $new_user_group_id;
-                        $classes_added ++;
+                        $classes_added++;
                     }
                 }
                 $output->writeln("Classes added: $classes_added");
@@ -124,7 +123,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                     }
                     $values = [
                         'usergroup_id' => $mapping_classes[$row['class_id']],
-                        'user_id' => $row['user_id']
+                        'user_id' => $row['user_id'],
                     ];
 
                     if ($dryRun) {
@@ -150,7 +149,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
 
                     $subResult = $mainConnection->executeQuery($sql_course);
                     $courseInfo = $subResult->fetch();
-                    $course_id  = $courseInfo['id'];
+                    $course_id = $courseInfo['id'];
                     if (empty($mapping_classes[$row['class_id']])) {
                         // Cover a special case where data would not be
                         // consistent - see BT#7254
@@ -159,7 +158,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                     }
                     $values = [
                         'usergroup_id' => $mapping_classes[$row['class_id']],
-                        'course_id' => $course_id
+                        'course_id' => $course_id,
                     ];
 
                     if ($dryRun) {
@@ -218,7 +217,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
             "personal_agenda",
             "personal_agenda_repeat",
             "personal_agenda_repeat_not",
-            "user_course_category"
+            "user_course_category",
         ];
 
         $userSchemaManager = $userConnection->getSchemaManager();
@@ -351,7 +350,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                     'wiki',
                     'wiki_conf',
                     'wiki_discuss',
-                    'wiki_mailcue'
+                    'wiki_mailcue',
                 ];
 
                 $output->writeln('');
@@ -402,7 +401,6 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                                 if ($dryRun) {
                                     $id = 1;
                                 } else {
-
                                     // Fixing data
                                     switch ($table) {
                                         case 'forum_notification':
@@ -516,8 +514,8 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
 
                         foreach ($work_list as $work) {
                             $session_id = intval($work['session_id']);
-                            $group_id   = intval($work['post_group_id']);
-                            $work_key   = $session_id.$group_id;
+                            $group_id = intval($work['post_group_id']);
+                            $work_key = $session_id.$group_id;
 
                             $dir_name = "default_tasks_".$group_id."_".$session_id;
 
@@ -539,7 +537,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                                         qualificator_id     = '',
                                         user_id 			= '".$user_id."'";
                                 $mainConnection->executeQuery($sql);
-                                $id  = $mainConnection->lastInsertId();
+                                $id = $mainConnection->lastInsertId();
 
                                 //2.2 Adding the folder in item property
                                 if ($id) {
@@ -618,7 +616,7 @@ function check_work($mainConnection, $folder_id, $work_url, $work_table, $base_w
 {
     $uniq_id = uniqid();
     // Looking for subfolders
-    $sql 	= "SELECT * FROM $work_table WHERE parent_id = $folder_id AND filetype ='folder' AND c_id = $courseId";
+    $sql = "SELECT * FROM $work_table WHERE parent_id = $folder_id AND filetype ='folder' AND c_id = $courseId";
     $result = $mainConnection->executeQuery($sql);
     $rows = $result->fetchAll();
 
@@ -638,7 +636,7 @@ function check_work($mainConnection, $folder_id, $work_url, $work_table, $base_w
         rename($base_work_dir.$work_url, $base_work_dir.$new_url);
 
         //Rename all files inside the folder
-        $sql 	= "SELECT * FROM $work_table WHERE parent_id = $folder_id AND filetype ='file' AND c_id = $courseId";
+        $sql = "SELECT * FROM $work_table WHERE parent_id = $folder_id AND filetype ='file' AND c_id = $courseId";
         $result = $mainConnection->executeQuery($sql);
         $rows = $result->fetchAll();
 
@@ -657,7 +655,8 @@ function check_work($mainConnection, $folder_id, $work_url, $work_table, $base_w
 /**
  * @param string $base_work_dir
  * @param string $desired_dir_name
- * @param array $portalSettings
+ * @param array  $portalSettings
+ *
  * @return bool|string
  */
 function create_unexisting_work_directory($base_work_dir, $desired_dir_name, $portalSettings)
@@ -665,7 +664,7 @@ function create_unexisting_work_directory($base_work_dir, $desired_dir_name, $po
     $nb = '';
     $base_work_dir = (substr($base_work_dir, -1, 1) == '/' ? $base_work_dir : $base_work_dir.'/');
     while (file_exists($base_work_dir.$desired_dir_name.$nb)) {
-        $nb += 1;
+        $nb++;
     }
     if (mkdir($base_work_dir.$desired_dir_name.$nb, $portalSettings['permissions_for_new_directories'])) {
         return $desired_dir_name.$nb;

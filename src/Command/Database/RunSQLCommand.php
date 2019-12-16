@@ -7,7 +7,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Connects to the MySQL client without the need to introduce a password
+ * Connects to the MySQL client without the need to introduce a password.
+ *
  * @return int Exit code returned by mysql command
  */
 class RunSQLCommand extends DatabaseCommand
@@ -24,9 +25,7 @@ class RunSQLCommand extends DatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -35,11 +34,12 @@ class RunSQLCommand extends DatabaseCommand
 
         $_configuration = $this->getConfigurationArray();
 
-        $cmd         = 'mysql -h '.$_configuration['db_host'].' -u '.$_configuration['db_user'].' -p'.$_configuration['db_password'].' '.$_configuration['main_database'];
-        $process     = proc_open($cmd, [0 => STDIN, 1 => STDOUT, 2 => STDERR], $pipes);
+        $cmd = 'mysql -h '.$_configuration['db_host'].' -u '.$_configuration['db_user'].' -p'.$_configuration['db_password'].' '.$_configuration['main_database'];
+        $process = proc_open($cmd, [0 => STDIN, 1 => STDOUT, 2 => STDERR], $pipes);
         $proc_status = proc_get_status($process);
-        $exit_code   = proc_close($process);
-        return ($proc_status["running"] ? $exit_code : $proc_status["exitcode"]);
+        $exit_code = proc_close($process);
+
+        return $proc_status["running"] ? $exit_code : $proc_status["exitcode"];
 
         /*$output->writeln('<comment>Starting Chamilo process</comment>');
         $output->writeln('<info>Chamilo process ended succesfully</info>');

@@ -5,7 +5,6 @@ namespace Chash\Command\User;
 use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -14,7 +13,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 /**
  * Class ChangePassCommand
- * Changes a user password to the one given
+ * Changes a user password to the one given.
+ *
  * @package Chash\Command\User
  */
 class ChangePassCommand extends DatabaseCommand
@@ -39,9 +39,7 @@ class ChangePassCommand extends DatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return null|void
+     * @return void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -96,6 +94,7 @@ class ChangePassCommand extends DatabaseCommand
         } else {
             $output->writeln('The connection does not seem to be a valid PDO connection');
         }
+
         return null;
     }
 }

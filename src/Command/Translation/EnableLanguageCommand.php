@@ -6,7 +6,6 @@ use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -14,6 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Definition of the translation:enable command
  * Definition of command to enable a language.
  * Does not support multi-url yet.
+ *
  * @package Chash\Command\Translation
  */
 class EnableLanguageCommand extends DatabaseCommand
@@ -33,9 +33,7 @@ class EnableLanguageCommand extends DatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -56,11 +54,13 @@ class EnableLanguageCommand extends DatabaseCommand
             $num = $stmt->rowCount();
             if ($num < 1) {
                 $output->writeln($lang.' language not found in the database. Please make sure you use an existing language name.');
+
                 return null;
             }
             $lr = $stmt->fetch(\PDO::FETCH_ASSOC);
             if ($lr['available'] == 1) {
                 $output->writeln($lang.' language is already enabled. Nothing to do.');
+
                 return null;
             }
             // Everything is OK so far, enable the language
@@ -76,6 +76,7 @@ class EnableLanguageCommand extends DatabaseCommand
         } else {
             $output->writeln('The connection does not seem to be a valid PDO connection');
         }
+
         return null;
     }
 }

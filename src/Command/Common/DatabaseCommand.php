@@ -2,37 +2,20 @@
 
 namespace Chash\Command\Common;
 
-use Symfony\Component\Console\Style\SymfonyStyle;
+use Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Dotenv\Dotenv;
-use Exception;
 
 /**
- * Class CommonDatabaseCommand
+ * Class CommonDatabaseCommand.
  */
 class DatabaseCommand extends CommonCommand
 {
-    protected function configure(): void
-    {
-        $this
-            ->addOption(
-                'conf',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'The configuration.php file path. Example /var/www/chamilo/config/configuration.php'
-            )
-            ->addOption(
-                'dry-run',
-                null,
-                InputOption::VALUE_NONE,
-                'For tests'
-            );
-    }
-
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getConnection(InputInterface $input)
     {
@@ -55,10 +38,25 @@ class DatabaseCommand extends CommonCommand
         }
     }
 
+    protected function configure(): void
+    {
+        $this
+            ->addOption(
+                'conf',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'The configuration.php file path. Example /var/www/chamilo/config/configuration.php'
+            )
+            ->addOption(
+                'dry-run',
+                null,
+                InputOption::VALUE_NONE,
+                'For tests'
+            );
+    }
+
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -122,7 +120,7 @@ class DatabaseCommand extends CommonCommand
                 'host' => $configuration['db_host'],
                 'dbname' => $configuration['main_database'],
                 'user' => $configuration['db_user'],
-                'password' => $configuration['db_password']
+                'password' => $configuration['db_password'],
             ];
         } else {
             $databaseSettings = [
@@ -130,7 +128,7 @@ class DatabaseCommand extends CommonCommand
                 'host' => $configuration['database_host'],
                 'dbname' => $configuration['database_name'],
                 'user' => $configuration['database_user'],
-                'password' => $configuration['database_password']
+                'password' => $configuration['database_password'],
             ];
         }
 

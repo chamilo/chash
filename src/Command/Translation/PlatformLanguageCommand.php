@@ -2,23 +2,24 @@
 /**
  * Definition of command to
  * change platform language
- * Does not support multi-url yet
+ * Does not support multi-url yet.
  */
 /**
- * Necessary namespaces definitions and usage
+ * Necessary namespaces definitions and usage.
  */
+
 namespace Chash\Command\Translation;
 
 use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class PlatformLanguageCommand
- * Definition of the translation:platform_language command
+ * Definition of the translation:platform_language command.
+ *
  * @package Chash\Command\Translation
  */
 class PlatformLanguageCommand extends DatabaseCommand
@@ -38,9 +39,7 @@ class PlatformLanguageCommand extends DatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -75,6 +74,7 @@ class PlatformLanguageCommand extends DatabaseCommand
                 }
                 if (!in_array($lang, $languages)) {
                     $output->writeln($lang.' must be available on your platform before you can set it as default');
+
                     return null;
                 }
                 $lang = $conn->quote($lang);
@@ -89,6 +89,7 @@ class PlatformLanguageCommand extends DatabaseCommand
                 $output->writeln('Language set to '.$lang);
             }
         }
+
         return null;
     }
 }

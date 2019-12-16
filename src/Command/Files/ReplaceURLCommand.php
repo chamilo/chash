@@ -10,7 +10,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class ReplaceURLCommand
- * Clean the archives directory, leaving only index.html, twig and Serializer
+ * Clean the archives directory, leaving only index.html, twig and Serializer.
  */
 class ReplaceURLCommand extends DatabaseCommand
 {
@@ -33,9 +33,7 @@ class ReplaceURLCommand extends DatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -119,7 +117,7 @@ class ReplaceURLCommand extends DatabaseCommand
 
         if (!empty($results)) {
             foreach ($results as $row) {
-                $filePath = $coursePath . '/' . $row['directory'] . '/document' . $row['path'];
+                $filePath = $coursePath.'/'.$row['directory'].'/document'.$row['path'];
                 $output->writeln($filePath);
                 if (file_exists($filePath) && !empty($row['path'])) {
                     if (!$dryRun) {
@@ -162,7 +160,7 @@ class ReplaceURLCommand extends DatabaseCommand
             'c_tool_intro' => ['intro_text'],
             'track_e_attempt' => ['answer'],
             'c_link' => ['url'],
-            'c_glossary' => ['description']
+            'c_glossary' => ['description'],
         ];
     }
 }

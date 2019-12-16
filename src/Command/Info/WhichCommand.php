@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class WhichCommand
  * Command meant to deal with what the user of this script is calling it for.
- * Gives info about where to find some important Chamilo code for specific tools
+ * Gives info about where to find some important Chamilo code for specific tools.
  */
 class WhichCommand extends InfoCommand
 {
@@ -79,14 +79,14 @@ class WhichCommand extends InfoCommand
             'adminpath' => 'main/',
         ],
         'aliases' => [
-            'admin'     => ['administration', 'management'],
+            'admin' => ['administration', 'management'],
             'announcement' => ['announcements', 'news'],
             'calendar' => ['agenda', 'schedule', 'events', 'event'],
             'attendance' => ['attendances', 'attend', 'assistance'],
             'auth' => ['openid', 'cas', 'sso', 'single-sign-on', 'shibboleth', 'drupal'],
-
         ],
     ];
+
     protected function configure(): void
     {
         parent::configure();
@@ -102,9 +102,7 @@ class WhichCommand extends InfoCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return null|void
+     * @return void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -139,6 +137,7 @@ class WhichCommand extends InfoCommand
         if (!empty($this->tools[$tool]['libpath'])) {
             $output->writeln('* Tool\'s general library: '.$this->tools[$tool]['libpath']);
         }
+
         return 0;
     }
 }
