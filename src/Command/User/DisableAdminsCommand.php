@@ -50,6 +50,6 @@ class DisableAdminsCommand extends DatabaseCommand
             $output->writeln('All admins have been disabled. Use user:make-admin to add one back.');
         }
 
-        return null;
+        return 0;
     }
 }
