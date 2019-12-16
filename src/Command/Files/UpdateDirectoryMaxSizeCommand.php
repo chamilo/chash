@@ -108,7 +108,7 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
                         if ($quota > 0) {
                             $newAllowedSize = $quota;
                             $rate = round(
-                                ($size / $newAllowedSize) * 100,
+                                $size / $newAllowedSize * 100,
                                 0
                             ); //rate is a percentage of disk use vs allowed quota, in MB
                             $increase = false;
@@ -117,7 +117,7 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
                                 // Current disk usage goes beyond threshold. Increase allowed size by 100MB
                                 $newAllowedSize += $add;
                                 //$output->writeln('....New allowed size is '.$newAllowedSize);
-                                $rate = round(($size / $newAllowedSize) * 100, 0);
+                                $rate = round($size / $newAllowedSize * 100, 0);
                                 //$output->writeln('...Rate is now '.$rate);
                                 $increase = true;
                             }

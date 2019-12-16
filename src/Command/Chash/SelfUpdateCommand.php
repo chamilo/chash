@@ -50,8 +50,6 @@ class SelfUpdateCommand extends AbstractCommand
             return 0;
         }
 
-        //$protocol = extension_loaded('openssl') ? 'https' : 'http';
-        $protocol = 'http';
         $rfs = new RemoteFilesystem(new NullIO());
 
         // Chamilo version

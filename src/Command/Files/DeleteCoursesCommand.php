@@ -339,8 +339,8 @@ class DeleteCoursesCommand extends DatabaseCommand
      * This operation follows the "unlink course" operation so that it just
      * completes it, but only in case the course is used only once.
      *
-     * @param object  Output interface
-     * @param string  Course code
+     * @param object $input  Output interface
+     * @param string $output Course code
      *
      * @return int
      */

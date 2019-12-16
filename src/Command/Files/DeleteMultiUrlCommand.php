@@ -145,7 +145,6 @@ class DeleteMultiUrlCommand extends DatabaseCommand
                         foreach ($courses as $code) {
                             $countUrl = count($coursesUrl[$code]);
                             $unique = ($countUrl <= 1 ? 'yes' : 'no');
-                            $diskUsage = '';
                             if ($du) {
                                 $courseDir = $coursesPath.$coursesDir[$code];
                                 if (!is_dir($courseDir)) {
@@ -299,11 +298,11 @@ class DeleteMultiUrlCommand extends DatabaseCommand
             $sql = 'DELETE FROM session_rel_course_rel_user '
                 ."WHERE id_session = $sessionId "
                 ." AND course_code = '$courseCode' ";
-            $stmt = $connection->query($sql);
+            $connection->query($sql);
             $sql = 'DELETE FROM session_rel_course '
                 ."WHERE id_session = $sessionId "
                 ." AND course_code = '$courseCode' ";
-            $stmt = $connection->query($sql);
+            $connection->query($sql);
             $sql = "SELECT count(*) as courseCount FROM session_rel_course WHERE id_session = $sessionId";
             $stmt = $connection->query($sql);
             while ($row = $stmt->fetch()) {
@@ -312,19 +311,19 @@ class DeleteMultiUrlCommand extends DatabaseCommand
                     // No course within this session => delete the session
                     // @todo: use sessionmanager::delete_session($sessionId)
                     $sqlDelete = "DELETE FROM session WHERE id = $sessionId";
-                    $stmtDelete = $connection->query($sqlDelete);
+                    $connection->query($sqlDelete);
                     $sqlDelete = "DELETE FROM session_rel_course_rel_user WHERE id_session = $sessionId";
-                    $stmtDelete = $connection->query($sqlDelete);
+                    $connection->query($sqlDelete);
                     $sqlDelete = "DELETE FROM session_rel_user WHERE id_session = $sessionId";
-                    $stmtDelete = $connection->query($sqlDelete);
+                    $connection->query($sqlDelete);
                     $sqlDelete = "DELETE FROM session_rel_course WHERE id_session = $sessionId";
-                    $stmtDelete = $connection->query($sqlDelete);
+                    $connection->query($sqlDelete);
                     $sqlDelete = "DELETE FROM access_url_rel_session WHERE session_id = $sessionId";
-                    $stmtDelete = $connection->query($sqlDelete);
+                    $connection->query($sqlDelete);
                     $sqlDelete = "DELETE FROM session_field_values WHERE session_id = $sessionId";
-                    $stmtDelete = $connection->query($sqlDelete);
+                    $connection->query($sqlDelete);
                     $sqlDelete = "DELETE FROM session WHERE id = $sessionId";
-                    $stmtDelete = $connection->query($sqlDelete);
+                    $connection->query($sqlDelete);
                 }
             }
         }
@@ -333,7 +332,7 @@ class DeleteMultiUrlCommand extends DatabaseCommand
         $sql = 'DELETE FROM access_url_rel_course '
             ." WHERE access_url_id = $urlId "
             ." AND course_code = '$courseCode'";
-        $stmt = $connection->query($sql);
+        $connection->query($sql);
     }
 
     /**
@@ -341,8 +340,8 @@ class DeleteMultiUrlCommand extends DatabaseCommand
      * This operation follows the "unlink course" operation so that it just
      * completes it, but only in case the course is used only once.
      *
-     * @param object  Output interface
-     * @param string  Course code
+     * @param object $input  Output interface
+     * @param string $output Course code
      *
      * @return bool
      */
@@ -468,8 +467,8 @@ class DeleteMultiUrlCommand extends DatabaseCommand
      * super-admins. Other roles should only be able to disable a user,
      * which removes access to the platform but doesn't delete anything.
      *
-     * @param object  Output interface
-     * @param int     User ID
+     * @param object $input  Output interface
+     * @param int    $output User ID
      *
      * @return int
      *

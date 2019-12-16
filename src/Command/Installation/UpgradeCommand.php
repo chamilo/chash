@@ -339,7 +339,7 @@ class UpgradeCommand extends CommonCommand
      *
      * @param string          $sqlFilePath
      * @param OutputInterface $output
-     * @param string type
+     * @param string          $type
      */
     public function fillQueryList($sqlFilePath, $output, string $type)
     {

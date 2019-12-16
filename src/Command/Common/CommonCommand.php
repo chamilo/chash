@@ -430,10 +430,8 @@ class CommonCommand extends AbstractCommand
 
     /**
      * Gets an array with the supported versions to migrate.
-     *
-     * @return array
      */
-    public function getVersionNumberList()
+    public function getVersionNumberList(): array
     {
         $versionList = $this->availableVersions();
         $versionNumberList = [];
@@ -446,12 +444,10 @@ class CommonCommand extends AbstractCommand
 
     /**
      * Gets an array with the settings for every supported version.
-     *
-     * @return array
      */
-    public function availableVersions()
+    public function availableVersions(): array
     {
-        $versionList = [
+        return [
             '1.8.7' => [
                 'require_update' => false,
             ],
@@ -580,8 +576,6 @@ class CommonCommand extends AbstractCommand
                 'parent' => '2.0',
             ],
         ];
-
-        return $versionList;
     }
 
     /**

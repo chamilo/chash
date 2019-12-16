@@ -6,6 +6,8 @@ $update = function ($_configuration, \Doctrine\DBAL\Connection $mainConnection, 
     $mainConnection->beginTransaction();
 
     $dbNameForm = $_configuration['main_database'];
+    $courseList;
+    $upgrade;
 
     $session_table = "$dbNameForm.session";
     $session_rel_course_table = "$dbNameForm.session_rel_course";

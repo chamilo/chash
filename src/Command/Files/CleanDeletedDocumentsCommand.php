@@ -87,7 +87,7 @@ class CleanDeletedDocumentsCommand extends DatabaseCommand
                 foreach ($files as $file) {
                     $size += $file->getSize();
                 }
-                $output->writeln('Total size used by deleted documents: '.round(((float) $size / 1024) / 1024, 2).'MB');
+                $output->writeln('Total size used by deleted documents: '.round((float) $size / 1024 / 1024, 2).'MB');
             }
 
             $helper = $this->getHelperSet()->get('question');

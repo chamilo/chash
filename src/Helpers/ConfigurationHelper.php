@@ -63,7 +63,7 @@ class ConfigurationHelper extends Helper
      */
     public function chamiloVersions()
     {
-        $versionList = [
+        return [
             '1.8.6.2',
             '1.8.7',
             '1.8.8',
@@ -79,8 +79,6 @@ class ConfigurationHelper extends Helper
             '1.11.0',
             '2.0.0',
         ];
-
-        return $versionList;
     }
 
     /**
@@ -587,7 +585,7 @@ class ConfigurationHelper extends Helper
     /**
      * Lists the files in the main/inc/conf.
      *
-     * @param fileName
+     * @param $fileName
      *
      * @return Finder
      */
@@ -609,7 +607,7 @@ class ConfigurationHelper extends Helper
     /**
      * Lists the files in the main/inc/lib.
      *
-     * @param fileName
+     * @param $fileName
      *
      * @return Finder
      */

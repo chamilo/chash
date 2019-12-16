@@ -857,9 +857,8 @@ class InstallCommand extends CommonCommand
     public function testDatabaseConnection()
     {
         $conn = $this->testUserAccessConnection();
-        $connect = $conn->connect();
 
-        return $connect;
+        return $conn->connect();
     }
 
     /**
@@ -870,12 +869,11 @@ class InstallCommand extends CommonCommand
         $config = new \Doctrine\DBAL\Configuration();
         $settings = $this->getDatabaseSettings();
         $settings['dbname'] = null;
-        $conn = \Doctrine\DBAL\DriverManager::getConnection(
+
+        return \Doctrine\DBAL\DriverManager::getConnection(
             $settings,
             $config
         );
-
-        return $conn;
     }
 
     /**
@@ -886,19 +884,17 @@ class InstallCommand extends CommonCommand
         $config = new \Doctrine\DBAL\Configuration();
         $settings = $this->getDatabaseSettings();
 
-        $conn = \Doctrine\DBAL\DriverManager::getConnection(
+        return \Doctrine\DBAL\DriverManager::getConnection(
             $settings,
             $config
         );
-
-        return $conn;
     }
 
     /**
      * Creates a course (only an insert in the DB).
      *
-     * @param \Doctrine\DBAL\Connection
-     * @param string $databaseName
+     * @param \Doctrine\DBAL\Connection $connection
+     * @param string                    $databaseName
      */
     public function createCourse($connection, $databaseName)
     {

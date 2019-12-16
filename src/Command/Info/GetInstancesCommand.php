@@ -61,9 +61,8 @@ class GetInstancesCommand extends CommonCommand
                 }
             }
             $portal = [$url, $version, $packager, $configurationFile];
-            $portal = array_map('trim', $portal);
 
-            return $portal;
+            return array_map('trim', $portal);
         }
 
         return [];

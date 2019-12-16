@@ -224,7 +224,7 @@ class ShowDiskUsageCommand extends DatabaseCommand
                             $quota = round($localCourses[$file]['quota'] / $div, 0);
                             $rate = '-';
                             if ($quota > 0) {
-                                $rate = round((round($size / $div2, 2) / $quota) * 100, 0);
+                                $rate = round(round($size / $div2, 2) / $quota * 100, 0);
                             }
                             $finalList[$code] = [
                                 'code' => $code,
