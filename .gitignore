@@ -23,3 +23,4 @@
 .idea/cssxfire.xml
 /vendor/*
 .php_cs.cache
+!/chash.phar
