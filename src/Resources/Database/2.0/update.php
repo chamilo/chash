@@ -1,4 +1,5 @@
 <?php
+
 /* For licensing terms, see /license.txt */
 
 $update = function ($_configuration, \Doctrine\DBAL\Connection $mainConnection, $courseList, $dryRun, $output, $upgrade) {
@@ -26,13 +27,13 @@ $update = function ($_configuration, \Doctrine\DBAL\Connection $mainConnection, 
         // Check if the session is registered in the access_url_rel_session table
         $sql = "SELECT session_id FROM $accessUrlRelSessionTable WHERE session_id = $session_id";
         $result = $mainConnection->executeQuery($sql);
-        if ($result->rowCount() == 0) {
+        if (0 == $result->rowCount()) {
             $sql = "INSERT INTO $accessUrlRelSessionTable (session_id, access_url_id) VALUES ('$session_id', '1')";
             $mainConnection->executeQuery($sql);
         }
 
         // Fixing date_start
-        if (isset($session['date_start']) && !empty($session['date_start']) && $session['date_start'] != '0000-00-00') {
+        if (isset($session['date_start']) && !empty($session['date_start']) && '0000-00-00' != $session['date_start']) {
             $datetime = $session['date_start'].' 00:00:00';
             $update_sql = "UPDATE $session_table SET display_start_date = '$datetime', access_start_date = '$datetime'
                            WHERE id = $session_id";
@@ -48,7 +49,7 @@ $update = function ($_configuration, \Doctrine\DBAL\Connection $mainConnection, 
         }
 
         // Fixing end_date
-        if (isset($session['date_end']) && !empty($session['date_end']) && $session['date_end'] != '0000-00-00') {
+        if (isset($session['date_end']) && !empty($session['date_end']) && '0000-00-00' != $session['date_end']) {
             $datetime = $session['date_end'].' 00:00:00';
             $update_sql = "UPDATE $session_table SET display_end_date = '$datetime', access_end_date = '$datetime'
                            WHERE id = $session_id";
@@ -91,7 +92,7 @@ $update = function ($_configuration, \Doctrine\DBAL\Connection $mainConnection, 
         // Check if the course is registered in the access_url_rel_course table
         $sql = "SELECT c_id FROM $accessUrlRelCourseTable WHERE c_id = $courseId";
         $result = $mainConnection->executeQuery($sql);
-        if ($result->rowCount() == 0) {
+        if (0 == $result->rowCount()) {
             $sql = "INSERT INTO $accessUrlRelCourseTable (access_url_id, course_code, c_id) VALUES ('1', '$courseCode', '$courseId')";
             $mainConnection->executeQuery($sql);
         }
@@ -122,7 +123,7 @@ $update = function ($_configuration, \Doctrine\DBAL\Connection $mainConnection, 
         $ins = "INSERT INTO $to (c_id, session_id, exercise_id, exercise_order)".
                " VALUES ($cid, $temp_session_id, {$row['id']}, $order)";
         $mainConnection->executeQuery($ins);
-        $order++;
+        ++$order;
     }
 
     // Fixing special course

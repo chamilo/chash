@@ -9,8 +9,6 @@ use Doctrine\DBAL\Types\DateTimeType;
 
 /**
  * Save datetime values in UTC in the database.
- *
- * @package Chamilo\CoreBundle\DoctrineExtensions\DBAL\Types
  */
 class UTCDateTimeType extends DateTimeType
 {
@@ -21,7 +19,7 @@ class UTCDateTimeType extends DateTimeType
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
@@ -39,7 +37,7 @@ class UTCDateTimeType extends DateTimeType
      */
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 

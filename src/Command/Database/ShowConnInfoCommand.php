@@ -38,12 +38,12 @@ class ShowConnInfoCommand extends DatabaseCommand
         }
         $_configuration = $this->getConfigurationArray();
 
-        $output->writeln("Database connection details:");
+        $output->writeln('Database connection details:');
         $output->writeln("Host:\t".$_configuration['db_host']);
         $output->writeln("User:\t".$_configuration['db_user']);
         $output->writeln("Pass:\t".$_configuration['db_password']);
         $output->writeln("DB:\t".$_configuration['main_database']);
-        $output->writeln("Connection string (add password manually for increased security:");
-        $output->writeln("mysql -h ".$_configuration['db_host']." -u ".$_configuration['db_user']." -p ".$_configuration['main_database']."\n");
+        $output->writeln('Connection string (add password manually for increased security:');
+        $output->writeln('mysql -h '.$_configuration['db_host'].' -u '.$_configuration['db_user'].' -p '.$_configuration['main_database']."\n");
     }
 }

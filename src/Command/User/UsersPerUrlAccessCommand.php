@@ -34,14 +34,16 @@ class UsersPerUrlAccessCommand extends ChamiloUserCommand
         $table = $this->getHelperSet()->get('table');
 
         if ($conn instanceof \Doctrine\DBAL\Connection) {
-            $ls = "SELECT url, count(user_id) as users FROM access_url a
+            $ls = 'SELECT url, count(user_id) as users FROM access_url a
                     INNER JOIN access_url_rel_user r ON a.id = r.access_url_id
-                    order by url";
+                    order by url';
+
             try {
                 $stmt = $conn->prepare($ls);
                 $stmt->execute();
             } catch (\PDOException $e) {
                 $output->writeln('SQL Error!'.PHP_EOL);
+
                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
             $table->setHeaders(['Url', 'Number of Users']);

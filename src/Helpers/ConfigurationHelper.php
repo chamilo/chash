@@ -8,8 +8,6 @@ use Symfony\Component\Yaml\Parser;
 
 /**
  * Class ConfigurationHelper.
- *
- * @package Chash\Helpers
  */
 class ConfigurationHelper extends Helper
 {
@@ -289,6 +287,7 @@ class ConfigurationHelper extends Helper
 
                             return $_configuration;
                         }
+
                         break;
                     case 'yml':
                         $yaml = new Parser();
@@ -300,6 +299,7 @@ class ConfigurationHelper extends Helper
                         }
 
                         return $_configuration;
+
                         break;
                 }
             }
@@ -747,7 +747,7 @@ class ConfigurationHelper extends Helper
 
         $singleDatabase = isset($_configuration['single_database']) ? $_configuration['single_database'] : false;
 
-        if ($singleDatabase == false) {
+        if (false == $singleDatabase) {
             /*$sql = 'SELECT db_name from '.$courseTable;
             $res = mysql_query($sql);
             if ($res && mysql_num_rows($res) > 0) {

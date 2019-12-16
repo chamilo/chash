@@ -10,8 +10,6 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 /**
  * Class DisableAdminsCommand
  * Remove the "admin" role from *ALL* users on all portals of this instance.
- *
- * @package Chash\Command\User
  */
 class DisableAdminsCommand extends DatabaseCommand
 {
@@ -43,12 +41,13 @@ class DisableAdminsCommand extends DatabaseCommand
 
         if ($conn instanceof \Doctrine\DBAL\Connection) {
             try {
-                $us = "DELETE FROM admin";
+                $us = 'DELETE FROM admin';
                 $stmt = $conn->prepare($us);
                 $stmt->execute();
             } catch (\PDOException $e) {
                 $output->writeln('Could not delete admins.');
                 $output->write('SQL error!'.PHP_EOL);
+
                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
             $output->writeln('All admins have been disabled. Use user:make-admin to add one back.');

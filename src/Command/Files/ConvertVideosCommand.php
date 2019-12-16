@@ -15,8 +15,6 @@ use Symfony\Component\Finder\Finder;
  * Class ConvertVideosCommand
  * Convert all videos found in the given directory (recursively)
  * to the given format, using ffmpeg.
- *
- * @package Chash\Command\Files
  */
 class ConvertVideosCommand extends DatabaseCommand
 {
@@ -74,7 +72,7 @@ class ConvertVideosCommand extends DatabaseCommand
             $sysPath = $this->getConfigurationHelper()->getSysPathFromConfigurationFile($confPath);
 
             $dir = $input->getArgument('source'); //1 if the option was set
-            if (substr($dir, 0, 1) != '/') {
+            if ('/' != substr($dir, 0, 1)) {
                 $dir = $sysPath.$dir;
             }
             if (!is_dir($dir)) {
@@ -99,7 +97,7 @@ class ConvertVideosCommand extends DatabaseCommand
                 $bitRate = '512';
             }
             $vcodec = 'copy';
-            if ($this->ext == 'webm') {
+            if ('webm' == $this->ext) {
                 $vcodec = 'libvpx';
             }
 
@@ -169,7 +167,7 @@ class ConvertVideosCommand extends DatabaseCommand
                 $output->writeln('ffmpeg -i '.$newNameCommand.' -b '.$bitRate.'k -f '.$this->ext.' -vcodec '.$vcodec.' -acodec copy -r '.$fps.' '.$origNameCommand);
                 $exec = @system('ffmpeg -i '.$newNameCommand.' -b '.$bitRate.'k -f '.$this->ext.' -vcodec '.$vcodec.' -acodec copy -r '.$fps.' '.$origNameCommand, $out);
                 $sizeNew += filesize($origName);
-                $counter++;
+                ++$counter;
             }
         }
         $output->writeln('');

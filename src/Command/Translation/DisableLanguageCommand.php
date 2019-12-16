@@ -12,8 +12,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class DisableLanguageCommand
  * Definition of the translation:disable command
  * Disable a language. Does not support multi-url yet.
- *
- * @package Chash\Command\Translation
  */
 class DisableLanguageCommand extends DatabaseCommand
 {
@@ -43,11 +41,13 @@ class DisableLanguageCommand extends DatabaseCommand
         if ($conn instanceof \Doctrine\DBAL\Connection) {
             $langQuoted = $conn->quote($lang);
             $ls = "SELECT id, english_name, available FROM language WHERE english_name = $langQuoted";
+
             try {
                 $stmt = $conn->prepare($ls);
                 $stmt->execute();
             } catch (\PDOException $e) {
                 $output->write('SQL error!'.PHP_EOL);
+
                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
             $num = $stmt->rowCount();
@@ -57,18 +57,20 @@ class DisableLanguageCommand extends DatabaseCommand
                 return null;
             }
             $lr = $stmt->fetch(\PDO::FETCH_ASSOC);
-            if ($lr['available'] == 0) {
+            if (0 == $lr['available']) {
                 $output->writeln($lang.' language is already disabled. Nothing to do.');
 
                 return null;
             }
             // Everything is OK so far, enable the language
-            $us = "UPDATE language SET available = 0 WHERE id = ".$lr['id'];
+            $us = 'UPDATE language SET available = 0 WHERE id = '.$lr['id'];
+
             try {
                 $uq = $stmt2 = $conn->prepare($us);
                 $stmt2->execute();
             } catch (\PDOException $e) {
                 $output->write('SQL error!'.PHP_EOL);
+
                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
             $output->writeln($langQuoted.' language has been disabled.');

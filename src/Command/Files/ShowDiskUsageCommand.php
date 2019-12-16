@@ -13,8 +13,6 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
  * Class ShowDiskUsageCommand
  * Show the total disk usage per course compared to the maximum space allowed
  * for the corresponding courses.
- *
- * @package Chash\Command\Files
  */
 class ShowDiskUsageCommand extends DatabaseCommand
 {
@@ -103,7 +101,7 @@ class ShowDiskUsageCommand extends DatabaseCommand
             if (!$csv) {
                 $output->writeln('Using multi-url mode');
             }
-            $sql = "SELECT id, url FROM access_url ORDER BY url";
+            $sql = 'SELECT id, url FROM access_url ORDER BY url';
             $stmt = $connection->query($sql);
             while ($row = $stmt->fetch()) {
                 $portals[$row['id']] = $row['url'];
@@ -111,7 +109,7 @@ class ShowDiskUsageCommand extends DatabaseCommand
         }
 
         $globalCourses = [];
-        $sql = "SELECT id, code, directory, disk_quota FROM course ORDER BY code";
+        $sql = 'SELECT id, code, directory, disk_quota FROM course ORDER BY code';
         $stmt = $connection->query($sql);
         while ($row = $stmt->fetch()) {
             $globalCourses[$row['directory']] = [
@@ -137,24 +135,24 @@ class ShowDiskUsageCommand extends DatabaseCommand
         $dirs = $this->getConfigurationHelper()->getDataFolders();
 
         $isDocumentOnly = $input->getOption('documents-only');
-        $dirDoc = "";
-        $docsOnly = "AllDiskFiles";
+        $dirDoc = '';
+        $docsOnly = 'AllDiskFiles';
         if ($isDocumentOnly) {
-            $dirDoc = "/document";
-            $docsOnly = " DocFilesOnly";
+            $dirDoc = '/document';
+            $docsOnly = ' DocFilesOnly';
         }
         $precision = $input->getOption('precision');
 
         if (version_compare($_configuration['system_version'], '10.0', '>=')) {
-            $sql = " SELECT access_url_id, c.id as course_id, c.code, directory, disk_quota
+            $sql = ' SELECT access_url_id, c.id as course_id, c.code, directory, disk_quota
                 FROM course c JOIN access_url_rel_course u
                 ON u.c_id = c.id
-                WHERE u.access_url_id = ? ";
+                WHERE u.access_url_id = ? ';
         } else {
-            $sql = " SELECT access_url_id, c.id as course_id, c.code, directory, disk_quota
+            $sql = ' SELECT access_url_id, c.id as course_id, c.code, directory, disk_quota
                 FROM course c JOIN access_url_rel_course u
                 ON u.course_code = c.code
-                WHERE u.access_url_id = ? ";
+                WHERE u.access_url_id = ? ';
         }
 
         /** @var TableHelper $table */

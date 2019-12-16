@@ -1,4 +1,5 @@
 <?php
+
 /* For licensing terms, see /license.txt */
 
 $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $output, $upgrade, $removeUnusedTables) {
@@ -74,12 +75,12 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
         $session_mode = $result['selected_value'];
         $output->writeln("<comment>Session mode: $session_mode</comment>");
 
-        if ($session_mode == 'true') {
+        if ('true' == $session_mode) {
             $sql = "UPDATE settings_current SET selected_value = 'true'
                     WHERE variable='use_session_mode' ";
             $mainConnection->executeQuery($sql);
 
-            $sql = "SELECT * FROM class";
+            $sql = 'SELECT * FROM class';
             $result = $mainConnection->executeQuery($sql);
             $rows = $result->fetchAll();
 
@@ -102,13 +103,13 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
 
                     if (is_numeric($new_user_group_id)) {
                         $mapping_classes[$old_id] = $new_user_group_id;
-                        $classes_added++;
+                        ++$classes_added;
                     }
                 }
                 $output->writeln("Classes added: $classes_added");
             }
 
-            $sql = "SELECT * FROM class_user";
+            $sql = 'SELECT * FROM class_user';
             $result = $mainConnection->executeQuery($sql);
             $rows = $result->fetchAll();
 
@@ -118,7 +119,8 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                     if (empty($mapping_classes[$row['class_id']])) {
                         // Cover a special case where data would not be
                         // consistent - see BT#7254
-                        $output->writeln("<comment>Warning: data inconsistency: \$mapping_classes[".$row['class_id']."] was not defined, suggesting that this class ID was still used in class_user although the class had been removed</comment>");
+                        $output->writeln('<comment>Warning: data inconsistency: $mapping_classes['.$row['class_id'].'] was not defined, suggesting that this class ID was still used in class_user although the class had been removed</comment>');
+
                         continue;
                     }
                     $values = [
@@ -127,20 +129,20 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                     ];
 
                     if ($dryRun) {
-                        $output->writeln("<comment>Values to be saved:</comment>".implode(', ', $values));
+                        $output->writeln('<comment>Values to be saved:</comment>'.implode(', ', $values));
                     } else {
                         $mainConnection->insert('usergroup_rel_user', $values);
-                        $output->writeln("<comment>Saving:</comment> ".implode(', ', $values));
+                        $output->writeln('<comment>Saving:</comment> '.implode(', ', $values));
                     }
                 }
             }
 
-            $sql = "SELECT * FROM course_rel_class";
+            $sql = 'SELECT * FROM course_rel_class';
             $result = $mainConnection->executeQuery($sql);
             $rows = $result->fetchAll();
 
             if (!empty($rows)) {
-                $output->writeln("Moving  course_rel_class to usergroup_rel_course");
+                $output->writeln('Moving  course_rel_class to usergroup_rel_course');
 
                 foreach ($rows as $row) {
                     $course_code = $row['course_code'];
@@ -153,7 +155,8 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                     if (empty($mapping_classes[$row['class_id']])) {
                         // Cover a special case where data would not be
                         // consistent - see BT#7254
-                        $output->writeln("<comment>Warning: data inconsistency: \$mapping_classes[".$row['class_id']."] was not defined, suggesting that this class ID was still used in course_rel_class although the class had been removed</comment>");
+                        $output->writeln('<comment>Warning: data inconsistency: $mapping_classes['.$row['class_id'].'] was not defined, suggesting that this class ID was still used in course_rel_class although the class had been removed</comment>');
+
                         continue;
                     }
                     $values = [
@@ -162,10 +165,10 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                     ];
 
                     if ($dryRun) {
-                        $output->writeln("<comment>Values to be saved:</comment>".implode(', ', $values));
+                        $output->writeln('<comment>Values to be saved:</comment>'.implode(', ', $values));
                     } else {
                         $mainConnection->insert('usergroup_rel_course', $values);
-                        $output->writeln("<comment>Saving:</comment> ".implode(', ', $values));
+                        $output->writeln('<comment>Saving:</comment> '.implode(', ', $values));
                     }
                 }
             }
@@ -174,29 +177,29 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
         // Moving Stats DB to the main DB.
 
         $statsTable = [
-            "track_c_browsers",
-            "track_c_countries",
-            "track_c_os",
-            "track_c_providers",
-            "track_c_referers",
-            "track_e_access",
-            "track_e_attempt",
-            "track_e_attempt_recording",
-            "track_e_course_access",
-            "track_e_default",
-            "track_e_downloads",
-            "track_e_exercices",
-            "track_e_hotpotatoes",
-            "track_e_hotspot",
-            "track_e_item_property",
-            "track_e_lastaccess",
-            "track_e_links",
-            "track_e_login",
-            "track_e_online",
-            "track_e_open",
-            "track_e_uploads",
-            "track_stored_values",
-            "track_stored_values_stack",
+            'track_c_browsers',
+            'track_c_countries',
+            'track_c_os',
+            'track_c_providers',
+            'track_c_referers',
+            'track_e_access',
+            'track_e_attempt',
+            'track_e_attempt_recording',
+            'track_e_course_access',
+            'track_e_default',
+            'track_e_downloads',
+            'track_e_exercices',
+            'track_e_hotpotatoes',
+            'track_e_hotspot',
+            'track_e_item_property',
+            'track_e_lastaccess',
+            'track_e_links',
+            'track_e_login',
+            'track_e_online',
+            'track_e_open',
+            'track_e_uploads',
+            'track_stored_values',
+            'track_stored_values_stack',
         ];
 
         if (isset($_configuration['statistics_database'])) {
@@ -214,10 +217,10 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
 
         // Moving user database to the main database.
         $usersTables = [
-            "personal_agenda",
-            "personal_agenda_repeat",
-            "personal_agenda_repeat_not",
-            "user_course_category",
+            'personal_agenda',
+            'personal_agenda_repeat',
+            'personal_agenda_repeat_not',
+            'user_course_category',
         ];
 
         $userSchemaManager = $userConnection->getSchemaManager();
@@ -234,19 +237,19 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
         }
 
         // Adding admin user in the access_url_rel_user table.
-        $sql = "SELECT user_id FROM admin WHERE user_id = 1";
+        $sql = 'SELECT user_id FROM admin WHERE user_id = 1';
         $result = $mainConnection->executeQuery($sql);
         $row = $result->fetch();
         $has_user_id = !empty($row);
 
-        $sql = "SELECT * FROM access_url_rel_user
-                WHERE user_id = 1 AND access_url_id = 1";
+        $sql = 'SELECT * FROM access_url_rel_user
+                WHERE user_id = 1 AND access_url_id = 1';
         $result = $mainConnection->executeQuery($sql);
         $row = $result->fetch();
         $has_entry = !empty($row);
 
         if ($has_user_id && !$has_entry) {
-            $sql = "INSERT INTO access_url_rel_user VALUES(1, 1)";
+            $sql = 'INSERT INTO access_url_rel_user VALUES(1, 1)';
             $mainConnection->executeQuery($sql);
             $output->writeln($sql);
         }
@@ -254,7 +257,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
         $upgrade->createCourseTables($output, $dryRun);
 
         if (!empty($courseList)) {
-            $output->writeln("<comment>Moving old course tables to the new structure 1: single database</comment>");
+            $output->writeln('<comment>Moving old course tables to the new structure 1: single database</comment>');
 
             $progress = $upgrade->getHelperSet()->get('progress');
             $progress->start($output, count($courseList));
@@ -414,6 +417,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                                             if (empty($row['forum_id'])) {
                                                 $row['forum_id'] = 0;
                                             }
+
                                             break;
                                         case 'wiki_conf':
                                             /*
@@ -426,10 +430,12 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                                             $result = $mainConnection->executeQuery($sql);
                                             $rowResult = $result->fetch();
                                             if ($rowResult['count'] >= 1) {
-                                                $output->writeln("Skipping content of the c_wiki_conf:");
+                                                $output->writeln('Skipping content of the c_wiki_conf:');
                                                 $output->writeln(print_r($row, 1));
+
                                                 continue 2;
                                             }
+
                                             break;
                                     }
                                     $mainConnection->insert($newTable, $row);
@@ -437,7 +443,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                                 }
 
                                 if (is_numeric($id)) {
-                                    $count++;
+                                    ++$count;
                                 } else {
                                     $errors[$old_table][] = $row;
                                 }
@@ -460,11 +466,11 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                 $progress->advance();
             }
             $progress->finish();
-            $output->writeln("<comment>End course migration.</comment>");
+            $output->writeln('<comment>End course migration.</comment>');
 
             // Drop prefix tables
-            if ($removeUnusedTables && $dryRun == false) {
-                $output->writeln("<comment>Removing unused tables:</comment>");
+            if ($removeUnusedTables && false == $dryRun) {
+                $output->writeln('<comment>Removing unused tables:</comment>');
 
                 $onlyPrefix = $upgrade->getTablePrefix($_configuration);
                 if (!empty($onlyPrefix)) {
@@ -483,17 +489,17 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
             }
 
             /* Start work fix */
-            $output->writeln("<comment>Starting work fix:</comment>");
+            $output->writeln('<comment>Starting work fix:</comment>');
 
             /* Fixes the work subfolder and work with no parent issues */
 
-            $work_table = "c_student_publication";
-            $item_table = "c_item_property";
+            $work_table = 'c_student_publication';
+            $item_table = 'c_item_property';
 
             $today = time();
             $user_id = 1;
 
-            if ($dryRun == false) {
+            if (false == $dryRun) {
                 foreach ($courseList as $course) {
                     $courseId = $course['id']; //int id
 
@@ -517,7 +523,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                             $group_id = intval($work['post_group_id']);
                             $work_key = $session_id.$group_id;
 
-                            $dir_name = "default_tasks_".$group_id."_".$session_id;
+                            $dir_name = 'default_tasks_'.$group_id.'_'.$session_id;
 
                             // Only create the folder once
                             if (!isset($work_dir_created[$work_key])) {
@@ -556,7 +562,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                             // 2.3 Updating the url
                             if (!empty($work_dir_created[$work_key])) {
                                 $parent_id = $work_dir_created[$work_key];
-                                $new_url = "work/".$dir_name.'/'.basename($work['url']);
+                                $new_url = 'work/'.$dir_name.'/'.basename($work['url']);
                                 $sql = "UPDATE $work_table SET
                                             url = '$new_url',
                                             parent_id = $parent_id,
@@ -591,7 +597,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                     }
                 }
             }
-            $output->writeln("<comment>End work fix</comment>");
+            $output->writeln('<comment>End work fix</comment>');
             if ($dryRun) {
                 $output->writeln('<info>Queries were not executed. Because dry-run is on<info>');
             } else {
@@ -600,6 +606,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
         }
     } catch (Exception $e) {
         $mainConnection->rollback();
+
         throw $e;
     }
 };
@@ -642,7 +649,7 @@ function check_work($mainConnection, $folder_id, $work_url, $work_table, $base_w
 
         if (!empty($rows)) {
             foreach ($rows as $row) {
-                $new_url = "work".$new_url.'/'.basename($row['url']);
+                $new_url = 'work'.$new_url.'/'.basename($row['url']);
                 $sql = "UPDATE $work_table
                         SET url = '$new_url', parent_id = $folder_id, contains_file = '1'
                         WHERE id = {$row['id']} AND c_id = $courseId";
@@ -662,9 +669,9 @@ function check_work($mainConnection, $folder_id, $work_url, $work_table, $base_w
 function create_unexisting_work_directory($base_work_dir, $desired_dir_name, $portalSettings)
 {
     $nb = '';
-    $base_work_dir = (substr($base_work_dir, -1, 1) == '/' ? $base_work_dir : $base_work_dir.'/');
+    $base_work_dir = ('/' == substr($base_work_dir, -1, 1) ? $base_work_dir : $base_work_dir.'/');
     while (file_exists($base_work_dir.$desired_dir_name.$nb)) {
-        $nb++;
+        ++$nb;
     }
     if (mkdir($base_work_dir.$desired_dir_name.$nb, $portalSettings['permissions_for_new_directories'])) {
         return $desired_dir_name.$nb;

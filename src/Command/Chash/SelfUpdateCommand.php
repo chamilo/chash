@@ -73,10 +73,11 @@ class SelfUpdateCommand extends AbstractCommand
 
         $zippy = Zippy::load();
         $archive = $zippy->open($tempFile);
+
         try {
             $archive->extract($folderPath);
         } catch (\Alchemy\Zippy\Exception\RunTimeException $e) {
-            $output->writeln("<comment>Chash update failed during unzip.");
+            $output->writeln('<comment>Chash update failed during unzip.');
             $output->writeln($e->getMessage());
 
             return 0;

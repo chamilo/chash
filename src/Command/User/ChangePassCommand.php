@@ -14,8 +14,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class ChangePassCommand
  * Changes a user password to the one given.
- *
- * @package Chash\Command\User
  */
 class ChangePassCommand extends DatabaseCommand
 {
@@ -50,12 +48,13 @@ class ChangePassCommand extends DatabaseCommand
         $password = $input->getArgument('password');
         if ($conn instanceof \Doctrine\DBAL\Connection) {
             try {
-                $us = "SELECT id FROM user WHERE username = ".$conn->quote($username);
+                $us = 'SELECT id FROM user WHERE username = '.$conn->quote($username);
                 $stmt = $conn->prepare($us);
                 $stmt->execute();
                 $un = $stmt->rowCount();
             } catch (\PDOException $e) {
                 $output->write('SQL error!'.PHP_EOL);
+
                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
             if ($un >= 1) {
@@ -64,18 +63,23 @@ class ChangePassCommand extends DatabaseCommand
                 switch ($enc) {
                     case 'bcrypt':
                         $password = $conn->quote(password_hash($password, PASSWORD_BCRYPT, ['cost' => 4, 'salt' => $salt]));
+
                         break;
                     case 'sha1':
                         $password = $conn->quote(sha1($password));
+
                         break;
                     case 'md5':
                         $password = $conn->quote(md5($password));
+
                         break;
                     default:
                         $password = $conn->quote($password);
+
                         break;
                 }
                 $result = $stmt->fetch(\PDO::FETCH_OBJ);
+
                 try {
                     $ups = "UPDATE user
                       SET password = $password,
@@ -85,6 +89,7 @@ class ChangePassCommand extends DatabaseCommand
                     $stmt->execute();
                 } catch (\PDOException $e) {
                     $output->write('SQL error!'.PHP_EOL);
+
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
                 $output->writeln('User '.$username.' has new password.');

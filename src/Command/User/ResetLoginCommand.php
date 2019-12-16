@@ -44,11 +44,12 @@ class ResetLoginCommand extends ChamiloUserCommand
         $conn = $this->getConnection($input);
         if ($conn instanceof \Doctrine\DBAL\Connection) {
             try {
-                $us = "SELECT id, email FROM user WHERE username = ".$conn->quote($username);
+                $us = 'SELECT id, email FROM user WHERE username = '.$conn->quote($username);
                 $stmt = $conn->prepare($us);
                 $stmt->execute();
             } catch (\PDOException $e) {
                 $output->write('SQL error!'.PHP_EOL);
+
                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
             $un = $stmt->rowCount();

@@ -102,7 +102,7 @@ class DeleteCoursesCommand extends DatabaseCommand
                 } else {
                     $output->writeln('ID-based course search: '.$courseId);
                 }
-                $sql .= " ORDER BY creation_date";
+                $sql .= ' ORDER BY creation_date';
             } elseif (!empty($courseCode)) {
                 $sql = "SELECT id, code, category_code, creation_date
                         FROM course
@@ -113,7 +113,7 @@ class DeleteCoursesCommand extends DatabaseCommand
                 } else {
                     $output->writeln('Code-based course search: '.$courseCode);
                 }
-                $sql .= " ORDER BY creation_date";
+                $sql .= ' ORDER BY creation_date';
             } elseif (!empty($courseCategory)) {
                 $sql = "SELECT id, code, category_code, creation_date
                         FROM course
@@ -124,7 +124,7 @@ class DeleteCoursesCommand extends DatabaseCommand
                 } else {
                     $output->writeln('Category-based course search: '.$courseCategory);
                 }
-                $sql .= " ORDER BY creation_date";
+                $sql .= ' ORDER BY creation_date';
             } elseif (!empty($beforeDate)) {
                 $output->writeln('Category-based course search: '.$beforeDate);
                 $sql = "SELECT id, code, category_code, creation_date
@@ -203,7 +203,7 @@ class DeleteCoursesCommand extends DatabaseCommand
                                 $res = preg_split('/\s/', $res);
                                 $size = $res[0];
                                 $output->writeln($id.":\t".$size);
-                                if ($unique == 'yes') {
+                                if ('yes' == $unique) {
                                     $totalDiskUsage += $size;
                                 }
                             }
@@ -296,18 +296,18 @@ class DeleteCoursesCommand extends DatabaseCommand
 
         // 2. Delete the session_rel_course and session_rel_course_rel_user
         foreach ($sessions as $sessionId) {
-            $sql = "DELETE FROM session_rel_course_rel_user "
+            $sql = 'DELETE FROM session_rel_course_rel_user '
                 ."WHERE id_session = $sessionId "
                 ." AND course_code = '$courseCode' ";
             $stmt = $connection->query($sql);
-            $sql = "DELETE FROM session_rel_course "
+            $sql = 'DELETE FROM session_rel_course '
                 ."WHERE id_session = $sessionId "
                 ." AND course_code = '$courseCode' ";
             $stmt = $connection->query($sql);
             $sql = "SELECT count(*) as courseCount FROM session_rel_course WHERE id_session = $sessionId";
             $stmt = $connection->query($sql);
             while ($row = $stmt->fetch()) {
-                if ($row['courseCount'] === 0) {
+                if (0 === $row['courseCount']) {
                     $output->writeln('No course left in session '.$sessionId.' so deleting the session');
                     // No course within this session => delete the session
                     // @todo: use sessionmanager::delete_session($sessionId)
@@ -330,7 +330,7 @@ class DeleteCoursesCommand extends DatabaseCommand
         }
 
         // 3. Delete the access_url_rel_course reference
-        $sql = "DELETE FROM access_url_rel_course "
+        $sql = 'DELETE FROM access_url_rel_course '
             ." WHERE access_url_id = $urlId "
             ." AND course_code = '$courseCode'";
         $connection->query($sql);

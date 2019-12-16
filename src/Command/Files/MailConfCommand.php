@@ -9,8 +9,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class MailConfCommand
  * Returns the current mail configuration.
- *
- * @package Chash\Command\Files
  */
 class MailConfCommand extends DatabaseCommand
 {
@@ -32,7 +30,7 @@ class MailConfCommand extends DatabaseCommand
 
         $path = $this->getHelper('configuration')->getConfigurationPath();
         $path .= 'mail.conf.php';
-        define('IS_WINDOWS_OS', strtolower(substr(php_uname(), 0, 3)) == 'win' ? true : false);
+        define('IS_WINDOWS_OS', 'win' == strtolower(substr(php_uname(), 0, 3)) ? true : false);
         $platform_email = [];
         if (isset($path) && is_file($path)) {
             $output->writeln('File: '.$path);
@@ -54,7 +52,7 @@ class MailConfCommand extends DatabaseCommand
             $output->writeln('User:     '.$platform_email['SMTP_USER']);
             $output->writeln('Pass:     '.$platform_email['SMTP_PASS']);
         } else {
-            $output->writeln("<comment>Nothing to print</comment>");
+            $output->writeln('<comment>Nothing to print</comment>');
         }
     }
 }

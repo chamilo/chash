@@ -48,11 +48,12 @@ class SetLanguageCommand extends DatabaseCommand
         if ($conn instanceof \Doctrine\DBAL\Connection) {
             if (empty($lang)) {
                 try {
-                    $ls = "SELECT DISTINCT language, count(*) as num FROM user GROUP BY 1 ORDER BY language";
+                    $ls = 'SELECT DISTINCT language, count(*) as num FROM user GROUP BY 1 ORDER BY language';
                     $stmt = $conn->prepare($ls);
                     $stmt->execute();
                 } catch (\PDOException $e) {
                     $output->writeln('SQL Error!'.PHP_EOL);
+
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
                 $output->writeln("Language\t| Number of users");
@@ -62,11 +63,12 @@ class SetLanguageCommand extends DatabaseCommand
             } else {
                 try {
                     // Check available languages
-                    $ls = "SELECT english_name FROM language ORDER BY english_name";
+                    $ls = 'SELECT english_name FROM language ORDER BY english_name';
                     $stmt = $conn->prepare($ls);
                     $stmt->execute();
                 } catch (\PDOException $e) {
                     $output->writeln('SQL Error!'.PHP_EOL);
+
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
                 $languages = [];
@@ -86,6 +88,7 @@ class SetLanguageCommand extends DatabaseCommand
                         $stmt->execute();
                     } catch (\PDOException $e) {
                         $output->writeln('SQL Error!'.PHP_EOL);
+
                         throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                     }
                     $output->writeln('Language set to '.$lang.' for all users');
@@ -98,6 +101,7 @@ class SetLanguageCommand extends DatabaseCommand
                         $stmt->execute();
                     } catch (\PDOException $e) {
                         $output->writeln('SQL Error!'.PHP_EOL);
+
                         throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                     }
                     $output->writeln('Language set to '.$lang.' for user '.$username);

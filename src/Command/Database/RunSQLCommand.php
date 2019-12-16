@@ -39,7 +39,7 @@ class RunSQLCommand extends DatabaseCommand
         $proc_status = proc_get_status($process);
         $exit_code = proc_close($process);
 
-        return $proc_status["running"] ? $exit_code : $proc_status["exitcode"];
+        return $proc_status['running'] ? $exit_code : $proc_status['exitcode'];
 
         /*$output->writeln('<comment>Starting Chamilo process</comment>');
         $output->writeln('<info>Chamilo process ended succesfully</info>');

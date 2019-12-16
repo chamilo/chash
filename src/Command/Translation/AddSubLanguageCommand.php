@@ -12,8 +12,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class AddSubLanguageCommand
  * Definition of the translation:add_sub_language command
  * Does not support multi-url yet.
- *
- * @package Chash\Command\Translation
  */
 class AddSubLanguageCommand extends DatabaseCommand
 {
@@ -50,11 +48,13 @@ class AddSubLanguageCommand extends DatabaseCommand
         if ($conn instanceof \Doctrine\DBAL\Connection) {
             $langQuoted = $conn->quote($lang);
             $sql = "SELECT english_name FROM language WHERE english_name = $langQuoted";
+
             try {
                 $stmt = $conn->prepare($sql);
                 $stmt->execute();
             } catch (\PDOException $e) {
                 $output->write('SQL error!'.PHP_EOL);
+
                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
 
@@ -68,11 +68,13 @@ class AddSubLanguageCommand extends DatabaseCommand
             $parentQuoted = $conn->quote($parent);
             $sql = "SELECT id, original_name, english_name, isocode, dokeos_folder
                     FROM language WHERE english_name = $parentQuoted";
+
             try {
                 $stmt2 = $conn->prepare($sql);
                 $stmt2->execute();
             } catch (\PDOException $e) {
                 $output->write('SQL error!'.PHP_EOL);
+
                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
             $count = $stmt2->rowCount();
@@ -93,7 +95,7 @@ class AddSubLanguageCommand extends DatabaseCommand
             // Everything is OK so far, insert the sub-language
             try {
                 $conn->insert('language', [
-                    'original_name' => $parentData['original_name']."-2",
+                    'original_name' => $parentData['original_name'].'-2',
                     'english_name' => $lang,
                     'isocode' => $parentData['isocode'],
                     'dokeos_folder' => $lang,
@@ -102,6 +104,7 @@ class AddSubLanguageCommand extends DatabaseCommand
                 ]);
             } catch (\PDOException $e) {
                 $output->write('SQL error!'.PHP_EOL);
+
                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
             //Permissions gathering, copied from main_api.lib.php::api_get_permissions_for_new_directories()

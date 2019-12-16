@@ -19,8 +19,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class PlatformLanguageCommand
  * Definition of the translation:platform_language command.
- *
- * @package Chash\Command\Translation
  */
 class PlatformLanguageCommand extends DatabaseCommand
 {
@@ -50,22 +48,26 @@ class PlatformLanguageCommand extends DatabaseCommand
         if ($conn instanceof \Doctrine\DBAL\Connection) {
             if (empty($lang)) {
                 $ls = "SELECT selected_value FROM settings_current WHERE variable='platformLanguage'";
+
                 try {
                     $stmt = $conn->prepare($ls);
                     $stmt->execute();
                 } catch (\PDOException $e) {
                     $output->write('SQL error!'.PHP_EOL);
+
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
                 $lr = $stmt->fetch(\PDO::FETCH_ASSOC);
                 $output->writeln('Current default language is: '.$lr['selected_value']);
             } else {
-                $ls = "SELECT english_name FROM language ORDER BY english_name";
+                $ls = 'SELECT english_name FROM language ORDER BY english_name';
+
                 try {
                     $stmt = $conn->prepare($ls);
                     $stmt->execute();
                 } catch (\PDOException $e) {
                     $output->write('SQL error!'.PHP_EOL);
+
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
                 $languages = [];
@@ -79,11 +81,13 @@ class PlatformLanguageCommand extends DatabaseCommand
                 }
                 $lang = $conn->quote($lang);
                 $lu = "UPDATE settings_current set selected_value = $lang WHERE variable = 'platformLanguage'";
+
                 try {
                     $stmt = $conn->prepare($lu);
                     $stmt->execute();
                 } catch (\PDOException $e) {
                     $output->write('SQL error!'.PHP_EOL);
+
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
                 $output->writeln('Language set to '.$lang);

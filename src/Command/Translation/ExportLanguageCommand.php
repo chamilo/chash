@@ -9,8 +9,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class ExportLanguageCommand.
- *
- * @package Chash\Command\Translation
  */
 class ExportLanguageCommand extends DatabaseCommand
 {
@@ -52,45 +50,51 @@ class ExportLanguageCommand extends DatabaseCommand
             $langQuoted = $conn->quote($lang);
 
             $q = "SELECT * FROM language WHERE english_name = $langQuoted ";
+
             try {
                 $stmt = $conn->prepare($q);
                 $stmt->execute();
             } catch (\PDOException $e) {
                 $output->write('SQL error!'.PHP_EOL);
+
                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
             $langInfo = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (!$langInfo) {
                 $output->writeln("<comment>Language $langQuoted is not registered in the Chamilo Database</comment>");
 
-                $q = "SELECT * FROM language WHERE parent_id IS NULL or parent_id = 0";
+                $q = 'SELECT * FROM language WHERE parent_id IS NULL or parent_id = 0';
+
                 try {
                     $stmt2 = $conn->prepare($q);
                     $stmt2->execute();
                 } catch (\PDOException $e) {
                     $output->write('SQL error!'.PHP_EOL);
+
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
-                $output->writeln("<comment>Available languages are: </comment>");
+                $output->writeln('<comment>Available languages are: </comment>');
                 $list = '';
                 while ($langRow = $stmt2->fetch(\PDO::FETCH_ASSOC)) {
-                    $list .= $langRow['english_name'].", ";
+                    $list .= $langRow['english_name'].', ';
                 }
                 $output->write(substr($list, 0, -2));
                 $output->writeln(' ');
 
-                $q = "SELECT * FROM language WHERE parent_id <> 0";
+                $q = 'SELECT * FROM language WHERE parent_id <> 0';
+
                 try {
                     $stmt3 = $conn->prepare($q);
                     $stmt3->execute();
                 } catch (\PDOException $e) {
                     $output->write('SQL error!'.PHP_EOL);
+
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
-                $output->writeln("<comment>Available sub languages are: </comment>");
+                $output->writeln('<comment>Available sub languages are: </comment>');
                 $list = '';
                 while ($langRow = $stmt3->fetch(\PDO::FETCH_ASSOC)) {
-                    $list .= $langRow['english_name'].", ";
+                    $list .= $langRow['english_name'].', ';
                 }
                 $output->write(substr($list, 0, -2));
                 $output->writeln(' ');
@@ -110,7 +114,7 @@ class ExportLanguageCommand extends DatabaseCommand
             if (empty($tmpFolder)) {
                 $tmpFolder = '/tmp/';
                 $output->writeln(
-                    "<comment>No temporary directory defined. Assuming /tmp/. Please make sure you have *enough space* left on that device"
+                    '<comment>No temporary directory defined. Assuming /tmp/. Please make sure you have *enough space* left on that device'
                 );
             }
 
@@ -122,7 +126,7 @@ class ExportLanguageCommand extends DatabaseCommand
             }
 
             if ($langInfo) {
-                $output->writeln("<comment>Creating translation package</comment>");
+                $output->writeln('<comment>Creating translation package</comment>');
                 $fileName = $tmpFolder.$langInfo['english_name'].'.tar';
                 $phar = new \PharData($fileName);
                 $phar->buildFromDirectory($langFolder);

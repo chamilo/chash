@@ -27,7 +27,7 @@ class CleanConfigFilesCommand extends DatabaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-        $this->writeCommandHeader($output, "Cleaning config files.");
+        $this->writeCommandHeader($output, 'Cleaning config files.');
 
         $helper = $this->getHelperSet()->get('question');
         $question = new ConfirmationQuestion(

@@ -13,8 +13,6 @@ use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Class GetInstancesCommand.
- *
- * @package Chash\Command\Translation
  */
 class GetInstancesCommand extends CommonCommand
 {
@@ -33,7 +31,7 @@ class GetInstancesCommand extends CommonCommand
             $url = '';
             $packager = '';
             foreach ($lines as $line) {
-                if (strpos($line, 'system_version') !== false) {
+                if (false !== strpos($line, 'system_version')) {
                     $replace = [
                         "\$_configuration['system_version']",
                         '=',
@@ -42,7 +40,7 @@ class GetInstancesCommand extends CommonCommand
                     ];
                     $version = str_replace($replace, '', $line);
                 }
-                if (strpos($line, 'root_web') !== false) {
+                if (false !== strpos($line, 'root_web')) {
                     $replace = [
                         "\$_configuration['root_web']",
                         '=',
@@ -51,7 +49,7 @@ class GetInstancesCommand extends CommonCommand
                     ];
                     $url = str_replace($replace, '', $line);
                 }
-                if (strpos($line, 'packager') !== false) {
+                if (false !== strpos($line, 'packager')) {
                     $replace = [
                         "\$_configuration['packager']",
                         '=',

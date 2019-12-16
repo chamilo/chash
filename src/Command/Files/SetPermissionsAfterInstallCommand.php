@@ -10,8 +10,6 @@ use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class SetPermissionsAfterInstallCommand.
- *
- * @package Chash\Command\Files
  */
 class SetPermissionsAfterInstallCommand extends DatabaseCommand
 {
@@ -41,35 +39,36 @@ class SetPermissionsAfterInstallCommand extends DatabaseCommand
         }
 
         $fs = new Filesystem();
+
         try {
             if ($dryRun) {
-                $output->writeln("<comment>Modifying files permission to: ".decoct($permission)."</comment>");
-                $output->writeln("<comment>user: ".$user."</comment>");
-                $output->writeln("<comment>group: ".$group."</comment>");
+                $output->writeln('<comment>Modifying files permission to: '.decoct($permission).'</comment>');
+                $output->writeln('<comment>user: '.$user.'</comment>');
+                $output->writeln('<comment>group: '.$group.'</comment>');
                 if ($listFiles) {
-                    $output->writeln("<comment>Files: </comment>");
+                    $output->writeln('<comment>Files: </comment>');
                     foreach ($files as $file) {
                         $output->writeln($file->getPathName());
                     }
                 }
             } else {
                 if (!empty($permission)) {
-                    $output->writeln("<comment>Modifying files permission to: ".decoct($permission)."</comment>");
+                    $output->writeln('<comment>Modifying files permission to: '.decoct($permission).'</comment>');
                 }
                 if (!empty($user)) {
-                    $output->writeln("<comment>Modifying file user: ".$user."</comment>");
+                    $output->writeln('<comment>Modifying file user: '.$user.'</comment>');
                 }
                 if (!empty($group)) {
-                    $output->writeln("<comment>Modifying file group: ".$group."</comment>");
+                    $output->writeln('<comment>Modifying file group: '.$group.'</comment>');
                 }
 
                 if ($listFiles) {
-                    $output->writeln("<comment>Files: </comment>");
+                    $output->writeln('<comment>Files: </comment>');
                     foreach ($files as $file) {
                         $output->writeln($file->getPathName());
                     }
                 } else {
-                    $output->writeln("<comment>Skipping file list (too long)... </comment>");
+                    $output->writeln('<comment>Skipping file list (too long)... </comment>');
                 }
 
                 if (!empty($permission)) {

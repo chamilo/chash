@@ -10,8 +10,6 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class ImportLanguageCommand.
- *
- * @package Chash\Command\Translation
  */
 class ImportLanguageCommand extends DatabaseCommand
 {
@@ -47,12 +45,14 @@ class ImportLanguageCommand extends DatabaseCommand
 
                 if ($conn instanceof \Doctrine\DBAL\Connection) {
                     $folder = $conn->quote($langInfo['dokeos_folder']);
-                    $ls = "SELECT * FROM language WHERE dokeos_folder = ".$folder;
+                    $ls = 'SELECT * FROM language WHERE dokeos_folder = '.$folder;
+
                     try {
                         $stmt = $conn->prepare($ls);
                         $stmt->execute($ls);
                     } catch (\PDOException $e) {
                         $output->write('SQL error!'.PHP_EOL);
+
                         throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                     }
                     $langInfoFromDB = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -68,7 +68,7 @@ class ImportLanguageCommand extends DatabaseCommand
                         if (is_writable($langFolderPath)) {
                             $output->writeln("Trying to save files here: $langFolderPath");
                             $phar->extractTo($langFolderPath, null, true); // extract all files
-                            $output->writeln("Files were copied.");
+                            $output->writeln('Files were copied.');
                         } else {
                             $output->writeln(
                                 "<error>Make sure that the $langFolderPath folder has writable permissions, or execute the script with sudo </error>"
@@ -79,28 +79,32 @@ class ImportLanguageCommand extends DatabaseCommand
                         $parentId = '';
                         if (!empty($langInfo['parent_id'])) {
                             $sql = "select selected_value from settings_current where variable = 'allow_use_sub_language'";
+
                             try {
                                 $stmt2 = $conn->prepare($sql);
                                 $stmt2->execute();
                             } catch (\PDOException $e) {
                                 $output->write('SQL error!'.PHP_EOL);
+
                                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                             }
                             $subLanguageSetting = $stmt2->fetch(\PDO::FETCH_ASSOC);
                             $subLanguageSetting = $subLanguageSetting['selected_value'];
-                            if ($subLanguageSetting == 'true') {
-                                $sql = "SELECT * FROM language WHERE id = ".(int) $langInfo['parent_id'];
+                            if ('true' == $subLanguageSetting) {
+                                $sql = 'SELECT * FROM language WHERE id = '.(int) $langInfo['parent_id'];
+
                                 try {
                                     $stmt3 = $conn->prepare($sql);
                                     $stmt3->execute();
                                 } catch (\PDOException $e) {
                                     $output->write('SQL error!'.PHP_EOL);
+
                                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                                 }
                                 $parentLangInfoFromDB = $stmt3->fetch(\PDO::FETCH_ASSOC);
                                 if ($parentLangInfoFromDB) {
                                     $output->writeln(
-                                        "Setting parent language: ".$parentLangInfoFromDB['original_name']
+                                        'Setting parent language: '.$parentLangInfoFromDB['original_name']
                                     );
                                     $parentId = $langInfo['parent_id'];
                                 } else {
@@ -111,12 +115,12 @@ class ImportLanguageCommand extends DatabaseCommand
                                 }
                             } else {
                                 $output->writeln(
-                                    "<comment>Please turn ON the sublanguage feature in this portal</comment>"
+                                    '<comment>Please turn ON the sublanguage feature in this portal</comment>'
                                 );
                                 exit;
                             }
                         } else {
-                            $output->writeln("Parent language was not provided");
+                            $output->writeln('Parent language was not provided');
                         }
 
                         $q = "INSERT INTO language (original_name, english_name, isocode, dokeos_folder, available, parent_id) VALUES (
@@ -126,14 +130,16 @@ class ImportLanguageCommand extends DatabaseCommand
                                 '".$langInfo['dokeos_folder']."',
                                 1,
                                 '$parentId')";
+
                         try {
                             $stmt4 = $conn->prepare($q);
                             $stmt4->execute();
                         } catch (\PDOException $e) {
                             $output->write('SQL error!'.PHP_EOL);
+
                             throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                         }
-                        $output->writeln("Language inserted in the DB");
+                        $output->writeln('Language inserted in the DB');
                         $langFolderPath = $_configuration['root_sys'].'main/lang/'.$langInfo['dokeos_folder'];
                         $phar->extractTo($langFolderPath, null, true); // extract all files
                         $output->writeln("<comment>Files were copied here $langFolderPath </comment>");
@@ -142,7 +148,7 @@ class ImportLanguageCommand extends DatabaseCommand
                     $output->writeln('The connection does not seem to be a valid PDO connection');
                 }
             } else {
-                $output->writeln("<comment>The file is not a valid Chamilo language package<comment>");
+                $output->writeln('<comment>The file is not a valid Chamilo language package<comment>');
             }
         } else {
             $output->writeln("<comment>The file located in '$file' is not accessible<comment>");

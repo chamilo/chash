@@ -22,8 +22,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * in main/cron/lang/
  * The present command serves only at the end of this process, to generate the
  * corresponding language packages in other languages than English
- *
- * @package Chash\Command\Translation
  */
 class TermsPackageCommand extends DatabaseCommand
 {
@@ -81,13 +79,13 @@ class TermsPackageCommand extends DatabaseCommand
 
         $_configuration = $this->getHelper('configuration')->getConfiguration();
         $baseDir = $_configuration['root_sys'];
-        if (substr($baseDir, -1, 1) != '/') {
+        if ('/' != substr($baseDir, -1, 1)) {
             $baseDir .= '/';
         }
-        if (substr($source, -1, 1) != '/') {
+        if ('/' != substr($source, -1, 1)) {
             $source .= '/';
         }
-        if (substr($destination, -1, 1) != '/') {
+        if ('/' != substr($destination, -1, 1)) {
             $destination .= '/';
         }
 
@@ -114,7 +112,7 @@ class TermsPackageCommand extends DatabaseCommand
         $listDir = scandir($langDir);
         $langs = [];
         foreach ($listDir as $lang) {
-            if (substr($lang, 0, 1) == '.') {
+            if ('.' == substr($lang, 0, 1)) {
                 continue;
             }
             if (!is_dir($langDir.$lang)) {
@@ -159,7 +157,7 @@ class TermsPackageCommand extends DatabaseCommand
         $countTranslatedWords = 0;
         $fileString = '<?php'."\n";
         foreach ($listFiles as $file) {
-            if (substr($file, -1, 1) == '.') {
+            if ('.' == substr($file, -1, 1)) {
                 continue;
             }
             $destFileLines = $fileString;
@@ -176,13 +174,13 @@ class TermsPackageCommand extends DatabaseCommand
                 if (in_array($var, $source2Keys)) {
                     $destFileLines .= '$'.$var.'='.$source2Vars[$var]."\n";
                     $origFileLines .= '$'.$var.'='.$val."\n";
-                    $countTranslatedVars++;
+                    ++$countTranslatedVars;
                     $countTranslatedWords += str_word_count($sourceVars[$var]);
                 } else {
                     $destFileLines .= '$'.$var.'="";'."\n";
                     $origFileLines .= '$'.$var.'='.$val."\n";
                 }
-                $countVars++;
+                ++$countVars;
                 $countWords += str_word_count($sourceVars[$var]);
             }
             $output->writeln('Writing to file '.$destination.$language.'/'.$file);
@@ -222,7 +220,7 @@ class TermsPackageCommand extends DatabaseCommand
         }
         $info_file = file($file);
         foreach ($info_file as $line) {
-            if (substr($line, 0, 1) != '$') {
+            if ('$' != substr($line, 0, 1)) {
                 continue;
             }
             list($var, $val) = preg_split('/=/', $line, 2);

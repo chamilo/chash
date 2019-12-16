@@ -103,13 +103,13 @@ class UpgradeDatabaseCommand extends CommonCommand
                 ];
 
                 $output->writeln(
-                    "<comment>Executing migrations:migrate ".$versionInfo['hook_to_doctrine_version']." --configuration=".$file."<comment>"
+                    '<comment>Executing migrations:migrate '.$versionInfo['hook_to_doctrine_version'].' --configuration='.$file.'<comment>'
                 );
                 $input = new ArrayInput($arguments);
                 $input->setInteractive(false);
                 $command->run($input, $output);
                 $output->writeln(
-                    "<comment>Migration ended successfully</comment>"
+                    '<comment>Migration ended successfully</comment>'
                 );
             }
 
@@ -172,12 +172,13 @@ class UpgradeDatabaseCommand extends CommonCommand
 
         foreach ($databases as $section => &$dbList) {
             foreach ($dbList as &$dbInfo) {
-                $output->writeln("");
-                $output->writeln("<comment>Loading section:</comment> <info>$section</info> <comment>using database key</comment> <info>".$dbInfo['database']."</info>");
-                $output->writeln("--------------------------");
+                $output->writeln('');
+                $output->writeln("<comment>Loading section:</comment> <info>$section</info> <comment>using database key</comment> <info>".$dbInfo['database'].'</info>');
+                $output->writeln('--------------------------');
 
-                if ($dbInfo['status'] == 'complete') {
-                    $output->writeln("<comment>Database already updated.</comment>");
+                if ('complete' == $dbInfo['status']) {
+                    $output->writeln('<comment>Database already updated.</comment>');
+
                     continue;
                 }
 
@@ -194,14 +195,14 @@ class UpgradeDatabaseCommand extends CommonCommand
 
                             /** @var \Doctrine\DBAL\Connection $conn */
                             $conn = $this->getHelper($dbInfo['database'])->getConnection();
-                            $output->writeln("<comment>Executing queries in DB:</comment> <info>".$conn->getDatabase()."</info>");
+                            $output->writeln('<comment>Executing queries in DB:</comment> <info>'.$conn->getDatabase().'</info>');
 
                             $conn->beginTransaction();
 
                             foreach ($queryList as $query) {
                                 // Add a prefix.
 
-                                if ($section == 'course') {
+                                if ('course' == $section) {
                                     $query = str_replace('{prefix}', $dbInfo['prefix'], $query);
                                 }
 
@@ -212,7 +213,7 @@ class UpgradeDatabaseCommand extends CommonCommand
                                     $conn->executeQuery($query);
                                     //$conn->exec($query);
                                 }
-                                $lines++;
+                                ++$lines;
                             }
 
                             if (!$dryRun) {
@@ -226,10 +227,11 @@ class UpgradeDatabaseCommand extends CommonCommand
                         } catch (\Exception $e) {
                             $conn->rollback();
                             $output->write(sprintf('<error>Migration failed. Error %s</error>', $e->getMessage()));
+
                             throw $e;
                         }
                     } else {
-                        $output->writeln(sprintf("<comment>queryList array is empty.</comment>"));
+                        $output->writeln(sprintf('<comment>queryList array is empty.</comment>'));
                     }
                 } else {
                     $output->writeln(sprintf("<comment>Nothing to execute for section $section!</comment>"));
@@ -434,14 +436,14 @@ class UpgradeDatabaseCommand extends CommonCommand
      */
     public function getSQLContents($file, $section, $output)
     {
-        if (empty($file) || file_exists($file) == false) {
+        if (empty($file) || false == file_exists($file)) {
             $output->writeln(sprintf("File doesn't exist: '<info>%s</info>'... ", $file));
 
             return false;
         }
 
         if (!in_array($section, ['main', 'user', 'stats', 'scorm', 'course'])) {
-            $output->writeln(sprintf("Section is <info>%s</info> not authorized in getSQLContents()", $section));
+            $output->writeln(sprintf('Section is <info>%s</info> not authorized in getSQLContents()', $section));
 
             return false;
         }
@@ -458,7 +460,7 @@ class UpgradeDatabaseCommand extends CommonCommand
         $sectionContents = [];
         $record = false;
         foreach ($fileContents as $line) {
-            if (substr($line, 0, 2) == '--') {
+            if ('--' == substr($line, 0, 2)) {
                 //This is a comment. Check if section name, otherwise ignore
                 $result = [];
                 if (preg_match('/^-- xx([A-Z]*)xx/', $line, $result)) { //we got a section name here
@@ -496,7 +498,7 @@ class UpgradeDatabaseCommand extends CommonCommand
     public function createCourseTables($output, $dryRun)
     {
         if ($dryRun) {
-            $output->writeln("<comment>Creating c_* tables but dry-run is on. 0 table created.</comment>");
+            $output->writeln('<comment>Creating c_* tables but dry-run is on. 0 table created.</comment>');
 
             return 0;
         }
@@ -556,10 +558,10 @@ class UpgradeDatabaseCommand extends CommonCommand
         $versionList = $this->availableVersions();
 
         // Checking version.
-        if ($version != 'master') {
+        if ('master' != $version) {
             if (!in_array($version, $versionNameList)) {
                 $output->writeln("<comment>Version '$version' is not available.</comment>");
-                $output->writeln("<comment>Available versions: </comment><info>".implode(', ', $versionNameList)."</info>");
+                $output->writeln('<comment>Available versions: </comment><info>'.implode(', ', $versionNameList).'</info>');
 
                 return 0;
             }
@@ -567,7 +569,7 @@ class UpgradeDatabaseCommand extends CommonCommand
 
         if (version_compare($version, $minVersion, '<')) {
             $output->writeln("<comment>Your Chamilo version is not supported! The minimun version is: </comment><info>$minVersion</info>");
-            $output->writeln("<comment>You want to upgrade from <info>".$version."</info> <comment>to</comment> <info>$minVersion</info>");
+            $output->writeln('<comment>You want to upgrade from <info>'.$version."</info> <comment>to</comment> <info>$minVersion</info>");
 
             return 0;
         }
@@ -619,15 +621,15 @@ class UpgradeDatabaseCommand extends CommonCommand
         $conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
 
         if ($conn) {
-            $output->writeln("<comment>Connection to the database established.</comment>");
+            $output->writeln('<comment>Connection to the database established.</comment>');
         } else {
-            $output->writeln("<comment>Can't connect to the DB with user:</comment><info>".$_configuration['db_user'])."</info>";
+            $output->writeln("<comment>Can't connect to the DB with user:</comment><info>".$_configuration['db_user']).'</info>';
 
             return 0;
         }
 
         // Get course list
-        $query = "SELECT * FROM course";
+        $query = 'SELECT * FROM course';
         $result = $conn->executeQuery($query);
         $courseList = $result->fetchAll();
 
@@ -636,27 +638,27 @@ class UpgradeDatabaseCommand extends CommonCommand
         $oldVersion = $version;
 
         // Handle 1.10.x as 1.10.1000
-        if ($currentVersion == '1.9.x') {
+        if ('1.9.x' == $currentVersion) {
             $currentVersion = '1.9.1000';
         }
 
-        if ($currentVersion == '1.10.x') {
+        if ('1.10.x' == $currentVersion) {
             $currentVersion = '1.10.1000';
         }
 
-        if ($currentVersion == '1.11.x') {
+        if ('1.11.x' == $currentVersion) {
             $currentVersion = '1.11.1000';
         }
 
-        if ($version == '1.9.x') {
+        if ('1.9.x' == $version) {
             $version = '1.9.1000';
         }
 
-        if ($version == '1.10.x') {
+        if ('1.10.x' == $version) {
             $version = '1.10.1000';
         }
 
-        if ($version == '1.11.x') {
+        if ('1.11.x' == $version) {
             $version = '1.11.1000';
         }
 
@@ -669,7 +671,7 @@ class UpgradeDatabaseCommand extends CommonCommand
         require_once $rootSys.'main/inc/lib/database.lib.php';
 
         if (!is_dir($rootSys.'vendor')) {
-            $output->writeln("Execute composer update in your chamilo instance first. Then continue with the upgrade");
+            $output->writeln('Execute composer update in your chamilo instance first. Then continue with the upgrade');
 
             return 1;
         }
@@ -684,10 +686,10 @@ class UpgradeDatabaseCommand extends CommonCommand
         }
 
         foreach ($versionsToRun as $versionItem => $versionInfo) {
-            if (isset($versionInfo['require_update']) && $versionInfo['require_update'] == true) {
-                $output->writeln("----------------------------------------------------------------");
+            if (isset($versionInfo['require_update']) && true == $versionInfo['require_update']) {
+                $output->writeln('----------------------------------------------------------------');
                 $output->writeln("<comment>Starting migration from version: </comment><info>$currentVersion</info><comment> to version </comment><info>$versionItem ");
-                $output->writeln("");
+                $output->writeln('');
 
                 // Greater than my current version.
                 $this->startMigration(
@@ -703,8 +705,8 @@ class UpgradeDatabaseCommand extends CommonCommand
                     $rootSys
                 );
                 $currentVersion = $versionItem;
-                $output->writeln("<comment>End database migration</comment>");
-                $output->writeln("----------------------------------------------------------------");
+                $output->writeln('<comment>End database migration</comment>');
+                $output->writeln('----------------------------------------------------------------');
             } else {
                 $currentVersion = $versionItem;
                 $output->writeln("<comment>Skip migration from version: </comment><info>$currentVersion</info><comment> to version </comment><info>$versionItem ");
@@ -713,7 +715,7 @@ class UpgradeDatabaseCommand extends CommonCommand
             /*
              * If the migration from 1.9.x to 1.10.x is finished then we fix the IDs and extra fields
              */
-            if ($originalVersion === '1.9.x' && $currentVersion === '1.10.x') {
+            if ('1.9.x' === $originalVersion && '1.10.x' === $currentVersion) {
                 require_once $rootSys.'main/inc/lib/database.constants.inc.php';
                 require_once $rootSys.'main/inc/lib/system/session.class.php';
                 require_once $rootSys.'main/inc/lib/chamilo_session.class.php';
@@ -737,7 +739,7 @@ class UpgradeDatabaseCommand extends CommonCommand
             }
         }
 
-        $output->writeln("<comment>Hurray!!! You just finished this migration. To check the current status of your platform, run </comment><info>chamilo:status</info>");
+        $output->writeln('<comment>Hurray!!! You just finished this migration. To check the current status of your platform, run </comment><info>chamilo:status</info>');
         $endTime = time();
         $totalTimeInMinutes = round(($endTime - $startTime) / 60, 2);
         $output->writeln("<comment>The script took $totalTimeInMinutes minutes to execute.</comment>");

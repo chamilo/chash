@@ -84,9 +84,9 @@ class SendEmailCommand extends ChamiloEmailCommand
             $userTable = $_configuration['main_database'].'.user';
             $adminTable = $_configuration['main_database'].'.admin';
 
-            require_once "SendEmailCommand.php";
-            require_once "SendEmailCommand.php";
-            require_once "SendEmailCommand.php";
+            require_once 'SendEmailCommand.php';
+            require_once 'SendEmailCommand.php';
+            require_once 'SendEmailCommand.php';
 
             $recipient_name = $input->getArgument('recipient-name');
             $recipient_email = $input->getArgument('recipient-email');
@@ -99,12 +99,14 @@ class SendEmailCommand extends ChamiloEmailCommand
             if ($conn instanceof \Doctrine\DBAL\Connection) {
                 $sql = "SELECT email, CONCAT(lastname, firstname) as name FROM $userTable u "
                      ."LEFT JOIN $adminTable a ON a.user_id = u.user_id "
-                     ."ORDER BY u.user_id LIMIT 1";
+                     .'ORDER BY u.user_id LIMIT 1';
+
                 try {
                     $stmt = $conn->prepare($sql);
                     $stmt->execute();
                 } catch (\PDOException $e) {
                     $output->write('SQL error!'.PHP_EOL);
+
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
                 $row = $stmt->fetch(\PDO::FETCH_ASSOC);

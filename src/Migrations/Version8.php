@@ -7,8 +7,6 @@ use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Manages the migration to version 1.8.0.
- *
- * @package ChamiloLMS\Controller\Migrations
  */
 class Version8 extends AbstractMigration
 {

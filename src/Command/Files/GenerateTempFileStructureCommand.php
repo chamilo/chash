@@ -10,8 +10,6 @@ use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class GenerateTempFileStructureCommand.
- *
- * @package Chash\Command\Files
  */
 class GenerateTempFileStructureCommand extends DatabaseCommand
 {
@@ -32,14 +30,15 @@ class GenerateTempFileStructureCommand extends DatabaseCommand
         }
 
         $fs = new Filesystem();
+
         try {
             if ($dryRun) {
-                $output->writeln("<comment>Folders to be created with permission ".decoct($permission).":</comment>");
+                $output->writeln('<comment>Folders to be created with permission '.decoct($permission).':</comment>');
                 foreach ($files as $file) {
                     $output->writeln($file);
                 }
             } else {
-                $output->writeln("<comment>Creating folders with permission ".decoct($permission).":</comment>");
+                $output->writeln('<comment>Creating folders with permission '.decoct($permission).':</comment>');
                 foreach ($files as $file) {
                     $output->writeln($file);
                 }

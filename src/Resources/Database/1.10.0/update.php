@@ -1,4 +1,5 @@
 <?php
+
 /* For licensing terms, see /license.txt */
 
 use Symfony\Component\Filesystem\Filesystem;
@@ -16,6 +17,7 @@ $updateFiles = function ($_configuration, $mainConnection, $courseList, $dryRun,
     $sysPath = $upgrade->getRootSys();
     $sysCodePath = $upgrade->getRootSys().'main/';
     $output->writeln(__DIR__.'update.php');
+
     try {
         $langPath = $sysCodePath.'lang/';
         // Only erase files from Chamilo languages (not sublanguages defined by the users)
@@ -214,7 +216,7 @@ $updateFiles = function ($_configuration, $mainConnection, $courseList, $dryRun,
             $files = $finder->directories()->in($originalCourseDir);
             $dirCount = $dirs->count();
             $fileCount = $dirs->count();
-            if ($fileCount == 0 && $dirCount == 0) {
+            if (0 == $fileCount && 0 == $dirCount) {
                 if ($fs->exists($sysPath.'courses')) {
                     $fs->remove($sysPath.'courses');
                 }

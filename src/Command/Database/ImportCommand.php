@@ -65,7 +65,7 @@ EOT
     {
         $conn = $this->getHelper('db')->getConnection();
 
-        if (($fileNames = $input->getArgument('file')) !== null) {
+        if (null !== ($fileNames = $input->getArgument('file'))) {
             foreach ((array) $fileNames as $fileName) {
                 if (!file_exists($fileName)) {
                     throw new \InvalidArgumentException(sprintf("SQL file '<info>%s</info>' does not exist.", $fileName));
@@ -89,7 +89,7 @@ EOT
                             $stmt->fetch();
                             $stmt->closeCursor();
 
-                            $lines++;
+                            ++$lines;
                         } while ($stmt->nextRowset());
 
                         $output->write(sprintf('%d statements executed!', $lines).PHP_EOL);

@@ -185,7 +185,7 @@ class CommonCommand extends AbstractCommand
      */
     public function getInstallationPath($version)
     {
-        if ($version === 'master') {
+        if ('master' === $version) {
             $version = $this->getLatestVersion();
         }
 
@@ -619,7 +619,7 @@ class CommonCommand extends AbstractCommand
     {
         $configurationPath = $this->getConfigurationHelper()->getNewConfigurationPath($path);
 
-        if ($configurationPath == false) {
+        if (false == $configurationPath) {
             //  Seems an old installation!
             $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($path);
             $this->setRootSys(realpath($configurationPath.'/../../../').'/');
@@ -640,12 +640,12 @@ class CommonCommand extends AbstractCommand
      */
     public function writeConfiguration($version, $path, $output)
     {
-        $output->writeln("");
-        $output->writeln("<comment>Starting the writeConfiguration process.</comment>");
+        $output->writeln('');
+        $output->writeln('<comment>Starting the writeConfiguration process.</comment>');
         $portalSettings = $this->getPortalSettings();
         $databaseSettings = $this->getDatabaseSettings();
         $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($path);
-        $output->writeln("<comment>Recovered all info. Reviewing.</comment>");
+        $output->writeln('<comment>Recovered all info. Reviewing.</comment>');
 
         // Creates a YML File
         $configuration = [];
@@ -672,10 +672,10 @@ class CommonCommand extends AbstractCommand
 
         // Version settings
         $configuration['system_version'] = $version;
-        $output->writeln("<comment>Data reviewed. Checking where to write to...</comment>");
+        $output->writeln('<comment>Data reviewed. Checking where to write to...</comment>');
 
         if (file_exists($this->getRootSys().'config/parameters.yml.dist')) {
-            $output->writeln("<comment>parameters.yml.dist file found.</comment>");
+            $output->writeln('<comment>parameters.yml.dist file found.</comment>');
 
             $file = $this->getRootSys().'config/parameters.yml';
             if (!file_exists($file)) {
@@ -697,7 +697,7 @@ class CommonCommand extends AbstractCommand
             }
         } else {
             // Try the old one
-            $output->writeln("<comment>Looking for main/install/configuration.dist.php.</comment>");
+            $output->writeln('<comment>Looking for main/install/configuration.dist.php.</comment>');
 
             $contents = file_get_contents($this->getRootSys().'main/install/configuration.dist.php');
 
@@ -710,18 +710,18 @@ class CommonCommand extends AbstractCommand
             $config['{DATABASE_DRIVER}'] = $configuration['driver'];
 
             $config['{COURSE_TABLE_PREFIX}'] = '';
-            $config['{DATABASE_GLUE}'] = "`.`"; // keeping for backward compatibility
+            $config['{DATABASE_GLUE}'] = '`.`'; // keeping for backward compatibility
             $config['{DATABASE_PREFIX}'] = '';
             $config['{DATABASE_STATS}'] = $configuration['main_database'];
             $config['{DATABASE_SCORM}'] = $configuration['main_database'];
             $config['{DATABASE_PERSONAL}'] = $configuration['main_database'];
             $config['TRACKING_ENABLED'] = "'true'";
-            $config['SINGLE_DATABASE'] = "false";
+            $config['SINGLE_DATABASE'] = 'false';
 
             $config['{ROOT_WEB}'] = $portalSettings['site_url'];
             $config['{ROOT_SYS}'] = $this->getRootSys();
 
-            $config['{URL_APPEND_PATH}'] = "";
+            $config['{URL_APPEND_PATH}'] = '';
             $config['{SECURITY_KEY}'] = $configuration['security_key'];
             $config['{ENCRYPT_PASSWORD}'] = $configuration['password_encryption'];
 
@@ -734,10 +734,10 @@ class CommonCommand extends AbstractCommand
             }
 
             $newConfigurationFile = $configurationPath.'configuration.php';
-            $output->writeln(sprintf("<comment>Writing config to %s</comment>", $newConfigurationFile));
+            $output->writeln(sprintf('<comment>Writing config to %s</comment>', $newConfigurationFile));
 
             $result = file_put_contents($newConfigurationFile, $contents);
-            $output->writeln("<comment>Config file written.</comment>");
+            $output->writeln('<comment>Config file written.</comment>');
         }
 
         return $result;
@@ -789,9 +789,9 @@ class CommonCommand extends AbstractCommand
         $configurationPath = $this->getConfigurationPath();
         $newConfigurationFile = $configurationPath.'configuration.php';
 
-        if ($dryRun == false) {
+        if (false == $dryRun) {
             if (version_compare($newValues['system_version'], '1.10', '>=') ||
-                ($newValues['system_version'] == '1.10.x' || $newValues['system_version'] == '1.11.x')
+                ('1.10.x' == $newValues['system_version'] || '1.11.x' == $newValues['system_version'])
             ) {
                 $configurationPath = $_configuration['root_sys'].'app/config/';
                 $newConfigurationFile = $configurationPath.'configuration.php';
@@ -919,6 +919,7 @@ class CommonCommand extends AbstractCommand
         }
 
         $fs = new Filesystem();
+
         try {
             if ($dryRun) {
                 $output->writeln('<comment>Files to be removed (--dry-run is on).</comment>');
@@ -969,20 +970,24 @@ class CommonCommand extends AbstractCommand
 
         // Download the chamilo package from from github:
         if (empty($updateInstallation)) {
-            $updateInstallation = "https://github.com/chamilo/chamilo-lms/archive/v".$version.".zip";
+            $updateInstallation = 'https://github.com/chamilo/chamilo-lms/archive/v'.$version.'.zip';
 
             switch ($version) {
                 case 'master':
-                    $updateInstallation = "https://github.com/chamilo/chamilo-lms/archive/master.zip";
+                    $updateInstallation = 'https://github.com/chamilo/chamilo-lms/archive/master.zip';
+
                     break;
                 case '1.9.x':
-                    $updateInstallation = "https://github.com/chamilo/chamilo-lms/archive/1.9.x.zip";
+                    $updateInstallation = 'https://github.com/chamilo/chamilo-lms/archive/1.9.x.zip';
+
                     break;
                 case '1.10.x':
-                    $updateInstallation = "https://github.com/chamilo/chamilo-lms/archive/1.10.x.zip";
+                    $updateInstallation = 'https://github.com/chamilo/chamilo-lms/archive/1.10.x.zip';
+
                     break;
                 case '1.11.x':
-                    $updateInstallation = "https://github.com/chamilo/chamilo-lms/archive/1.11.x.zip";
+                    $updateInstallation = 'https://github.com/chamilo/chamilo-lms/archive/1.11.x.zip';
+
                     break;
             }
         }
@@ -998,7 +1003,7 @@ class CommonCommand extends AbstractCommand
             }
 
             // Download file?
-            if (strpos($updateInstallation, 'http') === false) {
+            if (false === strpos($updateInstallation, 'http')) {
                 if (!file_exists($updateInstallation)) {
                     $output->writeln("<comment>File does not exists: $updateInstallation</comment>");
 
@@ -1012,14 +1017,14 @@ class CommonCommand extends AbstractCommand
                     $output->writeln("<comment>Executing</comment> <info>wget -O $updateInstallationLocalName '$updateInstallation'</info>");
                     $output->writeln('');
 
-                    $execute = "wget -O ".$updateInstallationLocalName." '$updateInstallation'\n";
+                    $execute = 'wget -O '.$updateInstallationLocalName." '$updateInstallation'\n";
 
                     $systemOutput = shell_exec($execute);
 
                     $systemOutput = str_replace("\n", "\n\t", $systemOutput);
                     $output->writeln($systemOutput);
                 } else {
-                    $output->writeln("<comment>Seems that the chamilo v".$version." has been already downloaded. File location:</comment> <info>$updateInstallationLocalName</info>");
+                    $output->writeln('<comment>Seems that the chamilo v'.$version." has been already downloaded. File location:</comment> <info>$updateInstallationLocalName</info>");
                 }
 
                 $updateInstallation = $updateInstallationLocalName;
@@ -1044,7 +1049,7 @@ class CommonCommand extends AbstractCommand
                     // Load from cache
                     $chamiloPath = $folderPath.'/chamilo-lms-CHAMILO_'.$versionTag.'_STABLE/main/inc/global.inc.php';
                     if (file_exists($chamiloPath)) {
-                        $output->writeln("<comment>Files have been already extracted here: </comment><info>".$folderPath.'/chamilo-lms-CHAMILO_'.$versionTag.'_STABLE/'."</info>");
+                        $output->writeln('<comment>Files have been already extracted here: </comment><info>'.$folderPath.'/chamilo-lms-CHAMILO_'.$versionTag.'_STABLE/'.'</info>');
 
                         return $folderPath.'/chamilo-lms-CHAMILO_'.$versionTag.'_STABLE/';
                     }
@@ -1061,12 +1066,13 @@ class CommonCommand extends AbstractCommand
                     /** @var \SplFileInfo $file */
                     foreach ($files as $file) {
                         $chamiloLocationPath = $file->getRealPath();
+
                         break;
                     }
                 }
 
                 if (empty($chamiloLocationPath)) {
-                    $output->writeln("<error>Chamilo folder structure not found in package.</error>");
+                    $output->writeln('<error>Chamilo folder structure not found in package.</error>');
 
                     return 0;
                 }
@@ -1121,20 +1127,20 @@ class CommonCommand extends AbstractCommand
         }
 
         if (empty($chamiloLocationPath)) {
-            $output->writeln("<error>The chamiloLocationPath variable is empty<error>");
+            $output->writeln('<error>The chamiloLocationPath variable is empty<error>');
 
             return 0;
         }
 
-        $output->writeln("<comment>Copying files from </comment><info>$chamiloLocationPath</info><comment> to </comment><info>".$destinationPath."</info>");
+        $output->writeln("<comment>Copying files from </comment><info>$chamiloLocationPath</info><comment> to </comment><info>".$destinationPath.'</info>');
 
         if (empty($destinationPath)) {
-            $output->writeln("<error>The root path was not set.<error>");
+            $output->writeln('<error>The root path was not set.<error>');
 
             return 0;
         } else {
             $fileSystem->mirror($chamiloLocationPath, $destinationPath, null, ['override' => true]);
-            $output->writeln("<comment>Copy finished.<comment>");
+            $output->writeln('<comment>Copy finished.<comment>');
 
             return 1;
         }
@@ -1207,13 +1213,13 @@ class CommonCommand extends AbstractCommand
             $configFile = str_replace('dist.', '', $file);
 
             if (file_exists($confDir.$configFile)) {
-                $output->writeln("<comment> Moving file from: </comment>".$confDir.$configFile);
-                $output->writeln("<comment> to: </comment>".$configurationPath.$configFile);
+                $output->writeln('<comment> Moving file from: </comment>'.$confDir.$configFile);
+                $output->writeln('<comment> to: </comment>'.$configurationPath.$configFile);
                 if (!file_exists($configurationPath.$configFile)) {
                     $fs->copy($confDir.$configFile, $configurationPath.$configFile);
                 }
             } else {
-                $output->writeln("<comment> File not found: </comment>".$confDir.$configFile);
+                $output->writeln('<comment> File not found: </comment>'.$confDir.$configFile);
             }
         }
 
@@ -1473,12 +1479,12 @@ class CommonCommand extends AbstractCommand
             foreach ($dbList as &$dbInfo) {
                 $params = $this->getDatabaseSettings();
 
-                if (isset($_configuration['single_database']) && $_configuration['single_database'] == true) {
+                if (isset($_configuration['single_database']) && true == $_configuration['single_database']) {
                     $em = \Doctrine\ORM\EntityManager::create($params, $config);
                 } else {
-                    if ($section == 'course') {
+                    if ('course' == $section) {
                         if (version_compare($version, '10', '<=')) {
-                            if (strpos($dbInfo['database'], '_chamilo_course_') === false) {
+                            if (false === strpos($dbInfo['database'], '_chamilo_course_')) {
                                 //$params['dbname'] = $params['dbname'];
                             } else {
                                 $params['dbname'] = str_replace('_chamilo_course_', '', $dbInfo['database']);
@@ -1490,9 +1496,11 @@ class CommonCommand extends AbstractCommand
                         switch ($dbInfo['database']) {
                             case 'statistics_database':
                                 $databaseName = isset($_configuration['statistics_database']) ? $_configuration['statistics_database'] : $databaseName;
+
                                 break;
                             case 'user_personal_database':
                                 $databaseName = isset($_configuration['user_personal_database']) ? $_configuration['user_personal_database'] : $databaseName;
+
                                 break;
                         }
                         $params['dbname'] = $databaseName;

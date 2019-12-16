@@ -48,7 +48,7 @@ class ReplaceURLCommand extends DatabaseCommand
             $output->writeln('');
         }
 
-        $this->writeCommandHeader($output, "Replacing URLs in these tables");
+        $this->writeCommandHeader($output, 'Replacing URLs in these tables');
         $tables = $this->getTables();
 
         foreach ($tables as $table => $fields) {
@@ -78,14 +78,14 @@ class ReplaceURLCommand extends DatabaseCommand
                     $count = $result->rowCount();
                     $output->writeln("<comment># $count row(s) modified.</comment>");
                 } else {
-                    $output->writeln("<comment>Nothing was changed.</comment>");
+                    $output->writeln('<comment>Nothing was changed.</comment>');
                 }
             }
         }
 
         // Replacing documents.
         $output->writeln('');
-        $this->writeCommandHeader($output, "Replacing documents matching this query:");
+        $this->writeCommandHeader($output, 'Replacing documents matching this query:');
 
         $sql = "SELECT
                     DISTINCT d.id, d.c_id, d.title, d.path, c.code, c.directory
@@ -127,14 +127,14 @@ class ReplaceURLCommand extends DatabaseCommand
 
                         if ($result) {
                             $output->writeln(
-                                "<comment>File Updated.</comment>"
+                                '<comment>File Updated.</comment>'
                             );
                         } else {
-                            $output->writeln("<error>Error!<error>");
+                            $output->writeln('<error>Error!<error>');
                         }
                     } else {
                         $output->writeln(
-                            "<comment>Nothing was changed.</comment>"
+                            '<comment>Nothing was changed.</comment>'
                         );
                     }
                 } else {
@@ -143,7 +143,7 @@ class ReplaceURLCommand extends DatabaseCommand
             }
         } else {
             $output->writeln(
-                "<comment>No results found.</comment>"
+                '<comment>No results found.</comment>'
             );
         }
     }

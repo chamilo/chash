@@ -9,8 +9,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class CommonChamiloUserCommand.
- *
- * @package Chash\Command\User
  */
 class ChamiloEmailCommand extends Command
 {

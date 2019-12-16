@@ -1,4 +1,5 @@
 <?php
+
 /* For licensing terms, see /license.txt */
 
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,6 +18,7 @@ $updateFiles = function ($_configuration, $mainConnection, $courseList, $dryRun,
     $sysCodePath = $upgrade->getRootSys().'main/';
 
     $output->writeln('update.php');
+
     try {
         $fs = new Filesystem();
 

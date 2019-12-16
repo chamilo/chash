@@ -49,7 +49,7 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
             $add = 100;
         }
 
-        if ($add == 1) {
+        if (1 == $add) {
             $this->writeCommandHeader($output, 'Max space needs to be of at least 1MB for each course first');
 
             return;
@@ -72,11 +72,13 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
             $globalCourses = [];
             $sql = "SELECT c.id as cid, c.code as ccode, c.directory as cdir, c.disk_quota as cquota
                     FROM $courseTable c";
+
             try {
                 $stmt = $conn->prepare($sql);
                 $stmt->execute();
             } catch (\PDOException $e) {
                 $output->write('SQL error!'.PHP_EOL);
+
                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
             if ($stmt->rowCount() > 0) {
@@ -122,11 +124,13 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
                             $newAllowedSize = $newAllowedSize * 1024 * 1024;
                             //$output->writeln('Allowed size is '.$newAllowedSize.' Bytes, or '.round($newAllowedSize/(1024*1024)));
                             $sql = "UPDATE $courseTable SET disk_quota = $newAllowedSize WHERE id = ".$globalCourses[$file]['id'];
+
                             try {
                                 $stmt2 = $conn->prepare($sql);
                                 $stmt2->execute();
                             } catch (\PDOException $e) {
                                 $output->write('SQL error!'.PHP_EOL);
+
                                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                             }
                             if ($increase) {

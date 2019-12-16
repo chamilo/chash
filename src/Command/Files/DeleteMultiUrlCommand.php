@@ -16,7 +16,6 @@ use Symfony\Component\Filesystem\Filesystem;
  * all resources used by more than one URL, but trying to disassociate them
  * progressively.
  *
- * @package Chash\Command\Files
  *
  * @todo Add support for version 2.*
  */
@@ -73,7 +72,7 @@ class DeleteMultiUrlCommand extends DatabaseCommand
             $this->writeCommandHeader($output, 'Deleting URL');
             $list = $input->getOption('list'); //1 if the option was set
             $connection = $this->getConnection($input);
-            $sql = "SELECT * FROM access_url";
+            $sql = 'SELECT * FROM access_url';
             $stmt = $connection->query($sql);
             $urls = [];
             while ($row = $stmt->fetch()) {
@@ -87,7 +86,7 @@ class DeleteMultiUrlCommand extends DatabaseCommand
                     $output->writeln('ID'."\t".'Active?'."\t".'URL');
                     $preventDelete = '';
                     foreach ($urls as $id => $url) {
-                        if ($id == 1) {
+                        if (1 == $id) {
                             $preventDelete = '(cannot be deleted!)';
                         } else {
                             $preventDelete = '';
@@ -109,11 +108,11 @@ class DeleteMultiUrlCommand extends DatabaseCommand
             $show = $input->getOption('show'); //1 if the option was set
 
             // Get all courses by URL
-            $sql = "SELECT u.course_code, u.access_url_id, c.directory "
-                ." FROM access_url_rel_course u, course c "
-                ." WHERE u.course_code = c.code "
+            $sql = 'SELECT u.course_code, u.access_url_id, c.directory '
+                .' FROM access_url_rel_course u, course c '
+                .' WHERE u.course_code = c.code '
                 //." WHERE access_url_id != 1 "
-                ." ORDER BY access_url_id, course_code ASC";
+                .' ORDER BY access_url_id, course_code ASC';
             $stmt = $connection->query($sql);
             $urlCourses = [];
             $coursesUrl = [];
@@ -155,7 +154,7 @@ class DeleteMultiUrlCommand extends DatabaseCommand
                                     $res = @exec('du -s '.$courseDir);
                                     $res = preg_split('/\s/', $res);
                                     $size = $res[0];
-                                    if ($unique == 'yes') {
+                                    if ('yes' == $unique) {
                                         $totalDiskUsage += $size;
                                     }
                                 }
@@ -171,7 +170,7 @@ class DeleteMultiUrlCommand extends DatabaseCommand
 
             if (!empty($urlId)) {
                 $output->writeln('');
-                if ($urlId == 1) {
+                if (1 == $urlId) {
                     $output->writeln('URL 1 cannot be deleted as it is the main URL');
 
                     return;
@@ -299,18 +298,18 @@ class DeleteMultiUrlCommand extends DatabaseCommand
 
         // 2. Delete the session_rel_course and session_rel_course_rel_user
         foreach ($sessions as $sessionId) {
-            $sql = "DELETE FROM session_rel_course_rel_user "
+            $sql = 'DELETE FROM session_rel_course_rel_user '
                 ."WHERE id_session = $sessionId "
                 ." AND course_code = '$courseCode' ";
             $stmt = $connection->query($sql);
-            $sql = "DELETE FROM session_rel_course "
+            $sql = 'DELETE FROM session_rel_course '
                 ."WHERE id_session = $sessionId "
                 ." AND course_code = '$courseCode' ";
             $stmt = $connection->query($sql);
             $sql = "SELECT count(*) as courseCount FROM session_rel_course WHERE id_session = $sessionId";
             $stmt = $connection->query($sql);
             while ($row = $stmt->fetch()) {
-                if ($row['courseCount'] === 0) {
+                if (0 === $row['courseCount']) {
                     $output->writeln('No course left in session '.$sessionId.' so deleting the session');
                     // No course within this session => delete the session
                     // @todo: use sessionmanager::delete_session($sessionId)
@@ -333,7 +332,7 @@ class DeleteMultiUrlCommand extends DatabaseCommand
         }
 
         // 3. Delete the access_url_rel_course reference
-        $sql = "DELETE FROM access_url_rel_course "
+        $sql = 'DELETE FROM access_url_rel_course '
             ." WHERE access_url_id = $urlId "
             ." AND course_code = '$courseCode'";
         $stmt = $connection->query($sql);
@@ -525,7 +524,7 @@ class DeleteMultiUrlCommand extends DatabaseCommand
         $sql = "SELECT selected_value FROM settings_current WHERE variable = 'split_users_upload_directory'";
         $stmt = $connection->query($sql);
         $row = $stmt->fetch();
-        if ($row['selected_value'] == 'true') {
+        if ('true' == $row['selected_value']) {
             $sub = substr($userId, 0, 1).'/';
         }
         $img_path = $sysPath.'main/upload/users/'.$sub.$userId;

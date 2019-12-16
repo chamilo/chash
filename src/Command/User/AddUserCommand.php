@@ -14,8 +14,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class AddUserCommand
  * Changes a user password to the one given.
- *
- * @package Chash\Command\User
  */
 class AddUserCommand extends DatabaseCommand
 {
@@ -86,30 +84,35 @@ class AddUserCommand extends DatabaseCommand
         }
         if ($conn instanceof \Doctrine\DBAL\Connection) {
             try {
-                $userSelect = "SELECT * FROM user WHERE username = ".$conn->quote($username);
+                $userSelect = 'SELECT * FROM user WHERE username = '.$conn->quote($username);
                 $stmt = $conn->prepare($userSelect);
                 $stmt->execute();
                 $un = $stmt->rowCount();
             } catch (\PDOException $e) {
                 $output->write('SQL error!'.PHP_EOL);
+
                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
 
-            if ($un === 0) {
+            if (0 === $un) {
                 $enc = $_configuration['password_encryption'];
                 $salt = sha1(uniqid(null, true));
                 switch ($enc) {
                     case 'bcrypt':
                         $password = $conn->quote(password_hash($password, PASSWORD_BCRYPT, ['cost' => 4, 'salt' => $salt]));
+
                         break;
                     case 'sha1':
                         $password = $conn->quote(sha1($password));
+
                         break;
                     case 'md5':
                         $password = $conn->quote(md5($password));
+
                         break;
                     default:
                         $password = $conn->quote($password);
+
                         break;
                 }
                 $numRole = 5;
@@ -118,14 +121,17 @@ class AddUserCommand extends DatabaseCommand
                 switch ($role) {
                     case 'anonymous':
                         $numRole = 6;
+
                         break;
                     case 'teacher':
                         $numRole = 1;
+
                         break;
                     case 'admin':
                         $numRole = 1;
                         $isAdmin = 1;
                         $stringRoles = 'a:1:{i:0;s:16:"ROLE_SUPER_ADMIN";}';
+
                         break;
                     case 'student':
                     default:
@@ -177,41 +183,49 @@ class AddUserCommand extends DatabaseCommand
                     '$timeExpiry',
                     $language
                   )";
+
                 try {
                     $stmt = $conn->prepare($ups);
                     $stmt->execute();
                     $newUserId = $conn->lastInsertId();
                 } catch (\PDOException $e) {
                     $output->write('SQL error!'.PHP_EOL);
+
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
 
                 $output->writeln('User '.$username.' has been created.');
-                if ($isAdmin === 1) {
+                if (1 === $isAdmin) {
                     $uas = "INSERT INTO admin (user_id) values ($newUserId)";
+
                     try {
                         $stmt = $conn->prepare($uas);
                         $stmt->execute();
                     } catch (\PDOException $e) {
                         $output->write('SQL error!'.PHP_EOL);
+
                         throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                     }
                 }
                 // Add user to access_url_rel_user
                 $uas = "INSERT INTO access_url_rel_user (access_url_id, user_id) values (1, $newUserId)";
+
                 try {
                     $stmt = $conn->prepare($uas);
                     $stmt->execute();
                 } catch (\PDOException $e) {
                     $output->write('SQL error!'.PHP_EOL);
+
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
                 $uas = "UPDATE user SET user_id = id WHERE id = $newUserId";
+
                 try {
                     $stmt = $conn->prepare($uas);
                     $stmt->execute();
                 } catch (\PDOException $e) {
                     $output->write('SQL error!'.PHP_EOL);
+
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
             } else {

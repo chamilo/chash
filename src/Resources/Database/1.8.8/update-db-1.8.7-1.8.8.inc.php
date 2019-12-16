@@ -1,4 +1,5 @@
 <?php
+
 /* For licensing terms, see /license.txt */
 
 $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $output, $upgrade) {
@@ -21,9 +22,9 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                 $output->writeln('Updating course db: '.$row_course['db_name']);
 
                 $prefix = $upgrade->getTablePrefix($_configuration, $row_course['db_name']);
-                $table_lp_item_view = $prefix."lp_item_view";
-                $table_lp_view = $prefix."lp_view";
-                $table_lp_item = $prefix."lp_item";
+                $table_lp_item_view = $prefix.'lp_item_view';
+                $table_lp_view = $prefix.'lp_view';
+                $table_lp_item = $prefix.'lp_item';
 
                 $courseConnection = null;
                 foreach ($courseDatabaseConnectionList as $database) {
@@ -157,9 +158,9 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
 
         // Fixing table access_url_rel_course if the platform have courses that were created in Dok€ 1.8.5.
 
-        if (!isset($_configuration['multiple_access_urls']) || $_configuration['multiple_access_urls'] == false) {
-            $output->writeln("Fixing access_url_rel_course:");
-            $sql = "SELECT code FROM course";
+        if (!isset($_configuration['multiple_access_urls']) || false == $_configuration['multiple_access_urls']) {
+            $output->writeln('Fixing access_url_rel_course:');
+            $sql = 'SELECT code FROM course';
             $result = $mainConnection->executeQuery($sql);
             $rows = $result->fetchAll();
             foreach ($rows as $row) {
@@ -169,7 +170,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
                         WHERE course_code = '".$row['code']."' AND access_url_id = 1";
                 $result = $mainConnection->executeQuery($sql);
 
-                if ($result->rowCount() == 0) {
+                if (0 == $result->rowCount()) {
                     $sql = "INSERT INTO access_url_rel_course
                             SET course_code = '".$row['code']."', access_url_id = '1' ";
                     $mainConnection->executeQuery($sql);
@@ -185,6 +186,7 @@ $update = function ($_configuration, $mainConnection, $courseList, $dryRun, $out
         }
     } catch (Exception $e) {
         $mainConnection->rollback();
+
         throw $e;
     }
 };

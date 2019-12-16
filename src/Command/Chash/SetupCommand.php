@@ -50,7 +50,7 @@ class SetupCommand extends AbstractCommand
         $version = $input->getArgument('version');
         $chamiloRoot = $input->getArgument('chamilo_root');
 
-        if ($version == '111') {
+        if ('111' == $version) {
             $file = $chamiloRoot.'app/config/migrations.yml';
 
             require_once $chamiloRoot.'app/Migrations/AbstractMigrationChamilo.php';
@@ -60,7 +60,7 @@ class SetupCommand extends AbstractCommand
             return 1;
         }
 
-        if ($version == '110') {
+        if ('110' == $version) {
             $file = $chamiloRoot.'app/config/migrations110.yml';
 
             $this->migrationFile = $file;

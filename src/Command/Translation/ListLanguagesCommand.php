@@ -12,8 +12,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class ListLanguagesCommand
  * Definition of the translation:list command
  * Definition of command to list platform languages.
- *
- * @package Chash\Command\Translation
  */
 class ListLanguagesCommand extends DatabaseCommand
 {
@@ -49,35 +47,39 @@ class ListLanguagesCommand extends DatabaseCommand
         $count = $input->getArgument('count');
         if ($conn instanceof \Doctrine\DBAL\Connection) {
             $ls = "SELECT selected_value FROM settings_current WHERE variable='platformLanguage'";
+
             try {
                 $stmt = $conn->prepare($ls);
                 $stmt->execute();
             } catch (\PDOException $e) {
                 $output->write('SQL error!'.PHP_EOL);
+
                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
             $lr = $stmt->fetch(\PDO::FETCH_ASSOC);
             //$output->writeln('Current default language is: '.$lr['selected_value']);
             $current = $lr['selected_value'];
             $where = '';
-            if ($availability === '0') {
+            if ('0' === $availability) {
                 $where = 'WHERE available = 0';
-            } elseif ($availability === '1') {
+            } elseif ('1' === $availability) {
                 $where = 'WHERE available = 1';
             }
-            $ls = "SELECT english_name, available FROM language ".$where." ORDER BY english_name";
+            $ls = 'SELECT english_name, available FROM language '.$where.' ORDER BY english_name';
+
             try {
                 $stmt = $conn->prepare($ls);
                 $stmt->execute();
             } catch (\PDOException $e) {
                 $output->write('SQL error!'.PHP_EOL);
+
                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
-            $titleLine = "Language          | Enabled | Platform language";
-            $titleLine2 = "-----------------------------------------------";
+            $titleLine = 'Language          | Enabled | Platform language';
+            $titleLine2 = '-----------------------------------------------';
             if ($count > 0) {
-                $titleLine .= " | Users";
-                $titleLine2 .= "--------";
+                $titleLine .= ' | Users';
+                $titleLine2 .= '--------';
             }
             $output->writeln($titleLine);
             $output->writeln($titleLine2);
@@ -87,19 +89,21 @@ class ListLanguagesCommand extends DatabaseCommand
                 if ($lr['english_name'] == $current) {
                     $pl = '*';
                 }
-                $resultLine = $lr['english_name'].str_repeat(' ', 18 - $l)."| ".$lr['available']."       | ".$pl;
+                $resultLine = $lr['english_name'].str_repeat(' ', 18 - $l).'| '.$lr['available'].'       | '.$pl;
                 if ($count > 0) {
                     $language = $conn->quote($lr['english_name']);
                     $countUsers = "SELECT count(*) as num FROM user WHERE language = $language";
+
                     try {
                         $stmt2 = $conn->prepare($countUsers);
                         $stmt2->execute();
                     } catch (\PDOException $e) {
                         $output->write('SQL error!'.PHP_EOL);
+
                         throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                     }
                     $countUsersNum = $stmt2->fetch(\PDO::FETCH_ASSOC);
-                    $resultLine .= "                 | ".$countUsersNum['num'];
+                    $resultLine .= '                 | '.$countUsersNum['num'];
                 }
                 $output->writeln($resultLine);
             }

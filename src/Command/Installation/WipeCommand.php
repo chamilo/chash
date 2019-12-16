@@ -36,10 +36,10 @@ class WipeCommand extends CommonCommand
         $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($path);
         $configurationFilePath = $this->getConfigurationHelper()->getConfigurationFilePath($path);
         $this->writeCommandHeader($output, 'Wipe command.');
-        $output->writeln("<comment>This command will clean your Chamilo installation. Removing the database and courses.</comment>");
+        $output->writeln('<comment>This command will clean your Chamilo installation. Removing the database and courses.</comment>');
 
-        if ($configurationPath == false) {
-            $output->writeln("<comment>A Chamilo installation was not detected. You can add a path: </comment><info>chamilo:wipe /var/www/chamilo </info>");
+        if (false == $configurationPath) {
+            $output->writeln('<comment>A Chamilo installation was not detected. You can add a path: </comment><info>chamilo:wipe /var/www/chamilo </info>');
 
             return 0;
         } else {
@@ -51,7 +51,7 @@ class WipeCommand extends CommonCommand
                 return 0;
             }
         }
-        $output->writeln("<comment>This command will clean your installation: drop db, removes config files, cache files.</comment>");
+        $output->writeln('<comment>This command will clean your installation: drop db, removes config files, cache files.</comment>');
         // Drop database Chash command.
         $command = $this->getApplication()->find('db:drop_databases');
 
