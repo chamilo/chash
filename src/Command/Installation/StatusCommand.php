@@ -39,6 +39,11 @@ class StatusCommand extends DatabaseCommand
     {
         parent::execute($input, $output);
         $connection = $this->getConnection($input);
+        if (!$connection) {
+            $output->writeln('<comment>No connection to the database.</comment>');
+
+            return;
+        }
         $_configuration = $this->getConfigurationArray();
         $showPass = $input->getOption('show-pass');
         $query = "SELECT selected_value FROM settings_current WHERE variable = 'chamilo_database_version'";
