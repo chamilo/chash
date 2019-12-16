@@ -22,10 +22,7 @@ class CleanCoursesFilesCommand extends DatabaseCommand
             ->setDescription('Cleans the courses directory');
     }
 
-    /**
-     * @return bool|int|void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $this->writeCommandHeader($output, 'Cleaning folders in courses directory.');
@@ -40,5 +37,7 @@ class CleanCoursesFilesCommand extends DatabaseCommand
         }
         $files = $this->getConfigurationHelper()->getCoursesFiles();
         $this->removeFiles($files, $output);
+
+        return 0;
     }
 }

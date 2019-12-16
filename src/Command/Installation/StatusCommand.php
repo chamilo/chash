@@ -27,12 +27,7 @@ class StatusCommand extends DatabaseCommand
         ;
     }
 
-    /**
-     * Executes a command via CLI.
-     *
-     * @return int|void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $connection = $this->getConnection($input);
@@ -114,5 +109,7 @@ class StatusCommand extends DatabaseCommand
             /*$output->writeln("<error>Please check carefully your Chamilo installation. </error>");
             $output->writeln("<comment>The configuration.php file and the 'chamilo_database_version' setting are not synced.</comment>");*/
         }
+
+        return 0;
     }
 }

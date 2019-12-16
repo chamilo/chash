@@ -21,9 +21,9 @@ class DropDatabaseCommand extends DatabaseCommand
     }
 
     /**
-     * @return int|void|null
+     * @return void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
 
@@ -62,5 +62,7 @@ class DropDatabaseCommand extends DatabaseCommand
         } else {
             $output->writeln("<comment>Can't established connection with the database. Probably it was already deleted.</comment>");
         }
+
+        return 0;
     }
 }

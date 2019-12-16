@@ -49,6 +49,7 @@ class ConfigurationHelper extends Helper
 
     /**
      * @param $dryRun
+     * @param bool|null|string|string[] $dryRun
      */
     public function setDryRun($dryRun)
     {
@@ -229,7 +230,7 @@ class ConfigurationHelper extends Helper
      *
      * @param string $configurationFile
      *
-     * @return string
+     * @return false|null|string
      */
     public function getSysPathFromConfigurationFile($configurationFile)
     {
@@ -313,7 +314,7 @@ class ConfigurationHelper extends Helper
      *
      * @param $configuration
      */
-    public function setConfiguration($configuration)
+    public function setConfiguration(array $configuration)
     {
         $this->configuration = $configuration;
     }
@@ -463,9 +464,9 @@ class ConfigurationHelper extends Helper
     }
 
     /**
-     * @return Finder
+     * @return Finder|null
      */
-    public function getDataFolders()
+    public function getDataFolders(): ?Finder
     {
         $finder = new Finder();
         $sysPath = $this->getSysPath();
@@ -571,7 +572,7 @@ class ConfigurationHelper extends Helper
     /**
      * Lists the lib folder.
      *
-     * @return Finder
+     * @return false|string
      */
     public function getLibFolder()
     {
@@ -632,7 +633,7 @@ class ConfigurationHelper extends Helper
      *
      * @param $sysPath
      */
-    public function setSysPath($sysPath)
+    public function setSysPath(string $sysPath)
     {
         $this->sysPath = $sysPath;
     }

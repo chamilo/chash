@@ -21,10 +21,7 @@ class CleanTempFolderCommand extends DatabaseCommand
             ->setDescription('Cleans the temp directory.');
     }
 
-    /**
-     * @return bool|int|void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $this->writeCommandHeader($output, 'Cleaning temp files.');
@@ -38,5 +35,7 @@ class CleanTempFolderCommand extends DatabaseCommand
         }
         $files = $this->getConfigurationHelper()->getTempFiles();
         $this->removeFiles($files, $output);
+
+        return 0;
     }
 }

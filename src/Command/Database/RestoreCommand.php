@@ -32,9 +32,9 @@ class RestoreCommand extends DatabaseCommand
     }
 
     /**
-     * @return int|void|null
+     * @return void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $dumpPath = $input->getArgument('file');
@@ -48,5 +48,7 @@ class RestoreCommand extends DatabaseCommand
         } else {
             $output->writeln('<comment>File is not a valid SQL file: '.$dumpPath.' </comment>');
         }
+
+        return 0;
     }
 }

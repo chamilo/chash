@@ -493,9 +493,9 @@ class UpgradeDatabaseCommand extends CommonCommand
      * @param OutputInterface $output
      * @param string          $dryRun
      *
-     * @return int
+     * @return int|null
      */
-    public function createCourseTables($output, $dryRun)
+    public function createCourseTables($output, $dryRun): ?int
     {
         if ($dryRun) {
             $output->writeln('<comment>Creating c_* tables but dry-run is on. 0 table created.</comment>');

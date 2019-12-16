@@ -24,10 +24,7 @@ class RunSQLCommand extends DatabaseCommand
         $this->setHelp('Prompts a SQL cli');
     }
 
-    /**
-     * @return int|void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $output->writeln('Starting Chamilo SQL cli');
@@ -60,5 +57,7 @@ class RunSQLCommand extends DatabaseCommand
         // Inside execute function
         //$output->getFormatter()->setStyle('fcbarcelona', new OutputFormatterStyle('red', 'blue', array('blink', 'bold', 'underscore')));
         //$output->writeln('<fcbarcelona>Messi for the win</fcbarcelona>');
+
+        return 0;
     }
 }

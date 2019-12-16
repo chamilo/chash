@@ -21,10 +21,7 @@ class ShowConnInfoCommand extends DatabaseCommand
             ->setDescription('Shows database connection credentials for the current Chamilo install');
     }
 
-    /**
-     * @return int|void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
 
@@ -45,5 +42,7 @@ class ShowConnInfoCommand extends DatabaseCommand
         $output->writeln("DB:\t".$_configuration['main_database']);
         $output->writeln('Connection string (add password manually for increased security:');
         $output->writeln('mysql -h '.$_configuration['db_host'].' -u '.$_configuration['db_user'].' -p '.$_configuration['main_database']."\n");
+
+        return 0;
     }
 }

@@ -21,7 +21,7 @@ class MailConfCommand extends DatabaseCommand
     }
 
     /**
-     * @return int|void|null
+     * @return void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -54,5 +54,7 @@ class MailConfCommand extends DatabaseCommand
         } else {
             $output->writeln('<comment>Nothing to print</comment>');
         }
+
+        return 0;
     }
 }

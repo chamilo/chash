@@ -24,11 +24,13 @@ class ChamiloEmailCommand extends Command
     }
 
     /**
-     * @return int|void|null
+     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $configuration = $input->getOption('conf');
         $this->getHelper('configuration')->readConfigurationFile($configuration);
+
+        return 0;
     }
 }

@@ -151,9 +151,9 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getCourseSysPath()
+    public function getCourseSysPath(): ?string
     {
         if (is_dir($this->getRootSys().'courses')) {
             return $this->getRootSys().'courses';
@@ -636,7 +636,7 @@ class CommonCommand extends AbstractCommand
      * @param string $path
      * @param object $output  Output handler to print info messages
      *
-     * @return bool
+     * @return bool|int
      */
     public function writeConfiguration($version, $path, $output)
     {
@@ -1241,6 +1241,7 @@ class CommonCommand extends AbstractCommand
 
     /**
      * @param $path
+     * @param bool|null|string|string[] $path
      */
     public function removeUnUsedFiles(OutputInterface $output, $path)
     {

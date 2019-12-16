@@ -67,9 +67,9 @@ class DeleteCoursesCommand extends DatabaseCommand
     }
 
     /**
-     * @return bool|int|void|null
+     * @return void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         parent::execute($input, $output);
 
@@ -267,9 +267,9 @@ class DeleteCoursesCommand extends DatabaseCommand
      * @param string $courseCode
      * @param int    $urlId
      *
-     * @return bool
+     * @return void
      */
-    private function unlinkCourse($input, OutputInterface $output, $courseCode, $urlId)
+    private function unlinkCourse(InputInterface $input, OutputInterface $output, $courseCode, $urlId): void
     {
         /* Check tables:
          * session, session_rel_course, session_rel_course_rel_user
@@ -341,12 +341,12 @@ class DeleteCoursesCommand extends DatabaseCommand
      * This operation follows the "unlink course" operation so that it just
      * completes it, but only in case the course is used only once.
      *
-     * @param   object  Output interface
-     * @param   string  Course code
+     * @param object  Output interface
+     * @param string  Course code
      *
      * @return bool
      */
-    private function deleteCourse($input, OutputInterface $output, $courseCode)
+    private function deleteCourse(InputInterface $input, OutputInterface $output, $courseCode)
     {
         $connection = $this->getConnection($input);
         $sql = "SELECT id, directory FROM course WHERE code = '$courseCode'";
@@ -466,6 +466,6 @@ class DeleteCoursesCommand extends DatabaseCommand
             'Deleted course '.$courseCode.' reference in course table.'
         );
 
-        return true;
+        return 0;
     }
 }

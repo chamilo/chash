@@ -48,10 +48,7 @@ class FullBackupCommand extends DatabaseCommand
             );
     }
 
-    /**
-     * @return int|void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
 
@@ -107,5 +104,7 @@ class FullBackupCommand extends DatabaseCommand
         $output->writeln(
             '<comment>End Chamilo backup. File can be found here: '.realpath($resultPath).' </comment>'
         );
+
+        return 0;
     }
 }

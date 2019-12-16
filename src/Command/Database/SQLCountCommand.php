@@ -30,9 +30,9 @@ class SQLCountCommand extends DatabaseCommand
     /**
      * @todo use doctrine
      *
-     * @return int|void|null
+     * @return void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $table = $input->getArgument('table');
@@ -52,5 +52,7 @@ class SQLCountCommand extends DatabaseCommand
                 "<comment>Table '$table' does not exists in the database: ".$_configuration['main_database']
             );
         }
+
+        return 0;
     }
 }

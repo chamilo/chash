@@ -48,10 +48,7 @@ class CleanDeletedDocumentsCommand extends DatabaseCommand
         ;
     }
 
-    /**
-     * @return bool|int|void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $category = $input->getOption('category');
@@ -123,5 +120,7 @@ class CleanDeletedDocumentsCommand extends DatabaseCommand
             }
         }
         $this->removeFiles($files, $output);
+
+        return 0;
     }
 }

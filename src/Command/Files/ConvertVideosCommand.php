@@ -59,10 +59,7 @@ class ConvertVideosCommand extends DatabaseCommand
             );
     }
 
-    /**
-     * @return bool|int|void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
 
@@ -176,5 +173,7 @@ class ConvertVideosCommand extends DatabaseCommand
         $output->writeln('Total size of old videos combined: '.round($sizeOrig / (1024 * 1024)).'M');
         $output->writeln('Total size of all new videos combined: '.round($sizeNew / (1024 * 1024)).'M');
         //$this->removeFiles($files, $output);
+
+        return 0;
     }
 }

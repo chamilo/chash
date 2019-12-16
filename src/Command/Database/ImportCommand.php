@@ -58,9 +58,6 @@ EOT
             );
     }
 
-    /**
-     * @see Console\Command\Command
-     */
     protected function execute(Console\Input\InputInterface $input, Console\Output\OutputInterface $output)
     {
         $conn = $this->getHelper('db')->getConnection();
@@ -117,5 +114,7 @@ EOT
                 }
             }
         }
+
+        return 0;
     }
 }

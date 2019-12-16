@@ -17,9 +17,9 @@ class GenerateTempFileStructureCommand extends DatabaseCommand
      * @param array $files
      * @param $permission
      *
-     * @return int
+     * @return int|null
      */
-    public function createFolders(OutputInterface $output, $files, $permission)
+    public function createFolders(OutputInterface $output, $files, int $permission): ?int
     {
         $dryRun = $this->getConfigurationHelper()->getDryRun();
 
@@ -58,9 +58,9 @@ class GenerateTempFileStructureCommand extends DatabaseCommand
     }
 
     /**
-     * @return int|void|null
+     * @return void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $this->writeCommandHeader($output, 'Generating temp folders.');
@@ -68,5 +68,7 @@ class GenerateTempFileStructureCommand extends DatabaseCommand
         // Data folders
         $files = $this->getConfigurationHelper()->getTempFolderList();
         $this->createFolders($output, $files, 0777);
+
+        return 0;
     }
 }

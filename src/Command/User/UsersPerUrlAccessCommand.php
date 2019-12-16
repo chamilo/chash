@@ -24,10 +24,7 @@ class UsersPerUrlAccessCommand extends ChamiloUserCommand
             ->setDescription('Show the accesses users have, per URL, in multi-URL configurations');
     }
 
-    /**
-     * @return int|void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $conn = $this->getConnection($input);

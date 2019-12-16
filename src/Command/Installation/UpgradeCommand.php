@@ -254,7 +254,7 @@ class UpgradeCommand extends CommonCommand
      *
      * @return bool
      */
-    public function processQueryList($courseList, $output, $path, $version, $dryRun, $type)
+    public function processQueryList($courseList, $output, string $path, string $version, bool $dryRun, string $type)
     {
         $databases = $this->getDatabaseList($output, $courseList, $path, $version, $type);
         $this->setConnections($version, $path, $databases);
@@ -341,7 +341,7 @@ class UpgradeCommand extends CommonCommand
      * @param OutputInterface $output
      * @param string type
      */
-    public function fillQueryList($sqlFilePath, $output, $type)
+    public function fillQueryList($sqlFilePath, $output, string $type)
     {
         $output->writeln(sprintf("Processing file type: $type '<info>%s</info>'... ", $sqlFilePath));
         $sections = $this->getSections();
@@ -582,9 +582,9 @@ class UpgradeCommand extends CommonCommand
      * @param OutputInterface $output
      * @param string          $dryRun
      *
-     * @return int
+     * @return int|null
      */
-    public function createCourseTables($output, $dryRun)
+    public function createCourseTables($output, $dryRun): ?int
     {
         if ($dryRun) {
             $output->writeln('<comment>Creating c_* tables but dry-run is on. 0 table created.</comment>');

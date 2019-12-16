@@ -32,10 +32,7 @@ class ReplaceURLCommand extends DatabaseCommand
             );
     }
 
-    /**
-     * @return int|void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $search = $input->getArgument('search');
@@ -146,6 +143,8 @@ class ReplaceURLCommand extends DatabaseCommand
                 '<comment>No results found.</comment>'
             );
         }
+
+        return 0;
     }
 
     /**

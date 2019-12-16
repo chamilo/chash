@@ -257,7 +257,7 @@ class InstallCommand extends CommonCommand
     /**
      * Install Chamilo.
      *
-     * @return bool
+     * @return false|int|null
      */
     public function install(InputInterface $input, OutputInterface $output)
     {
@@ -610,7 +610,7 @@ class InstallCommand extends CommonCommand
      *
      * @return bool
      */
-    public function processInstallation($databaseSettings, $version, $output)
+    public function processInstallation($databaseSettings, $version, OutputInterface $output)
     {
         $sqlFolder = $this->getInstallationPath($version);
         $databaseMap = $this->getDatabaseMap();
@@ -950,9 +950,9 @@ class InstallCommand extends CommonCommand
     /**
      * Executes a command via CLI.
      *
-     * @return int|void|null
+     * @return false|int|null
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // Setting configuration helper.
         $this->getApplication()->getHelperSet()->set(
@@ -1021,6 +1021,8 @@ class InstallCommand extends CommonCommand
         } else {
             $this->install($input, $output);
         }
+
+        return 0;
     }
 
     /**
@@ -1029,7 +1031,7 @@ class InstallCommand extends CommonCommand
      *
      * @throws \Exception
      */
-    private function importSQLFile($file, $output)
+    private function importSQLFile(string $file, OutputInterface $output)
     {
         $command = $this->getApplication()->find('dbal:import');
 

@@ -19,17 +19,20 @@ class SetPermissionsAfterInstallCommand extends DatabaseCommand
      * @param $user
      * @param $group
      * @param bool $listFiles
+     * @param int|null $permission
+     * @param bool|null|string|string[] $user
+     * @param bool|null|string|string[] $group
      *
-     * @return int
+     * @return int|null
      */
     public function setPermissions(
         OutputInterface $output,
         $files,
-        $permission,
+        ?int $permission,
         $user,
         $group,
         $listFiles = true
-    ) {
+    ): ?int {
         $dryRun = $this->getConfigurationHelper()->getDryRun();
 
         if (empty($files)) {
@@ -102,10 +105,7 @@ class SetPermissionsAfterInstallCommand extends DatabaseCommand
             ->addOption('linux-group', null, InputOption::VALUE_OPTIONAL, 'group', 'www-data');
     }
 
-    /**
-     * @return int|void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $this->writeCommandHeader($output, 'Setting permissions ...');
@@ -140,5 +140,7 @@ class SetPermissionsAfterInstallCommand extends DatabaseCommand
         $this->writeCommandHeader($output, 'Temp files...');
         $files = $this->getConfigurationHelper()->getTempFolders();
         $this->setPermissions($output, $files, 0777, $linuxUser, $linuxGroup, false);
+
+        return 0;
     }
 }

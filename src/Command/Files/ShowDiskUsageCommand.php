@@ -58,9 +58,9 @@ class ShowDiskUsageCommand extends DatabaseCommand
     }
 
     /**
-     * @return bool|int|void|null
+     * @return void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
 
@@ -317,5 +317,7 @@ class ShowDiskUsageCommand extends DatabaseCommand
                 ->setPadType(STR_PAD_RIGHT);
         }
         $table->render($output);
+
+        return 0;
     }
 }

@@ -55,10 +55,7 @@ class DatabaseCommand extends CommonCommand
             );
     }
 
-    /**
-     * @return int|void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $configurationFile = $input->getOption('conf');
@@ -103,7 +100,7 @@ class DatabaseCommand extends CommonCommand
                         '<comment>Try</comment> <info>prefix:command --conf=/var/www/chamilo/config/configuration.php</info>'
                     );
 
-                    return false;
+                    return 0;
                 }
             }
         }
@@ -135,5 +132,7 @@ class DatabaseCommand extends CommonCommand
         // Setting doctrine connection
         $this->setDatabaseSettings($databaseSettings);
         $this->setDoctrineSettings($this->getHelperSet());
+
+        return 0;
     }
 }

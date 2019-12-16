@@ -20,12 +20,11 @@ class InfoCommand extends Command
             );
     }
 
-    /**
-     * @return int|void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $configuration = $input->getOption('conf');
         $this->getHelper('configuration')->readConfigurationFile($configuration);
+
+        return 0;
     }
 }

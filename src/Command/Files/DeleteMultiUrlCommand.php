@@ -62,9 +62,9 @@ class DeleteMultiUrlCommand extends DatabaseCommand
     }
 
     /**
-     * @return bool|int|void|null
+     * @return void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         parent::execute($input, $output);
 
@@ -266,9 +266,9 @@ class DeleteMultiUrlCommand extends DatabaseCommand
      * @param string $courseCode
      * @param int    $urlId
      *
-     * @return bool
+     * @return void
      */
-    private function unlinkCourse($input, OutputInterface $output, $courseCode, $urlId)
+    private function unlinkCourse(InputInterface $input, OutputInterface $output, $courseCode, $urlId): void
     {
         /* Check tables:
          * session, session_rel_course, session_rel_course_rel_user
@@ -343,12 +343,12 @@ class DeleteMultiUrlCommand extends DatabaseCommand
      * This operation follows the "unlink course" operation so that it just
      * completes it, but only in case the course is used only once.
      *
-     * @param   object  Output interface
-     * @param   string  Course code
+     * @param object  Output interface
+     * @param string  Course code
      *
      * @return bool
      */
-    private function deleteCourse($input, OutputInterface $output, $courseCode)
+    private function deleteCourse(InputInterface $input, OutputInterface $output, $courseCode)
     {
         $connection = $this->getConnection($input);
         $sql = "SELECT id, directory FROM course WHERE code = '$courseCode'";
@@ -470,14 +470,14 @@ class DeleteMultiUrlCommand extends DatabaseCommand
      * super-admins. Other roles should only be able to disable a user,
      * which removes access to the platform but doesn't delete anything.
      *
-     * @param   object  Output interface
-     * @param   int     User ID
+     * @param object  Output interface
+     * @param int     User ID
      *
      * @return bool
      *
      * @todo Use UserManager::delete_user() instead
      */
-    private function deleteUser($input, OutputInterface $output, $userId)
+    private function deleteUser(InputInterface $input, OutputInterface $output, $userId)
     {
         // No validation of permissions or variables is done because Chash is
         // only for sysadmins anyway
@@ -573,6 +573,6 @@ class DeleteMultiUrlCommand extends DatabaseCommand
         //event_system(LOG_USER_DELETE, LOG_USER_OBJECT, $user_info, api_get_utc_datetime(), $user_id_manager, null, $user_info);
         $output->writeln('Removed user '.$userId);
 
-        return true;
+        return 0;
     }
 }

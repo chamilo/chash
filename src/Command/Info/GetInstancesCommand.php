@@ -87,10 +87,7 @@ class GetInstancesCommand extends CommonCommand
         ;
     }
 
-    /**
-     * @return int|void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $path = $input->getArgument('path');
         $folderInsidePath = $input->getArgument('folder');
@@ -129,6 +126,6 @@ class GetInstancesCommand extends CommonCommand
 
         $table->render();
 
-        return null;
+        return 0;
     }
 }

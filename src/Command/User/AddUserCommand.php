@@ -61,10 +61,7 @@ class AddUserCommand extends DatabaseCommand
             );
     }
 
-    /**
-     * @return void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $conn = $this->getConnection($input);

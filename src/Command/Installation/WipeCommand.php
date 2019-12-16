@@ -22,12 +22,7 @@ class WipeCommand extends CommonCommand
             ->addArgument('path', InputArgument::OPTIONAL, 'The path to the Chamilo folder');
     }
 
-    /**
-     * Executes a command via CLI.
-     *
-     * @return int|void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // Arguments
         $path = $input->getArgument('path');
@@ -92,5 +87,7 @@ class WipeCommand extends CommonCommand
         ];
         $input = new ArrayInput($arguments);
         $command->run($input, $output);
+
+        return 0;
     }
 }

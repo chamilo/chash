@@ -36,10 +36,7 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
         ;
     }
 
-    /**
-     * @return bool|int|void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $conn = $this->getConnection($input);
@@ -146,5 +143,7 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
         } else {
             $output->writeln('The connection does not seem to be a valid PDO connection');
         }
+
+        return 0;
     }
 }

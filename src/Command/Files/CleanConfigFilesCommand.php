@@ -22,9 +22,9 @@ class CleanConfigFilesCommand extends DatabaseCommand
     }
 
     /**
-     * @return int|void|null
+     * @return void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $this->writeCommandHeader($output, 'Cleaning config files.');
@@ -39,5 +39,7 @@ class CleanConfigFilesCommand extends DatabaseCommand
         }
         $files = $this->getConfigurationHelper()->getConfigFiles();
         $this->removeFiles($files, $output);
+
+        return 0;
     }
 }

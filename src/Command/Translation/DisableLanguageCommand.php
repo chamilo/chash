@@ -29,10 +29,7 @@ class DisableLanguageCommand extends DatabaseCommand
             );
     }
 
-    /**
-     * @return int|void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $_configuration = $this->getHelper('configuration')->getConfiguration();

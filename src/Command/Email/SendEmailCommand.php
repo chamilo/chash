@@ -63,10 +63,7 @@ class SendEmailCommand extends ChamiloEmailCommand
             );
     }
 
-    /**
-     * @return void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $mailLib = $this->getHelper('configuration')->getLibFile('mail.lib.inc.php');
@@ -135,6 +132,6 @@ class SendEmailCommand extends ChamiloEmailCommand
             }
         }
 
-        return null;
+        return 0;
     }
 }

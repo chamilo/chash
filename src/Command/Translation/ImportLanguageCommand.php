@@ -26,10 +26,7 @@ class ImportLanguageCommand extends DatabaseCommand
             );
     }
 
-    /**
-     * @return int|void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $helper = $this->getHelperSet()->get('question');
