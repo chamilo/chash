@@ -2,7 +2,6 @@
 
 namespace Chash\Command\Common;
 
-use Chash\Helpers\ConfigurationHelper;
 use Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

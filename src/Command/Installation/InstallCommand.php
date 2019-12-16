@@ -718,6 +718,7 @@ class InstallCommand extends CommonCommand
                         $output->writeln("<comment>Env file created: $envFile</comment>");
                     } else {
                         $output->writeln("<error>File not created: $envFile</error>");
+
                         return 0;
                     }
 
