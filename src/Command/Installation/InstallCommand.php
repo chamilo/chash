@@ -4,7 +4,6 @@ namespace Chash\Command\Installation;
 
 use Chash\Helpers\ConfigurationHelper;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -12,7 +11,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -897,7 +895,7 @@ class InstallCommand extends CommonCommand
                         exit;
                     }
                 } else {
-                    $chashPath = __DIR__.'/../../../../';
+                    $chashPath = __DIR__.'/../../../chash/';
                     $database = new \Database();
                     $database::$utcDateTimeClass = 'Chash\DoctrineExtensions\DBAL\Types\UTCDateTimeType';
                     $output->writeln("<comment>Connect to database</comment>");

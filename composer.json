@@ -14,7 +14,7 @@
         }
     },
     "require": {
-        "php": "^7.2.0",
+        "php": "^7.2.5",
         "composer/composer": "1.6.*",
         "symfony/class-loader": "~3.0",
         "symfony/doctrine-bridge": "^4.0",

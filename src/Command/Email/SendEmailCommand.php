@@ -85,9 +85,9 @@ class SendEmailCommand extends CommonChamiloEmailCommand
             $userTable = $_configuration['main_database'].'.user';
             $adminTable = $_configuration['main_database'].'.admin';
 
-            require_once "{$mainApiLib->getRealPath()}";
-            require_once "{$cnfFiles->getRealPath()}";
-            require_once "{$mailLib->getRealPath()}";
+            require_once "SendEmailCommand.php";
+            require_once "SendEmailCommand.php";
+            require_once "SendEmailCommand.php";
 
             $recipient_name = $input->getArgument('recipient-name');
             $recipient_email = $input->getArgument('recipient-email');

@@ -39,7 +39,7 @@ class SelfUpdateCommand extends AbstractCommand
         $destinationFolder = $input->getOption('src-destination');
 
         if (empty($destinationFolder)) {
-            $destinationFolder =  realpath(__DIR__.'/../../../../');
+            $destinationFolder =  realpath(__DIR__.'/../../../chash/');
         }
 
         if (!is_writable($destinationFolder)) {
