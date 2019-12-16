@@ -57,7 +57,6 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
         }
 
         if ($conn instanceof \Doctrine\DBAL\Connection) {
-
             $threshold = $input->getArgument('threshold');
             if (empty($threshold)) {
                 $threshold = 75;
@@ -71,7 +70,7 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
             $_configuration = $this->getConfigurationHelper()->getConfiguration();
 
             $courseTable = $_configuration['main_database'].'.course';
-            $globalCourses = array();
+            $globalCourses = [];
             $sql = "SELECT c.id as cid, c.code as ccode, c.directory as cdir, c.disk_quota as cquota
                     FROM $courseTable c";
             try {
@@ -83,11 +82,11 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
             }
             if ($stmt->rowCount() > 0) {
                 while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-                    $globalCourses[$row['cdir']] = array(
+                    $globalCourses[$row['cdir']] = [
                         'id' => $row['cid'],
                         'code' => $row['ccode'],
                         'quota' => $row['cquota']
-                    );
+                    ];
                 }
             }
 
@@ -100,13 +99,17 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
                     $size = round($res[0] / 1024, 1); // $size is stored in MB
                     if (isset($globalCourses[$file]['code'])) {
                         $code = $globalCourses[$file]['code'];
-                        $quota = round($globalCourses[$file]['quota'] / (1024 * 1024),
-                            0); //quota is originally in Bytes in DB. Store in MB
+                        $quota = round(
+                            $globalCourses[$file]['quota'] / (1024 * 1024),
+                            0
+                        ); //quota is originally in Bytes in DB. Store in MB
                         $rate = '-';
                         if ($quota > 0) {
                             $newAllowedSize = $quota;
-                            $rate = round(($size / $newAllowedSize) * 100,
-                                0); //rate is a percentage of disk use vs allowed quota, in MB
+                            $rate = round(
+                                ($size / $newAllowedSize) * 100,
+                                0
+                            ); //rate is a percentage of disk use vs allowed quota, in MB
                             $increase = false;
                             while ($rate > $threshold) { // Typically 80 > 75 -> increase quota
                                 //$output->writeln('...Rate '.$rate.' is larger than '.$threshold.', so increase allowed size');

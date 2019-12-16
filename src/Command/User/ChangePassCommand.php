@@ -85,7 +85,7 @@ class ChangePassCommand extends DatabaseCommand
                       WHERE id = ".$result->id;
                     $stmt = $conn->prepare($ups);
                     $stmt->execute();
-                }catch (\PDOException $e) {
+                } catch (\PDOException $e) {
                     $output->write('SQL error!'.PHP_EOL);
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }

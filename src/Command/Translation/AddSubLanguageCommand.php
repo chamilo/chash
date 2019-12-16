@@ -91,14 +91,14 @@ class AddSubLanguageCommand extends DatabaseCommand
 
             // Everything is OK so far, insert the sub-language
             try {
-                $conn->insert('language', array(
+                $conn->insert('language', [
                     'original_name' => $parentData['original_name']."-2",
                     'english_name' => $lang,
                     'isocode' => $parentData['isocode'],
                     'dokeos_folder' => $lang,
                     'available' => 0,
                     'parent_id' => $parentData['id']
-                ));
+                ]);
             } catch (\PDOException $e) {
                 $output->write('SQL error!'.PHP_EOL);
                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);

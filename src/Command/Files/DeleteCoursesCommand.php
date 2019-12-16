@@ -291,7 +291,7 @@ class DeleteCoursesCommand extends DatabaseCommand
         }
         $output->writeln('Sessions using course ' . $courseCode . ' in URL ' . $urlId . ': ' . implode(
             ',',
-                $sessions
+            $sessions
         ));
 
         // 2. Delete the session_rel_course and session_rel_course_rel_user

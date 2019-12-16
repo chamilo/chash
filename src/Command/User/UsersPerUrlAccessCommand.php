@@ -13,7 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Command functions meant to deal with what the user of this script is calling it for.
  */
 class UsersPerUrlAccessCommand extends ChamiloUserCommand
-
 {
     protected function configure(): void
     {
@@ -47,10 +46,10 @@ class UsersPerUrlAccessCommand extends ChamiloUserCommand
                 $output->writeln('SQL Error!'.PHP_EOL);
                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
-            $table->setHeaders(array('Url', 'Number of Users'));
-            $usersPerUrl = array();
+            $table->setHeaders(['Url', 'Number of Users']);
+            $usersPerUrl = [];
             while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-                $usersPerUrl[] = array($row['url'], $row['users']);
+                $usersPerUrl[] = [$row['url'], $row['users']];
             }
             $table->setRows($usersPerUrl);
             $table->render($output);

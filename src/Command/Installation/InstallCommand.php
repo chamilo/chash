@@ -370,7 +370,6 @@ class InstallCommand extends CommonCommand
 
                 $configurationWasSaved = $this->writeConfiguration($version, $path, $output);
                 if ($configurationWasSaved) {
-
                     $this->setDoctrineSettings($this->getHelperSet());
                     $this->setPortalSettingsInChamilo(
                         $output,
@@ -590,8 +589,8 @@ class InstallCommand extends CommonCommand
      *
      * @return int|null|void
      */
-     protected function execute(InputInterface $input, OutputInterface $output)
-     {
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
         // Setting configuration helper.
         $this->getApplication()->getHelperSet()->set(
             new ConfigurationHelper(),
