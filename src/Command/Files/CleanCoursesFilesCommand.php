@@ -33,7 +33,7 @@ class CleanCoursesFilesCommand extends DatabaseCommand
             false
         );
         if (!$helper->ask($input, $output, $question)) {
-            return;
+            return 0;
         }
         $files = $this->getConfigurationHelper()->getCoursesFiles();
         $this->removeFiles($files, $output);

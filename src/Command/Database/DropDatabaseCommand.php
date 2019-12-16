@@ -20,9 +20,6 @@ class DropDatabaseCommand extends DatabaseCommand
             ->setDescription('Drops all databases from the current Chamilo install');
     }
 
-    /**
-     * @return void
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
@@ -33,12 +30,12 @@ class DropDatabaseCommand extends DatabaseCommand
             false
         );
         if (!$helper->ask($input, $output, $question)) {
-            return;
+            return 0;
         }
 
         $question = new ConfirmationQuestion('<question>Are you really sure? (y/N)</question>', false);
         if (!$helper->ask($input, $output, $question)) {
-            return;
+            return 0;
         }
 
         $_configuration = $this->getConfigurationArray();

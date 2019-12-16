@@ -64,6 +64,9 @@ class TermsPackageCommand extends DatabaseCommand
             );
     }
 
+    /**
+     * @return void
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);

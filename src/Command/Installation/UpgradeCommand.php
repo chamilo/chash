@@ -848,7 +848,7 @@ class UpgradeCommand extends CommonCommand
                 false
             );
             if (!$helper->ask($input, $output, $question)) {
-                return;
+                return 0;
             }
 
             $question = new ConfirmationQuestion(
@@ -856,7 +856,7 @@ class UpgradeCommand extends CommonCommand
                 false
             );
             if (!$helper->ask($input, $output, $question)) {
-                return;
+                return 0;
             }
         }
 
@@ -943,7 +943,7 @@ class UpgradeCommand extends CommonCommand
                     false
                 );
                 if (!$helper->ask($input, $output, $question)) {
-                    return;
+                    return 0;
                 }
             }
         }

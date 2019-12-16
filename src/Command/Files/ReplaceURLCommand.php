@@ -32,6 +32,9 @@ class ReplaceURLCommand extends DatabaseCommand
             );
     }
 
+    /**
+     * @return int|null
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
@@ -60,7 +63,7 @@ class ReplaceURLCommand extends DatabaseCommand
             false
         );
         if (!$helper->ask($input, $output, $question)) {
-            return;
+            return 0;
         }
         $output->writeln('');
         $connection = $this->getConnection();
@@ -107,7 +110,7 @@ class ReplaceURLCommand extends DatabaseCommand
             false
         );
         if (!$helper->ask($input, $output, $question)) {
-            return;
+            return 0;
         }
 
         $output->writeln('');

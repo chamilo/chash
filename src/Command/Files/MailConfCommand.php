@@ -21,9 +21,9 @@ class MailConfCommand extends DatabaseCommand
     }
 
     /**
-     * @return void
+     * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $this->writeCommandHeader($output, 'Current mail configuration.');

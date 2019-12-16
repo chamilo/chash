@@ -48,6 +48,9 @@ class CleanDeletedDocumentsCommand extends DatabaseCommand
         ;
     }
 
+    /**
+     * @return int|null
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
@@ -75,7 +78,7 @@ class CleanDeletedDocumentsCommand extends DatabaseCommand
                 } else {
                     $output->writeln('No file to be deleted in courses/ directory');
 
-                    return;
+                    return 0;
                 }
             }
             $stats = $input->getOption('size'); //1 if the option was set
@@ -93,7 +96,7 @@ class CleanDeletedDocumentsCommand extends DatabaseCommand
                 false
             );
             if (!$helper->ask($input, $output, $question)) {
-                return;
+                return 0;
             }
             $deleteFromDb = $input->getOption('from-db');
             if ($deleteFromDb) {

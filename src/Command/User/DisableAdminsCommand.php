@@ -33,7 +33,7 @@ class DisableAdminsCommand extends DatabaseCommand
             false
         );
         if (!$helper->ask($input, $output, $question)) {
-            return;
+            return 0;
         }
 
         if ($conn instanceof \Doctrine\DBAL\Connection) {

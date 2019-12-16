@@ -59,6 +59,9 @@ class ConvertVideosCommand extends DatabaseCommand
             );
     }
 
+    /**
+     * @return int|null
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
@@ -75,7 +78,7 @@ class ConvertVideosCommand extends DatabaseCommand
             if (!is_dir($dir)) {
                 $output->writeln($dir.' was not confirmed as a directory (if not starting with /, it is considered as relative to Chamilo\'s root folder)');
 
-                return;
+                return 0;
             }
             $this->ext = $input->getOption('ext');
             if (empty($this->ext)) {
@@ -133,7 +136,7 @@ class ConvertVideosCommand extends DatabaseCommand
                 }
                 $output->writeln('No video left to convert');
 
-                return;
+                return 0;
             }
 
             $helper = $this->getHelperSet()->get('question');
@@ -142,7 +145,7 @@ class ConvertVideosCommand extends DatabaseCommand
                 false
             );
             if (!$helper->ask($input, $output, $question)) {
-                return;
+                return 0;
             }
 
             $fs = new Filesystem();

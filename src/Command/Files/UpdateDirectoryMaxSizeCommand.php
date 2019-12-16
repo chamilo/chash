@@ -36,6 +36,9 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
         ;
     }
 
+    /**
+     * @return int|null
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
@@ -49,7 +52,7 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
         if (1 == $add) {
             $this->writeCommandHeader($output, 'Max space needs to be of at least 1MB for each course first');
 
-            return;
+            return 0;
         }
 
         if ($conn instanceof \Doctrine\DBAL\Connection) {

@@ -26,7 +26,7 @@ class ImportLanguageCommand extends DatabaseCommand
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         parent::execute($input, $output);
         $helper = $this->getHelperSet()->get('question');
@@ -60,7 +60,7 @@ class ImportLanguageCommand extends DatabaseCommand
                             false
                         );
                         if (!$helper->ask($input, $output, $question)) {
-                            return;
+                            return 0;
                         }
                         if (is_writable($langFolderPath)) {
                             $output->writeln("Trying to save files here: $langFolderPath");

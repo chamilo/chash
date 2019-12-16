@@ -27,6 +27,9 @@ class StatusCommand extends DatabaseCommand
         ;
     }
 
+    /**
+     * @return int|null
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
@@ -34,7 +37,7 @@ class StatusCommand extends DatabaseCommand
         if (!$connection) {
             $output->writeln('<comment>No connection to the database.</comment>');
 
-            return;
+            return 0;
         }
         $_configuration = $this->getConfigurationArray();
         $showPass = $input->getOption('show-pass');

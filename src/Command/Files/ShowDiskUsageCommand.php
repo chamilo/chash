@@ -88,7 +88,7 @@ class ShowDiskUsageCommand extends DatabaseCommand
             false
         );
         if (!$helper->ask($input, $output, $question)) {
-            return;
+            return 0;
         }
 
         $_configuration = $this->getConfigurationHelper()->getConfiguration();

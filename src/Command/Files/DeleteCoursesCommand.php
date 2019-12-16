@@ -87,7 +87,7 @@ class DeleteCoursesCommand extends DatabaseCommand
                 $output->writeln('At least one search criteria (id, code, category or date) must be provided.');
                 $output->writeln('Use "--help" param for details.');
 
-                return;
+                return 0;
             }
 
             // Check the courses that match the search criteria
@@ -159,7 +159,7 @@ class DeleteCoursesCommand extends DatabaseCommand
             } else {
                 $output->writeln('No course found with that criteria. Bye bye.');
 
-                return;
+                return 0;
             }
 
             // Get courses vs URL match and measure disk usage
@@ -222,7 +222,7 @@ class DeleteCoursesCommand extends DatabaseCommand
                 false
             );
             if (!$helper->ask($input, $output, $question)) {
-                return;
+                return 0;
             }
 
             if (count($urls) > 1) {
@@ -344,9 +344,9 @@ class DeleteCoursesCommand extends DatabaseCommand
      * @param object  Output interface
      * @param string  Course code
      *
-     * @return bool
+     * @return int
      */
-    private function deleteCourse(InputInterface $input, OutputInterface $output, $courseCode)
+    private function deleteCourse(InputInterface $input, OutputInterface $output, $courseCode): int
     {
         $connection = $this->getConnection($input);
         $sql = "SELECT id, directory FROM course WHERE code = '$courseCode'";

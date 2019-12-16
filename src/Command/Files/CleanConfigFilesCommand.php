@@ -21,9 +21,6 @@ class CleanConfigFilesCommand extends DatabaseCommand
             ->setDescription('Cleans the config files to help you re-install');
     }
 
-    /**
-     * @return void
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
@@ -35,7 +32,7 @@ class CleanConfigFilesCommand extends DatabaseCommand
             false
         );
         if (!$helper->ask($input, $output, $question)) {
-            return;
+            return 0;
         }
         $files = $this->getConfigurationHelper()->getConfigFiles();
         $this->removeFiles($files, $output);

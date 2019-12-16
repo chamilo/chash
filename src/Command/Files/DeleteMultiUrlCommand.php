@@ -101,7 +101,7 @@ class DeleteMultiUrlCommand extends DatabaseCommand
                 } else {
                     $output->writeln('Only one URL. Please use another command to delete');
 
-                    return;
+                    return 0;
                 }
             }
 
@@ -173,7 +173,7 @@ class DeleteMultiUrlCommand extends DatabaseCommand
                 if (1 == $urlId) {
                     $output->writeln('URL 1 cannot be deleted as it is the main URL');
 
-                    return;
+                    return 0;
                 }
                 $output->writeln('Selected URL: '.$urlId.' ('.$urls[$urlId]['url'].')');
                 if (!in_array($urlId, array_keys($urls))) {
@@ -182,7 +182,7 @@ class DeleteMultiUrlCommand extends DatabaseCommand
                         'Please use the --list param to see the list of available URLs'
                     );
 
-                    return;
+                    return 0;
                 }
                 $helper = $this->getHelperSet()->get('question');
                 $question = new ConfirmationQuestion(
@@ -190,7 +190,7 @@ class DeleteMultiUrlCommand extends DatabaseCommand
                     false
                 );
                 if (!$helper->ask($input, $output, $question)) {
-                    return;
+                    return 0;
                 }
                 // Now get the list of courses for that URL, and check, for each
                 // course, whether it is used in just one or more URLs.
@@ -473,11 +473,11 @@ class DeleteMultiUrlCommand extends DatabaseCommand
      * @param object  Output interface
      * @param int     User ID
      *
-     * @return bool
+     * @return int
      *
      * @todo Use UserManager::delete_user() instead
      */
-    private function deleteUser(InputInterface $input, OutputInterface $output, $userId)
+    private function deleteUser(InputInterface $input, OutputInterface $output, $userId): int
     {
         // No validation of permissions or variables is done because Chash is
         // only for sysadmins anyway
