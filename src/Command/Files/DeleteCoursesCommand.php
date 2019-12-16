@@ -266,8 +266,6 @@ class DeleteCoursesCommand extends DatabaseCommand
      *
      * @param string $courseCode
      * @param int    $urlId
-     *
-     * @return void
      */
     private function unlinkCourse(InputInterface $input, OutputInterface $output, $courseCode, $urlId): void
     {

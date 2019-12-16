@@ -19,7 +19,7 @@ class GenerateTempFileStructureCommand extends DatabaseCommand
      *
      * @return int|null
      */
-    public function createFolders(OutputInterface $output, $files, int $permission): ?int
+    public function createFolders(OutputInterface $output, $files, int $permission): int
     {
         $dryRun = $this->getConfigurationHelper()->getDryRun();
 
