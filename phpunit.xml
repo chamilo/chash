@@ -27,7 +27,7 @@
         </whitelist>
     </filter>
 
-    <listeners>
-        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
-    </listeners>
+<!--    <listeners>-->
+<!--        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />-->
+<!--    </listeners>-->
 </phpunit>
