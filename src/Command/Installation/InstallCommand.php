@@ -845,23 +845,6 @@ class InstallCommand extends CommonCommand
     }
 
     /**
-     * In step 3. Tests establishing connection to the database server.
-     * If it's a single database environment the function checks if the database exist.
-     * If the database doesn't exist we check the creation permissions.
-     *
-     * @return int 1 when there is no problem;
-     *             0 when a new database is impossible to be created,
-     *             then the single/multiple database configuration is impossible too
-     *             -1 when there is no connection established
-     */
-    public function testDatabaseConnection()
-    {
-        $conn = $this->testUserAccessConnection();
-
-        return $conn->connect();
-    }
-
-    /**
      * @return \Doctrine\DBAL\Connection
      */
     public function getUserAccessConnectionToHost()
@@ -943,18 +926,13 @@ class InstallCommand extends CommonCommand
         }
     }
 
-    /**
-     * Executes a command via CLI.
-     *
-     * @return false|int|null
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // Setting configuration helper.
-        $this->getApplication()->getHelperSet()->set(
+        /*$this->getApplication()->getHelperSet()->set(
             new ConfigurationHelper(),
             'configuration'
-        );
+        );*/
 
         $this->settingParameters($input);
         $output->writeln('Root sys value: '.$this->rootSys);
@@ -1009,7 +987,7 @@ class InstallCommand extends CommonCommand
         } else {
             $output->writeln("<comment>Chamilo $version doesnt have a parent</comment>");
 
-            return false;
+            return 0;
         }
 
         if ($isLegacy) {

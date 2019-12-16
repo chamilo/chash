@@ -2,6 +2,7 @@
 
 namespace Chash\Command\Common;
 
+use Chash\Helpers\ConfigurationHelper;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ConnectionException;
@@ -30,6 +31,16 @@ class CommonCommand extends AbstractCommand
     public $extraDatabaseSettings;
     private $migrationConfigurationFile;
     private $manager;
+
+    public $configurationHelper;
+
+    public function __construct(ConfigurationHelper $configurationHelper)
+    {
+        $this->configurationHelper = $configurationHelper;
+
+        // you *must* call the parent constructor
+        parent::__construct();
+    }
 
     public function setConfigurationArray(array $configuration)
     {
@@ -594,7 +605,7 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * @return \Chash\Helpers\ConfigurationHelper
+     * @return ConfigurationHelper
      */
     public function getConfigurationHelper()
     {

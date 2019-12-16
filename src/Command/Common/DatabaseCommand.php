@@ -15,16 +15,6 @@ use Symfony\Component\Dotenv\Dotenv;
  */
 class DatabaseCommand extends CommonCommand
 {
-    public $configurationHelper;
-
-    public function __construct(ConfigurationHelper $configurationHelper)
-    {
-        $this->configurationHelper = $configurationHelper;
-
-        // you *must* call the parent constructor
-        parent::__construct();
-    }
-
     /**
      * {@inheritdoc}
      */
