@@ -3,7 +3,6 @@
 namespace Chash\Command\Installation;
 
 use Chash\Command\Common\CommonCommand;
-use Chash\Helpers\ConfigurationHelper;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -257,7 +256,7 @@ class InstallCommand extends CommonCommand
     /**
      * Install Chamilo.
      *
-     * @return false|int|null
+     * @return int
      */
     public function install(InputInterface $input, OutputInterface $output)
     {
@@ -290,7 +289,7 @@ class InstallCommand extends CommonCommand
         if (empty($this->databaseSettings)) {
             $output->writeln('<comment>Cannot get database settings. </comment>');
 
-            return false;
+            return 0;
         }
 
         if ($this->commandLine) {
@@ -335,18 +334,11 @@ class InstallCommand extends CommonCommand
             // Installing database.
             $result = $this->processInstallation($this->databaseSettings, $version, $output);
             if ($result) {
-                $path = $this->path;
-                $linuxUser = $this->linuxUser;
-                $linuxGroup = $this->linuxGroup;
-
-                $configurationWasSaved = $this->writeConfiguration($version, $path, $output);
-                if ($configurationWasSaved) {
-                    $this->setDoctrineSettings($this->getHelperSet());
-                    $this->setPortalSettingsInChamilo(
-                        $output,
-                        $this->getHelper('db')->getConnection()
-                    );
-                }
+                $this->setDoctrineSettings($this->getHelperSet());
+                $this->setPortalSettingsInChamilo(
+                    $output,
+                    $this->getHelper('db')->getConnection()
+                );
             }
         }
     }
