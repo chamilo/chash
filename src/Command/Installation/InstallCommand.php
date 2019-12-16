@@ -124,7 +124,7 @@ class InstallCommand extends CommonCommand
                 $connect = $connectionToDatabase->connect();*/
                 $connect = true;
                 if ($connect) {
-                    $configurationWasSaved = $this->writeConfiguration($version, $path, $output);
+                    /*$configurationWasSaved = $this->writeConfiguration($version, $path, $output);
 
                     if ($configurationWasSaved) {
                         $absPath = $this->getConfigurationHelper()->getConfigurationPath($path);
@@ -138,7 +138,7 @@ class InstallCommand extends CommonCommand
                         $output->writeln('<comment>Configuration file was not saved</comment>');
 
                         return 0;
-                    }
+                    }*/
 
                     // Installing database.
                     $result = $this->processInstallation($databaseSettings, $version, $output);
