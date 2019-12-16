@@ -3,6 +3,7 @@
 namespace Chash\Command\Installation;
 
 use Chash\Command\Common\CommonCommand;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -142,6 +143,7 @@ class InstallCommand extends CommonCommand
                     // Installing database.
                     $result = $this->processInstallation($databaseSettings, $version, $output);
                     if ($result) {
+                        $output->writeln('Read configuration file.');
                         // Read configuration file.
                         $configurationFile = $this->getConfigurationHelper()->getConfigurationFilePath($this->getRootSys());
                         $configuration = $this->getConfigurationHelper()->readConfigurationFile($configurationFile);
@@ -284,7 +286,6 @@ class InstallCommand extends CommonCommand
         $this->askAdminSettings($input, $output);
 
         $databaseSettings = $this->databaseSettings;
-        $silent = $this->silent;
 
         if (empty($this->databaseSettings)) {
             $output->writeln('<comment>Cannot get database settings. </comment>');
@@ -316,8 +317,8 @@ class InstallCommand extends CommonCommand
 
             $eventManager = $connectionToHost->getSchemaManager();
             $databases = $eventManager->listDatabases();
-            if (in_array($databaseSettings['dbname'], $databases)) {
-                if (false == $silent) {
+            /*if (in_array($databaseSettings['dbname'], $databases)) {
+                if (false == $this->silent) {
                     $helper = $this->getHelperSet()->get('question');
                     $question = new ConfirmationQuestion(
                         '<comment>The database <info>'.$databaseSettings['dbname'].'</info> exists and is going to be dropped!</comment> <question>Are you sure?</question>(y/N)',
@@ -327,20 +328,21 @@ class InstallCommand extends CommonCommand
                         return 0;
                     }
                 }
-            }
+            }*/
 
             $version = $this->version;
 
             // Installing database.
-            $result = $this->processInstallation($this->databaseSettings, $version, $output);
-            if ($result) {
-                $this->setDoctrineSettings($this->getHelperSet());
+            $connection = $this->processInstallation($this->databaseSettings, $version, $output);
+            if ($connection) {
                 $this->setPortalSettingsInChamilo(
                     $output,
-                    $this->getHelper('db')->getConnection()
+                    $connection
                 );
             }
         }
+
+        return 0;
     }
 
     /**
@@ -600,10 +602,11 @@ class InstallCommand extends CommonCommand
      * @param string $version
      * @param $output
      *
-     * @return bool
+     * @return Connection
      */
     public function processInstallation($databaseSettings, $version, OutputInterface $output)
     {
+        $output->writeln('processInstallation');
         $sqlFolder = $this->getInstallationPath($version);
         $databaseMap = $this->getDatabaseMap();
         // Fixing the version
@@ -715,7 +718,7 @@ class InstallCommand extends CommonCommand
                         $output->writeln("<comment>Env file created: $envFile</comment>");
                     } else {
                         $output->writeln("<error>File not created: $envFile</error>");
-                        exit;
+                        return 0;
                     }
 
                     (new Dotenv())->load($envFile);
@@ -781,6 +784,8 @@ class InstallCommand extends CommonCommand
                             false, //$allowSelfReg,
                             false //$allowSelfRegProf
                         );
+
+                        return $doctrine->getConnection();
                     } else {
                         $output->writeln('<error>Cannot create database</error>');
                         exit;
@@ -920,12 +925,6 @@ class InstallCommand extends CommonCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        // Setting configuration helper.
-        /*$this->getApplication()->getHelperSet()->set(
-            new ConfigurationHelper(),
-            'configuration'
-        );*/
-
         $this->settingParameters($input);
         $output->writeln('Root sys value: '.$this->rootSys);
 
@@ -986,6 +985,8 @@ class InstallCommand extends CommonCommand
             $this->installLegacy($input, $output);
         } else {
             $this->install($input, $output);
+
+            exit;
         }
 
         return 0;
