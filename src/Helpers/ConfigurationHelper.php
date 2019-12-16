@@ -49,7 +49,7 @@ class ConfigurationHelper extends Helper
 
     /**
      * @param $dryRun
-     * @param bool|null|string|string[] $dryRun
+     * @param bool|string|string[]|null $dryRun
      */
     public function setDryRun($dryRun)
     {
@@ -228,7 +228,7 @@ class ConfigurationHelper extends Helper
      *
      * @param string $configurationFile
      *
-     * @return false|null|string
+     * @return false|string|null
      */
     public function getSysPathFromConfigurationFile($configurationFile)
     {
@@ -461,9 +461,6 @@ class ConfigurationHelper extends Helper
         return $finder;
     }
 
-    /**
-     * @return Finder|null
-     */
     public function getDataFolders(): ?Finder
     {
         $finder = new Finder();

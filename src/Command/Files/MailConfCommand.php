@@ -20,9 +20,6 @@ class MailConfCommand extends DatabaseCommand
             ->setDescription('Returns the current mail config');
     }
 
-    /**
-     * @return int
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);

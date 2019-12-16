@@ -19,11 +19,8 @@ class SetPermissionsAfterInstallCommand extends DatabaseCommand
      * @param $user
      * @param $group
      * @param bool                      $listFiles
-     * @param int|null                  $permission
-     * @param bool|null|string|string[] $user
-     * @param bool|null|string|string[] $group
-     *
-     * @return int|null
+     * @param bool|string|string[]|null $user
+     * @param bool|string|string[]|null $group
      */
     public function setPermissions(
         OutputInterface $output,

@@ -16,7 +16,6 @@ use Symfony\Component\Filesystem\Filesystem;
  * all resources used by more than one URL, but trying to disassociate them
  * progressively.
  *
- *
  * @todo Add support for version 2.*
  */
 class DeleteMultiUrlCommand extends DatabaseCommand
@@ -61,9 +60,6 @@ class DeleteMultiUrlCommand extends DatabaseCommand
             );
     }
 
-    /**
-     * @return int
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
@@ -469,8 +465,6 @@ class DeleteMultiUrlCommand extends DatabaseCommand
      *
      * @param object $input  Output interface
      * @param int    $output User ID
-     *
-     * @return int
      *
      * @todo Use UserManager::delete_user() instead
      */

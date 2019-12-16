@@ -150,9 +150,6 @@ class CommonCommand extends AbstractCommand
         return $this->rootSys;
     }
 
-    /**
-     * @return null|string
-     */
     public function getCourseSysPath(): ?string
     {
         if (is_dir($this->getRootSys().'courses')) {
@@ -1235,7 +1232,7 @@ class CommonCommand extends AbstractCommand
 
     /**
      * @param $path
-     * @param bool|null|string|string[] $path
+     * @param bool|string|string[]|null $path
      */
     public function removeUnUsedFiles(OutputInterface $output, $path)
     {

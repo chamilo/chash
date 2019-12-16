@@ -29,8 +29,6 @@ class SQLCountCommand extends DatabaseCommand
 
     /**
      * @todo use doctrine
-     *
-     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

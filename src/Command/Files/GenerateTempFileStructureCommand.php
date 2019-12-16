@@ -57,9 +57,6 @@ class GenerateTempFileStructureCommand extends DatabaseCommand
             ->setDescription('Generate temp folder structure: twig');
     }
 
-    /**
-     * @return int
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);

@@ -66,9 +66,6 @@ class DeleteCoursesCommand extends DatabaseCommand
             );
     }
 
-    /**
-     * @return int
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
@@ -341,8 +338,6 @@ class DeleteCoursesCommand extends DatabaseCommand
      *
      * @param object $input  Output interface
      * @param string $output Course code
-     *
-     * @return int
      */
     private function deleteCourse(InputInterface $input, OutputInterface $output, $courseCode): int
     {
