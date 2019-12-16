@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Command-line tool to do things more swiftly in Chamilo.
  * To add support for a new command see the Console Component read:.

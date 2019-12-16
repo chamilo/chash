@@ -601,7 +601,7 @@ class CommonCommand extends AbstractCommand
      */
     public function getConfigurationHelper()
     {
-        return $this->getHelper('configuration');
+        return $this->configurationHelper;
     }
 
     /**

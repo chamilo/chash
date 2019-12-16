@@ -2,6 +2,7 @@
 
 namespace Chash\Command\Common;
 
+use Chash\Helpers\ConfigurationHelper;
 use Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -14,10 +15,20 @@ use Symfony\Component\Dotenv\Dotenv;
  */
 class DatabaseCommand extends CommonCommand
 {
+    public $configurationHelper;
+
+    public function __construct(ConfigurationHelper $configurationHelper)
+    {
+        $this->configurationHelper = $configurationHelper;
+
+        // you *must* call the parent constructor
+        parent::__construct();
+    }
+
     /**
      * {@inheritdoc}
      */
-    public function getConnection(InputInterface $input)
+    public function getConnection()
     {
         try {
             return $this->getHelper('db')->getConnection();

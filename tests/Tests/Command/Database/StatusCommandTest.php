@@ -18,6 +18,6 @@ class StatusCommandTest extends KernelTestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        //$this->assertContains('Username: Wouter', $output);
+        $this->assertStringContainsString('No connection to the database', $output);
     }
 }
