@@ -1,20 +1,18 @@
 <?php
 
-namespace Chash\Command\Database;
+namespace Chash\Command\Common;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Chash\Command\Installation\CommonCommand;
 use Symfony\Component\Dotenv\Dotenv;
 use Exception;
 
 /**
  * Class CommonDatabaseCommand
- * @package Chash\Command\Database
  */
-class CommonDatabaseCommand extends CommonCommand
+class DatabaseCommand extends CommonCommand
 {
     protected function configure(): void
     {

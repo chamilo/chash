@@ -11,15 +11,11 @@ use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class SetupCommand
- * @package Chash\Command\Chash
  */
 class SetupCommand extends AbstractCommand
 {
-    public $migrationFile = null;
+    public $migrationFile;
 
-    /**
-     *
-     */
     protected function configure(): void
     {
         $this

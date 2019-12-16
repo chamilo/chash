@@ -2,7 +2,7 @@
 
 namespace Chash\Command\Translation;
 
-use Chash\Command\Database\CommonDatabaseCommand;
+use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class ExportLanguageCommand
  * @package Chash\Command\Translation
  */
-class ExportLanguageCommand extends CommonDatabaseCommand
+class ExportLanguageCommand extends DatabaseCommand
 {
     protected function configure(): void
     {

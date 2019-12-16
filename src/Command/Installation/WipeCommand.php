@@ -2,6 +2,7 @@
 
 namespace Chash\Command\Installation;
 
+use Chash\Command\Common\CommonCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -10,7 +11,6 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class WipeCommand
- * @package Chash\Command\Installation
  */
 class WipeCommand extends CommonCommand
 {

@@ -2,21 +2,17 @@
 
 namespace Chash\Command\Database;
 
-use Symfony\Component\Console\Command\Command;
+use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Count the number of rows in a specific table
  * @return mixed Integer number of rows, or null on error
  */
-class SQLCountCommand extends CommonDatabaseCommand
+class SQLCountCommand extends DatabaseCommand
 {
-    /**
-     *
-     */
     protected function configure(): void
     {
         parent::configure();

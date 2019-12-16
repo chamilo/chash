@@ -2,23 +2,16 @@
 
 namespace Chash\Command\Database;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
+use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 
 /**
  * Connects to the MySQL client without the need to introduce a password
  * @return int Exit code returned by mysql command
  */
-class RunSQLCommand extends CommonDatabaseCommand
+class RunSQLCommand extends DatabaseCommand
 {
-    /**
-     *
-     */
     protected function configure(): void
     {
         parent::configure();

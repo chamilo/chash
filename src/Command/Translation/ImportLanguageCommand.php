@@ -2,7 +2,7 @@
 
 namespace Chash\Command\Translation;
 
-use Chash\Command\Database\CommonDatabaseCommand;
+use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,7 +14,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
  * Class ImportLanguageCommand
  * @package Chash\Command\Translation
  */
-class ImportLanguageCommand extends CommonDatabaseCommand
+class ImportLanguageCommand extends DatabaseCommand
 {
     protected function configure(): void
     {

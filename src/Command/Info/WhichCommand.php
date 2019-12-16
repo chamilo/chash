@@ -2,19 +2,17 @@
 
 namespace Chash\Command\Info;
 
-use Symfony\Component\Console\Command\Command;
+use Chash\Command\Common\InfoCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class WhichCommand
  * Command meant to deal with what the user of this script is calling it for.
  * Gives info about where to find some important Chamilo code for specific tools
- * @package Chash\Command\Info
  */
-class WhichCommand extends CommonInfoCommand
+class WhichCommand extends InfoCommand
 {
     protected $tools = [
         'admin' => [

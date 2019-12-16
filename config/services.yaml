@@ -9,4 +9,4 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     Chash\:
         resource: '../src/*'
-        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+        exclude: '../src/{DependencyInjection,Command/Common,Entity,Migrations,Tests,Kernel.php}'

@@ -1,14 +1,12 @@
 <?php
 
-namespace Chash\Command\Installation;
+namespace Chash\Command\Common;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\DBAL\ConnectionException;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Yaml\Parser;
-//use Doctrine\Migrations\Tools\Console\Command\AbstractCommand;
-//use Doctrine\ORM\Tools\Console\Command\SchemaTool\AbstractCommand;
 use Symfony\Component\Console\Command\Command as AbstractCommand;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -20,7 +18,6 @@ use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class CommonCommand
- * @package Chash\Command\Installation
  */
 class CommonCommand extends AbstractCommand
 {

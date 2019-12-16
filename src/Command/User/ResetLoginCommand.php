@@ -2,6 +2,7 @@
 
 namespace Chash\Command\User;
 
+use Chash\Command\Common\ChamiloUserCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,9 +17,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class ResetLoginCommand
  * Returns a password reset link for the given username (user will receive
  * an e-mail with new login + password)
- * @package Chash\Command\User
  */
-class ResetLoginCommand extends CommonChamiloUserCommand
+class ResetLoginCommand extends ChamiloUserCommand
 {
     protected function configure(): void
     {

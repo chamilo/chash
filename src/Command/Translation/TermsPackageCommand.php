@@ -2,7 +2,7 @@
 
 namespace Chash\Command\Translation;
 
-use Chash\Command\Database\CommonDatabaseCommand;
+use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,7 +24,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * corresponding language packages in other languages than English
  * @package Chash\Command\Translation
  */
-class TermsPackageCommand extends CommonDatabaseCommand
+class TermsPackageCommand extends DatabaseCommand
 {
     /**
      * Set the input variables and what will be shown in command helper

@@ -2,16 +2,15 @@
 
 namespace Chash\Command\Installation;
 
-use Chash\Command\Database\CommonDatabaseCommand;
+use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class StatusCommand
- * @package Chash\Command\Installation
  */
-class StatusCommand extends CommonDatabaseCommand
+class StatusCommand extends DatabaseCommand
 {
     protected function configure(): void
     {

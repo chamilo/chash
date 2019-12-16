@@ -2,7 +2,7 @@
 
 namespace Chash\Command\Files;
 
-use Chash\Command\Database\CommonDatabaseCommand;
+use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,7 +12,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
  * Class ReplaceURLCommand
  * Clean the archives directory, leaving only index.html, twig and Serializer
  */
-class ReplaceURLCommand extends CommonDatabaseCommand
+class ReplaceURLCommand extends DatabaseCommand
 {
     protected function configure(): void
     {

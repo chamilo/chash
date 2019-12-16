@@ -2,7 +2,7 @@
 
 namespace Chash\Command\Files;
 
-use Chash\Command\Database\CommonDatabaseCommand;
+use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,7 +14,7 @@ use Symfony\Component\Filesystem\Filesystem;
  * Class SetPermissionsAfterInstallCommand
  * @package Chash\Command\Files
  */
-class SetPermissionsAfterInstallCommand extends CommonDatabaseCommand
+class SetPermissionsAfterInstallCommand extends DatabaseCommand
 {
     protected function configure(): void
     {

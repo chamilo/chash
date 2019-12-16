@@ -2,6 +2,7 @@
 
 namespace Chash\Command\Installation;
 
+use Chash\Command\Common\CommonCommand;
 use Chash\Helpers\ConfigurationHelper;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Input\ArrayInput;

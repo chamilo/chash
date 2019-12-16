@@ -2,7 +2,7 @@
 
 namespace Chash\Command\User;
 
-use Chash\Command\Database\CommonDatabaseCommand;
+use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Makes the given user an admin on the main portal
  */
-class MakeAdminCommand extends CommonDatabaseCommand
+class MakeAdminCommand extends DatabaseCommand
 {
     protected function configure(): void
     {

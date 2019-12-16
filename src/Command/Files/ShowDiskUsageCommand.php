@@ -2,7 +2,7 @@
 
 namespace Chash\Command\Files;
 
-use Chash\Command\Database\CommonDatabaseCommand;
+use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,7 +17,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
  * for the corresponding courses
  * @package Chash\Command\Files
  */
-class ShowDiskUsageCommand extends CommonDatabaseCommand
+class ShowDiskUsageCommand extends DatabaseCommand
 {
     protected function configure(): void
     {

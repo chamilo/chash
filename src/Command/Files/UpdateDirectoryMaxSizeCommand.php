@@ -2,11 +2,9 @@
 
 namespace Chash\Command\Files;
 
-use Chash\Command\Database\CommonDatabaseCommand;
-use Symfony\Component\Console\Command\Command;
+use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -15,9 +13,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  * used called once every night, to make a "progressive increase" of space which
  * will block abuse attempts, but still provide enough space to all courses to
  * continue working progressively.
- * @package Chash\Command\Files
  */
-class UpdateDirectoryMaxSizeCommand extends CommonDatabaseCommand
+class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
 {
     protected function configure(): void
     {

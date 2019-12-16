@@ -2,7 +2,7 @@
 
 namespace Chash\Command\Database;
 
-use Symfony\Component\Console\Command\Command;
+use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -15,11 +15,8 @@ use Symfony\Component\Console\Input\ArrayInput;
  * Store the temporary data into the /tmp/ directory
  * @param array $params The params received
  */
-class FullBackupCommand extends CommonDatabaseCommand
+class FullBackupCommand extends DatabaseCommand
 {
-    /**
-     *
-     */
     protected function configure(): void
     {
         parent::configure();

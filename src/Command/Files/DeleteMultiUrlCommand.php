@@ -2,8 +2,7 @@
 
 namespace Chash\Command\Files;
 
-use Chash\Command\Database\CommonDatabaseCommand;
-use Symfony\Component\Console\Command\Command;
+use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -19,7 +18,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
  * @package Chash\Command\Files
  * @todo Add support for version 2.*
  */
-class DeleteMultiUrlCommand extends CommonDatabaseCommand
+class DeleteMultiUrlCommand extends DatabaseCommand
 {
     /**
      * Define options for the command

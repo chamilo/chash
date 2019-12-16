@@ -2,6 +2,7 @@
 
 namespace Chash\Command\Installation;
 
+use Chash\Command\Common\CommonCommand;
 use Doctrine\Migrations\Tools\Console\Command\MigrateCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
@@ -13,7 +14,6 @@ use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class UpgradeDatabaseCommand
- * @package Chash\Command\Installation
  */
 class UpgradeDatabaseCommand extends CommonCommand
 {
@@ -30,9 +30,6 @@ class UpgradeDatabaseCommand extends CommonCommand
         return $this->getHelper('db')->getConnection();
     }
 
-    /**
-     *
-     */
     protected function configure(): void
     {
         $this

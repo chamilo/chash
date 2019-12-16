@@ -2,7 +2,7 @@
 
 namespace Chash\Command\Files;
 
-use Chash\Command\Database\CommonDatabaseCommand;
+use Chash\Command\Common\DatabaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,7 +16,7 @@ use Symfony\Component\Filesystem\Filesystem;
  * progressively
  * @todo Add support for version 2.*
  */
-class DeleteCoursesCommand extends CommonDatabaseCommand
+class DeleteCoursesCommand extends DatabaseCommand
 {
     /**
      * Define options for the command

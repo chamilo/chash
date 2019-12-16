@@ -2,6 +2,7 @@
 
 namespace Chash\Command\Email;
 
+use Chash\Command\Common\ChamiloEmailCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -13,7 +14,7 @@ use Exception;
  * Command functions meant to deal with what the user of this script is calling
  * it for.
  */
-class SendEmailCommand extends CommonChamiloEmailCommand
+class SendEmailCommand extends ChamiloEmailCommand
 {
     protected function configure(): void
     {
