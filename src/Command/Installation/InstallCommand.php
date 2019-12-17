@@ -737,7 +737,8 @@ class InstallCommand extends CommonCommand
                     $output->writeln('<comment>Creating Application object:</comment>');
                     $application = new Application($kernel);
 
-                    try {
+                    /*try {
+                        $output->writeln('<comment>Drop database if exists</comment>');
                         // Drop database if exists
                         $command = $application->find('doctrine:database:drop');
                         $input = new ArrayInput([], $command->getDefinition());
@@ -746,47 +747,57 @@ class InstallCommand extends CommonCommand
                         $command->execute($input, new ConsoleOutput());
                     } catch (\Exception $e) {
                         error_log($e->getMessage());
-                    }
+                    }*/
+
+                    //try {
 
                     // Create database
+                    $output->writeln('<comment>Creating database</comment>');
                     $input = new ArrayInput([]);
                     $command = $application->find('doctrine:database:create');
                     $command->run($input, new ConsoleOutput());
 
                     // Create schema
+                    $output->writeln('<comment>Creating schema</comment>');
                     $command = $application->find('doctrine:schema:create');
                     $result = $command->run($input, new ConsoleOutput());
 
                     // No errors
                     if (0 == $result) {
-                        $kernel->boot();
-                        $container = $kernel->getContainer();
-                        $manager = $doctrine->getManager();
+                        try {
+                            $output->writeln('<comment>Booting system</comment>');
+                            $kernel->boot();
+                            $container = $kernel->getContainer();
+                            $manager = $doctrine->getManager();
 
-                        // Boot kernel and get the doctrine from Symfony container
-                        $output->writeln('<comment>Database created</comment>');
-                        $this->setManager($manager);
+                            // Boot kernel and get the doctrine from Symfony container
+                            $output->writeln('<comment>Database created</comment>');
+                            $this->setManager($manager);
 
-                        $output->writeln("<comment>Calling 'finishInstallationWithContainer()'</comment>");
-                        \finishInstallationWithContainer(
-                            $container,
-                            $newInstallationPath,
-                            $portalSettings['encrypt_method'],
-                            $adminSettings['password'],
-                            $adminSettings['lastname'],
-                            $adminSettings['firstname'],
-                            $adminSettings['username'],
-                            $adminSettings['email'],
-                            $adminSettings['phone'],
-                            $adminSettings['language'],
-                            $portalSettings['institution'],
-                            $portalSettings['institution_url'],
-                            $portalSettings['sitename'],
-                            false, //$allowSelfReg,
-                            false //$allowSelfRegProf
-                        );
+                            $output->writeln("<comment>Calling 'finishInstallationWithContainer()'</comment>");
+                            \finishInstallationWithContainer(
+                                $container,
+                                $newInstallationPath,
+                                $portalSettings['encrypt_method'],
+                                $adminSettings['password'],
+                                $adminSettings['lastname'],
+                                $adminSettings['firstname'],
+                                $adminSettings['username'],
+                                $adminSettings['email'],
+                                $adminSettings['phone'],
+                                $adminSettings['language'],
+                                $portalSettings['institution'],
+                                $portalSettings['institution_url'],
+                                $portalSettings['sitename'],
+                                false, //$allowSelfReg,
+                                false //$allowSelfRegProf
+                            );
 
-                        return $doctrine->getConnection();
+                            return $doctrine->getConnection();
+                        } catch (\Exception $e) {
+                            error_log($e->getMessage());
+                            exit;
+                        }
                     } else {
                         $output->writeln('<error>Cannot create database</error>');
                         exit;
