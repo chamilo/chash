@@ -69,22 +69,22 @@ class DatabaseCommand extends CommonCommand
             $configurationFile = $this->getConfigurationHelper()->getConfigurationFilePath();
             //$configuration = $this->getConfigurationHelper()->readConfigurationFile($configurationFile);
             //if (empty($configuration)) {
-                $showError = true;
-                // Try 2.x
-                $currentPath = getcwd();
-                if (file_exists($currentPath.'/.env.local')) {
-                    $showError = false;
-                    $io->note('File: .env found '.$currentPath.'/.env.local');
-                    $dotenv = new Dotenv();
-                    $data = file_get_contents($currentPath.'/.env.local');
-                    $values = $dotenv->parse($data);
-                    $result = [];
-                    foreach ($values as $key => $value) {
-                        $result[] = [$key, $value];
-                    }
-                    $io->table(['Name', 'Value'], $result);
+            $showError = true;
+            // Try 2.x
+            $currentPath = getcwd();
+            if (file_exists($currentPath.'/.env.local')) {
+                $showError = false;
+                $io->note('File: .env found '.$currentPath.'/.env.local');
+                $dotenv = new Dotenv();
+                $data = file_get_contents($currentPath.'/.env.local');
+                $values = $dotenv->parse($data);
+                $result = [];
+                foreach ($values as $key => $value) {
+                    $result[] = [$key, $value];
+                }
+                $io->table(['Name', 'Value'], $result);
 
-                    $configuration = [
+                $configuration = [
                         'db_host' => $values['DATABASE_HOST'],
                         'main_database' => $values['DATABASE_NAME'],
                         'db_user' => $values['DATABASE_USER'],
@@ -92,16 +92,16 @@ class DatabaseCommand extends CommonCommand
                         'root_web' => '',
                         'system_version' => '2.x',
                     ];
-                }
+            }
 
-                if ($showError) {
-                    $io->error('The configuration file was not found or Chamilo is not installed here');
-                    $output->writeln(
+            if ($showError) {
+                $io->error('The configuration file was not found or Chamilo is not installed here');
+                $output->writeln(
                         '<comment>Try</comment> <info>prefix:command --conf=/var/www/chamilo/config/configuration.php</info>'
                     );
 
-                    return 0;
-                }
+                return 0;
+            }
             //}
         }
 
