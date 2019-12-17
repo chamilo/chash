@@ -749,18 +749,21 @@ class InstallCommand extends CommonCommand
                         error_log($e->getMessage());
                     }*/
 
-                    //try {
+                    try {
+                        // Create database
+                        $output->writeln('<comment>Creating database</comment>');
+                        $input = new ArrayInput([]);
+                        $command = $application->find('doctrine:database:create');
+                        $command->run($input, new ConsoleOutput());
 
-                    // Create database
-                    $output->writeln('<comment>Creating database</comment>');
-                    $input = new ArrayInput([]);
-                    $command = $application->find('doctrine:database:create');
-                    $command->run($input, new ConsoleOutput());
-
-                    // Create schema
-                    $output->writeln('<comment>Creating schema</comment>');
-                    $command = $application->find('doctrine:schema:create');
-                    $result = $command->run($input, new ConsoleOutput());
+                        // Create schema
+                        $output->writeln('<comment>Creating schema</comment>');
+                        $command = $application->find('doctrine:schema:create');
+                        $result = $command->run($input, new ConsoleOutput());
+                    } catch (\Exception $e) {
+                        error_log($e->getMessage());
+                        exit;
+                    }
 
                     // No errors
                     if (0 == $result) {
