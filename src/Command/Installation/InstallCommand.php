@@ -761,7 +761,7 @@ class InstallCommand extends CommonCommand
                         $command = $application->find('doctrine:schema:create');
                         $result = $command->run($input, new ConsoleOutput());
                     } catch (\Exception $e) {
-                        error_log($e->getMessage());
+                        echo $e->getMessage();
                         exit;
                     }
 
@@ -798,7 +798,7 @@ class InstallCommand extends CommonCommand
 
                             return $doctrine->getConnection();
                         } catch (\Exception $e) {
-                            error_log($e->getMessage());
+                            echo $e->getMessage();
                             exit;
                         }
                     } else {
