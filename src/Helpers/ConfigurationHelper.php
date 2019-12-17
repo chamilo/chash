@@ -238,9 +238,9 @@ class ConfigurationHelper extends Helper
 
         $configurationPath = dirname($configurationFile);
 
-        // 2.0.x
-        if (file_exists($configurationPath.'/../../web/app.php')) {
-            return realpath($configurationPath.'/../../').'/';
+        // 2.x
+        if (file_exists($configurationPath.'/../.env.local')) {
+            return realpath($configurationPath.'/../').'/';
         }
 
         // 1.10.x

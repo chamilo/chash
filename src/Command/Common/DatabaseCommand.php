@@ -67,8 +67,8 @@ class DatabaseCommand extends CommonCommand
         if (empty($configuration)) {
             // Test out a few possibilities.
             $configurationFile = $this->getConfigurationHelper()->getConfigurationFilePath();
-            $configuration = $this->getConfigurationHelper()->readConfigurationFile($configurationFile);
-            if (empty($configuration)) {
+            //$configuration = $this->getConfigurationHelper()->readConfigurationFile($configurationFile);
+            //if (empty($configuration)) {
                 $showError = true;
                 // Try 2.x
                 $currentPath = getcwd();
@@ -102,7 +102,7 @@ class DatabaseCommand extends CommonCommand
 
                     return 0;
                 }
-            }
+            //}
         }
 
         $this->setConfigurationArray($configuration);
@@ -122,10 +122,10 @@ class DatabaseCommand extends CommonCommand
         } else {
             $databaseSettings = [
                 'driver' => 'pdo_mysql',
-                'host' => $configuration['database_host'],
-                'dbname' => $configuration['database_name'],
-                'user' => $configuration['database_user'],
-                'password' => $configuration['database_password'],
+                'host' => $configuration['db_host'],
+                'dbname' => $configuration['main_database'],
+                'user' => $configuration['db_user'],
+                'dbpassword' => $configuration['db_password'],
             ];
         }
 
