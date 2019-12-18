@@ -59,9 +59,6 @@ class ConvertVideosCommand extends DatabaseCommand
             );
     }
 
-    /**
-     * @return int|null
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
@@ -113,7 +110,7 @@ class ConvertVideosCommand extends DatabaseCommand
                 if (is_file(substr($file->getRealPath(), 0, -$extLength).$combinedExt)) {
                     $this->excluded[] = $file;
 
-                    return false;
+                    return 0;
                 }
             };
 

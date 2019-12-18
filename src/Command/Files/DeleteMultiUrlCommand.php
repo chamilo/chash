@@ -252,6 +252,8 @@ class DeleteMultiUrlCommand extends DatabaseCommand
                 $connection->query($sql);
             }
         }
+
+        return 0;
     }
 
     /**
@@ -335,13 +337,8 @@ class DeleteMultiUrlCommand extends DatabaseCommand
      * Delete a course completely
      * This operation follows the "unlink course" operation so that it just
      * completes it, but only in case the course is used only once.
-     *
-     * @param object $input  Output interface
-     * @param string $output Course code
-     *
-     * @return bool
      */
-    private function deleteCourse(InputInterface $input, OutputInterface $output, $courseCode)
+    private function deleteCourse(InputInterface $input, OutputInterface $output, string $courseCode)
     {
         $connection = $this->getConnection($input);
         $sql = "SELECT id, directory FROM course WHERE code = '$courseCode'";
@@ -443,7 +440,7 @@ class DeleteMultiUrlCommand extends DatabaseCommand
         ];
         foreach ($tables as $table) {
             $sql = "DELETE FROM $table WHERE c_id = $cid";
-            $stmt = $connection->query($sql);
+            $connection->query($sql);
         }
         $output->writeln(
             'Deleted all references to course '.$courseCode.' in c_* tables.'
@@ -463,12 +460,9 @@ class DeleteMultiUrlCommand extends DatabaseCommand
      * super-admins. Other roles should only be able to disable a user,
      * which removes access to the platform but doesn't delete anything.
      *
-     * @param object $input  Output interface
-     * @param int    $output User ID
-     *
      * @todo Use UserManager::delete_user() instead
      */
-    private function deleteUser(InputInterface $input, OutputInterface $output, $userId): int
+    private function deleteUser(InputInterface $input, OutputInterface $output, int $userId): int
     {
         // No validation of permissions or variables is done because Chash is
         // only for sysadmins anyway

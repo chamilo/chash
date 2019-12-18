@@ -16,8 +16,6 @@ class GenerateTempFileStructureCommand extends DatabaseCommand
     /**
      * @param array $files
      * @param $permission
-     *
-     * @return int|null
      */
     public function createFolders(OutputInterface $output, $files, int $permission): int
     {
@@ -47,6 +45,8 @@ class GenerateTempFileStructureCommand extends DatabaseCommand
         } catch (IOException $e) {
             echo "\n An error occurred while removing the directory: ".$e->getMessage()."\n ";
         }
+
+        return 0;
     }
 
     protected function configure(): void

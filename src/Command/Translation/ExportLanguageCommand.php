@@ -134,5 +134,7 @@ class ExportLanguageCommand extends DatabaseCommand
         } else {
             $output->writeln('The connection does not seem to be a valid PDO connection');
         }
+
+        return 0;
     }
 }

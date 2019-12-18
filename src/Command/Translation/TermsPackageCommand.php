@@ -199,6 +199,8 @@ class TermsPackageCommand extends DatabaseCommand
         if (!$tgz) {
             $output->writeln('Please make sure you review your work directory for possible cleaning.');
         }
+
+        return 0;
     }
 
     /**

@@ -26,13 +26,12 @@ class ImportLanguageCommand extends DatabaseCommand
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         parent::execute($input, $output);
         $helper = $this->getHelperSet()->get('question');
         $_configuration = $this->getHelper('configuration')->getConfiguration();
         $file = $input->getArgument('file');
-
         $conn = $this->getConnection($input);
 
         if (is_file($file) && is_readable($file)) {
@@ -150,5 +149,7 @@ class ImportLanguageCommand extends DatabaseCommand
         } else {
             $output->writeln("<comment>The file located in '$file' is not accessible<comment>");
         }
+
+        return 0;
     }
 }

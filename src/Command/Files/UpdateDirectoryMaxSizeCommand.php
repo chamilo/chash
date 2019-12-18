@@ -36,9 +36,6 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
         ;
     }
 
-    /**
-     * @return int|null
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
@@ -136,8 +133,6 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
                             if ($increase) {
                                 $output->writeln('Increased max size of '.$globalCourses[$file]['code'].'('.$globalCourses[$file]['id'].') to '.$newAllowedSize);
                             }
-                        } else {
-                            //Quota is 0 (unlimited?)
                         }
                     }
                 }

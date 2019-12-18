@@ -255,16 +255,15 @@ class DeleteCoursesCommand extends DatabaseCommand
         $output->writeln('');
         $output->writeln('All done. '.$totalDiskUsage.'KB have been freed. Bye bye.');
         $output->writeln('');
+
+        return 0;
     }
 
     /**
      * Delete all references to a course inside a given URL, but do not delete
      * the course itself.
-     *
-     * @param string $courseCode
-     * @param int    $urlId
      */
-    private function unlinkCourse(InputInterface $input, OutputInterface $output, $courseCode, $urlId): void
+    private function unlinkCourse(InputInterface $input, OutputInterface $output, string $courseCode, int $urlId): void
     {
         /* Check tables:
          * session, session_rel_course, session_rel_course_rel_user
@@ -335,11 +334,8 @@ class DeleteCoursesCommand extends DatabaseCommand
      * Delete a course completely
      * This operation follows the "unlink course" operation so that it just
      * completes it, but only in case the course is used only once.
-     *
-     * @param object $input  Output interface
-     * @param string $output Course code
      */
-    private function deleteCourse(InputInterface $input, OutputInterface $output, $courseCode): int
+    private function deleteCourse(InputInterface $input, OutputInterface $output, string $courseCode): int
     {
         $connection = $this->getConnection($input);
         $sql = "SELECT id, directory FROM course WHERE code = '$courseCode'";

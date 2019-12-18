@@ -21,9 +21,6 @@ class CleanTempFolderCommand extends DatabaseCommand
             ->setDescription('Cleans the temp directory.');
     }
 
-    /**
-     * @return int|null
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);

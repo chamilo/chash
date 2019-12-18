@@ -577,13 +577,8 @@ class UpgradeCommand extends CommonCommand
 
     /**
      * Creates the course tables with the prefix c_.
-     *
-     * @param OutputInterface $output
-     * @param string          $dryRun
-     *
-     * @return int|null
      */
-    public function createCourseTables($output, $dryRun): int
+    public function createCourseTables(OutputInterface $output, string $dryRun): int
     {
         if ($dryRun) {
             $output->writeln('<comment>Creating c_* tables but dry-run is on. 0 table created.</comment>');

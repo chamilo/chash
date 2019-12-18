@@ -493,7 +493,7 @@ class UpgradeDatabaseCommand extends CommonCommand
      * @param OutputInterface $output
      * @param string          $dryRun
      *
-     * @return int|null
+     * @return int
      */
     public function createCourseTables($output, $dryRun): int
     {
