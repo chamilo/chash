@@ -44,7 +44,8 @@
     },
     "scripts": {
         "analyse": [
-            "@php vendor/bin/ecs check src"
+            "@php vendor/bin/ecs check src",
+            "@php vendor/bin/psalm"
         ],
         "fix": [
             "@php vendor/bin/ecs check src --fix"
