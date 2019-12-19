@@ -89,7 +89,7 @@ class DeleteCoursesCommand extends DatabaseCommand
 
             // Check the courses that match the search criteria
             if (!empty($courseId)) {
-                $courseId = intval($courseId);
+                $courseId = (int) $courseId;
                 $sql = "SELECT id, code, category_code, creation_date
                         FROM course
                         WHERE id = $courseId ";

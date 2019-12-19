@@ -97,7 +97,7 @@ class TermsPackageCommand extends DatabaseCommand
             $output->writeln('The directory '.$destination.' does not seem to exist. The destination directory must exist in order for this script to write the results in a safe place');
             exit;
         }
-        if (!is_writeable($destination)) {
+        if (!is_writable($destination)) {
             $output->writeln('The destination directory must be writeable. '.$destination.' seems not to be writeable now.');
             exit;
         }
@@ -127,7 +127,7 @@ class TermsPackageCommand extends DatabaseCommand
             }
         }*/
         if (is_dir($destination.$language)) {
-            if (!is_writeable($destination.$language)) {
+            if (!is_writable($destination.$language)) {
                 $output->writeln('Destination directory '.$destination.$language.' already exists but is not writeable. Please make sure whoever launches this script has privileges to write in there.');
                 exit;
             }
@@ -137,7 +137,7 @@ class TermsPackageCommand extends DatabaseCommand
             exit;
         }
         if (is_dir($destination.$origLang)) {
-            if (!is_writeable($destination.$origLang)) {
+            if (!is_writable($destination.$origLang)) {
                 $output->writeln('Destination directory '.$destination.$origLang.' already exists but is not writeable. Please make sure whoever launches this script has privileges to write in there.');
                 exit;
             }

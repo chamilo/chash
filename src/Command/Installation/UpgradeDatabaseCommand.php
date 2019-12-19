@@ -414,8 +414,6 @@ class UpgradeDatabaseCommand extends CommonCommand
      * @param string          $section
      * @param string          $version
      * @param string          $type
-     *
-     * @return mixed
      */
     public function getDatabasesPerSection($output, $courseList, $path, $section, $version, $type)
     {
@@ -492,8 +490,6 @@ class UpgradeDatabaseCommand extends CommonCommand
      *
      * @param OutputInterface $output
      * @param string          $dryRun
-     *
-     * @return int
      */
     public function createCourseTables($output, $dryRun): int
     {
@@ -534,12 +530,7 @@ class UpgradeDatabaseCommand extends CommonCommand
         ;
     }
 
-    /**
-     * Executes a command via CLI.
-     *
-     * @return int|void|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // sudo php /var/www/html/chash/chash.php chash:chamilo_upgrade 1.11.x --linux-user=jmontoya --linux-group=jmontoya
 

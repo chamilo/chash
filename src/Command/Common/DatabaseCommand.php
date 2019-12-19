@@ -14,9 +14,6 @@ use Symfony\Component\Dotenv\Dotenv;
  */
 class DatabaseCommand extends CommonCommand
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getConnection()
     {
         try {

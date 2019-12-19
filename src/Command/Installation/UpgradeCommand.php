@@ -502,8 +502,6 @@ class UpgradeCommand extends CommonCommand
      * @param string          $section
      * @param string          $version
      * @param string          $type
-     *
-     * @return mixed
      */
     public function getDatabasesPerSection($output, $courseList, $path, $section, $version, $type)
     {

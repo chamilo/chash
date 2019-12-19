@@ -124,9 +124,6 @@ class CommonCommand extends AbstractCommand
         $this->extraDatabaseSettings = $databaseSettings;
     }
 
-    /**
-     * @return mixed
-     */
     public function getExtraDatabaseSettings()
     {
         return $this->extraDatabaseSettings;
@@ -179,7 +176,7 @@ class CommonCommand extends AbstractCommand
      */
     public function getInstallationFolder()
     {
-        $chashFolder = dirname(dirname(dirname(__FILE__)));
+        $chashFolder = dirname(dirname(__DIR__));
 
         return $chashFolder.'/Resources/Database/';
     }
@@ -428,8 +425,6 @@ class CommonCommand extends AbstractCommand
 
     /**
      * Gets the min version available to migrate with this command.
-     *
-     * @return mixed
      */
     public function getMinVersionSupportedByInstall()
     {

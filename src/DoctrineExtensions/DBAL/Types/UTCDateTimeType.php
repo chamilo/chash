@@ -15,16 +15,13 @@ class UTCDateTimeType extends DateTimeType
 {
     private static $utc = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
         if (null === $value) {
             return null;
         }
 
-        if (is_null(self::$utc)) {
+        if (null === self::$utc) {
             self::$utc = new \DateTimeZone('UTC');
         }
 
@@ -33,16 +30,13 @@ class UTCDateTimeType extends DateTimeType
         return $value->format($platform->getDateTimeFormatString());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         if (null === $value) {
             return null;
         }
 
-        if (is_null(self::$utc)) {
+        if (null === self::$utc) {
             self::$utc = new \DateTimeZone('UTC');
         }
 
