@@ -29,10 +29,9 @@ class CommonCommand extends AbstractCommand
     public $configurationPath;
     public $configuration;
     public $extraDatabaseSettings;
+    public $configurationHelper;
     private $migrationConfigurationFile;
     private $manager;
-
-    public $configurationHelper;
 
     public function __construct(ConfigurationHelper $configurationHelper)
     {
