@@ -994,8 +994,6 @@ class CommonCommand extends AbstractCommand
             }
         }
 
-        $updateInstallationOriginal = $updateInstallation;
-
         if (!empty($updateInstallation)) {
             // Check temp folder
             if (!is_writable($defaultTempFolder)) {

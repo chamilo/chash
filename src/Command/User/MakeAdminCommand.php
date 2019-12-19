@@ -33,7 +33,6 @@ class MakeAdminCommand extends DatabaseCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
-        $_configuration = $this->getHelper('configuration')->getConfiguration();
         $conn = $this->getConnection($input);
         $username = $input->getArgument('username');
         if ($conn instanceof \Doctrine\DBAL\Connection) {

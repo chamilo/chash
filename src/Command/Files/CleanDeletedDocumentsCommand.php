@@ -99,7 +99,7 @@ class CleanDeletedDocumentsCommand extends DatabaseCommand
             if ($deleteFromDb) {
                 $connection = $this->getConnection($input);
                 $sql = "DELETE FROM c_document WHERE path LIKE '%_DELETED%'";
-                $stmt = $connection->query($sql);
+                $connection->query($sql);
                 /*
                 while ($row = $stmt->fetch()) {
                     $sql2 = "SELECT id FROM c_item_property

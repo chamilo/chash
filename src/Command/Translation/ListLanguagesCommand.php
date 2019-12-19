@@ -37,10 +37,8 @@ class ListLanguagesCommand extends DatabaseCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
-        $_configuration = $this->getHelper('configuration')->getConfiguration();
         $conn = $this->getConnection($input);
         $availability = $input->getArgument('availability');
-        $current = 'english';
         $count = $input->getArgument('count');
         if ($conn instanceof \Doctrine\DBAL\Connection) {
             $ls = "SELECT selected_value FROM settings_current WHERE variable='platformLanguage'";

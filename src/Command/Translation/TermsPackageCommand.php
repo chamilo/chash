@@ -72,7 +72,7 @@ class TermsPackageCommand extends DatabaseCommand
         $language = $input->getArgument('language');
         $destination = $input->getArgument('dest');
         $tgz = $input->getOption('tgz');
-        $allowNew = $input->getOption('new');
+        //$allowNew = $input->getOption('new');
 
         $_configuration = $this->getHelper('configuration')->getConfiguration();
         $baseDir = $_configuration['root_sys'];
@@ -117,7 +117,7 @@ class TermsPackageCommand extends DatabaseCommand
             }
             $langs[] = $lang;
         }
-        $new = false;
+        /*$new = false;
         if (!in_array($language, $langs)) {
             if (!$allowNew) {
                 $output->writeln('The destination language must be expressed as one of the directories available in your Chamilo installation. If you are exporting for the creation of a new language, use the --new option to ignore this warning');
@@ -125,7 +125,7 @@ class TermsPackageCommand extends DatabaseCommand
             } else {
                 $new = true;
             }
-        }
+        }*/
         if (is_dir($destination.$language)) {
             if (!is_writeable($destination.$language)) {
                 $output->writeln('Destination directory '.$destination.$language.' already exists but is not writeable. Please make sure whoever launches this script has privileges to write in there.');
@@ -181,8 +181,8 @@ class TermsPackageCommand extends DatabaseCommand
                 $countWords += str_word_count($sourceVars[$var]);
             }
             $output->writeln('Writing to file '.$destination.$language.'/'.$file);
-            $w = file_put_contents($destination.$language.'/'.$file, $destFileLines);
-            $w = file_put_contents($destination.$origLang.'/'.$file, $origFileLines);
+            file_put_contents($destination.$language.'/'.$file, $destFileLines);
+            file_put_contents($destination.$origLang.'/'.$file, $origFileLines);
         }
         $output->writeln('Written translation files for packaging in '.$destination.$language.'.');
         $output->writeln('Found '.$countVars.' variables, of which '.$countTranslatedVars.' were already translated (and '.($countVars - $countTranslatedVars).' are missing).');

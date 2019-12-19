@@ -637,7 +637,7 @@ class UpgradeDatabaseCommand extends CommonCommand
 
         $output->writeln("<comment>Current version: </comment><info>$currentVersion</info>");
         $output->writeln("<comment>Latest version: </comment><info>$version</info>");
-        $oldVersion = $version;
+        //$oldVersion = $version;
 
         // Handle 1.10.x as 1.10.1000
         if ('1.9.x' == $currentVersion) {

@@ -85,21 +85,21 @@ class FullBackupCommand extends DatabaseCommand
         $f = $_configuration['db_user'];
         //backup the files (this requires root permissions)
         $bkp_dir = $tmpFolder.'/'.$f.'-'.date('Ymdhis');
-        $err = @mkdir($bkp_dir);
+        @mkdir($bkp_dir);
         $tgz = $bkp_dir.'/'.$f.'.tgz';
         $sql = $bkp_dir.'/'.$f.'-db.sql';
-        $err = @system('tar zcf '.$tgz.' '.$cha_dir);
+        @system('tar zcf '.$tgz.' '.$cha_dir);
 
         $output->writeln('<comment>Generating mysqldump</comment>');
 
-        $err = @system(
+        @system(
             'mysqldump -h '.$_configuration['db_host'].' -u '.$_configuration['db_user'].' -p'.$_configuration['db_password'].' '.$_configuration['main_database'].' --result-file='.$sql
         );
 
         $output->writeln('<comment>Generating tarball </comment>');
 
-        $err = @system('tar zcf '.$resultPath.' '.$bkp_dir);
-        $err = @system('rm -rf '.$bkp_dir);
+        @system('tar zcf '.$resultPath.' '.$bkp_dir);
+        @system('rm -rf '.$bkp_dir);
 
         $output->writeln(
             '<comment>End Chamilo backup. File can be found here: '.realpath($resultPath).' </comment>'

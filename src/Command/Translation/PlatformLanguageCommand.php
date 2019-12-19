@@ -39,7 +39,6 @@ class PlatformLanguageCommand extends DatabaseCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
-        $_configuration = $this->getHelper('configuration')->getConfiguration();
         $conn = $this->getConnection($input);
         $lang = $input->getArgument('language');
         if ($conn instanceof \Doctrine\DBAL\Connection) {

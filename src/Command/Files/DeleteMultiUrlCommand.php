@@ -473,33 +473,31 @@ class DeleteMultiUrlCommand extends DatabaseCommand
                 WHERE cu.user_id = $userId AND c.code = cu.course_code";
         $stmt = $connection->query($sql);
 
-        while ($course = $stmt->fetch()) {
-            $sql = "DELETE FROM c_group_rel_user AND user_id = $userId";
-            $stmt2 = $connection->query($sql);
-        }
+        $sql = "DELETE FROM c_group_rel_user AND user_id = $userId";
+        $connection->query($sql);
 
         // Unsubscribe user from usergroup_rel_user
         $sql = "DELETE FROM usergroup_rel_user WHERE user_id = $userId";
-        $stmt = $connection->query($sql);
+        $connection->query($sql);
 
         // Unsubscribe user from all courses
         $sql = "DELETE FROM course_rel_user WHERE user_id = $userId";
-        $stmt = $connection->query($sql);
+        $connection->query($sql);
 
         // Unsubscribe user from all courses in sessions
         $sql = "DELETE FROM session_rel_course_rel_user WHERE id_user = $userId";
-        $stmt = $connection->query($sql);
+        $connection->query($sql);
 
         // If the user was added as a id_coach then set the current admin as coach see BT#
         $sql = "UPDATE session SET id_coach = 1 WHERE id_coach = $userId";
-        $stmt = $connection->query($sql);
+        $connection->query($sql);
 
         $sql = "UPDATE session SET id_coach = 1 WHERE session_admin_id = $userId";
-        $stmt = $connection->query($sql);
+        $connection->query($sql);
 
         // Unsubscribe user from all sessions
         $sql = "DELETE FROM session_rel_user WHERE id_user = $userId";
-        $stmt = $connection->query($sql);
+        $connection->query($sql);
 
         // Delete user picture
         /* TODO: Logic about api_get_setting('split_users_upload_directory') == 'true'
@@ -507,7 +505,7 @@ class DeleteMultiUrlCommand extends DatabaseCommand
         $sysPath = $this->getConfigurationHelper()->getSysPath();
         $sub = '';
         $sql = "SELECT selected_value FROM settings_current WHERE variable = 'split_users_upload_directory'";
-        $stmt = $connection->query($sql);
+        $connection->query($sql);
         $row = $stmt->fetch();
         if ('true' == $row['selected_value']) {
             $sub = substr($userId, 0, 1).'/';
@@ -519,38 +517,38 @@ class DeleteMultiUrlCommand extends DatabaseCommand
 
         // Delete the personal course categories
         $sql = "DELETE FROM user_course_category WHERE user_id = $userId";
-        $stmt = $connection->query($sql);
+        $connection->query($sql);
 
         // Delete user from database
         $sql = "DELETE FROM user WHERE user_id = $userId";
-        $stmt = $connection->query($sql);
+        $connection->query($sql);
 
         // Delete user from the admin table
         $sql = "DELETE FROM admin WHERE user_id = $userId";
-        $stmt = $connection->query($sql);
+        $connection->query($sql);
 
         // Delete the personal agenda-items from this user
         $sql = "DELETE FROM personal_agenda WHERE user = $userId";
-        $stmt = $connection->query($sql);
+        $connection->query($sql);
 
         $sql = "DELETE FROM gradebook_result WHERE user_id = $userId";
-        $stmt = $connection->query($sql);
+        $connection->query($sql);
 
         $sql = "DELETE FROM user_field_values WHERE user_id = $userId";
-        $stmt = $connection->query($sql);
+        $connection->query($sql);
 
         $sql = "DELETE FROM group_rel_user WHERE user_id = $userId";
-        $stmt = $connection->query($sql);
+        $connection->query($sql);
 
         $sql = "DELETE FROM user_rel_user WHERE user_id = $userId";
-        $stmt = $connection->query($sql);
+        $connection->query($sql);
 
         // Removing survey invitation
         //survey_manager::delete_all_survey_invitations_by_user($user_id);
 
         // Delete students works
         $sql = "DELETE FROM c_student_publication WHERE user_id = $userId AND c_id <> 0";
-        $stmt = $connection->query($sql);
+        $connection->query($sql);
 
         // Add event to system log
         //$user_id_manager = api_get_user_id();

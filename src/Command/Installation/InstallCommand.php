@@ -315,8 +315,8 @@ class InstallCommand extends CommonCommand
                 return 0;
             }
 
-            $eventManager = $connectionToHost->getSchemaManager();
-            $databases = $eventManager->listDatabases();
+            //$eventManager = $connectionToHost->getSchemaManager();
+            //$databases = $eventManager->listDatabases();
             /*if (in_array($databaseSettings['dbname'], $databases)) {
                 if (false == $this->silent) {
                     $helper = $this->getHelperSet()->get('question');

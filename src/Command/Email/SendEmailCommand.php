@@ -67,8 +67,6 @@ class SendEmailCommand extends ChamiloEmailCommand
     {
         parent::execute($input, $output);
         $mailLib = $this->getHelper('configuration')->getLibFile('mail.lib.inc.php');
-        $mainApiLib = $this->getHelper('configuration')->getLibFile('main_api.lib.php');
-        $cnfFiles = $this->getHelper('configuration')->getConfFile('mail.conf.php');
         $conn = $this->getConnection($input);
 
         if (empty($mailLib)) {

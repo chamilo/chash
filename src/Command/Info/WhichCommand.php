@@ -104,7 +104,6 @@ class WhichCommand extends InfoCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
-        $_configuration = $this->getHelper('configuration')->getConfiguration();
         $version = $this->getHelper('configuration')->getMajorVersion();
         $tool = $input->getArgument('tool');
         $found = false;

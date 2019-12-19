@@ -61,8 +61,8 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
             $this->writeCommandHeader($output, 'Checking courses dir...');
 
             // Get database and path information
-            $coursesPath = $this->getConfigurationHelper()->getSysPath();
-            $connection = $this->getConnection($input);
+            //$coursesPath = $this->getConfigurationHelper()->getSysPath();
+            //$connection = $this->getConnection($input);
             $_configuration = $this->getConfigurationHelper()->getConfiguration();
 
             $courseTable = $_configuration['main_database'].'.course';
@@ -96,7 +96,7 @@ class UpdateDirectoryMaxSizeCommand extends DatabaseCommand
                     $res = preg_split('/\s/', $res);
                     $size = round($res[0] / 1024, 1); // $size is stored in MB
                     if (isset($globalCourses[$file]['code'])) {
-                        $code = $globalCourses[$file]['code'];
+                        //$code = $globalCourses[$file]['code'];
                         $quota = round(
                             $globalCourses[$file]['quota'] / (1024 * 1024),
                             0

@@ -162,7 +162,7 @@ class ConvertVideosCommand extends DatabaseCommand
                 $origNameCommand = preg_replace('/\(/', '\(', $origNameCommand);
                 $origNameCommand = preg_replace('/\)/', '\)', $origNameCommand);
                 $output->writeln('ffmpeg -i '.$newNameCommand.' -b '.$bitRate.'k -f '.$this->ext.' -vcodec '.$vcodec.' -acodec copy -r '.$fps.' '.$origNameCommand);
-                $exec = @system('ffmpeg -i '.$newNameCommand.' -b '.$bitRate.'k -f '.$this->ext.' -vcodec '.$vcodec.' -acodec copy -r '.$fps.' '.$origNameCommand, $out);
+                @system('ffmpeg -i '.$newNameCommand.' -b '.$bitRate.'k -f '.$this->ext.' -vcodec '.$vcodec.' -acodec copy -r '.$fps.' '.$origNameCommand, $out);
                 $sizeNew += filesize($origName);
                 ++$counter;
             }

@@ -76,7 +76,7 @@ class DeleteCoursesCommand extends DatabaseCommand
             $courseCode = $input->getOption('course-code'); //1 if the option was set
             $courseCategory = $input->getOption('course-category'); //1 if the option was set
             $beforeDate = $input->getOption('before-date'); //1 if the option was set
-            $confirmDelete = $input->getOption('delete'); //1 if the option was set
+            //$confirmDelete = $input->getOption('delete'); //1 if the option was set
             $du = $input->getOption('show-disk-usage'); //1 if the option was set
             $connection = $this->getConnection($input);
 
@@ -190,11 +190,11 @@ class DeleteCoursesCommand extends DatabaseCommand
                     foreach ($coursesList as $id) {
                         $countUrl = count($coursesUrl[$id]);
                         $unique = ($countUrl <= 1 ? 'yes' : 'no');
-                        $diskUsage = '';
+                        //$diskUsage = '';
                         if ($du) {
                             $courseDir = $coursesPath.$coursesDir[$id];
                             if (!is_dir($courseDir)) {
-                                $size = 'N/A';
+                                //$size = 'N/A';
                             } else {
                                 $res = @exec('du -s '.$courseDir);
                                 $res = preg_split('/\s/', $res);
@@ -306,19 +306,19 @@ class DeleteCoursesCommand extends DatabaseCommand
                     // No course within this session => delete the session
                     // @todo: use sessionmanager::delete_session($sessionId)
                     $sqlDelete = "DELETE FROM session WHERE id = $sessionId";
-                    $stmtDelete = $connection->query($sqlDelete);
+                    $connection->query($sqlDelete);
                     $sqlDelete = "DELETE FROM session_rel_course_rel_user WHERE id_session = $sessionId";
-                    $stmtDelete = $connection->query($sqlDelete);
+                    $connection->query($sqlDelete);
                     $sqlDelete = "DELETE FROM session_rel_user WHERE id_session = $sessionId";
-                    $stmtDelete = $connection->query($sqlDelete);
+                    $connection->query($sqlDelete);
                     $sqlDelete = "DELETE FROM session_rel_course WHERE id_session = $sessionId";
-                    $stmtDelete = $connection->query($sqlDelete);
+                    $connection->query($sqlDelete);
                     $sqlDelete = "DELETE FROM access_url_rel_session WHERE session_id = $sessionId";
-                    $stmtDelete = $connection->query($sqlDelete);
+                    $connection->query($sqlDelete);
                     $sqlDelete = "DELETE FROM session_field_values WHERE session_id = $sessionId";
-                    $stmtDelete = $connection->query($sqlDelete);
+                    $connection->query($sqlDelete);
                     $sqlDelete = "DELETE FROM session WHERE id = $sessionId";
-                    $stmtDelete = $connection->query($sqlDelete);
+                    $connection->query($sqlDelete);
                 }
             }
         }

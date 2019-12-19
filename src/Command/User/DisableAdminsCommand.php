@@ -25,7 +25,6 @@ class DisableAdminsCommand extends DatabaseCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
-        $_configuration = $this->getHelper('configuration')->getConfiguration();
         $conn = $this->getConnection($input);
         $helper = $this->getHelperSet()->get('question');
         $question = new ConfirmationQuestion(

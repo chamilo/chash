@@ -5,7 +5,7 @@
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
-/**
+/*
  * @param $_configuration
  * @param $mainConnection
  * @param $courseList
@@ -13,7 +13,7 @@ use Symfony\Component\Filesystem\Filesystem;
  * @param OutputInterface $output
  * @param $upgrade
  */
-$updateFiles = function ($_configuration, $mainConnection, $courseList, $dryRun, $output, $upgrade) {
+/*$updateFiles = function ($_configuration, $mainConnection, $courseList, $dryRun, $output, $upgrade) {
     $sysPath = $upgrade->getRootSys();
     $sysCodePath = $upgrade->getRootSys().'main/';
 
@@ -44,4 +44,4 @@ $updateFiles = function ($_configuration, $mainConnection, $courseList, $dryRun,
     } catch (Exception $e) {
         echo $e->getMessage();
     }
-};
+};*/

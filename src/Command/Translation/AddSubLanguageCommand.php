@@ -111,7 +111,7 @@ class AddSubLanguageCommand extends DatabaseCommand
             //require_once $_configuration['root_sys'].'main/inc/lib/main_api.lib.php';
             //$perm = api_get_permissions_for_new_directories();
             // @todo Improve permissions to force creating as user www-data
-            $r = @mkdir($_configuration['root_sys'].'main/lang/'.$lang, 0777);
+            @mkdir($_configuration['root_sys'].'main/lang/'.$lang, 0777);
             $output->writeln('Sub-language '.$lang.' of language '.$parent.' has been created but is disabled. Fill it, then enable to make available to users. Make sure you check the permissions for the newly created directory as well ('.$_configuration['root_sys'].'main/lang/'.$lang.')');
         } else {
             $output->writeln('The connection does not seem to be a valid PDO connection');

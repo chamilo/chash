@@ -2,7 +2,7 @@
 
 /* For licensing terms, see /license.txt */
 
-$update = function ($_configuration, \Doctrine\DBAL\Connection $mainConnection, $courseList, $dryRun, $output, $upgrade) {
+/*$update = function ($_configuration, \Doctrine\DBAL\Connection $mainConnection, $courseList, $dryRun, $output, $upgrade) {
     $mainConnection->beginTransaction();
 
     $dbNameForm = $_configuration['main_database'];
@@ -246,3 +246,4 @@ $update = function ($_configuration, \Doctrine\DBAL\Connection $mainConnection, 
         $mainConnection->commit();
     }
 };
+*/
