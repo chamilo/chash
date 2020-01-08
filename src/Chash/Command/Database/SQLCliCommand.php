@@ -14,7 +14,7 @@ use Symfony\Component\Console\Formatter\OutputFormatterStyle;
  * Connects to the MySQL client without the need to introduce a password
  * @return int Exit code returned by mysql command
  */
-class RunSQLCommand extends CommonDatabaseCommand
+class SQLCliCommand extends CommonDatabaseCommand
 {
     /**
      *
@@ -50,7 +50,7 @@ class RunSQLCommand extends CommonDatabaseCommand
         return ($proc_status["running"] ? $exit_code : $proc_status["exitcode"]);
 
         /*$output->writeln('<comment>Starting Chamilo process</comment>');
-        $output->writeln('<info>Chamilo process ended succesfully</info>');
+        $output->writeln('<info>Chamilo process ended successfully</info>');
         */
         /*
         $progress = $this->getHelperSet()->get('progress');
@@ -64,9 +64,5 @@ class RunSQLCommand extends CommonDatabaseCommand
             $progress->advance();
         }
         $progress->finish();*/
-
-        // Inside execute function
-        //$output->getFormatter()->setStyle('fcbarcelona', new OutputFormatterStyle('red', 'blue', array('blink', 'bold', 'underscore')));
-        //$output->writeln('<fcbarcelona>Messi for the win</fcbarcelona>');
     }
 }
