@@ -50,7 +50,7 @@ $application->addCommands(
         new Chash\Command\Chash\SetupCommand(),
         new Chash\Command\Chash\SelfUpdateCommand(),
 
-        new Chash\Command\Database\RunSQLCommand(),
+        new Chash\Command\Database\SQLCliCommand(),
         new Chash\Command\Database\ImportCommand(),
         new Chash\Command\Database\DumpCommand(),
         new Chash\Command\Database\RestoreCommand(),
