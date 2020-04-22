@@ -1,0 +1,41 @@
+<?php
+
+$header = '/* For licensing terms, see /license.txt */';
+
+$rules = [
+    '@Symfony' => true,
+    //'@Symfony:risky' => true,
+    'array_syntax' => [
+        'syntax' => 'short',
+    ],
+    /*'header_comment' => [
+        'header' => $header,
+    ],*/
+    'blank_line_after_opening_tag' => false,
+    'no_extra_consecutive_blank_lines' => true,
+    'multiline_comment_opening_closing' => true,
+    'phpdoc_to_comment' => false,
+    'phpdoc_annotation_without_dot' => false,
+    'no_useless_else' => false,
+    'single_quote' => false,
+    'no_useless_return' => true,
+    'ordered_class_elements' => true,
+    'ordered_imports' => true,
+    'phpdoc_order' => true,
+    'no_break_comment' => true,
+    // To be tested before insertion:
+//    'strict_comparison' => true,
+//    'strict_param' => true,
+//    'php_unit_strict' => true,
+];
+
+$finder = PhpCsFixer\Finder::create()
+    ->exclude('tests')
+    ->in(__DIR__)
+;
+
+return PhpCsFixer\Config::create()
+    ->setRules(
+        $rules
+    )
+    ->setFinder($finder);
