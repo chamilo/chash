@@ -2,19 +2,18 @@
 
 namespace Chash\Command\Installation;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\DBAL\ConnectionException;
-use Symfony\Component\Console\Helper\HelperSet;
-use Symfony\Component\Yaml\Dumper;
-use Symfony\Component\Yaml\Parser;
-use Doctrine\DBAL\Migrations\Tools\Console\Command\AbstractCommand;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Exception\IOException;
 use Alchemy\Zippy\Zippy;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Finder\Finder;
+use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ConnectionException;
+use Doctrine\DBAL\Migrations\Tools\Console\Command\AbstractCommand;
+use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Yaml;
 
 /**

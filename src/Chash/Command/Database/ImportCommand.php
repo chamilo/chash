@@ -19,8 +19,8 @@
 
 namespace Chash\Command\Database;
 
-use Symfony\Component\Console\Input\InputArgument,
-    Symfony\Component\Console;
+use Symfony\Component\Console;
+use Symfony\Component\Console\Input\InputArgument;
 
 /**
  * Task for executing arbitrary SQL that can come from a file or directly from

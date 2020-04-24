@@ -3,10 +3,6 @@
 namespace Chash\Command\Installation;
 
 use Chash\Command\Database\CommonDatabaseCommand;
-use Doctrine\DBAL\Migrations\Tools\Console\Command\AbstractCommand;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
-
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 

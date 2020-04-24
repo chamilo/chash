@@ -3,11 +3,11 @@
 namespace Chash\Command\Chash;
 
 use Doctrine\DBAL\Migrations\Tools\Console\Command\AbstractCommand;
+use Symfony\Component\Console;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console;
-use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Yaml\Dumper;
 
 /**
  * Class SetupCommand

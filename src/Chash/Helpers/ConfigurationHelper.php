@@ -4,8 +4,8 @@ namespace Chash\Helpers;
 
 use Guzzle\Tests\Batch\ExceptionBufferingBatchTest;
 use Symfony\Component\Console\Helper\Helper;
-use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Yaml\Parser;
 
 /**
  * Class ConfigurationHelper

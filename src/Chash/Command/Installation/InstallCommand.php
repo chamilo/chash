@@ -2,20 +2,14 @@
 
 namespace Chash\Command\Installation;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use Doctrine\DBAL\Migrations\Tools\Console\Command\AbstractCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Yaml\Dumper;
-use Symfony\Component\ClassLoader\ClassLoader;
-use Symfony\Component\ClassLoader\Psr4ClassLoader;
 
 /**
  * Class InstallCommand
