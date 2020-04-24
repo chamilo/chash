@@ -7,13 +7,12 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
 /**
  * Command functions meant to deal with what the user of this script is calling
  * it for.
  */
 /**
- * Makes the given user an admin on the main portal
+ * Makes the given user an admin on the main portal.
  */
 class MakeAdminCommand extends CommonDatabaseCommand
 {
@@ -76,6 +75,7 @@ class MakeAdminCommand extends CommonDatabaseCommand
         } else {
             $output->writeln('The connection does not seem to be a valid PDO connection');
         }
+
         return null;
     }
 }

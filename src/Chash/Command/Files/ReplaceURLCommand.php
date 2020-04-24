@@ -10,14 +10,10 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class ReplaceURLCommand
- * Clean the archives directory, leaving only index.html, twig and Serializer
- * @package Chash\Command\Files
+ * Clean the archives directory, leaving only index.html, twig and Serializer.
  */
 class ReplaceURLCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
     protected function configure()
     {
         parent::configure();
@@ -37,9 +33,7 @@ class ReplaceURLCommand extends CommonDatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -128,7 +122,7 @@ class ReplaceURLCommand extends CommonDatabaseCommand
 
         if (!empty($results)) {
             foreach ($results as $row) {
-                $filePath = $coursePath . '/' . $row['directory'] . '/document' . $row['path'];
+                $filePath = $coursePath.'/'.$row['directory'].'/document'.$row['path'];
                 $output->writeln($filePath);
                 if (file_exists($filePath) && !empty($row['path'])) {
                     if (!$dryRun) {
@@ -164,14 +158,14 @@ class ReplaceURLCommand extends CommonDatabaseCommand
      */
     private function getTables()
     {
-        return array(
-            'c_quiz' => array('description'),
-            'c_quiz_answer' => array('answer', 'comment'),
-            'c_quiz_question' => array('description'),
-            'c_tool_intro' => array('intro_text'),
-            'track_e_attempt' => array('answer'),
-            'c_link' => array('url'),
-            'c_glossary' => array('description')
-        );
+        return [
+            'c_quiz' => ['description'],
+            'c_quiz_answer' => ['answer', 'comment'],
+            'c_quiz_question' => ['description'],
+            'c_tool_intro' => ['intro_text'],
+            'track_e_attempt' => ['answer'],
+            'c_link' => ['url'],
+            'c_glossary' => ['description'],
+        ];
     }
 }

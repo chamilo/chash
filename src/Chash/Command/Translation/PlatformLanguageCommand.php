@@ -2,11 +2,12 @@
 /**
  * Definition of command to
  * change platform language
- * Does not support multi-url yet
+ * Does not support multi-url yet.
  */
 /**
- * Necessary namespaces definitions and usage
+ * Necessary namespaces definitions and usage.
  */
+
 namespace Chash\Command\Translation;
 
 use Chash\Command\Database\CommonDatabaseCommand;
@@ -16,20 +17,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class PlatformLanguageCommand
- * Definition of the translation:platform_language command
- * @package Chash\Command\Translation
+ * Definition of the translation:platform_language command.
  */
 class PlatformLanguageCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
     protected function configure()
     {
         parent::configure();
         $this
             ->setName('translation:platform_language')
-            ->setAliases(array('tpl'))
+            ->setAliases(['tpl'])
             ->setDescription('Gets or sets the platform language')
             ->addArgument(
                 'language',
@@ -39,9 +36,7 @@ class PlatformLanguageCommand extends CommonDatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -70,12 +65,13 @@ class PlatformLanguageCommand extends CommonDatabaseCommand
                     $output->write('SQL error!'.PHP_EOL);
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
-                $languages = array();
+                $languages = [];
                 while ($lr = $stmt->fetch(\PDO::FETCH_ASSOC)) {
                     $languages[] = $lr['english_name'];
                 }
-                if (!in_array($lang,$languages)) {
+                if (!in_array($lang, $languages)) {
                     $output->writeln($lang.' must be available on your platform before you can set it as default');
+
                     return null;
                 }
                 $lang = $conn->quote($lang);
@@ -90,6 +86,7 @@ class PlatformLanguageCommand extends CommonDatabaseCommand
                 $output->writeln('Language set to '.$lang);
             }
         }
+
         return null;
     }
 }

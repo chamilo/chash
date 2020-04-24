@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class ExportLanguageCommand
+ * Class ExportLanguageCommand.
  *
  * TermsPackage command, made to simplify the live of
  * translators by providing them with a list of the 10,000 most used words in
@@ -21,12 +21,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  * in main/cron/lang/
  * The present command serves only at the end of this process, to generate the
  * corresponding language packages in other languages than English
- * @package Chash\Command\Translation
  */
 class TermsPackageCommand extends CommonDatabaseCommand
 {
     /**
-     * Set the input variables and what will be shown in command helper
+     * Set the input variables and what will be shown in command helper.
      */
     protected function configure()
     {
@@ -65,29 +64,27 @@ class TermsPackageCommand extends CommonDatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
 
-        $source  = $input->getArgument('source');
-        $language  = $input->getArgument('language');
+        $source = $input->getArgument('source');
+        $language = $input->getArgument('language');
         $destination = $input->getArgument('dest');
         $tgz = $input->getOption('tgz');
         $allowNew = $input->getOption('new');
 
         $_configuration = $this->getHelper('configuration')->getConfiguration();
         $baseDir = $_configuration['root_sys'];
-        if (substr($baseDir,-1,1) != '/') {
+        if ('/' != substr($baseDir, -1, 1)) {
             $baseDir .= '/';
         }
-        if (substr($source,-1,1) != '/') {
+        if ('/' != substr($source, -1, 1)) {
             $source .= '/';
         }
-        if (substr($destination,-1,1) != '/') {
+        if ('/' != substr($destination, -1, 1)) {
             $destination .= '/';
         }
 
@@ -96,7 +93,7 @@ class TermsPackageCommand extends CommonDatabaseCommand
             exit;
         }
         // Generate a folder name for saving the *partial* files in the original language - use suffix "_partial
-        $origLang = substr(substr($source,0,-1),strrpos(substr($source,0,-1),'/')).'_partial';
+        $origLang = substr(substr($source, 0, -1), strrpos(substr($source, 0, -1), '/')).'_partial';
 
         if (!is_dir($destination)) {
             $output->writeln('The directory '.$destination.' does not seem to exist. The destination directory must exist in order for this script to write the results in a safe place');
@@ -112,10 +109,14 @@ class TermsPackageCommand extends CommonDatabaseCommand
         }
         $langDir = $baseDir.'main/lang/';
         $listDir = scandir($langDir);
-        $langs = array();
+        $langs = [];
         foreach ($listDir as $lang) {
-            if (substr($lang,0,1) == '.') { continue; }
-            if (!is_dir($langDir.$lang)) { continue; }
+            if ('.' == substr($lang, 0, 1)) {
+                continue;
+            }
+            if (!is_dir($langDir.$lang)) {
+                continue;
+            }
             $langs[] = $lang;
         }
         $new = false;
@@ -155,13 +156,15 @@ class TermsPackageCommand extends CommonDatabaseCommand
         $countTranslatedWords = 0;
         $fileString = '<?php'."\n";
         foreach ($listFiles as $file) {
-            if (substr($file,-1,1) == '.') { continue; }
+            if ('.' == substr($file, -1, 1)) {
+                continue;
+            }
             $destFileLines = $fileString;
             $origFileLines = $fileString;
             $partialSourceFile = $langDir.$language.'/'.$file;
             $output->writeln('Source File 2 = '.$partialSourceFile);
             $sourceVars = $this->_getLangVars($source.$file);
-            $source2Vars = array();
+            $source2Vars = [];
             if (is_file($partialSourceFile)) {
                 $source2Vars = $this->_getLangVars($partialSourceFile);
             }
@@ -170,13 +173,13 @@ class TermsPackageCommand extends CommonDatabaseCommand
                 if (in_array($var, $source2Keys)) {
                     $destFileLines .= '$'.$var.'='.$source2Vars[$var]."\n";
                     $origFileLines .= '$'.$var.'='.$val."\n";
-                    $countTranslatedVars++;
+                    ++$countTranslatedVars;
                     $countTranslatedWords += str_word_count($sourceVars[$var]);
                 } else {
                     $destFileLines .= '$'.$var.'="";'."\n";
                     $origFileLines .= '$'.$var.'='.$val."\n";
                 }
-                $countVars++;
+                ++$countVars;
                 $countWords += str_word_count($sourceVars[$var]);
             }
             $output->writeln('Writing to file '.$destination.$language.'/'.$file);
@@ -184,7 +187,7 @@ class TermsPackageCommand extends CommonDatabaseCommand
             $w = file_put_contents($destination.$origLang.'/'.$file, $origFileLines);
         }
         $output->writeln('Written translation files for packaging in '.$destination.$language.'.');
-        $output->writeln('Found '.$countVars.' variables, of which '.$countTranslatedVars.' were already translated (and '.($countVars-$countTranslatedVars).' are missing).');
+        $output->writeln('Found '.$countVars.' variables, of which '.$countTranslatedVars.' were already translated (and '.($countVars - $countTranslatedVars).' are missing).');
         $output->writeln('In words, there are '.$countWords.' words in total, of which only '.($countWords - $countTranslatedWords).' still need translating.');
         if ($tgz) {
             $output->writeln('Compressing as .tar.gz...');
@@ -202,18 +205,21 @@ class TermsPackageCommand extends CommonDatabaseCommand
 
     /**
      * Gets all the variables in a language file as a hash
-     * This is a copy of the get_all_language_variable_in_file method in main/admin/sub_language.class.php
+     * This is a copy of the get_all_language_variable_in_file method in main/admin/sub_language.class.php.
+     *
      * @param string $file The asbolute path to the file from which to extract variables
+     *
      * @return array Named array of variable => translation
      */
-    private function _getLangVars($file) {
-        $res_list = array();
+    private function _getLangVars($file)
+    {
+        $res_list = [];
         if (!is_readable($file)) {
             return $res_list;
         }
         $info_file = file($file);
         foreach ($info_file as $line) {
-            if (substr($line, 0, 1) != '$') {
+            if ('$' != substr($line, 0, 1)) {
                 continue;
             }
             list($var, $val) = preg_split('/=/', $line, 2);
@@ -223,6 +229,7 @@ class TermsPackageCommand extends CommonDatabaseCommand
             $var = substr($var, 1);
             $res_list[$var] = $val;
         }
+
         return $res_list;
     }
 }

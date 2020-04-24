@@ -7,14 +7,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
- * Class DropDatabaseCommand
- * @package Chash\Command\Database
+ * Class DropDatabaseCommand.
  */
 class DropDatabaseCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
     protected function configure()
     {
         parent::configure();
@@ -24,9 +20,7 @@ class DropDatabaseCommand extends CommonDatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -55,7 +49,6 @@ class DropDatabaseCommand extends CommonDatabaseCommand
         $connection = $this->getConnection($input);
 
         if ($connection) {
-
             $list = $_configuration = $this->getHelper('configuration')->getAllDatabases();
             $currentDatabases = $connection->getSchemaManager()->listDatabases();
             if (is_array($list)) {

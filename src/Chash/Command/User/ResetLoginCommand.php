@@ -6,7 +6,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
 /**
  * Command functions meant to deal with what the user of this script is calling
  * it for.
@@ -14,8 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class ResetLoginCommand
  * Returns a password reset link for the given username (user will receive
- * an e-mail with new login + password)
- * @package Chash\Command\User
+ * an e-mail with new login + password).
  */
 class ResetLoginCommand extends CommonChamiloUserCommand
 {
@@ -34,9 +32,7 @@ class ResetLoginCommand extends CommonChamiloUserCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -66,6 +62,7 @@ class ResetLoginCommand extends CommonChamiloUserCommand
         } else {
             $output->writeln('The connection does not seem to be a valid PDO connection');
         }
+
         return null;
     }
 }

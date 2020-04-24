@@ -9,14 +9,10 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class DisableAdminsCommand
- * Remove the "admin" role from *ALL* users on all portals of this instance
- * @package Chash\Command\User
+ * Remove the "admin" role from *ALL* users on all portals of this instance.
  */
 class DisableAdminsCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
     protected function configure()
     {
         parent::configure();
@@ -27,9 +23,7 @@ class DisableAdminsCommand extends CommonDatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -57,6 +51,7 @@ class DisableAdminsCommand extends CommonDatabaseCommand
             }
             $output->writeln('All admins have been disabled. Use user:make-admin to add one back.');
         }
+
         return null;
     }
 }

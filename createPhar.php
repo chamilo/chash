@@ -1,7 +1,7 @@
 <?php
 /**
  * Make sure you have this setting in your php.ini (cli)
- * phar.readonly = Off
+ * phar.readonly = Off.
  */
 error_reporting(-1);
 

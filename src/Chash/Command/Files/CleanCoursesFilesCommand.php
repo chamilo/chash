@@ -9,27 +9,21 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class CleanCoursesFilesCommand
- * Clean the courses directory, leaving only index.html, twig and Serializer
- * @package Chash\Command\Files
+ * Clean the courses directory, leaving only index.html, twig and Serializer.
  */
 class CleanCoursesFilesCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
     protected function configure()
     {
         parent::configure();
         $this
             ->setName('files:clean_courses_files')
-            ->setAliases(array('ccf'))
+            ->setAliases(['ccf'])
             ->setDescription('Cleans the courses directory');
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return bool|int|null|void
+     * @return bool|int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

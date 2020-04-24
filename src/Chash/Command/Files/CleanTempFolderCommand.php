@@ -8,27 +8,21 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
- * Class CleanTempFolderCommand
- * @package Chash\Command\Files
+ * Class CleanTempFolderCommand.
  */
 class CleanTempFolderCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
     protected function configure()
     {
         parent::configure();
         $this
             ->setName('files:clean_temp_folder')
-            ->setAliases(array('fct'))
+            ->setAliases(['fct'])
             ->setDescription('Cleans the temp directory.');
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return bool|int|null|void
+     * @return bool|int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

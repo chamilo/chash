@@ -7,8 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class StatusCommand
- * @package Chash\Command\Installation
+ * Class StatusCommand.
  */
 class StatusCommand extends CommonDatabaseCommand
 {
@@ -22,19 +21,15 @@ class StatusCommand extends CommonDatabaseCommand
     }
 
     /**
-     * Executes a command via CLI
+     * Executes a command via CLI.
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
         $connection = $this->getConnection($input);
         $_configuration = $this->getConfigurationArray();
-
 
         $query = "SELECT selected_value FROM settings_current WHERE variable = 'chamilo_database_version'";
         $data = $connection->executeQuery($query);
@@ -96,10 +91,9 @@ class StatusCommand extends CommonDatabaseCommand
             $output->writeln('<comment>Chamilo $_configuration[system_version]:</comment> <info>'.$_configuration['system_version'].'</info>');
         }
 
-        if (!version_compare(substr($chamiloVersion, 0, 5), substr($_configuration['system_version'], 0, 5), '==' )) {
+        if (!version_compare(substr($chamiloVersion, 0, 5), substr($_configuration['system_version'], 0, 5), '==')) {
             /*$output->writeln("<error>Please check carefully your Chamilo installation. </error>");
             $output->writeln("<comment>The configuration.php file and the 'chamilo_database_version' setting are not synced.</comment>");*/
         }
     }
-
 }

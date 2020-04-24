@@ -17,8 +17,7 @@ use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Class CommonCommand
- * @package Chash\Command\Installation
+ * Class CommonCommand.
  */
 class CommonCommand extends AbstractCommand
 {
@@ -27,21 +26,18 @@ class CommonCommand extends AbstractCommand
     public $adminSettings;
     public $rootSys;
     public $configurationPath = null;
-    public $configuration = array();
+    public $configuration = [];
     public $extraDatabaseSettings;
     private $migrationConfigurationFile;
 
-    /**
-    * @param array $configuration
-    */
     public function setConfigurationArray(array $configuration)
     {
         $this->configuration = $configuration;
     }
 
     /**
-    * @return array
-    */
+     * @return array
+     */
     public function getConfigurationArray()
     {
         return $this->configuration;
@@ -63,9 +59,6 @@ class CommonCommand extends AbstractCommand
         return $this->configurationPath;
     }
 
-    /**
-     * @param array $portalSettings
-     */
     public function setPortalSettings(array $portalSettings)
     {
         $this->portalSettings = $portalSettings;
@@ -79,9 +72,6 @@ class CommonCommand extends AbstractCommand
         return $this->portalSettings;
     }
 
-    /**
-     * @param array $databaseSettings
-     */
     public function setDatabaseSettings(array $databaseSettings)
     {
         $user = isset($databaseSettings['dbuser']) ? $databaseSettings['dbuser'] : $databaseSettings['user'];
@@ -117,9 +107,6 @@ class CommonCommand extends AbstractCommand
         return $this->databaseSettings;
     }
 
-    /**
-    * @param array $databaseSettings
-    */
     public function setExtraDatabaseSettings(array $databaseSettings)
     {
         $this->extraDatabaseSettings = $databaseSettings;
@@ -133,9 +120,6 @@ class CommonCommand extends AbstractCommand
         return $this->extraDatabaseSettings;
     }
 
-    /**
-     * @param array $adminSettings
-     */
     public function setAdminSettings(array $adminSettings)
     {
         $this->adminSettings = $adminSettings;
@@ -192,7 +176,7 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Gets the installation version path
+     * Gets the installation version path.
      *
      * @param string $version
      *
@@ -200,14 +184,15 @@ class CommonCommand extends AbstractCommand
      */
     public function getInstallationPath($version)
     {
-        if ($version == 'master') {
+        if ('master' == $version) {
             $version = $this->getLatestVersion();
         }
+
         return $this->getInstallationFolder().$version.'/';
     }
 
     /**
-     * Gets the version name folders located in main/install
+     * Gets the version name folders located in main/install.
      *
      * @return array
      */
@@ -215,7 +200,7 @@ class CommonCommand extends AbstractCommand
     {
         $installPath = $this->getInstallationFolder();
         $dir = new \DirectoryIterator($installPath);
-        $dirList = array();
+        $dirList = [];
         foreach ($dir as $fileInfo) {
             if ($fileInfo->isDir() && !$fileInfo->isDot()) {
                 $dirList[$fileInfo->getFilename()] = $fileInfo->getFilename();
@@ -231,57 +216,57 @@ class CommonCommand extends AbstractCommand
      */
     public function getAdminSettingsParams()
     {
-        return array(
-            'firstname' => array(
-                'attributes' => array(
+        return [
+            'firstname' => [
+                'attributes' => [
                     'label' => 'Firstname',
-                    'data' =>  'John'
-                ),
-                'type' => 'text'
-            ),
-            'lastname' =>  array(
-                'attributes' => array(
+                    'data' => 'John',
+                ],
+                'type' => 'text',
+            ],
+            'lastname' => [
+                'attributes' => [
                     'label' => 'Lastname',
-                    'data' =>  'Doe'
-                ),
-                'type' => 'text'
-            ),
-            'username' => array(
-                'attributes' => array(
+                    'data' => 'Doe',
+                ],
+                'type' => 'text',
+            ],
+            'username' => [
+                'attributes' => [
                     'label' => 'Username',
-                    'data' =>  'admin'
-                ),
-                'type' => 'text'
-            ),
-            'password' => array(
-                'attributes' => array(
+                    'data' => 'admin',
+                ],
+                'type' => 'text',
+            ],
+            'password' => [
+                'attributes' => [
                     'label' => 'Password',
-                    'data' =>  'admin'
-                ),
-                'type' => 'password'
-            ),
-            'email' => array(
-                'attributes' => array(
+                    'data' => 'admin',
+                ],
+                'type' => 'password',
+            ],
+            'email' => [
+                'attributes' => [
                     'label' => 'Email',
-                    'data' =>  'admin@example.org'
-                ),
-                'type' => 'email'
-            ),
-            'language' => array(
-                'attributes' => array(
+                    'data' => 'admin@example.org',
+                ],
+                'type' => 'email',
+            ],
+            'language' => [
+                'attributes' => [
                     'label' => 'Language',
-                    'data' =>  'english'
-                ),
-                'type' => 'text'
-            ),
-            'phone' => array(
-                'attributes' => array(
+                    'data' => 'english',
+                ],
+                'type' => 'text',
+            ],
+            'phone' => [
+                'attributes' => [
                     'label' => 'Phone',
-                    'data' =>  '123456'
-                ),
-                'type' => 'text'
-            )
-        );
+                    'data' => '123456',
+                ],
+                'type' => 'text',
+            ],
+        ];
     }
 
     /**
@@ -289,120 +274,120 @@ class CommonCommand extends AbstractCommand
      */
     public function getPortalSettingsParams()
     {
-        return array(
-            'sitename' => array(
-                'attributes' => array(
+        return [
+            'sitename' => [
+                'attributes' => [
                     'label' => 'Site name',
                     'data' => 'Campus Chamilo',
-                ),
-                'type' => 'text'
-            ),
-            'site_url' => array(
-                'attributes' => array(
+                ],
+                'type' => 'text',
+            ],
+            'site_url' => [
+                'attributes' => [
                     'label' => 'URL of site to install',
                     'data' => 'http://localhost/',
-                ),
-                'type' => 'text'
-            ),
-            'institution' => array(
-                'attributes' => array(
+                ],
+                'type' => 'text',
+            ],
+            'institution' => [
+                'attributes' => [
                     'data' => 'Chamilo',
-                ),
-                'type' => 'text'
-            ),
-            'institution_url' => array(
-                'attributes' => array(
+                ],
+                'type' => 'text',
+            ],
+            'institution_url' => [
+                'attributes' => [
                     'label' => 'Website of the institution',
                     'data' => 'https://chamilo.org/',
-                ),
-                'type' => 'text'
-            ),
-            'encrypt_method' => array(
-                'attributes' => array(
-                    'choices' => array(
+                ],
+                'type' => 'text',
+            ],
+            'encrypt_method' => [
+                'attributes' => [
+                    'choices' => [
                         'sha1' => 'sha1',
                         'md5' => 'md5',
-                        'none' => 'none'
-                    ),
-                    'data' => 'sha1'
-                ),
+                        'none' => 'none',
+                    ],
+                    'data' => 'sha1',
+                ],
 
-                'type' => 'choice'
-            ),
-            'permissions_for_new_directories' => array(
-                'attributes' => array(
+                'type' => 'choice',
+            ],
+            'permissions_for_new_directories' => [
+                'attributes' => [
                     'data' => '0777',
-                ),
-                'type' => 'text'
-            ),
-            'permissions_for_new_files' => array(
-                'attributes' => array(
+                ],
+                'type' => 'text',
+            ],
+            'permissions_for_new_files' => [
+                'attributes' => [
                     'data' => '0666',
-                ),
-                'type' => 'text'
-            ),
-        );
+                ],
+                'type' => 'text',
+            ],
+        ];
     }
 
     /**
-     * Database parameters that are going to be parsed during the console/browser installation
+     * Database parameters that are going to be parsed during the console/browser installation.
+     *
      * @return array
      */
     public function getDatabaseSettingsParams()
     {
-        return array(
-            'driver' => array(
-                'attributes' => array(
-                    'choices' =>
-                        array(
+        return [
+            'driver' => [
+                'attributes' => [
+                    'choices' => [
                             'pdo_mysql' => 'pdo_mysql',
                             'pdo_sqlite' => 'pdo_sqlite',
                             'pdo_pgsql' => 'pdo_pgsql',
                             'pdo_oci' => 'pdo_oci',
                             'ibm_db2' => 'ibm_db2',
                             'pdo_ibm' => 'pdo_ibm',
-                            'pdo_sqlsrv' => 'pdo_sqlsrv'
-                        ),
-                    'data' => 'pdo_mysql'
-                ),
-                'type' => 'choice'
-            ),
-            'host' => array(
-                'attributes' => array(
+                            'pdo_sqlsrv' => 'pdo_sqlsrv',
+                        ],
+                    'data' => 'pdo_mysql',
+                ],
+                'type' => 'choice',
+            ],
+            'host' => [
+                'attributes' => [
                     'label' => 'Host',
                     'data' => 'localhost',
-                ),
-                'type' => 'text'
-            ),
-            'port' => array(
-                'attributes' => array(
+                ],
+                'type' => 'text',
+            ],
+            'port' => [
+                'attributes' => [
                     'label' => 'Port',
                     'data' => '3306',
-                ),
-                'type' => 'text'
-            ),
-            'dbname' => array(
-                'attributes' => array(
+                ],
+                'type' => 'text',
+            ],
+            'dbname' => [
+                'attributes' => [
                     'label' => 'Database name',
                     'data' => 'chamilo',
-                ),
-                'type' => 'text'
-            ),
-            'dbuser' => array(
-                'attributes' => array(
+                ],
+                'type' => 'text',
+            ],
+            'dbuser' => [
+                'attributes' => [
                     'label' => 'Database user',
                     'data' => 'root',
-                ),
-                'type' => 'text'
-            ),
-            'dbpassword' => array(
-                'attributes' => array(
+                ],
+                'type' => 'text',
+            ],
+            'dbpassword' => [
+                'attributes' => [
                     'label' => 'Database password',
                     'data' => 'root',
-                ),
-                'type' => 'password'
-            )
-        );
+                ],
+                'type' => 'password',
+            ],
+        ];
     }
 
     /**
@@ -414,7 +399,7 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Gets the content of a version from the available versions
+     * Gets the content of a version from the available versions.
      *
      * @param string $version
      *
@@ -433,7 +418,8 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Gets the min version available to migrate with this command
+     * Gets the min version available to migrate with this command.
+     *
      * @return mixed
      */
     public function getMinVersionSupportedByInstall()
@@ -442,13 +428,14 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Gets an array with the supported versions to migrate
+     * Gets an array with the supported versions to migrate.
+     *
      * @return array
      */
     public function getVersionNumberList()
     {
         $versionList = $this->availableVersions();
-        $versionNumberList = array();
+        $versionNumberList = [];
         foreach ($versionList as $version => $info) {
             $versionNumberList[] = $version;
         }
@@ -457,155 +444,156 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Gets an array with the settings for every supported version
+     * Gets an array with the settings for every supported version.
      *
      * @return array
      */
     public function availableVersions()
     {
-        $versionList = array(
-            '1.8.7' => array(
+        $versionList = [
+            '1.8.7' => [
                 'require_update' => false,
-            ),
-            '1.8.8' => array(
+            ],
+            '1.8.8' => [
                 'require_update' => true,
                 'pre' => 'migrate-db-1.8.7-1.8.8-pre.sql',
                 'post' => null,
                 'update_db' => 'update-db-1.8.7-1.8.8.inc.php',
                 //'update_files' => 'update-files-1.8.7-1.8.8.inc.php',
-                'hook_to_doctrine_version' => '8' //see ChamiloLMS\Migrations\Version8.php file
-            ),
-            '1.8.8.2' => array(
+                'hook_to_doctrine_version' => '8', //see ChamiloLMS\Migrations\Version8.php file
+            ],
+            '1.8.8.2' => [
                 'require_update' => false,
-                'parent' => '1.8.8'
-            ),
-            '1.8.8.4' => array(
+                'parent' => '1.8.8',
+            ],
+            '1.8.8.4' => [
                 'require_update' => false,
-                'parent' => '1.8.8'
-            ),
-            '1.8.8.6' => array(
+                'parent' => '1.8.8',
+            ],
+            '1.8.8.6' => [
                 'require_update' => false,
-                'parent' => '1.8.8'
-            ),
-            '1.9.0' => array(
+                'parent' => '1.8.8',
+            ],
+            '1.9.0' => [
                 'require_update' => true,
                 'pre' => 'migrate-db-1.8.8-1.9.0-pre.sql',
                 'post' => null,
                 'update_db' => 'update-db-1.8.8-1.9.0.inc.php',
                 'update_files' => 'update-files-1.8.8-1.9.0.inc.php',
-                'hook_to_doctrine_version' => '9'
-            ),
-            '1.9.2' => array(
+                'hook_to_doctrine_version' => '9',
+            ],
+            '1.9.2' => [
                 'require_update' => false,
-                'parent' => '1.9.0'
-            ),
-            '1.9.4' => array(
+                'parent' => '1.9.0',
+            ],
+            '1.9.4' => [
                 'require_update' => false,
-                'parent' => '1.9.0'
-            ),
-            '1.9.6.1' => array(
+                'parent' => '1.9.0',
+            ],
+            '1.9.6.1' => [
                 'require_update' => false,
-                'parent' => '1.9.0'
-            ),
-            '1.9.6' => array(
+                'parent' => '1.9.0',
+            ],
+            '1.9.6' => [
                 'require_update' => false,
-                'parent' => '1.9.0'
-            ),
-            '1.9.8' => array(
+                'parent' => '1.9.0',
+            ],
+            '1.9.8' => [
                 'require_update' => false,
-                'parent' => '1.9.0'
-            ),
-            '1.9.10' => array(
+                'parent' => '1.9.0',
+            ],
+            '1.9.10' => [
                 'require_update' => false,
-                'parent' => '1.9.0'
-            ),
-            '1.9.10.2' => array(
+                'parent' => '1.9.0',
+            ],
+            '1.9.10.2' => [
                 'require_update' => false,
-                'parent' => '1.9.0'
-            ),
-            '1.9.x' => array(
+                'parent' => '1.9.0',
+            ],
+            '1.9.x' => [
               'require_update' => false,
-              'parent' => '1.9.0'
-            ),
-            '1.10.0' => array(
+              'parent' => '1.9.0',
+            ],
+            '1.10.0' => [
                 'require_update' => true,
                 'hook_to_doctrine_version' => '20160808110200',
                 'migrations_directory' => 'app/Migrations/Schema/V110',
                 'migrations_namespace' => 'Application\Migrations\Schema\V110',
                 'migrations_yml' => 'V110.yml',
                 'update_files' => 'update.php',
-            ),
-            '1.10.2' => array(
+            ],
+            '1.10.2' => [
                 'require_update' => false,
-                'parent' => '1.10.0'
-            ),
-            '1.10.4' => array(
+                'parent' => '1.10.0',
+            ],
+            '1.10.4' => [
                 'require_update' => false,
-                'parent' => '1.10.0'
-            ),
-            '1.10.6' => array(
+                'parent' => '1.10.0',
+            ],
+            '1.10.6' => [
                 'require_update' => false,
-                'parent' => '1.10.0'
-            ),
-            '1.10.8' => array(
+                'parent' => '1.10.0',
+            ],
+            '1.10.8' => [
                 'require_update' => false,
-                'parent' => '1.10.0'
-            ),
-            '1.10.x' => array(
+                'parent' => '1.10.0',
+            ],
+            '1.10.x' => [
                 'require_update' => false,
-                'parent' => '1.10.0'
-            ),
-            '1.11.0' => array(
+                'parent' => '1.10.0',
+            ],
+            '1.11.0' => [
                 'require_update' => true,
                 'hook_to_doctrine_version' => '20171227120000',
                 'migrations_directory' => 'app/Migrations/Schema/V111',
                 'migrations_namespace' => 'Application\Migrations\Schema\V111',
                 'migrations_yml' => 'V111.yml',
                 'update_files' => 'update.php',
-            ),
-            '1.11.2' => array(
+            ],
+            '1.11.2' => [
                 'require_update' => false,
-                'parent' => '1.11.0'
-            ),
-            '1.11.4' => array(
+                'parent' => '1.11.0',
+            ],
+            '1.11.4' => [
                 'require_update' => false,
-                'parent' => '1.11.0'
-            ),
-            '1.11.6' => array(
+                'parent' => '1.11.0',
+            ],
+            '1.11.6' => [
                'require_update' => false,
-                'parent' => '1.11.0'
-            ),
-            '1.11.8' => array(
+                'parent' => '1.11.0',
+            ],
+            '1.11.8' => [
                'require_update' => false,
-                'parent' => '1.11.0'
-            ),
-            '1.11.10' => array(
+                'parent' => '1.11.0',
+            ],
+            '1.11.10' => [
                'require_update' => false,
-                'parent' => '1.11.0'
-            ),
-            '1.11.x' => array(
+                'parent' => '1.11.0',
+            ],
+            '1.11.x' => [
                 'require_update' => false,
-                'parent' => '1.11.0'
-            ),
-            '2.0'  => array(
+                'parent' => '1.11.0',
+            ],
+            '2.0' => [
                 'require_update' => true,
                 'update_files' => null,
                 'hook_to_doctrine_version' => '2',
-                'parent' => '2.0'
-            ),
-            'master'  => array(
+                'parent' => '2.0',
+            ],
+            'master' => [
                 'require_update' => true,
                 'update_files' => null,
                 'hook_to_doctrine_version' => '2',
-                'parent' => '2.0'
-            )
-        );
+                'parent' => '2.0',
+            ],
+        ];
 
         return $versionList;
     }
 
     /**
-     * Gets the Doctrine configuration file path
+     * Gets the Doctrine configuration file path.
+     *
      * @return string
      */
     public function getMigrationConfigurationFile()
@@ -622,7 +610,6 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     *
      * @return \Chash\Helpers\ConfigurationHelper
      */
     public function getConfigurationHelper()
@@ -632,13 +619,14 @@ class CommonCommand extends AbstractCommand
 
     /**
      * @todo move to configurationhelper
+     *
      * @param string $path
      */
     public function setRootSysDependingConfigurationPath($path)
     {
         $configurationPath = $this->getConfigurationHelper()->getNewConfigurationPath($path);
 
-        if ($configurationPath == false) {
+        if (false == $configurationPath) {
             //  Seems an old installation!
             $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($path);
             $this->setRootSys(realpath($configurationPath.'/../../../').'/');
@@ -650,9 +638,10 @@ class CommonCommand extends AbstractCommand
 
     /**
      * Writes an .htaccess file with the right RewriteBase path.
-     * @param string $path
-     * @return bool
      *
+     * @param string $path
+     *
+     * @return bool
      */
     public function writeHtaccess($path)
     {
@@ -679,7 +668,7 @@ class CommonCommand extends AbstractCommand
         $baseUrl = parse_url($portalSettings['site_url'], PHP_URL_PATH);
 
         // The second case should never happen, but let's play safe.
-        if ($baseUrl == null or substr($baseUrl, 0, 1) != '/') {
+        if (null == $baseUrl or '/' != substr($baseUrl, 0, 1)) {
             $baseUrl = '/';
         }
 
@@ -690,12 +679,13 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Writes the configuration file for the first time (install command)
+     * Writes the configuration file for the first time (install command).
+     *
      * @param string $version
      * @param string $path
-     * @param object $output Output handler to print info messages
-     * @return bool
+     * @param object $output  Output handler to print info messages
      *
+     * @return bool
      */
     public function writeConfiguration($version, $path, $output)
     {
@@ -708,7 +698,7 @@ class CommonCommand extends AbstractCommand
 
         // Creates a YML File
 
-        $configuration = array();
+        $configuration = [];
 
         $configuration['db_host'] = $databaseSettings['host'];
         $configuration['db_port'] = $databaseSettings['port'];
@@ -752,7 +742,7 @@ class CommonCommand extends AbstractCommand
                 $expectedValues['database_password'] = $configuration['db_password'];
                 $expectedValues['password_encryption'] = $configuration['password_encryption'];
 
-                $result = file_put_contents($file, Yaml::dump(array('parameters' => $expectedValues), 99));
+                $result = file_put_contents($file, Yaml::dump(['parameters' => $expectedValues], 99));
             } else {
                 return true;
             }
@@ -805,11 +795,11 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Updates the configuration.yml file
+     * Updates the configuration.yml file.
      *
-     * @param OutputInterface $output
-     * @param bool $dryRun
+     * @param bool  $dryRun
      * @param array $newValues
+     *
      * @return bool
      */
     public function updateConfiguration(OutputInterface $output, $dryRun, $newValues)
@@ -823,7 +813,7 @@ class CommonCommand extends AbstractCommand
             $_configuration = array_merge($_configuration, $newValues);
         }
 
-        $paramsToRemove = array(
+        $paramsToRemove = [
             'tracking_enabled',
             //'single_database', // still needed fro version 1.9.8
             //'table_prefix',
@@ -832,8 +822,8 @@ class CommonCommand extends AbstractCommand
             //'url_append',
             'statistics_database',
             'user_personal_database',
-            'scorm_database'
-        );
+            'scorm_database',
+        ];
 
         foreach ($_configuration as $key => $value) {
             if (in_array($key, $paramsToRemove)) {
@@ -850,9 +840,9 @@ class CommonCommand extends AbstractCommand
         $configurationPath = $this->getConfigurationPath();
         $newConfigurationFile = $configurationPath.'configuration.php';
 
-        if ($dryRun == false) {
+        if (false == $dryRun) {
             if (version_compare($newValues['system_version'], '1.10', '>=') ||
-                ($newValues['system_version'] == '1.10.x' || $newValues['system_version'] == '1.11.x')
+                ('1.10.x' == $newValues['system_version'] || '1.11.x' == $newValues['system_version'])
             ) {
                 $configurationPath = $_configuration['root_sys'].'app/config/';
                 $newConfigurationFile = $configurationPath.'configuration.php';
@@ -868,241 +858,115 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Gets the SQL files relation with versions
+     * Gets the SQL files relation with versions.
+     *
      * @return array
      */
     public function getDatabaseMap()
     {
-        $defaultCourseData = array(
-            array(
+        $defaultCourseData = [
+            [
                 'name' => 'course1',
-                'sql' => array(
+                'sql' => [
                     'db_course1.sql',
-                )
-            ),
-            array(
+                ],
+            ],
+            [
                 'name' => 'course2',
-                'sql' => array(
-                    'db_course2.sql'
-                )
-            )
-        );
+                'sql' => [
+                    'db_course2.sql',
+                ],
+            ],
+        ];
 
-        return array(
-            '1.8.7' => array(
-                'section' => array(
-                    'main' => array(
-                        array(
+        return [
+            '1.8.7' => [
+                'section' => [
+                    'main' => [
+                        [
                             'name' => 'chamilo',
-                            'sql' => array(
+                            'sql' => [
                                 'db_main.sql',
                                 'db_stats.sql',
-                                'db_user.sql'
-                            )
-                        )
-                    ),
-                    'course' => $defaultCourseData
-                ),
-            ),
-            '1.8.8' => array(
-                'section' => array(
-                    'main' => array(
-                        array(
+                                'db_user.sql',
+                            ],
+                        ],
+                    ],
+                    'course' => $defaultCourseData,
+                ],
+            ],
+            '1.8.8' => [
+                'section' => [
+                    'main' => [
+                        [
                             'name' => 'chamilo',
-                            'sql' => array(
+                            'sql' => [
                                 'db_main.sql',
                                 'db_stats.sql',
-                                'db_user.sql'
-                            )
-                        )
-                    ),
-                    'course' => $defaultCourseData
-                ),
-            ),
-            '1.9.0' => array(
-                'section' => array(
-                    'main' => array(
-                        array(
+                                'db_user.sql',
+                            ],
+                        ],
+                    ],
+                    'course' => $defaultCourseData,
+                ],
+            ],
+            '1.9.0' => [
+                'section' => [
+                    'main' => [
+                        [
                             'name' => 'chamilo',
-                            'sql' => array(
+                            'sql' => [
                                 'db_course.sql',
                                 'db_main.sql',
                                 'db_stats.sql',
-                                'db_user.sql'
-                            ),
-                        )
-                    )
-                )
-            ),
-            '1.10.0' => array(
-                'section' => array(
+                                'db_user.sql',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            '1.10.0' => [
+                'section' => [
                     'migrations' => 'Version110',
-                )
-            ),
-            '1.11.0' => array(
-                'section' => array(
+                ],
+            ],
+            '1.11.0' => [
+                'section' => [
                     'migrations' => 'Version111',
-                )
-            ),
-            '2.0' => array(
-                'section' => array(
-                    'main' => array(
-                        array(
+                ],
+            ],
+            '2.0' => [
+                'section' => [
+                    'main' => [
+                        [
                             'name' => 'chamilo',
-                            'sql' => array(
+                            'sql' => [
                                 //'course.sql',
                                 //'main.sql'
-                            ),
-                        ),
-                    ),
-                )
-            ),
-            'master' => array(
-                'section' => array(
-                    'main' => array(
-                        array(
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'master' => [
+                'section' => [
+                    'main' => [
+                        [
                             'name' => 'chamilo',
-                            'sql' => array(
+                            'sql' => [
                                 //'course.sql',
                                 //'main.sql'
-                            ),
-                        ),
-                    ),
-                )
-            )
-        );
-    }
-
-    /**
-     * Set Doctrine settings
-     * @param HelperSet $helperSet
-     * @return \Doctrine\ORM\EntityManager
-     */
-    protected function setDoctrineSettings(HelperSet $helperSet)
-    {
-        $config = new \Doctrine\ORM\Configuration();
-        $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache());
-        $reader = new AnnotationReader();
-
-        $driverImpl = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver(
-            $reader,
-            array()
-        );
-        $config->setMetadataDriverImpl($driverImpl);
-        $config->setProxyDir(__DIR__ . '/Proxies');
-        $config->setProxyNamespace('Proxies');
-        $settings = $this->getDatabaseSettings();
-        $dbName = $settings['dbname'];
-        unset($settings['dbname']);
-
-        $em = \Doctrine\ORM\EntityManager::create(
-            $settings,
-            $config
-        );
-
-        try {
-            $connection = $em->getConnection();
-            $dbList = $connection->getSchemaManager()->listDatabases();
-            // Check in db exists in list.
-            if (in_array($dbName, $dbList)) {
-                $settings['dbname'] = $dbName;
-                $em = \Doctrine\ORM\EntityManager::create(
-                    $settings,
-                    $config
-                );
-            }
-        } catch (ConnectionException $e) {
-            echo $e->getMessage();
-        }
-
-        $platform = $em->getConnection()->getDatabasePlatform();
-        $platform->registerDoctrineTypeMapping('enum', 'string');
-        $platform->registerDoctrineTypeMapping('set', 'string');
-
-        $helpers = array(
-            'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper(
-                $em->getConnection()
-            ),
-            'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper(
-                $em
-            )
-            //'configuration' => new \Chash\Helpers\ConfigurationHelper()
-        );
-
-        foreach ($helpers as $name => $helper) {
-            $helperSet->set(
-                $helper,
-                $name
-            );
-        }
-
-        return $em;
-    }
-
-    /**
-     * @param string $version
-     * @param string $path
-     * @param array $databaseList
-     */
-    protected function setConnections($version, $path, $databaseList)
-    {
-        $_configuration = $this->getHelper('configuration')->getConfiguration($path);
-
-        $config = new \Doctrine\ORM\Configuration();
-        $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache);
-        $reader = new AnnotationReader();
-
-        $driverImpl = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver($reader, array());
-        $config->setMetadataDriverImpl($driverImpl);
-        $config->setProxyDir(__DIR__ . '/Proxies');
-        $config->setProxyNamespace('Proxies');
-
-        foreach ($databaseList as $section => &$dbList) {
-            foreach ($dbList as &$dbInfo) {
-                $params = $this->getDatabaseSettings();
-
-                if (isset($_configuration['single_database']) && $_configuration['single_database'] == true) {
-                    $em = \Doctrine\ORM\EntityManager::create($params, $config);
-                } else {
-                    if ($section == 'course') {
-                        if (version_compare($version, '10', '<=')) {
-                            if (strpos($dbInfo['database'], '_chamilo_course_') === false) {
-                                //$params['dbname'] = $params['dbname'];
-                            } else {
-                                $params['dbname'] = str_replace('_chamilo_course_', '', $dbInfo['database']);
-                            }
-                        }
-                        $em = \Doctrine\ORM\EntityManager::create($params, $config);
-                    } else {
-                        $databaseName = $params['dbname'];
-                        switch ($dbInfo['database']) {
-                            case 'statistics_database':
-                                $databaseName = isset($_configuration['statistics_database']) ? $_configuration['statistics_database'] : $databaseName;
-                                break;
-                            case 'user_personal_database':
-                                $databaseName = isset($_configuration['user_personal_database']) ? $_configuration['user_personal_database'] : $databaseName;
-                                break;
-                        }
-                        $params['dbname'] = $databaseName;
-                        $em = \Doctrine\ORM\EntityManager::create($params, $config);
-                    }
-                }
-
-                if (!empty($em)) {
-                    $platform = $em->getConnection()->getDatabasePlatform();
-                    $platform->registerDoctrineTypeMapping('enum', 'string');
-                    $platform->registerDoctrineTypeMapping('set', 'string');
-                }
-
-                $helper = new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($em->getConnection());
-                $this->getApplication()->getHelperSet()->set($helper, $dbInfo['database']);
-            }
-        }
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
      * @param Finder $files
-     * @param OutputInterface $output
+     *
      * @return int
      */
     public function removeFiles($files, OutputInterface $output)
@@ -1135,7 +999,6 @@ class CommonCommand extends AbstractCommand
                 }
                 $fs->remove($files);
             }
-
         } catch (IOException $e) {
             echo "\n An error occurred while removing the directory: ".$e->getMessage()."\n ";
         }
@@ -1144,13 +1007,11 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param array $params
      * @return array
      */
     public function getParamsFromOptions(InputInterface $input, array $params)
     {
-        $filledParams = array();
+        $filledParams = [];
 
         foreach ($params as $key => $value) {
             $newValue = $input->getOption($key);
@@ -1161,11 +1022,11 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * @param OutputInterface $output
      * @param string $version
      * @param string $updateInstallation
      * @param string $defaultTempFolder
-     * @return int|null|String
+     *
+     * @return int|string|null
      */
     public function getPackage(OutputInterface $output, $version, $updateInstallation, $defaultTempFolder)
     {
@@ -1195,7 +1056,6 @@ class CommonCommand extends AbstractCommand
         $updateInstallationOriginal = $updateInstallation;
 
         if (!empty($updateInstallation)) {
-
             // Check temp folder
             if (!is_writable($defaultTempFolder)) {
                 $output->writeln("<comment>We don't have permissions to write in the temp folder: $defaultTempFolder</comment>");
@@ -1204,7 +1064,7 @@ class CommonCommand extends AbstractCommand
             }
 
             // Download file?
-            if (strpos($updateInstallation, 'http') === false) {
+            if (false === strpos($updateInstallation, 'http')) {
                 if (!file_exists($updateInstallation)) {
                     $output->writeln("<comment>File does not exists: $updateInstallation</comment>");
 
@@ -1215,7 +1075,6 @@ class CommonCommand extends AbstractCommand
 
                 $updateInstallationLocalName = $defaultTempFolder.'/'.basename($urlInfo['path']);
                 if (!file_exists($updateInstallationLocalName)) {
-
                     $output->writeln("<comment>Executing</comment> <info>wget -O $updateInstallationLocalName '$updateInstallation'</info>");
                     $output->writeln('');
 
@@ -1267,7 +1126,6 @@ class CommonCommand extends AbstractCommand
                         /** @var \Alchemy\Zippy\Archive\Member $member */
                         foreach ($archive as $member) {
                             if (isset($member)) {
-
                                 if ($member->isDir()) {
                                     $location = $member->getLocation();
                                     $globalFile = $folderPath.'/'.$location.'main/inc/global.inc.php';
@@ -1286,7 +1144,6 @@ class CommonCommand extends AbstractCommand
                                 }
                             }
                         }
-
                     } catch (\Alchemy\Zippy\Exception\RunTimeException $e) {
                         $output->writeln("<comment>It seems that this file doesn't contain a Chamilo package:</comment> <info>$updateInstallationOriginal</info>");
 
@@ -1319,9 +1176,10 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * @param array $_configuration
+     * @param array  $_configuration
      * @param string $courseDatabase
-     * @return null|string
+     *
+     * @return string|null
      */
     public function getTablePrefix($_configuration, $courseDatabase = null)
     {
@@ -1339,9 +1197,9 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * @param OutputInterface $output
      * @param string $chamiloLocationPath
      * @param string $destinationPath
+     *
      * @return int
      */
     public function copyPackageIntoSystem(
@@ -1357,6 +1215,7 @@ class CommonCommand extends AbstractCommand
 
         if (empty($chamiloLocationPath)) {
             $output->writeln("<error>The chamiloLocationPath variable is empty<error>");
+
             return 0;
         }
 
@@ -1364,16 +1223,17 @@ class CommonCommand extends AbstractCommand
 
         if (empty($destinationPath)) {
             $output->writeln("<error>The root path was not set.<error>");
+
             return 0;
         } else {
-            $fileSystem->mirror($chamiloLocationPath, $destinationPath, null, array('override' => true));
+            $fileSystem->mirror($chamiloLocationPath, $destinationPath, null, ['override' => true]);
             $output->writeln("<comment>Copy finished.<comment>");
+
             return 1;
         }
     }
 
     /**
-     * @param OutputInterface $output
      * @param string $title
      */
     public function writeCommandHeader(OutputInterface $output, $title)
@@ -1384,25 +1244,23 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Returns the config file list
+     * Returns the config file list.
+     *
      * @return array
      */
     public function getConfigFiles()
     {
-        return array(
+        return [
             'portfolio.conf.dist.php',
             'events.conf.dist.php',
             'add_course.conf.dist.php',
             'mail.conf.dist.php',
             'auth.conf.dist.php',
             'profile.conf.dist.php',
-            'course_info.conf.php'
-        );
+            'course_info.conf.php',
+        ];
     }
 
-    /**
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     */
     public function generateConfFiles(OutputInterface $output)
     {
         $confDir = $this->getConfigurationPath();
@@ -1421,8 +1279,7 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * Copy files from main/inc/conf to the new location config
-     * @param OutputInterface $output
+     * Copy files from main/inc/conf to the new location config.
      */
     public function copyConfigFilesToNewLocation(OutputInterface $output)
     {
@@ -1437,7 +1294,7 @@ class CommonCommand extends AbstractCommand
         $configList[] = 'configuration.dist.php';
         foreach ($configList as $file) {
             // This file contains a get_lang that cause a fatal error.
-            if (in_array($file, array('events.conf.dist.php', 'mail.conf.dist.php'))) {
+            if (in_array($file, ['events.conf.dist.php', 'mail.conf.dist.php'])) {
                 continue;
             }
             $configFile = str_replace('dist.', '', $file);
@@ -1470,7 +1327,6 @@ class CommonCommand extends AbstractCommand
     }
 
     /**
-     * @param OutputInterface $output
      * @param $path
      */
     public function removeUnUsedFiles(OutputInterface $output, $path)
@@ -1478,10 +1334,10 @@ class CommonCommand extends AbstractCommand
         $output->writeln('<comment>Removing unused files</comment>');
         $fs = new Filesystem();
 
-        $list = array(
+        $list = [
             'archive',
-            'config/course_info.conf.php'
-        );
+            'config/course_info.conf.php',
+        ];
 
         foreach ($list as $file) {
             $filePath = $path.'/'.$file;
@@ -1492,10 +1348,6 @@ class CommonCommand extends AbstractCommand
         }
     }
 
-    /**
-     * @param OutputInterface $output
-     * @param Connection $connection
-     */
     public function setPortalSettingsInChamilo(OutputInterface $output, Connection $connection)
     {
         // Admin settings
@@ -1503,23 +1355,23 @@ class CommonCommand extends AbstractCommand
 
         $connection->update(
             'settings_current',
-            array('selected_value' => $adminSettings['email']),
-            array('variable' => 'emailAdministrator')
+            ['selected_value' => $adminSettings['email']],
+            ['variable' => 'emailAdministrator']
         );
         $connection->update(
             'settings_current',
-            array('selected_value' => $adminSettings['lastname']),
-            array('variable' => 'administratorSurname')
+            ['selected_value' => $adminSettings['lastname']],
+            ['variable' => 'administratorSurname']
         );
         $connection->update(
             'settings_current',
-            array('selected_value' => $adminSettings['firstname']),
-            array('variable' => 'administratorName')
+            ['selected_value' => $adminSettings['firstname']],
+            ['variable' => 'administratorName']
         );
         $connection->update(
             'settings_current',
-            array('selected_value' => $adminSettings['language']),
-            array('variable' => 'platformLanguage')
+            ['selected_value' => $adminSettings['language']],
+            ['variable' => 'platformLanguage']
         );
 
         // Portal settings.
@@ -1527,68 +1379,64 @@ class CommonCommand extends AbstractCommand
 
         $connection->update(
             'settings_current',
-            array('selected_value' => 1),
-            array('variable' => 'allow_registration')
+            ['selected_value' => 1],
+            ['variable' => 'allow_registration']
         );
 
         $connection->update(
             'settings_current',
-            array('selected_value' => 1),
-            array('variable' => 'allow_registration_as_teacher')
+            ['selected_value' => 1],
+            ['variable' => 'allow_registration_as_teacher']
         );
 
         $connection->update(
             'settings_current',
-            array('selected_value' => $settings['permissions_for_new_directories']),
-            array('variable' => 'permissions_for_new_directories')
+            ['selected_value' => $settings['permissions_for_new_directories']],
+            ['variable' => 'permissions_for_new_directories']
         );
 
         $connection->update(
             'settings_current',
-            array('selected_value' => $settings['permissions_for_new_files']),
-            array('variable' => 'permissions_for_new_files')
+            ['selected_value' => $settings['permissions_for_new_files']],
+            ['variable' => 'permissions_for_new_files']
         );
 
         $connection->update(
             'settings_current',
-            array('selected_value' => $settings['institution']),
-            array('variable' => 'Institution')
+            ['selected_value' => $settings['institution']],
+            ['variable' => 'Institution']
         );
 
         $connection->update(
             'settings_current',
-            array('selected_value' => $settings['institution_url']),
-            array('variable' => 'InstitutionUrl')
+            ['selected_value' => $settings['institution_url']],
+            ['variable' => 'InstitutionUrl']
         );
 
         $connection->update(
             'settings_current',
-            array('selected_value' => $settings['sitename']),
-            array('variable' => 'siteName')
+            ['selected_value' => $settings['sitename']],
+            ['variable' => 'siteName']
         );
     }
 
-    /**
-     * @param OutputInterface $output
-     * @param Connection $connection
-     */
     public function setAdminSettingsInChamilo(OutputInterface $output, Connection $connection)
     {
         $settings = $this->getAdminSettings();
         // Password already set by the Chamilo
         //$settings['password'] = $this->getEncryptedPassword($settings['password']);
 
-        $connection->update('user', array('auth_source' => 'platform'), array('user_id' => '1'));
-        $connection->update('user', array('username' => $settings['username']), array('user_id' => '1'));
-        $connection->update('user', array('firstname' => $settings['firstname']), array('user_id' => '1'));
-        $connection->update('user', array('lastname' => $settings['lastname']), array('user_id' => '1'));
-        $connection->update('user', array('phone' => $settings['phone']), array('user_id' => '1'));
+        $connection->update('user', ['auth_source' => 'platform'], ['user_id' => '1']);
+        $connection->update('user', ['username' => $settings['username']], ['user_id' => '1']);
+        $connection->update('user', ['firstname' => $settings['firstname']], ['user_id' => '1']);
+        $connection->update('user', ['lastname' => $settings['lastname']], ['user_id' => '1']);
+        $connection->update('user', ['phone' => $settings['phone']], ['user_id' => '1']);
         //$connection->update('user', array('password' => $settings['password']), array('user_id' => '1'));
-        $connection->update('user', array('email' => $settings['email']), array('user_id' => '1'));
+        $connection->update('user', ['email' => $settings['email']], ['user_id' => '1']);
         // Admin user.
-        $connection->update('user', array('language' => $settings['language']), array('user_id' => '1'));
+        $connection->update('user', ['language' => $settings['language']], ['user_id' => '1']);
         // Anonymous user.
-        $connection->update('user', array('language' => $settings['language']), array('user_id' => '2'));
+        $connection->update('user', ['language' => $settings['language']], ['user_id' => '2']);
     }
 
     /**
@@ -1596,6 +1444,7 @@ class CommonCommand extends AbstractCommand
      *
      * @param string $password
      * @param string $salt
+     *
      * @return string
      */
     public function getEncryptedPassword($password, $salt = null)
@@ -1611,6 +1460,133 @@ class CommonCommand extends AbstractCommand
             case 'md5':
             default:
                 return empty($salt) ? md5($password) : md5($password.$salt);
+        }
+    }
+
+    /**
+     * Set Doctrine settings.
+     *
+     * @return \Doctrine\ORM\EntityManager
+     */
+    protected function setDoctrineSettings(HelperSet $helperSet)
+    {
+        $config = new \Doctrine\ORM\Configuration();
+        $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache());
+        $reader = new AnnotationReader();
+
+        $driverImpl = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver(
+            $reader,
+            []
+        );
+        $config->setMetadataDriverImpl($driverImpl);
+        $config->setProxyDir(__DIR__.'/Proxies');
+        $config->setProxyNamespace('Proxies');
+        $settings = $this->getDatabaseSettings();
+        $dbName = $settings['dbname'];
+        unset($settings['dbname']);
+
+        $em = \Doctrine\ORM\EntityManager::create(
+            $settings,
+            $config
+        );
+
+        try {
+            $connection = $em->getConnection();
+            $dbList = $connection->getSchemaManager()->listDatabases();
+            // Check in db exists in list.
+            if (in_array($dbName, $dbList)) {
+                $settings['dbname'] = $dbName;
+                $em = \Doctrine\ORM\EntityManager::create(
+                    $settings,
+                    $config
+                );
+            }
+        } catch (ConnectionException $e) {
+            echo $e->getMessage();
+        }
+
+        $platform = $em->getConnection()->getDatabasePlatform();
+        $platform->registerDoctrineTypeMapping('enum', 'string');
+        $platform->registerDoctrineTypeMapping('set', 'string');
+
+        $helpers = [
+            'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper(
+                $em->getConnection()
+            ),
+            'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper(
+                $em
+            ),
+            //'configuration' => new \Chash\Helpers\ConfigurationHelper()
+        ];
+
+        foreach ($helpers as $name => $helper) {
+            $helperSet->set(
+                $helper,
+                $name
+            );
+        }
+
+        return $em;
+    }
+
+    /**
+     * @param string $version
+     * @param string $path
+     * @param array  $databaseList
+     */
+    protected function setConnections($version, $path, $databaseList)
+    {
+        $_configuration = $this->getHelper('configuration')->getConfiguration($path);
+
+        $config = new \Doctrine\ORM\Configuration();
+        $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache());
+        $reader = new AnnotationReader();
+
+        $driverImpl = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver($reader, []);
+        $config->setMetadataDriverImpl($driverImpl);
+        $config->setProxyDir(__DIR__.'/Proxies');
+        $config->setProxyNamespace('Proxies');
+
+        foreach ($databaseList as $section => &$dbList) {
+            foreach ($dbList as &$dbInfo) {
+                $params = $this->getDatabaseSettings();
+
+                if (isset($_configuration['single_database']) && true == $_configuration['single_database']) {
+                    $em = \Doctrine\ORM\EntityManager::create($params, $config);
+                } else {
+                    if ('course' == $section) {
+                        if (version_compare($version, '10', '<=')) {
+                            if (false === strpos($dbInfo['database'], '_chamilo_course_')) {
+                                //$params['dbname'] = $params['dbname'];
+                            } else {
+                                $params['dbname'] = str_replace('_chamilo_course_', '', $dbInfo['database']);
+                            }
+                        }
+                        $em = \Doctrine\ORM\EntityManager::create($params, $config);
+                    } else {
+                        $databaseName = $params['dbname'];
+                        switch ($dbInfo['database']) {
+                            case 'statistics_database':
+                                $databaseName = isset($_configuration['statistics_database']) ? $_configuration['statistics_database'] : $databaseName;
+                                break;
+                            case 'user_personal_database':
+                                $databaseName = isset($_configuration['user_personal_database']) ? $_configuration['user_personal_database'] : $databaseName;
+                                break;
+                        }
+                        $params['dbname'] = $databaseName;
+                        $em = \Doctrine\ORM\EntityManager::create($params, $config);
+                    }
+                }
+
+                if (!empty($em)) {
+                    $platform = $em->getConnection()->getDatabasePlatform();
+                    $platform->registerDoctrineTypeMapping('enum', 'string');
+                    $platform->registerDoctrineTypeMapping('set', 'string');
+                }
+
+                $helper = new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($em->getConnection());
+                $this->getApplication()->getHelperSet()->set($helper, $dbInfo['database']);
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * Command-line tool to do things more swiftly in Chamilo.
- * To add support for a new command see the Console Component read:
+ * To add support for a new command see the Console Component read:.
  *
  * https://speakerdeck.com/hhamon/symfony-extending-the-console-component
  * http://symfony.com/doc/2.0/components/console/introduction.html
@@ -20,9 +20,9 @@ require __DIR__.'/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
 
-$helpers = array(
-    'configuration' => new Chash\Helpers\ConfigurationHelper()
-);
+$helpers = [
+    'configuration' => new Chash\Helpers\ConfigurationHelper(),
+];
 
 $application = new Application('Chamilo Command Line Interface', '1.0');
 
@@ -32,7 +32,7 @@ foreach ($helpers as $name => $helper) {
 }
 
 $application->addCommands(
-    array(
+    [
         // DBAL Commands.
         new \Doctrine\DBAL\Tools\Console\Command\RunSqlCommand(),
         //new \Doctrine\DBAL\Tools\Console\Command\ImportCommand(),
@@ -97,6 +97,6 @@ $application->addCommands(
         new Chash\Command\User\ResetLoginCommand(),
         new Chash\Command\User\SetLanguageCommand(),
         new Chash\Command\User\UsersPerUrlAccessCommand(),
-    )
+    ]
 );
 $application->run();

@@ -12,8 +12,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 
 /**
- * Class InstallCommand
- * @package Chash\Command\Installation
+ * Class InstallCommand.
  */
 class InstallCommand extends CommonCommand
 {
@@ -28,43 +27,6 @@ class InstallCommand extends CommonCommand
     public $linuxGroup;
 
     /**
-     * Configure command.
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('chash:chamilo_install')
-            ->setDescription('Execute a Chamilo installation to a specified version.')
-            ->addArgument('version', InputArgument::REQUIRED, 'The version to migrate to.', null)
-            ->addArgument('path', InputArgument::OPTIONAL, 'The path to the chamilo folder')
-            ->addOption('download-package', null, InputOption::VALUE_NONE, 'Downloads the chamilo package')
-            ->addOption('only-download-package', null, InputOption::VALUE_NONE, 'Only downloads the package')
-            ->addOption('temp-folder', null, InputOption::VALUE_OPTIONAL, 'The temp folder.', '/tmp')
-            ->addOption('linux-user', null, InputOption::VALUE_OPTIONAL, 'user', 'www-data')
-            ->addOption('linux-group', null, InputOption::VALUE_OPTIONAL, 'group', 'www-data')
-            ->addOption('silent', null, InputOption::VALUE_NONE, 'Execute the migration with out asking questions.');
-
-        $params = $this->getPortalSettingsParams();
-
-        foreach ($params as $key => $value) {
-            $this->addOption($key, null, InputOption::VALUE_OPTIONAL);
-        }
-
-        $params = $this->getAdminSettingsParams();
-        foreach ($params as $key => $value) {
-            $this->addOption($key, null, InputOption::VALUE_OPTIONAL);
-        }
-
-        $params = $this->getDatabaseSettingsParams();
-        foreach ($params as $key => $value) {
-            $this->addOption($key, null, InputOption::VALUE_OPTIONAL);
-        }
-    }
-
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
      * @return int
      */
     public function installLegacy(InputInterface $input, OutputInterface $output)
@@ -87,6 +49,7 @@ class InstallCommand extends CommonCommand
 
         if (!is_writable($configurationPath)) {
             $output->writeln("<error>Folder ".$configurationPath." must be writable</error>");
+
             return 0;
         } else {
             $output->writeln("<comment>Configuration file will be saved here: </comment><info>".$configurationPath."configuration.php </info>");
@@ -99,8 +62,9 @@ class InstallCommand extends CommonCommand
             $configurationDistExists = true;
         }
 
-        if ($configurationDistExists == false) {
+        if (false == $configurationDistExists) {
             $output->writeln("<error>configuration.dist.php file nof found</error> <comment>The file must exist in install/configuration.dist.php or app/config/parameter.yml");
+
             return 0;
         }
 
@@ -112,6 +76,7 @@ class InstallCommand extends CommonCommand
             } else {
                 $output->writeln("<comment>There's a Chamilo portal here:</comment> <info>".$configurationPath." </info>");
             }
+
             return 0;
         }
 
@@ -139,6 +104,7 @@ class InstallCommand extends CommonCommand
                     $databaseSettings['dbname']
                 )
             );
+
             return 0;
         }
 
@@ -146,7 +112,7 @@ class InstallCommand extends CommonCommand
             $eventManager = $connectionToHost->getSchemaManager();
             $databases = $eventManager->listDatabases();
             if (in_array($databaseSettings['dbname'], $databases)) {
-                if ($silent == false) {
+                if (false == $silent) {
                     $helper = $this->getHelper('question');
                     $question = new ConfirmationQuestion(
                         "<comment>The database <info>{$databaseSettings['dbname']}</info> exists and is going to be dropped!</comment> <question>Are you sure?</question>(y/N)"
@@ -173,11 +139,11 @@ class InstallCommand extends CommonCommand
                 )
             );
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
+
             return 0;
         }
 
         if ($connect) {
-
             $output->writeln(
                 sprintf(
                     "<comment>Connection to database '%s' established.</comment>",
@@ -187,7 +153,6 @@ class InstallCommand extends CommonCommand
             $configurationWasSaved = $this->writeConfiguration($version, $path, $output);
 
             if ($configurationWasSaved) {
-
                 $absPath = $this->getConfigurationHelper()->getConfigurationPath($path);
                 $output->writeln(
                     sprintf(
@@ -230,20 +195,20 @@ class InstallCommand extends CommonCommand
 
                     // Cleaning temp folders.
                     $command = $this->getApplication()->find('files:clean_temp_folder');
-                    $arguments = array(
+                    $arguments = [
                         'command' => 'files:clean_temp_folder',
                         '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
-                    );
+                    ];
 
                     $input = new ArrayInput($arguments);
                     $command->run($input, $output);
 
                     // Generating temp folders.
                     $command = $this->getApplication()->find('files:generate_temp_folders');
-                    $arguments = array(
+                    $arguments = [
                         'command' => 'files:generate_temp_folders',
                         '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
-                    );
+                    ];
 
                     $input = new ArrayInput($arguments);
                     $command->run($input, $output);
@@ -252,13 +217,13 @@ class InstallCommand extends CommonCommand
 
                     if (PHP_SAPI == 'cli') {
                         $command = $this->getApplication()->find('files:set_permissions_after_install');
-                        $arguments = array(
+                        $arguments = [
                             'command' => 'files:set_permissions_after_install',
                             '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
                             '--linux-user' => $linuxUser,
-                            '--linux-group' => $linuxGroup
+                            '--linux-group' => $linuxGroup,
                             //'--dry-run' => $dryRun
-                        );
+                        ];
 
                         $input = new ArrayInput($arguments);
                         $command->run($input, $output);
@@ -268,25 +233,27 @@ class InstallCommand extends CommonCommand
                     //$this->generateConfFiles($output);
 
                     $output->writeln("<comment>Chamilo was successfully installed here: ".$this->getRootSys()." </comment>");
+
                     return 1;
                 } else {
                     $output->writeln("<comment>There was an error during installation.</comment>");
+
                     return 0;
                 }
             } else {
                 $output->writeln("<comment>Configuration file was not saved</comment>");
+
                 return 0;
             }
         } else {
             $output->writeln("<comment>Can't create database '".$databaseSettings['dbname']."' </comment>");
+
             return 0;
         }
     }
 
     /**
-     * Install Chamilo
-     * @param InputInterface $input
-     * @param OutputInterface $output
+     * Install Chamilo.
      *
      * @return bool
      */
@@ -316,6 +283,7 @@ class InstallCommand extends CommonCommand
 
         if (empty($this->databaseSettings)) {
             $output->writeln("<comment>Cannot get database settings. </comment>");
+
             return false;
         } else {
             var_dump($this->databaseSettings);
@@ -349,8 +317,6 @@ class InstallCommand extends CommonCommand
 
     /**
      * Ask for DB settings.
-     * @param InputInterface $input
-     * @param OutputInterface $output
      */
     public function askDatabaseSettings(InputInterface $input, OutputInterface $output)
     {
@@ -363,13 +329,13 @@ class InstallCommand extends CommonCommand
         $params = $this->getDatabaseSettingsParams();
         $total = count($params);
         $output->writeln(
-            "<comment>Database settings: (" . $total . ")</comment>"
+            "<comment>Database settings: (".$total.")</comment>"
         );
-        $databaseSettings = array();
+        $databaseSettings = [];
         $counter = 1;
         foreach ($params as $key => $value) {
             if (!isset($filledParams[$key])) {
-                if (!$input->isInteractive() && (in_array($key, array('dbpassword', 'port', 'host', 'driver')))) {
+                if (!$input->isInteractive() && (in_array($key, ['dbpassword', 'port', 'host', 'driver']))) {
                     // db password may be empty, so if not provided and the
                     // --no-interaction mode was configured, forget about it
                     switch ($key) {
@@ -382,37 +348,37 @@ class InstallCommand extends CommonCommand
                         case 'host':
                             $databaseSettings[$key] = 'localhost';
                             $output->writeln(
-                                "($counter/$total) <comment>Option: $key was not provided. Using default value " . $databaseSettings[$key] . "</comment>"
+                                "($counter/$total) <comment>Option: $key was not provided. Using default value ".$databaseSettings[$key]."</comment>"
                             );
                             break;
                         case 'port':
                             $databaseSettings[$key] = '3306';
                             $output->writeln(
-                                "($counter/$total) <comment>Option: $key was not provided. Using default value " . $databaseSettings[$key] . "</comment>"
+                                "($counter/$total) <comment>Option: $key was not provided. Using default value ".$databaseSettings[$key]."</comment>"
                             );
                             break;
                         case 'driver':
                             $databaseSettings[$key] = 'pdo_mysql';
                             $output->writeln(
-                                "($counter/$total) <comment>Option: $key was not provided. Using default value " . $databaseSettings[$key] . "</comment>"
+                                "($counter/$total) <comment>Option: $key was not provided. Using default value ".$databaseSettings[$key]."</comment>"
                             );
                             break;
                     }
-                    $counter++;
+                    ++$counter;
                 } else {
                     $question = new Question(
-                        "($counter/$total) Please enter the value of the $key (" . $value['attributes']['data'] . "): ",
+                        "($counter/$total) Please enter the value of the $key (".$value['attributes']['data']."): ",
                         $value['attributes']['data']
                     );
                     $data = $helper->ask($input, $output, $question);
-                    $counter++;
+                    ++$counter;
                     $databaseSettings[$key] = $data;
                 }
             } else {
                 $output->writeln(
-                    "($counter/$total) <comment>Option: $key = '" . $filledParams[$key] . "' was added as an option. </comment>"
+                    "($counter/$total) <comment>Option: $key = '".$filledParams[$key]."' was added as an option. </comment>"
                 );
-                $counter++;
+                ++$counter;
                 $databaseSettings[$key] = $filledParams[$key];
             }
         }
@@ -421,9 +387,6 @@ class InstallCommand extends CommonCommand
 
     /**
      * Asks for admin settings.
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
      */
     public function askAdminSettings(InputInterface $input, OutputInterface $output)
     {
@@ -439,9 +402,9 @@ class InstallCommand extends CommonCommand
         $params = $this->getAdminSettingsParams();
         $total = count($params);
         $output->writeln(
-            "<comment>Admin settings: (" . $total . ")</comment>"
+            "<comment>Admin settings: (".$total.")</comment>"
         );
-        $adminSettings = array();
+        $adminSettings = [];
         $counter = 1;
 
         foreach ($params as $key => $value) {
@@ -451,13 +414,13 @@ class InstallCommand extends CommonCommand
                     $value['attributes']['data']
                 );
                 $data = $helper->ask($input, $output, $question);
-                $counter++;
+                ++$counter;
                 $adminSettings[$key] = $data;
             } else {
                 $output->writeln(
-                    "($counter/$total) <comment>Option: $key = '" . $filledParams[$key] . "' was added as an option. </comment>"
+                    "($counter/$total) <comment>Option: $key = '".$filledParams[$key]."' was added as an option. </comment>"
                 );
-                $counter++;
+                ++$counter;
                 $adminSettings[$key] = $filledParams[$key];
             }
         }
@@ -467,9 +430,6 @@ class InstallCommand extends CommonCommand
 
     /**
      * Ask for portal settings.
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
      */
     public function askPortalSettings(InputInterface $input, OutputInterface $output)
     {
@@ -480,7 +440,7 @@ class InstallCommand extends CommonCommand
 
         $params = $this->getPortalSettingsParams();
         $total = count($params);
-        $portalSettings = array();
+        $portalSettings = [];
 
         $output->writeln("<comment>Portal settings (".$total.") </comment>");
 
@@ -493,23 +453,21 @@ class InstallCommand extends CommonCommand
                     $value['attributes']['data']
                 );
                 $data = $helper->ask($input, $output, $question);
-                $counter++;
+                ++$counter;
                 $portalSettings[$key] = $data;
             } else {
                 $output->writeln("($counter/$total) <comment>Option: $key = '".$filledParams[$key]."' was added as an option. </comment>");
 
                 $portalSettings[$key] = $filledParams[$key];
-                $counter++;
+                ++$counter;
             }
         }
 
         $this->setPortalSettings($portalSettings);
     }
 
-
     /**
      * Setting common parameters.
-     * @param InputInterface $input
      */
     public function settingParameters(InputInterface $input)
     {
@@ -520,7 +478,7 @@ class InstallCommand extends CommonCommand
         // Arguments
         $this->path = $input->getArgument('path');
         $this->version = $input->getArgument('version');
-        $this->silent = $input->getOption('silent') == true;
+        $this->silent = true == $input->getOption('silent');
         $this->download = $input->getOption('download-package');
         $this->tempFolder = $input->getOption('temp-folder');
         $this->linuxUser = $input->getOption('linux-user');
@@ -530,11 +488,11 @@ class InstallCommand extends CommonCommand
         $configurationPath = $this->getConfigurationHelper()->getNewConfigurationPath($this->path);
 
         // @todo move this in the helper
-        if ($configurationPath == false) {
+        if (false == $configurationPath) {
             // Seems an old installation!
             $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($this->path);
 
-            if (strpos($configurationPath, 'app/config') === false) {
+            if (false === strpos($configurationPath, 'app/config')) {
                 // Version 1.9.x
                 $this->setRootSys(
                     realpath($configurationPath.'/../../../').'/'
@@ -559,86 +517,10 @@ class InstallCommand extends CommonCommand
     }
 
     /**
-     * Executes a command via CLI
+     * Get database version to install for a requested version.
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int|null|void
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        // Setting configuration helper.
-        $this->getApplication()->getHelperSet()->set(
-            new \Chash\Helpers\ConfigurationHelper(),
-            'configuration'
-        );
-
-        $this->settingParameters($input);
-
-        $version = $this->version;
-        $download = $this->download;
-        $tempFolder = $this->tempFolder;
-        $path = $this->path;
-
-        // @todo fix process in order to install minor versions: 1.9.6
-        $versionList = $this->getVersionNumberList();
-
-        if (!in_array($version, $versionList)) {
-            $output->writeln("<comment>Sorry you can't install version: '$version' of Chamilo :(</comment>");
-            $output->writeln("<comment>Supported versions:</comment> <info>".implode(', ', $this->getVersionNumberList()));
-            return 0;
-        }
-
-        if ($download) {
-            $chamiloLocationPath = $this->getPackage($output, $version, null, $tempFolder);
-            if (empty($chamiloLocationPath)) {
-                return 0;
-            }
-
-            $result = $this->copyPackageIntoSystem($output, $chamiloLocationPath, $path);
-            if ($result == 0) {
-                return 0;
-            }
-
-            $this->settingParameters($input);
-            if ($input->getOption('only-download-package')) {
-                return 0;
-            }
-        }
-
-        if ($this->commandLine) {
-            $title = "Welcome to the Chamilo installation process.";
-        } else {
-            $title = "Chamilo installation process.";
-        }
-
-        $this->writeCommandHeader($output, $title);
-
-        $versionInfo = $this->availableVersions()[$version];
-        if (isset($versionInfo['parent'])) {
-            $parent = $versionInfo['parent'];
-            if (in_array($parent, ['1.9.0', '1.10.0', '1.11.0'])) {
-                $isLegacy = true;
-            } else {
-                $isLegacy = false;
-            }
-        } else {
-            $output->writeln("<comment>Chamilo $version doesnt have a parent</comment>");
-            return false;
-        }
-
-        //$isLegacy = $this->getConfigurationHelper()->isLegacy();
-        if ($isLegacy) {
-            $this->installLegacy($input, $output);
-        } else {
-            $this->install($input, $output);
-        }
-    }
-
-    /**
-     * Get database version to install for a requested version
      * @param string $version
+     *
      * @return string
      */
     public function getVersionToInstall($version)
@@ -680,15 +562,15 @@ class InstallCommand extends CommonCommand
         }
 
         return $newVersion;
-
     }
 
     /**
-     * Installation command
+     * Installation command.
      *
-     * @param array $databaseSettings
+     * @param array  $databaseSettings
      * @param string $version
      * @param $output
+     *
      * @return bool
      */
     public function processInstallation($databaseSettings, $version, $output)
@@ -725,7 +607,6 @@ class InstallCommand extends CommonCommand
                                 );
                                 continue;
                             } else {
-
                                 // Fixing db list
                                 foreach ($dbList as &$db) {
                                     $db = $sqlFolder.$db;
@@ -735,10 +616,10 @@ class InstallCommand extends CommonCommand
                                     'dbal:import'
                                 );
                                 // Importing sql files.
-                                $arguments = array(
+                                $arguments = [
                                     'command' => 'dbal:import',
-                                    'file' => $dbList
-                                );
+                                    'file' => $dbList,
+                                ];
                                 $input = new ArrayInput($arguments);
                                 $command->run($input, $output);
 
@@ -747,7 +628,7 @@ class InstallCommand extends CommonCommand
                                     "<comment>Database </comment><info>$databaseName </info><comment>setup process terminated successfully!</comment>"
                                 );
                             }
-                            $sectionsCount++;
+                            ++$sectionsCount;
                         }
                     }
                 }
@@ -783,10 +664,8 @@ class InstallCommand extends CommonCommand
 
                     require_once $this->getRootSys().'/main/inc/lib/usermanager.lib.php';
 
-
                     $newInstallationPath = $this->getRootSys();
                     $chashPath = __DIR__.'/../../../../';
-
 
                       // Registering Constraints
                     AnnotationRegistry::registerAutoloadNamespace(
@@ -821,7 +700,7 @@ class InstallCommand extends CommonCommand
                     $databaseName = $courseInfo['name'];
                     $output->writeln("Inserting course database in Chamilo: <info>$databaseName</info>");
                     $this->createCourse($this->getHelper('db')->getConnection(), $databaseName);
-                    $sectionsCount ++;
+                    ++$sectionsCount;
                 }
             }
 
@@ -897,7 +776,7 @@ class InstallCommand extends CommonCommand
                 $output->writeln("<comment>Remember to run composer install</comment>");
             }
 
-            if ($sectionsCount == 0) {
+            if (0 == $sectionsCount) {
                 $output->writeln("<comment>No database section found for creation</comment>");
             }
 
@@ -912,36 +791,14 @@ class InstallCommand extends CommonCommand
     }
 
     /**
-     * @param $file
-     * @param $output
-     * @throws \Exception
-     */
-    private function importSQLFile($file, $output)
-    {
-        $command = $this->getApplication()->find('dbal:import');
-
-        // Importing sql files.
-        $arguments = array(
-            'command' => 'dbal:import',
-            'file' =>  $file
-        );
-        $input = new ArrayInput($arguments);
-        $command->run($input, $output);
-
-        // Getting extra information about the installation.
-        $output->writeln("<comment>File loaded </comment><info>$file</info>");
-    }
-
-    /**
-     *
      * In step 3. Tests establishing connection to the database server.
      * If it's a single database environment the function checks if the database exist.
      * If the database doesn't exist we check the creation permissions.
      *
-     * @return int      1 when there is no problem;
-     *                  0 when a new database is impossible to be created,
-     * then the single/multiple database configuration is impossible too
-     *                 -1 when there is no connection established.
+     * @return int 1 when there is no problem;
+     *             0 when a new database is impossible to be created,
+     *             then the single/multiple database configuration is impossible too
+     *             -1 when there is no connection established.
      */
     public function testDatabaseConnection()
     {
@@ -984,20 +841,153 @@ class InstallCommand extends CommonCommand
     }
 
     /**
-     * Creates a course (only an insert in the DB)
+     * Creates a course (only an insert in the DB).
      *
      * @param \Doctrine\DBAL\Connection
      * @param string $databaseName
      */
     public function createCourse($connection, $databaseName)
     {
-        $params = array(
+        $params = [
             'code' => $databaseName,
             'db_name' => $databaseName,
             'course_language' => 'english',
             'title' => $databaseName,
-            'visual_code' => $databaseName
-        );
+            'visual_code' => $databaseName,
+        ];
         $connection->insert('course', $params);
+    }
+
+    /**
+     * Configure command.
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('chash:chamilo_install')
+            ->setDescription('Execute a Chamilo installation to a specified version.')
+            ->addArgument('version', InputArgument::REQUIRED, 'The version to migrate to.', null)
+            ->addArgument('path', InputArgument::OPTIONAL, 'The path to the chamilo folder')
+            ->addOption('download-package', null, InputOption::VALUE_NONE, 'Downloads the chamilo package')
+            ->addOption('only-download-package', null, InputOption::VALUE_NONE, 'Only downloads the package')
+            ->addOption('temp-folder', null, InputOption::VALUE_OPTIONAL, 'The temp folder.', '/tmp')
+            ->addOption('linux-user', null, InputOption::VALUE_OPTIONAL, 'user', 'www-data')
+            ->addOption('linux-group', null, InputOption::VALUE_OPTIONAL, 'group', 'www-data')
+            ->addOption('silent', null, InputOption::VALUE_NONE, 'Execute the migration with out asking questions.');
+
+        $params = $this->getPortalSettingsParams();
+
+        foreach ($params as $key => $value) {
+            $this->addOption($key, null, InputOption::VALUE_OPTIONAL);
+        }
+
+        $params = $this->getAdminSettingsParams();
+        foreach ($params as $key => $value) {
+            $this->addOption($key, null, InputOption::VALUE_OPTIONAL);
+        }
+
+        $params = $this->getDatabaseSettingsParams();
+        foreach ($params as $key => $value) {
+            $this->addOption($key, null, InputOption::VALUE_OPTIONAL);
+        }
+    }
+
+    /**
+     * Executes a command via CLI.
+     *
+     * @return int|void|null
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        // Setting configuration helper.
+        $this->getApplication()->getHelperSet()->set(
+            new \Chash\Helpers\ConfigurationHelper(),
+            'configuration'
+        );
+
+        $this->settingParameters($input);
+
+        $version = $this->version;
+        $download = $this->download;
+        $tempFolder = $this->tempFolder;
+        $path = $this->path;
+
+        // @todo fix process in order to install minor versions: 1.9.6
+        $versionList = $this->getVersionNumberList();
+
+        if (!in_array($version, $versionList)) {
+            $output->writeln("<comment>Sorry you can't install version: '$version' of Chamilo :(</comment>");
+            $output->writeln("<comment>Supported versions:</comment> <info>".implode(', ', $this->getVersionNumberList()));
+
+            return 0;
+        }
+
+        if ($download) {
+            $chamiloLocationPath = $this->getPackage($output, $version, null, $tempFolder);
+            if (empty($chamiloLocationPath)) {
+                return 0;
+            }
+
+            $result = $this->copyPackageIntoSystem($output, $chamiloLocationPath, $path);
+            if (0 == $result) {
+                return 0;
+            }
+
+            $this->settingParameters($input);
+            if ($input->getOption('only-download-package')) {
+                return 0;
+            }
+        }
+
+        if ($this->commandLine) {
+            $title = "Welcome to the Chamilo installation process.";
+        } else {
+            $title = "Chamilo installation process.";
+        }
+
+        $this->writeCommandHeader($output, $title);
+
+        $versionInfo = $this->availableVersions()[$version];
+        if (isset($versionInfo['parent'])) {
+            $parent = $versionInfo['parent'];
+            if (in_array($parent, ['1.9.0', '1.10.0', '1.11.0'])) {
+                $isLegacy = true;
+            } else {
+                $isLegacy = false;
+            }
+        } else {
+            $output->writeln("<comment>Chamilo $version doesnt have a parent</comment>");
+
+            return false;
+        }
+
+        //$isLegacy = $this->getConfigurationHelper()->isLegacy();
+        if ($isLegacy) {
+            $this->installLegacy($input, $output);
+        } else {
+            $this->install($input, $output);
+        }
+    }
+
+    /**
+     * @param $file
+     * @param $output
+     *
+     * @throws \Exception
+     */
+    private function importSQLFile($file, $output)
+    {
+        $command = $this->getApplication()->find('dbal:import');
+
+        // Importing sql files.
+        $arguments = [
+            'command' => 'dbal:import',
+            'file' => $file,
+        ];
+        $input = new ArrayInput($arguments);
+        $command->run($input, $output);
+
+        // Getting extra information about the installation.
+        $output->writeln("<comment>File loaded </comment><info>$file</info>");
     }
 }

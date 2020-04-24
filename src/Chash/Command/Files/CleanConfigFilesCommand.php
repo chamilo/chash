@@ -9,14 +9,10 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class CleanConfigFilesCommand
- * Clean the archives directory, leaving only index.html, twig and Serializer
- * @package Chash\Command\Files
+ * Clean the archives directory, leaving only index.html, twig and Serializer.
  */
 class CleanConfigFilesCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
     protected function configure()
     {
         parent::configure();
@@ -26,9 +22,7 @@ class CleanConfigFilesCommand extends CommonDatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -48,6 +42,5 @@ class CleanConfigFilesCommand extends CommonDatabaseCommand
 
         $files = $this->getConfigurationHelper()->getConfigFiles();
         $this->removeFiles($files, $output);
-
     }
 }

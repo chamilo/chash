@@ -4,8 +4,9 @@
  * it for.
  */
 /**
- * Namespaces
+ * Namespaces.
  */
+
 namespace Chash\Command\User;
 
 use Chash\Command\Database\CommonDatabaseCommand;
@@ -15,8 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class SetLanguageCommand
- * Changes the language for all platform users
- * @package Chash\Command\User
+ * Changes the language for all platform users.
  */
 class SetLanguageCommand extends CommonDatabaseCommand
 {
@@ -26,7 +26,7 @@ class SetLanguageCommand extends CommonDatabaseCommand
 
         $this
             ->setName('user:set_language')
-            ->setAliases(array('usl'))
+            ->setAliases(['usl'])
             ->setDescription('Sets all the users\' language to the one given')
             ->addArgument(
                 'language',
@@ -41,9 +41,7 @@ class SetLanguageCommand extends CommonDatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -76,12 +74,13 @@ class SetLanguageCommand extends CommonDatabaseCommand
                     $output->writeln('SQL Error!'.PHP_EOL);
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
-                $languages = array();
+                $languages = [];
                 while ($lr = $stmt->fetch(\PDO::FETCH_ASSOC)) {
                     $languages[] = $lr['english_name'];
                 }
                 if (!in_array($lang, $languages)) {
                     $output->writeln($lang.' must be available on your platform before you can use it');
+
                     return null;
                 }
                 if (empty($username)) {
@@ -110,6 +109,7 @@ class SetLanguageCommand extends CommonDatabaseCommand
                 }
             }
         }
+
         return null;
     }
 }

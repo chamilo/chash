@@ -12,15 +12,14 @@ use Symfony\Component\Finder\Finder;
  * @param \Symfony\Component\Console\Output\OutputInterface $output
  * @param $upgrade
  */
-$updateFiles = function($_configuration, $mainConnection, $courseList, $dryRun, $output, $upgrade)
-{
+$updateFiles = function ($_configuration, $mainConnection, $courseList, $dryRun, $output, $upgrade) {
     $sysPath = $upgrade->getRootSys();
     $sysCodePath = $upgrade->getRootSys().'main/';
     $output->writeln(__DIR__.'update.php');
     try {
         $langPath = $sysCodePath.'lang/';
         // Only erase files from Chamilo languages (not sublanguages defined by the users)
-        $officialLanguages = array(
+        $officialLanguages = [
             'arabic',
             'asturian',
             'basque',
@@ -82,9 +81,9 @@ $updateFiles = function($_configuration, $mainConnection, $courseList, $dryRun, 
             'vietnamese',
             'xhosa',
             'yoruba',
-        );
+        ];
 
-        $filesToDelete = array(
+        $filesToDelete = [
             'accessibility',
             'admin',
             'agenda',
@@ -133,18 +132,18 @@ $updateFiles = function($_configuration, $mainConnection, $courseList, $dryRun, 
             'videoconf',
             'wiki',
             'work',
-        );
+        ];
 
         $output->writeln('Cleaning lang vars');
 
         $list = scandir($langPath);
         foreach ($list as $entry) {
-            if (is_dir($langPath . $entry) &&
+            if (is_dir($langPath.$entry) &&
                 in_array($entry, $officialLanguages)
             ) {
                 foreach ($filesToDelete as $file) {
-                    if (is_file($langPath . $entry . '/' . $file . '.inc.php')) {
-                        unlink($langPath . $entry . '/' . $file . '.inc.php');
+                    if (is_file($langPath.$entry.'/'.$file.'.inc.php')) {
+                        unlink($langPath.$entry.'/'.$file.'.inc.php');
                     }
                 }
             }
@@ -157,7 +156,7 @@ $updateFiles = function($_configuration, $mainConnection, $courseList, $dryRun, 
         // Remove the "main/conference/" directory that wasn't used since years long
         // past - see rrmdir function declared below
         if ($fs->exists($sysCodePath.'conference')) {
-           $fs->remove($sysCodePath.'conference');
+            $fs->remove($sysCodePath.'conference');
         }
 
         // Other files that we renamed
@@ -172,12 +171,12 @@ $updateFiles = function($_configuration, $mainConnection, $courseList, $dryRun, 
 
         // Move dirs into new structures.
         $movePathList = [
-            $sysCodePath.'upload/users/groups' => $sysPath . 'app/upload/groups',
-            $sysCodePath.'upload/users' => $sysPath . 'app/upload/users',
-            $sysCodePath.'upload/badges' => $sysPath . 'app/upload/badges',
-            $sysPath.'courses' => $sysPath . 'app/courses',
-            $sysPath.'searchdb' => $sysPath . 'app/upload/plugins/xapian/',
-            $sysPath.'home' => $sysPath . 'app/home'
+            $sysCodePath.'upload/users/groups' => $sysPath.'app/upload/groups',
+            $sysCodePath.'upload/users' => $sysPath.'app/upload/users',
+            $sysCodePath.'upload/badges' => $sysPath.'app/upload/badges',
+            $sysPath.'courses' => $sysPath.'app/courses',
+            $sysPath.'searchdb' => $sysPath.'app/upload/plugins/xapian/',
+            $sysPath.'home' => $sysPath.'app/home',
         ];
 
         $output->writeln('Moving folders');
@@ -215,7 +214,7 @@ $updateFiles = function($_configuration, $mainConnection, $courseList, $dryRun, 
             $files = $finder->directories()->in($originalCourseDir);
             $dirCount = $dirs->count();
             $fileCount = $dirs->count();
-            if ($fileCount == 0 && $dirCount == 0) {
+            if (0 == $fileCount && 0 == $dirCount) {
                 if ($fs->exists($sysPath.'courses')) {
                     $fs->remove($sysPath.'courses');
                 }

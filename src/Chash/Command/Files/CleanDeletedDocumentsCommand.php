@@ -11,14 +11,10 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 /**
  * Class CleanDeletedDocumentsCommand
  * Clean the courses/[CODE]/documents/ directory, removing all documents
- * and folders marked DELETED
- * @package Chash\Command\Files
+ * and folders marked DELETED.
  */
 class CleanDeletedDocumentsCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
     protected function configure()
     {
         parent::configure();
@@ -53,15 +49,13 @@ class CleanDeletedDocumentsCommand extends CommonDatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return bool|int|null|void
+     * @return bool|int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
         $category = $input->getOption('category');
-        $courseDirsList = array();
+        $courseDirsList = [];
         if (!empty($category)) {
             $courseDirsList = '';
             $connection = $this->getConnection($input);
@@ -83,6 +77,7 @@ class CleanDeletedDocumentsCommand extends CommonDatabaseCommand
                     }
                 } else {
                     $output->writeln('No file to be deleted in courses/ directory');
+
                     return;
                 }
             }
@@ -92,7 +87,7 @@ class CleanDeletedDocumentsCommand extends CommonDatabaseCommand
                 foreach ($files as $file) {
                     $size += $file->getSize();
                 }
-                $output->writeln('Total size used by deleted documents: '.round(((float)$size/1024)/1024,2).'MB');
+                $output->writeln('Total size used by deleted documents: '.round(((float) $size / 1024) / 1024, 2).'MB');
             }
 
             $helper = $this->getHelper('question');

@@ -8,20 +8,18 @@ use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\DateTimeType;
 
 /**
- * Save datetime values in UTC in the database
- *
- * @package Chamilo\CoreBundle\DoctrineExtensions\DBAL\Types
+ * Save datetime values in UTC in the database.
  */
 class UTCDateTimeType extends DateTimeType
 {
-    static private $utc = null;
+    private static $utc = null;
 
     /**
      * {@inheritdoc}
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
@@ -39,7 +37,7 @@ class UTCDateTimeType extends DateTimeType
      */
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 

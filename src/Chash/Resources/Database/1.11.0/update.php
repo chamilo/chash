@@ -1,9 +1,8 @@
 <?php
 /* For licensing terms, see /license.txt */
 
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @param $_configuration
@@ -13,8 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @param OutputInterface $output
  * @param $upgrade
  */
-$updateFiles = function($_configuration, $mainConnection, $courseList, $dryRun, $output, $upgrade)
-{
+$updateFiles = function ($_configuration, $mainConnection, $courseList, $dryRun, $output, $upgrade) {
     $sysPath = $upgrade->getRootSys();
     $sysCodePath = $upgrade->getRootSys().'main/';
 
@@ -22,19 +20,19 @@ $updateFiles = function($_configuration, $mainConnection, $courseList, $dryRun, 
     try {
         $fs = new Filesystem();
 
-        $exercisePath = $sysCodePath . 'exercice';
+        $exercisePath = $sysCodePath.'exercice';
         if (is_dir($exercisePath)) {
             $output->writeln("Remove $exercisePath");
             $fs->remove($exercisePath);
         }
         // Same with main/newscorm, renamed main/lp
-        $lpPath = $sysCodePath . 'newscorm';
+        $lpPath = $sysCodePath.'newscorm';
         if (is_dir($lpPath)) {
             $output->writeln("Remove $lpPath");
             $fs->remove($lpPath);
         }
 
-        $ticketPluginPath = $sysPath . 'plugin/ticket';
+        $ticketPluginPath = $sysPath.'plugin/ticket';
         if (is_dir($ticketPluginPath)) {
             $output->writeln("Remove $ticketPluginPath");
             $fs->remove($ticketPluginPath);

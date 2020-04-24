@@ -8,14 +8,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class ExportLanguageCommand
- * @package Chash\Command\Translation
+ * Class ExportLanguageCommand.
  */
 class ExportLanguageCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
     protected function configure()
     {
         parent::configure();
@@ -36,15 +32,13 @@ class ExportLanguageCommand extends CommonDatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
 
-        $language  = $input->getArgument('language');
+        $language = $input->getArgument('language');
         $tmpFolder = $input->getOption('tmp');
 
         $_configuration = $this->getHelper('configuration')->getConfiguration();
@@ -65,7 +59,6 @@ class ExportLanguageCommand extends CommonDatabaseCommand
             }
             $langInfo = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (!$langInfo) {
-
                 $output->writeln("<comment>Language $langQuoted is not registered in the Chamilo Database</comment>");
 
                 $q = "SELECT * FROM language WHERE parent_id IS NULL or parent_id = 0";
@@ -129,7 +122,7 @@ class ExportLanguageCommand extends CommonDatabaseCommand
             if ($langInfo) {
                 $output->writeln("<comment>Creating translation package</comment>");
                 $fileName = $tmpFolder.$langInfo['english_name'].'.tar';
-                $phar     = new \PharData($fileName);
+                $phar = new \PharData($fileName);
                 $phar->buildFromDirectory($langFolder);
 
                 $phar->setMetadata($langInfo);
