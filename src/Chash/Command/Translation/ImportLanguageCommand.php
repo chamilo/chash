@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class ImportLanguageCommand
@@ -40,7 +41,7 @@ class ImportLanguageCommand extends CommonDatabaseCommand
     {
         parent::execute($input, $output);
 
-        $dialog = $this->getHelperSet()->get('dialog');
+        $helper = $this->getHelper('question');
 
         $_configuration = $this->getHelper('configuration')->getConfiguration();
 
@@ -67,12 +68,11 @@ class ImportLanguageCommand extends CommonDatabaseCommand
                     $langFolderPath = $_configuration['root_sys'].'main/lang/'.$langInfoFromDB['dokeos_folder'];
                     if ($langInfoFromDB && $langFolderPath) {
                         //Overwrite lang files
-                        if (!$dialog->askConfirmation(
-                            $output,
-                            '<question>The '.$langInfo['original_name'].' language already exists in Chamilo. Do you want to overwrite the contents? (y/N)</question>',
+                        $question = new ConfirmationQuestion(
+                            "<question>The {$langInfo['original_name']} language already exists in Chamilo. Do you want to overwrite the contents? (y/N)</question>",
                             false
-                        )
-                        ) {
+                        );
+                        if (!$helper->ask($input, $output, $question)) {
                             return;
                         }
                         if (is_writable($langFolderPath)) {

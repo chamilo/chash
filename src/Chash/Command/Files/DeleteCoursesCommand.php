@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -219,13 +220,13 @@ class DeleteCoursesCommand extends CommonDatabaseCommand
             }
 
             $output->writeln('');
-            $dialog = $this->getHelperSet()->get('dialog');
-            if (!$dialog->askConfirmation(
-                $output,
+            $helper = $this->getHelper('question');
+            $question = new ConfirmationQuestion(
                 '<question>Are you sure you want to clean the listed courses? (y/N)</question>',
                 false
-            )
-            ) {
+            );
+
+            if (!$helper->ask($input, $output, $question)) {
                 return;
             }
 

@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class ReplaceURLCommand
@@ -63,16 +64,15 @@ class ReplaceURLCommand extends CommonDatabaseCommand
             $output->writeln(implode(', ', $fields));
         }
 
-        $dialog = $this->getHelperSet()->get('dialog');
-
         $output->writeln('');
 
-        if (!$dialog->askConfirmation(
-            $output,
-            '<question>Are you sure you want to replace</question> <comment>'.$search.'</comment> with <comment>'.$replace.'</comment>? (y/N)',
+        $helper = $this->getHelper('question');
+        $question = new ConfirmationQuestion(
+            "<question>Are you sure you want to replace <bg=cyan;options=bold>$search</> with <bg=cyan;options=bold>$replace</>? (y/N)</question>",
             false
-        )
-        ) {
+        );
+
+        if (!$helper->ask($input, $output, $question)) {
             return;
         }
 
@@ -116,12 +116,13 @@ class ReplaceURLCommand extends CommonDatabaseCommand
         $results = $result->fetchAll();
         $coursePath = $this->getCourseSysPath();
         $output->writeln('');
-        if (!$dialog->askConfirmation(
-            $output,
-            '<question>Are you sure you want to replace</question> <comment>'.$search.'</comment> with <comment>'.$replace.' in those '.$count.' files</comment> ? (y/N)',
+
+        $question = new ConfirmationQuestion(
+            "<question>Are you sure you want to replace <bg=cyan;options=bold>$search</> with <bg=cyan;options=bold>$replace</> in those <bg=cyan;options=bold>$count files</>? (y/N)</question>",
             false
-        )
-        ) {
+        );
+
+        if (!$helper->ask($input, $output, $question)) {
             return;
         }
 

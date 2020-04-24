@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -141,13 +142,13 @@ class ConvertVideosCommand extends CommonDatabaseCommand
                 return;
             }
 
-            $dialog = $this->getHelperSet()->get('dialog');
-            if (!$dialog->askConfirmation(
-                $output,
+            $helper = $this->getHelper('question');
+            $question = new ConfirmationQuestion(
                 '<question>All listed videos will be altered and a copy of the original will be taken with a .orig.webm extension. Are you sure you want to proceed? (y/N)</question>',
                 false
-            )
-            ) {
+            );
+
+            if (!$helper->ask($question)) {
                 return;
             }
             $fs = new Filesystem();

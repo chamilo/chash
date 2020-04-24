@@ -321,12 +321,7 @@ class UpgradeDatabaseCommand extends CommonCommand
 
                 file_put_contents($file, $yaml);
 
-                $command = new \Doctrine\DBAL\Migrations\Tools\Console\Command\MigrateCommand();
-                // Creates the helper set
-                $helperSet = \Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet($em);
-                $dialog = $this->getHelperSet()->get('dialog');
-                $helperSet->set($dialog, 'dialog');
-                $command->setHelperSet($helperSet);
+                $command = $this->getApplication()->find('migrations:migrate');
 
                 $arguments = array(
                     //'command' => 'migrations:migrate',

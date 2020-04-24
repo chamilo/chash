@@ -37,7 +37,7 @@ class WipeCommand extends CommonCommand
     {
         // Arguments
         $path = $input->getArgument('path');
-        $dialog = $this->getHelperSet()->get('dialog');
+        $helper = $this->getHelper('question');
 
         $configurationPath = $this->getConfigurationHelper()->getConfigurationPath($path);
         $configurationFilePath = $this->getConfigurationHelper()->getConfigurationFilePath($path);
@@ -50,13 +50,11 @@ class WipeCommand extends CommonCommand
             $output->writeln("<comment>A Chamilo installation was not detected. You can add a path: </comment><info>chamilo:wipe /var/www/chamilo </info>");
             return 0;
         } else {
-
-            if (!$dialog->askConfirmation(
-                $output,
-                '<comment>A Chamilo configuration file was found here:</comment><info> '.$configurationPath.' </info> <question>Are you sure you want to continue?</question>(y/N)',
+            $question = new Console\Question\ConfirmationQuestion(
+                "<comment>A Chamilo configuration file was found here:</comment> <info>{$configurationPath}</info> <question>Are you sure you want to continue?</question>(y/N)",
                 false
-            )
-            ) {
+            );
+            if (!$helper->ask($input, $output, $question)) {
                 return 0;
             }
         }
