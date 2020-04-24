@@ -76,7 +76,7 @@ class ReplaceURLCommand extends CommonDatabaseCommand
 
         $output->writeln('');
 
-        $connection = $this->getConnection();
+        $connection = $this->getConnection($input);
 
         // Replace URLs from Database:
 
