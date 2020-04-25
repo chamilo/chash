@@ -3,10 +3,8 @@
 namespace Chash\Command\Files;
 
 use Chash\Command\Database\CommonDatabaseCommand;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -15,19 +13,15 @@ use Symfony\Component\Console\Output\OutputInterface;
  * used called once every night, to make a "progressive increase" of space which
  * will block abuse attempts, but still provide enough space to all courses to
  * continue working progressively.
- * @package Chash\Command\Files
  */
 class UpdateDirectoryMaxSizeCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
     protected function configure()
     {
         parent::configure();
         $this
             ->setName('files:update_directory_max_size')
-            ->setAliases(array('fudms'))
+            ->setAliases(['fudms'])
             ->setDescription('Increases the max disk space for all the courses reaching a certain threshold.')
             ->addArgument(
                 'threshold',
@@ -43,9 +37,7 @@ class UpdateDirectoryMaxSizeCommand extends CommonDatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return bool|int|null|void
+     * @return bool|int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -57,13 +49,13 @@ class UpdateDirectoryMaxSizeCommand extends CommonDatabaseCommand
             $add = 100;
         }
 
-        if ($add == 1) {
+        if (1 == $add) {
             $this->writeCommandHeader($output, 'Max space needs to be of at least 1MB for each course first');
+
             return;
         }
 
         if ($conn instanceof \Doctrine\DBAL\Connection) {
-
             $threshold = $input->getArgument('threshold');
             if (empty($threshold)) {
                 $threshold = 75;
@@ -77,7 +69,7 @@ class UpdateDirectoryMaxSizeCommand extends CommonDatabaseCommand
             $_configuration = $this->getConfigurationHelper()->getConfiguration();
 
             $courseTable = $_configuration['main_database'].'.course';
-            $globalCourses = array();
+            $globalCourses = [];
             $sql = "SELECT c.id as cid, c.code as ccode, c.directory as cdir, c.disk_quota as cquota
                     FROM $courseTable c";
             try {
@@ -89,11 +81,11 @@ class UpdateDirectoryMaxSizeCommand extends CommonDatabaseCommand
             }
             if ($stmt->rowCount() > 0) {
                 while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-                    $globalCourses[$row['cdir']] = array(
+                    $globalCourses[$row['cdir']] = [
                         'id' => $row['cid'],
                         'code' => $row['ccode'],
-                        'quota' => $row['cquota']
-                    );
+                        'quota' => $row['cquota'],
+                    ];
                 }
             }
 

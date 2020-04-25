@@ -3,17 +3,14 @@
 namespace Chash\Command\Translation;
 
 use Chash\Command\Database\CommonDatabaseCommand;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class ListLanguagesCommand
  * Definition of the translation:list command
- * Definition of command to list platform languages
- * @package Chash\Command\Translation
+ * Definition of command to list platform languages.
  */
 class ListLanguagesCommand extends CommonDatabaseCommand
 {
@@ -22,7 +19,7 @@ class ListLanguagesCommand extends CommonDatabaseCommand
         parent::configure();
         $this
             ->setName('translation:list')
-            ->setAliases(array('tl'))
+            ->setAliases(['tl'])
             ->setDescription('Gets all languages as a list')
             ->addArgument(
                 'availability',
@@ -37,9 +34,7 @@ class ListLanguagesCommand extends CommonDatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -62,9 +57,9 @@ class ListLanguagesCommand extends CommonDatabaseCommand
             //$output->writeln('Current default language is: '.$lr['selected_value']);
             $current = $lr['selected_value'];
             $where = '';
-            if ($availability === '0') {
+            if ('0' === $availability) {
                 $where = 'WHERE available = 0';
-            } elseif ($availability === '1') {
+            } elseif ('1' === $availability) {
                 $where = 'WHERE available = 1';
             }
             $ls = "SELECT english_name, available FROM language ".$where." ORDER BY english_name";
@@ -106,6 +101,7 @@ class ListLanguagesCommand extends CommonDatabaseCommand
                 $output->writeln($resultLine);
             }
         }
+
         return null;
     }
 }

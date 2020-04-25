@@ -4,20 +4,17 @@
  * it for.
  */
 /**
- * Namespaces
+ * Namespaces.
  */
+
 namespace Chash\Command\User;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class UsersPerUrlAccessCommand
- * Changes the language for all platform users
- * @package Chash\Command\User
+ * Changes the language for all platform users.
  */
 class UsersPerUrlAccessCommand extends CommonChamiloUserCommand
 {
@@ -27,14 +24,12 @@ class UsersPerUrlAccessCommand extends CommonChamiloUserCommand
 
         $this
             ->setName('user:url_access')
-            ->setAliases(array('urla'))
+            ->setAliases(['urla'])
             ->setDescription('Show the accesses users have, per URL, in multi-URL configurations');
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -54,9 +49,10 @@ class UsersPerUrlAccessCommand extends CommonChamiloUserCommand
             }
             $output->writeln("Url\t\t\t\t| Number of users");
             while ($lr = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-                $output->writeln($lr['url'] . "\t\t| " . $lr['users']);
+                $output->writeln($lr['url']."\t\t| ".$lr['users']);
             }
         }
+
         return null;
     }
 }

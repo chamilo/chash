@@ -3,23 +3,29 @@
 namespace Chash\Command\Chash;
 
 use Doctrine\DBAL\Migrations\Tools\Console\Command\AbstractCommand;
+use Symfony\Component\Console;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console;
-use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Yaml\Dumper;
 
 /**
- * Class SetupCommand
- * @package Chash\Command\Chash
+ * Class SetupCommand.
  */
 class SetupCommand extends AbstractCommand
 {
     public $migrationFile = null;
 
     /**
+     * Gets the migration file path.
      *
+     * @return string
      */
+    public function getMigrationFile()
+    {
+        return $this->migrationFile;
+    }
+
     protected function configure()
     {
         $this
@@ -31,12 +37,9 @@ class SetupCommand extends AbstractCommand
     }
 
     /**
-     * Executes a command via CLI
+     * Executes a command via CLI.
      *
-     * @param Console\Input\InputInterface $input
-     * @param Console\Output\OutputInterface $output
-     *
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(Console\Input\InputInterface $input, Console\Output\OutputInterface $output)
     {
@@ -47,7 +50,7 @@ class SetupCommand extends AbstractCommand
         $version = $input->getArgument('version');
         $chamiloRoot = $input->getArgument('chamilo_root');
 
-        if ($version == '111') {
+        if ('111' == $version) {
             $file = $chamiloRoot.'app/config/migrations.yml';
 
             require_once $chamiloRoot.'app/Migrations/AbstractMigrationChamilo.php';
@@ -57,10 +60,8 @@ class SetupCommand extends AbstractCommand
             return 1;
         }
 
-        if ($version == '110') {
+        if ('110' == $version) {
             $file = $chamiloRoot.'app/config/migrations110.yml';
-
-
 
             $this->migrationFile = $file;
 
@@ -74,12 +75,12 @@ class SetupCommand extends AbstractCommand
             $fs->mkdir($migrationsFolder);
         }
 
-        $migrations = array(
+        $migrations = [
             'name' => 'Chamilo Migrations',
             'migrations_namespace' => 'Application\Migrations\Schema\V111',
             'table_name' => 'version',
-            'migrations_directory' => $migrationsFolder
-        );
+            'migrations_directory' => $migrationsFolder,
+        ];
 
         $dumper = new Dumper();
         $yaml = $dumper->dump($migrations, 1);
@@ -93,14 +94,5 @@ class SetupCommand extends AbstractCommand
         // migrations_directory
         $output->writeln("<comment>Chash migrations.yml saved: $file</comment>");
         $this->migrationFile = $file;
-    }
-
-    /**
-     * Gets the migration file path
-     * @return string
-     */
-    public function getMigrationFile()
-    {
-        return $this->migrationFile;
     }
 }

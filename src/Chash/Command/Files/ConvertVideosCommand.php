@@ -3,28 +3,25 @@
 namespace Chash\Command\Files;
 
 use Chash\Command\Database\CommonDatabaseCommand;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Finder\Finder;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 
 /**
  * Class ConvertVideosCommand
  * Convert all videos found in the given directory (recursively)
- * to the given format, using ffmpeg
- * @package Chash\Command\Files
+ * to the given format, using ffmpeg.
  */
 class ConvertVideosCommand extends CommonDatabaseCommand
 {
-    public $excluded = array();
+    public $excluded = [];
     public $ext;
     public $origExt;
-    /**
-     *
-     */
+
     protected function configure()
     {
         parent::configure();
@@ -63,9 +60,7 @@ class ConvertVideosCommand extends CommonDatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return bool|int|null|void
+     * @return bool|int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -77,11 +72,12 @@ class ConvertVideosCommand extends CommonDatabaseCommand
             $sysPath = $this->getConfigurationHelper()->getSysPathFromConfigurationFile($confPath);
 
             $dir = $input->getArgument('source'); //1 if the option was set
-            if (substr($dir,0,1) != '/') {
-                $dir = $sysPath . $dir;
+            if ('/' != substr($dir, 0, 1)) {
+                $dir = $sysPath.$dir;
             }
             if (!is_dir($dir)) {
-                $output->writeln($dir. ' was not confirmed as a directory (if not starting with /, it is considered as relative to Chamilo\'s root folder)');
+                $output->writeln($dir.' was not confirmed as a directory (if not starting with /, it is considered as relative to Chamilo\'s root folder)');
+
                 return;
             }
             $this->ext = $input->getOption('ext');
@@ -101,7 +97,7 @@ class ConvertVideosCommand extends CommonDatabaseCommand
                 $bitRate = '512';
             }
             $vcodec = 'copy';
-            if ($this->ext == 'webm') {
+            if ('webm' == $this->ext) {
                 $vcodec = 'libvpx';
             }
 
@@ -110,12 +106,13 @@ class ConvertVideosCommand extends CommonDatabaseCommand
             $filter = function (\SplFileInfo $file, $ext, $orig) {
                 $combinedExt = '.'.$orig.'.'.$ext;
                 $combinedExtLength = strlen($combinedExt);
-                $extLength = strlen('.' . $ext);
-                if (substr($file->getRealPath(),-$combinedExtLength) == $combinedExt) {
+                $extLength = strlen('.'.$ext);
+                if (substr($file->getRealPath(), -$combinedExtLength) == $combinedExt) {
                     return false;
                 }
-                if (is_file(substr($file->getRealPath(),0,-$extLength) . $combinedExt)) {
+                if (is_file(substr($file->getRealPath(), 0, -$extLength).$combinedExt)) {
                     $this->excluded[] = $file;
+
                     return false;
                 }
             };
@@ -138,16 +135,17 @@ class ConvertVideosCommand extends CommonDatabaseCommand
                     }
                 }
                 $output->writeln('No video left to convert');
+
                 return;
             }
 
-            $dialog = $this->getHelperSet()->get('dialog');
-            if (!$dialog->askConfirmation(
-                $output,
+            $helper = $this->getHelper('question');
+            $question = new ConfirmationQuestion(
                 '<question>All listed videos will be altered and a copy of the original will be taken with a .orig.webm extension. Are you sure you want to proceed? (y/N)</question>',
                 false
-            )
-            ) {
+            );
+
+            if (!$helper->ask($question)) {
                 return;
             }
             $fs = new Filesystem();
@@ -157,26 +155,26 @@ class ConvertVideosCommand extends CommonDatabaseCommand
             foreach ($finder as $file) {
                 $sizeOrig += $file->getSize();
                 $origName = $file->getRealPath();
-                $newName = substr($file->getRealPath(),0,-4).'orig.webm';
+                $newName = substr($file->getRealPath(), 0, -4).'orig.webm';
                 $fs->rename($origName, $newName);
-                $out = array();
-                $newNameCommand = preg_replace('/\s/','\ ',$newName);
-                $newNameCommand = preg_replace('/\(/','\(',$newNameCommand);
-                $newNameCommand = preg_replace('/\)/','\)',$newNameCommand);
-                $origNameCommand = preg_replace('/\s/','\ ',$origName);
-                $origNameCommand = preg_replace('/\(/','\(',$origNameCommand);
-                $origNameCommand = preg_replace('/\)/','\)',$origNameCommand);
-                $output->writeln('ffmpeg -i ' . $newNameCommand . ' -b ' . $bitRate . 'k -f ' . $this->ext . ' -vcodec ' . $vcodec . ' -acodec copy -r ' . $fps . ' ' . $origNameCommand);
-                $exec = @system('ffmpeg -i ' . $newNameCommand . ' -b ' . $bitRate . 'k -f ' . $this->ext . ' -vcodec ' . $vcodec . ' -acodec copy -r ' . $fps . ' ' . $origNameCommand, $out);
+                $out = [];
+                $newNameCommand = preg_replace('/\s/', '\ ', $newName);
+                $newNameCommand = preg_replace('/\(/', '\(', $newNameCommand);
+                $newNameCommand = preg_replace('/\)/', '\)', $newNameCommand);
+                $origNameCommand = preg_replace('/\s/', '\ ', $origName);
+                $origNameCommand = preg_replace('/\(/', '\(', $origNameCommand);
+                $origNameCommand = preg_replace('/\)/', '\)', $origNameCommand);
+                $output->writeln('ffmpeg -i '.$newNameCommand.' -b '.$bitRate.'k -f '.$this->ext.' -vcodec '.$vcodec.' -acodec copy -r '.$fps.' '.$origNameCommand);
+                $exec = @system('ffmpeg -i '.$newNameCommand.' -b '.$bitRate.'k -f '.$this->ext.' -vcodec '.$vcodec.' -acodec copy -r '.$fps.' '.$origNameCommand, $out);
                 $sizeNew += filesize($origName);
-                $counter ++;
+                ++$counter;
             }
         }
         $output->writeln('');
         $output->writeln('Done converting all videos from '.$dir);
-        $output->writeln('Total videos converted: ' . $counter . ' videos in ' . (time() - $time) .' seconds');
-        $output->writeln('Total size of old videos combined: ' . round($sizeOrig/(1024*1024)).'M');
-        $output->writeln('Total size of all new videos combined: ' . round($sizeNew/(1024*1024)).'M');
+        $output->writeln('Total videos converted: '.$counter.' videos in '.(time() - $time).' seconds');
+        $output->writeln('Total size of old videos combined: '.round($sizeOrig / (1024 * 1024)).'M');
+        $output->writeln('Total size of all new videos combined: '.round($sizeNew / (1024 * 1024)).'M');
         //$this->removeFiles($files, $output);
     }
 }

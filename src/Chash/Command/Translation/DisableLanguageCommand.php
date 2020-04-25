@@ -3,17 +3,14 @@
 namespace Chash\Command\Translation;
 
 use Chash\Command\Database\CommonDatabaseCommand;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class DisableLanguageCommand
  * Definition of the translation:disable command
- * Disable a language. Does not support multi-url yet
- * @package Chash\Command\Translation
+ * Disable a language. Does not support multi-url yet.
  */
 class DisableLanguageCommand extends CommonDatabaseCommand
 {
@@ -22,7 +19,7 @@ class DisableLanguageCommand extends CommonDatabaseCommand
         parent::configure();
         $this
             ->setName('translation:disable')
-            ->setAliases(array('tdl'))
+            ->setAliases(['tdl'])
             ->setDescription('Disables a language, without looking at dependencies (courses and users)')
             ->addArgument(
                 'language',
@@ -32,9 +29,7 @@ class DisableLanguageCommand extends CommonDatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -55,11 +50,13 @@ class DisableLanguageCommand extends CommonDatabaseCommand
             $num = $stmt->rowCount();
             if ($num < 1) {
                 $output->writeln($lang.' language not found in the database. Please make sure you use an existing language name.');
+
                 return null;
             }
             $lr = $stmt->fetch(\PDO::FETCH_ASSOC);
-            if ($lr['available'] == 0) {
+            if (0 == $lr['available']) {
                 $output->writeln($lang.' language is already disabled. Nothing to do.');
+
                 return null;
             }
             // Everything is OK so far, enable the language
@@ -75,6 +72,7 @@ class DisableLanguageCommand extends CommonDatabaseCommand
         } else {
             $output->writeln('The connection does not seem to be a valid PDO connection');
         }
+
         return null;
     }
 }

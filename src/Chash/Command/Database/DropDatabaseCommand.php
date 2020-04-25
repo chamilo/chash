@@ -2,21 +2,15 @@
 
 namespace Chash\Command\Database;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
- * Class DropDatabaseCommand
- * @package Chash\Command\Database
+ * Class DropDatabaseCommand.
  */
 class DropDatabaseCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
     protected function configure()
     {
         parent::configure();
@@ -26,31 +20,28 @@ class DropDatabaseCommand extends CommonDatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
 
-        $dialog = $this->getHelperSet()->get('dialog');
-
-        if (!$dialog->askConfirmation(
-            $output,
+        $helper = $this->getHelper('question');
+        $question = new ConfirmationQuestion(
             '<question>Are you sure you want to drop all database in this portal? (y/N)</question>',
             false
-        )
-        ) {
+        );
+
+        if (!$helper->ask($input, $output, $question)) {
             return;
         }
 
-        if (!$dialog->askConfirmation(
-            $output,
+        $question = new ConfirmationQuestion(
             '<question>Are you really sure? (y/N)</question>',
             false
-        )
-        ) {
+        );
+
+        if (!$helper->ask($input, $output, $question)) {
             return;
         }
 
@@ -58,7 +49,6 @@ class DropDatabaseCommand extends CommonDatabaseCommand
         $connection = $this->getConnection($input);
 
         if ($connection) {
-
             $list = $_configuration = $this->getHelper('configuration')->getAllDatabases();
             $currentDatabases = $connection->getSchemaManager()->listDatabases();
             if (is_array($list)) {

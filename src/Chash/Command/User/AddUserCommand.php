@@ -5,9 +5,7 @@ namespace Chash\Command\User;
 use Chash\Command\Database\CommonDatabaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 
 /**
  * Command functions meant to deal with what the user of this script is calling
@@ -15,8 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 /**
  * Class AddUserCommand
- * Changes a user password to the one given
- * @package Chash\Command\User
+ * Changes a user password to the one given.
  */
 class AddUserCommand extends CommonDatabaseCommand
 {
@@ -65,9 +62,7 @@ class AddUserCommand extends CommonDatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return null|void
+     * @return void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -94,11 +89,11 @@ class AddUserCommand extends CommonDatabaseCommand
                 $stmt->execute();
                 $un = $stmt->rowCount();
             } catch (\PDOException $e) {
-                $output->write('SQL error!' . PHP_EOL);
+                $output->write('SQL error!'.PHP_EOL);
                 throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
 
-            if ($un === 0) {
+            if (0 === $un) {
                 $enc = $_configuration['password_encryption'];
                 $salt = sha1(uniqid(null, true));
                 switch ($enc) {
@@ -136,7 +131,7 @@ class AddUserCommand extends CommonDatabaseCommand
                 }
                 // @TODO make UTC
                 $time = date('Y-m-d h:i:s');
-                $expiration = time()+(60*60*24*366*10);
+                $expiration = time() + (60 * 60 * 24 * 366 * 10);
                 $timeExpiry = date('Y-m-d h:i:s', $expiration);
                 $firstname = $conn->quote($firstname);
                 $lastname = $conn->quote($lastname);
@@ -185,18 +180,18 @@ class AddUserCommand extends CommonDatabaseCommand
                     $stmt->execute();
                     $newUserId = $conn->lastInsertId();
                 } catch (\PDOException $e) {
-                    $output->write('SQL error!' . PHP_EOL);
+                    $output->write('SQL error!'.PHP_EOL);
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
 
                 $output->writeln('User '.$username.' has been created.');
-                if ($isAdmin === 1) {
+                if (1 === $isAdmin) {
                     $uas = "INSERT INTO admin (user_id) values ($newUserId)";
                     try {
                         $stmt = $conn->prepare($uas);
                         $stmt->execute();
                     } catch (\PDOException $e) {
-                        $output->write('SQL error!' . PHP_EOL);
+                        $output->write('SQL error!'.PHP_EOL);
                         throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                     }
                 }
@@ -206,7 +201,7 @@ class AddUserCommand extends CommonDatabaseCommand
                     $stmt = $conn->prepare($uas);
                     $stmt->execute();
                 } catch (\PDOException $e) {
-                    $output->write('SQL error!' . PHP_EOL);
+                    $output->write('SQL error!'.PHP_EOL);
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
                 $uas = "UPDATE user SET user_id = id WHERE id = $newUserId";
@@ -214,17 +209,16 @@ class AddUserCommand extends CommonDatabaseCommand
                     $stmt = $conn->prepare($uas);
                     $stmt->execute();
                 } catch (\PDOException $e) {
-                    $output->write('SQL error!' . PHP_EOL);
+                    $output->write('SQL error!'.PHP_EOL);
                     throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
-
-
             } else {
                 $output->writeln('A user with username '.$username.' already exists');
             }
         } else {
             $output->writeln('The connection does not seem to be a valid PDO connection');
         }
+
         return null;
     }
 }

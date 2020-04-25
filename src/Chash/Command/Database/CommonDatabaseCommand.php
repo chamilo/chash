@@ -2,24 +2,40 @@
 
 namespace Chash\Command\Database;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
+use Chash\Command\Installation\CommonCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Chash\Command\Installation\CommonCommand;
-
-use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 
 /**
- * Class CommonDatabaseCommand
- * @package Chash\Command\Database
+ * Class CommonDatabaseCommand.
  */
 class CommonDatabaseCommand extends CommonCommand
 {
     /**
-     *
+     * {@inheritdoc}
      */
+    public function getConnection(InputInterface $input)
+    {
+        try {
+            return $this->getHelper('db')->getConnection();
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
+    }
+
+    /**
+     * @return \Doctrine\ORM\EntityManager
+     */
+    public function getEntityManager()
+    {
+        try {
+            return $this->getHelper('em')->getEntityManager();
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
+    }
+
     protected function configure()
     {
         $this
@@ -38,34 +54,7 @@ class CommonDatabaseCommand extends CommonCommand
     }
 
     /**
-     * @inheritdoc
-     */
-    public function getConnection(InputInterface $input)
-    {
-        try {
-            return $this->getHelper('db')->getConnection();
-
-        } catch (Exception $e) {
-            echo $e->getMessage();
-        }
-    }
-
-    /**
-     * @return \Doctrine\ORM\EntityManager
-     */
-    public function getEntityManager()
-    {
-        try {
-            return $this->getHelper('em')->getEntityManager();
-        } catch (Exception $e) {
-            echo $e->getMessage();
-        }
-    }
-
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -92,21 +81,21 @@ class CommonDatabaseCommand extends CommonCommand
         $this->setRootSysDependingConfigurationPath($sysPath);
 
         if ($this->getConfigurationHelper()->isLegacy()) {
-            $databaseSettings = array(
+            $databaseSettings = [
                 'driver' => 'pdo_mysql',
                 'host' => $configuration['db_host'],
                 'dbname' => $configuration['main_database'],
                 'user' => $configuration['db_user'],
-                'password' => $configuration['db_password']
-            );
+                'password' => $configuration['db_password'],
+            ];
         } else {
-            $databaseSettings = array(
+            $databaseSettings = [
                 'driver' => 'pdo_mysql',
                 'host' => $configuration['database_host'],
                 'dbname' => $configuration['database_name'],
                 'user' => $configuration['database_user'],
-                'password' => $configuration['database_password']
-            );
+                'password' => $configuration['database_password'],
+            ];
         }
 
         // Setting doctrine connection

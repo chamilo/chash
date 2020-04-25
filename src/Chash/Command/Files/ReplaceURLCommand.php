@@ -3,22 +3,17 @@
 namespace Chash\Command\Files;
 
 use Chash\Command\Database\CommonDatabaseCommand;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class ReplaceURLCommand
- * Clean the archives directory, leaving only index.html, twig and Serializer
- * @package Chash\Command\Files
+ * Clean the archives directory, leaving only index.html, twig and Serializer.
  */
 class ReplaceURLCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
     protected function configure()
     {
         parent::configure();
@@ -38,9 +33,7 @@ class ReplaceURLCommand extends CommonDatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -63,22 +56,21 @@ class ReplaceURLCommand extends CommonDatabaseCommand
             $output->writeln(implode(', ', $fields));
         }
 
-        $dialog = $this->getHelperSet()->get('dialog');
-
         $output->writeln('');
 
-        if (!$dialog->askConfirmation(
-            $output,
-            '<question>Are you sure you want to replace</question> <comment>'.$search.'</comment> with <comment>'.$replace.'</comment>? (y/N)',
+        $helper = $this->getHelper('question');
+        $question = new ConfirmationQuestion(
+            "<question>Are you sure you want to replace <bg=cyan;options=bold>$search</> with <bg=cyan;options=bold>$replace</>? (y/N)</question>",
             false
-        )
-        ) {
+        );
+
+        if (!$helper->ask($input, $output, $question)) {
             return;
         }
 
         $output->writeln('');
 
-        $connection = $this->getConnection();
+        $connection = $this->getConnection($input);
 
         // Replace URLs from Database:
 
@@ -116,12 +108,13 @@ class ReplaceURLCommand extends CommonDatabaseCommand
         $results = $result->fetchAll();
         $coursePath = $this->getCourseSysPath();
         $output->writeln('');
-        if (!$dialog->askConfirmation(
-            $output,
-            '<question>Are you sure you want to replace</question> <comment>'.$search.'</comment> with <comment>'.$replace.' in those '.$count.' files</comment> ? (y/N)',
+
+        $question = new ConfirmationQuestion(
+            "<question>Are you sure you want to replace <bg=cyan;options=bold>$search</> with <bg=cyan;options=bold>$replace</> in those <bg=cyan;options=bold>$count files</>? (y/N)</question>",
             false
-        )
-        ) {
+        );
+
+        if (!$helper->ask($input, $output, $question)) {
             return;
         }
 
@@ -129,7 +122,7 @@ class ReplaceURLCommand extends CommonDatabaseCommand
 
         if (!empty($results)) {
             foreach ($results as $row) {
-                $filePath = $coursePath . '/' . $row['directory'] . '/document' . $row['path'];
+                $filePath = $coursePath.'/'.$row['directory'].'/document'.$row['path'];
                 $output->writeln($filePath);
                 if (file_exists($filePath) && !empty($row['path'])) {
                     if (!$dryRun) {
@@ -165,14 +158,14 @@ class ReplaceURLCommand extends CommonDatabaseCommand
      */
     private function getTables()
     {
-        return array(
-            'c_quiz' => array('description'),
-            'c_quiz_answer' => array('answer', 'comment'),
-            'c_quiz_question' => array('description'),
-            'c_tool_intro' => array('intro_text'),
-            'track_e_attempt' => array('answer'),
-            'c_link' => array('url'),
-            'c_glossary' => array('description')
-        );
+        return [
+            'c_quiz' => ['description'],
+            'c_quiz_answer' => ['answer', 'comment'],
+            'c_quiz_question' => ['description'],
+            'c_tool_intro' => ['intro_text'],
+            'track_e_attempt' => ['answer'],
+            'c_link' => ['url'],
+            'c_glossary' => ['description'],
+        ];
     }
 }

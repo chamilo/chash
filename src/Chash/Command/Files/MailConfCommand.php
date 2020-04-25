@@ -3,22 +3,15 @@
 namespace Chash\Command\Files;
 
 use Chash\Command\Database\CommonDatabaseCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class MailConfCommand
- * Returns the current mail configuration
- * @package Chash\Command\Files
+ * Returns the current mail configuration.
  */
 class MailConfCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
     protected function configure()
     {
         parent::configure();
@@ -28,9 +21,7 @@ class MailConfCommand extends CommonDatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -39,16 +30,16 @@ class MailConfCommand extends CommonDatabaseCommand
 
         $path = $this->getHelper('configuration')->getConfigurationPath();
         $path .= 'mail.conf.php';
-        define('IS_WINDOWS_OS', strtolower(substr(php_uname(), 0, 3 )) == 'win'?true:false);
+        define('IS_WINDOWS_OS', 'win' == strtolower(substr(php_uname(), 0, 3)) ? true : false);
         $platform_email = [];
         if (isset($path) && is_file($path)) {
             $output->writeln('File: '.$path);
             $lines = file($path);
-            $list = array('SMTP_HOST','SMTP_PORT','SMTP_MAILER','SMTP_AUTH','SMTP_USER','SMTP_PASS');
+            $list = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_MAILER', 'SMTP_AUTH', 'SMTP_USER', 'SMTP_PASS'];
             foreach ($lines as $line) {
-                $match = array();
-                if (preg_match("/platform_email\['(.*)'\]/",$line,$match)) {
-                    if (in_array($match[1],$list)) {
+                $match = [];
+                if (preg_match("/platform_email\['(.*)'\]/", $line, $match)) {
+                    if (in_array($match[1], $list)) {
                         eval($line);
                     }
                 }

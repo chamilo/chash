@@ -3,22 +3,15 @@
 namespace Chash\Command\Info;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use Symfony\Component\Console\Formatter\OutputFormatterStyle;
-
 /**
- * Class CommonInfoCommand
- * @package Chash\Command\Info
+ * Class CommonInfoCommand.
  */
 class CommonInfoCommand extends Command
 {
-    /**
-     *
-     */
     protected function configure()
     {
         $this
@@ -31,9 +24,7 @@ class CommonInfoCommand extends Command
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

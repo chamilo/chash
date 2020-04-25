@@ -1,8 +1,7 @@
 <?php
 /* For licensing terms, see /license.txt */
 
-$update = function($_configuration, $mainConnection, $courseList, $dryRun, $output, $upgrade)
-{
+$update = function ($_configuration, $mainConnection, $courseList, $dryRun, $output, $upgrade) {
     $portalSettings = $upgrade->getPortalSettings();
     $databaseList = $upgrade->generateDatabaseList($courseList);
     $courseDatabaseConnectionList = $databaseList['course']; // main  user stats course
@@ -60,7 +59,7 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
                                 orig_lp_item_id = {$row['lp_item_id']} ";
                         $sub_result = $statsConnection->executeQuery($sql);
                         $sub_rows = $sub_result->fetchAll();
-                        $exe_list = array();
+                        $exe_list = [];
                         foreach ($sub_rows as $sub_row) {
                             $exe_list[] = $sub_row['exe_id'];
                         }
@@ -74,7 +73,7 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
                                         path = {$row['exercise_id']} ";
                         $sub_result = $courseConnection->executeQuery($sql);
                         $sub_rows = $sub_result->fetchAll();
-                        $lp_item_view_id_list = array();
+                        $lp_item_view_id_list = [];
                         foreach ($sub_rows as $sub_row) {
                             $lp_item_view_id_list[] = $sub_row['id'];
                         }
@@ -158,20 +157,19 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
 
         // Fixing table access_url_rel_course if the platform have courses that were created in Dok€ 1.8.5.
 
-        if (!isset($_configuration['multiple_access_urls']) || $_configuration['multiple_access_urls'] == false) {
+        if (!isset($_configuration['multiple_access_urls']) || false == $_configuration['multiple_access_urls']) {
             $output->writeln("Fixing access_url_rel_course:");
             $sql = "SELECT code FROM course";
             $result = $mainConnection->executeQuery($sql);
             $rows = $result->fetchAll();
             foreach ($rows as $row) {
-
                 // Adding course to default URL just in case.
                 // Check if already exists
                 $sql = "SELECT course_code FROM access_url_rel_course
                         WHERE course_code = '".$row['code']."' AND access_url_id = 1";
                 $result = $mainConnection->executeQuery($sql);
 
-                if ($result->rowCount() == 0) {
+                if (0 == $result->rowCount()) {
                     $sql = "INSERT INTO access_url_rel_course
                             SET course_code = '".$row['code']."', access_url_id = '1' ";
                     $mainConnection->executeQuery($sql);
@@ -182,7 +180,6 @@ $update = function($_configuration, $mainConnection, $courseList, $dryRun, $outp
 
         if ($dryRun) {
             $output->writeln('<info>Queries were not executed. Because dry-run is on<info>');
-
         } else {
             $mainConnection->commit();
         }

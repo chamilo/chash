@@ -3,21 +3,16 @@
 namespace Chash\Command\User;
 
 use Chash\Command\Database\CommonDatabaseCommand;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class DisableAdminsCommand
- * Remove the "admin" role from *ALL* users on all portals of this instance
- * @package Chash\Command\User
+ * Remove the "admin" role from *ALL* users on all portals of this instance.
  */
 class DisableAdminsCommand extends CommonDatabaseCommand
 {
-    /**
-     *
-     */
     protected function configure()
     {
         parent::configure();
@@ -28,22 +23,19 @@ class DisableAdminsCommand extends CommonDatabaseCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
         $_configuration = $this->getHelper('configuration')->getConfiguration();
         $conn = $this->getConnection($input);
-        $dialog = $this->getHelperSet()->get('dialog');
-        if (!$dialog->askConfirmation(
-            $output,
+        $helper = $this->getHelper('question');
+        $question = new ConfirmationQuestion(
             '<question>This action will make all admins normal teachers. Are you sure? (y/N)</question>',
             false
-        )
-        ) {
+        );
+        if (!$helper->ask($input, $output, $question)) {
             return;
         }
 
@@ -59,6 +51,7 @@ class DisableAdminsCommand extends CommonDatabaseCommand
             }
             $output->writeln('All admins have been disabled. Use user:make-admin to add one back.');
         }
+
         return null;
     }
 }
