@@ -33,12 +33,14 @@ class CleanTempFolderCommand extends CommonDatabaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $isInteractive = $input->isInteractive();
+
         parent::execute($input, $output);
         $this->writeCommandHeader($output, "Cleaning temp files.");
         $helper = $this->getHelper('question');
 
         if (PHP_SAPI === 'cli') {
-            if ($input->isInteractive()) {
+            if ($isInteractive) {
                 $question = new ConfirmationQuestion(
                     '<question>Are you sure you want to clean the Chamilo temp files? (y/N)</question>',
                     false
