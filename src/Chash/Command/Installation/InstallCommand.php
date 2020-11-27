@@ -414,14 +414,14 @@ class InstallCommand extends CommonCommand
                     );
 
                     // Cleaning temp folders.
-                    $command = $this->getApplication()->find('files:clean_temp_folder');
+                    /*$command = $this->getApplication()->find('files:clean_temp_folder');
                     $arguments = [
                         'command' => 'files:clean_temp_folder',
                         '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
                     ];
                     $input->setInteractive(false);
                     $input = new ArrayInput($arguments);
-                    $command->run($input, $output);
+                    $command->run($input, $output);*/
 
                     // Generating temp folders.
                     $command = $this->getApplication()->find('files:generate_temp_folders');
