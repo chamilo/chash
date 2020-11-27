@@ -34,7 +34,6 @@ class CleanTempFolderCommand extends CommonDatabaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $isInteractive = $input->isInteractive();
-
         parent::execute($input, $output);
         $this->writeCommandHeader($output, "Cleaning temp files.");
         $helper = $this->getHelper('question');

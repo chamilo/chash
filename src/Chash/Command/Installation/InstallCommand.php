@@ -419,7 +419,7 @@ class InstallCommand extends CommonCommand
                         'command' => 'files:clean_temp_folder',
                         '--conf' => $this->getConfigurationHelper()->getConfigurationFilePath($path),
                     ];
-
+                    $input->setInteractive(false);
                     $input = new ArrayInput($arguments);
                     $command->run($input, $output);
 
@@ -434,7 +434,6 @@ class InstallCommand extends CommonCommand
                     $command->run($input, $output);
 
                     // Fixing permissions.
-
                     if (PHP_SAPI == 'cli') {
                         $command = $this->getApplication()->find('files:set_permissions_after_install');
                         $arguments = [
