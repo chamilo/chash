@@ -15,7 +15,7 @@
     },
     "require": {
         "php": "^7.2.5",
-        "composer/composer": "1.6.*",
+        "composer/composer": "~1.10.23 || ~2.1.9",
         "symfony/class-loader": "~3.0",
         "symfony/doctrine-bridge": "^4.0",
         "symfony/validator": "^4.0",
