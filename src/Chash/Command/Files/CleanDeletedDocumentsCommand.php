@@ -25,6 +25,7 @@ class CleanDeletedDocumentsCommand extends CommonDatabaseCommand
         parent::configure();
         $this
             ->setName('files:clean_deleted_documents')
+            ->setAliases(array('fcdd'))
             ->setDescription('Cleans the documents that were deleted but left as _DELETED_')
             ->addOption(
                 'size',
@@ -64,7 +65,6 @@ class CleanDeletedDocumentsCommand extends CommonDatabaseCommand
         $category = $input->getOption('category');
         $courseDirsList = array();
         if (!empty($category)) {
-            $courseDirsList = '';
             $connection = $this->getConnection($input);
             // @todo escape the $category properly
             $sql = "SELECT directory FROM course WHERE category_code = '$category'";

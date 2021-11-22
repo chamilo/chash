@@ -61,7 +61,7 @@ $application->addCommands(
 
         new Chash\Command\Files\CleanConfigFilesCommand(),
         new Chash\Command\Files\CleanCoursesFilesCommand(),
-        new Chash\Command\Files\CleanDeletedDocumentsCommand(),
+        new Chash\Command\Files\RestoreDeletedDocumentsCommand(),
         new Chash\Command\Files\CleanTempFolderCommand(),
         new Chash\Command\Files\ConvertVideosCommand(),
         new Chash\Command\Files\DeleteCoursesCommand(),

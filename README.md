@@ -160,6 +160,7 @@ Available commands:
       files:clean_config_files              Cleans the config files to help you re-install
       files:clean_course_files              Cleans the courses directory
       files:clean_deleted_documents         Cleans the documents that were deleted but left as _DELETED_
+      files:restore_deleted_documents       Restores the documents that were deleted but left as _DELETED_ in a given course
       files:clean_temp_folder               Cleans the temp directory.
       files:convert_videos                  Converts all videos found in the given directory (recursively) to the given format, using the ffmpeg command line
       files:delete_courses                  Given an ID, code or category code, deletes one or several courses completely
