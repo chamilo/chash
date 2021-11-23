@@ -177,13 +177,11 @@ class RestoreDeletedDocumentsCommand extends CommonDatabaseCommand
         // 2. delete the "delete" edit action in c_item_property,
         $sql = "DELETE FROM c_item_property WHERE tool = 'document' AND ref = $documentId AND lastedit_type = 'delete'";
         $stmt = $connection->executeQuery($sql);
-        $stmt->fetchAllAssociative();
         // 3. update the last action to 'DocumentVisible' and visibility to 1,
         $sql = "UPDATE c_item_property
             SET lastedit_type = 'DocumentVisible', visibility = 1 
             WHERE tool = 'document' AND ref = $documentId AND lastedit_type = 'DocumentDeleted'";
         $stmt = $connection->executeQuery($sql);
-        $stmt->fetchAssociative();
         // 4. update the path of the file in c_document
         if ($isFolder) {
             // multi change (change all things that have the folder name in their path)
