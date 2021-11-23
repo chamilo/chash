@@ -111,13 +111,16 @@ class RestoreDeletedDocumentsCommand extends CommonDatabaseCommand
                 }
             } else {
                 if (count($files) > 0) {
+                    $counter = 1;
                     foreach ($files as $file) {
-                        $output->writeln('Restoring '.$file);
+                        $output->writeln('[#'.str_pad($counter, 5, ' ', STR_PAD_LEFT).'] Restoring '.$file);
                         $this->_restoreDocument($connection, $courseId, $courseDir, $file);
+                        $counter++;
                     }
                     $output->writeln(
                         'Restored all database references in c_document. Table c_item_property updated to remove delete action.'
                     );
+                    $output->writeln('Restored '.count($foldersSecond).' folders and '.count($filesFirst).' files in total');
                 }
             }
         }
@@ -155,6 +158,12 @@ class RestoreDeletedDocumentsCommand extends CommonDatabaseCommand
         // doesn't include the renamed folder (while the filesystem path
         // contains it).
         preg_match('#(.*)_DELETED_(\d+)$#', $deletedDBFilePath, $matches);
+        // If not match was found, this means the db "path" has already been
+        // stripped from its "_DELETED_" marker, which probably means there
+        // is a duplicate file on disk and we already treated this DB record.
+        if (empty($matches[1])) {
+            return false;
+        }
         $restoredDBFilePath = $matches[1];
         $fs = new Filesystem();
 
