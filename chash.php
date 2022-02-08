@@ -82,6 +82,8 @@ $application->addCommands(
         new Chash\Command\Installation\StatusCommand(),
         new Chash\Command\Installation\UpgradeCommand(),
 
+        new Chash\Command\Skill\CleanSkillsCommand(),
+
         new Chash\Command\Translation\AddSubLanguageCommand(),
         new Chash\Command\Translation\DisableLanguageCommand(),
         new Chash\Command\Translation\EnableLanguageCommand(),

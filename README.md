@@ -183,6 +183,9 @@ Available commands:
       migrations:status                     View the status of a set of migrations.
       migrations:version                    Manually add and delete migration versions from the version table.
 
+    skill
+      skill:clean                           Cleans all skills except root, to start anew
+
     translation
       translation:add_sub_language          Creates a sub-language
       translation:disable                   Disables a (enabled) language
