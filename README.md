@@ -14,7 +14,7 @@ Installation
     composer install
 
 Note: If you don't have Composer installed, check http://getcomposer.org/download/
-Note: To use Chash with PHP 7.0 or lower, please use branch 1.0: `git clone -b 1.0 https://github.com/chamilo/chash.git`
+Note: To use Chash with PHP 7.4 and Chamilo 1.11, please use branch 0.1: `git clone -b 0.1 https://github.com/chamilo/chash.git`
 
 Usage
 ====================
@@ -27,9 +27,9 @@ In a Chamilo installation folder located in "/var/www/chamilo"
     php /path/chash/chash.php chamilo:status
 
     Chamilo $_configuration info:
-    Chamilo $_configuration[root_web]: http://localhost/chamilo-1.8.7.1-stable/
-    Chamilo $_configuration[root_sys]: /var/www/chamilo-1.8.7.1-stable/
-    Chamilo $_configuration[main_database]: chamilo18777_chamilo_main
+    Chamilo $_configuration[root_web]: http://localhost/chamilo-1.11.26-stable/
+    Chamilo $_configuration[root_sys]: /var/www/chamilo-1.11.26-stable/
+    Chamilo $_configuration[main_database]: chamilo11126_chamilo_main
     Chamilo $_configuration[db_host]: localhost
     Chamilo $_configuration[db_user]: root
     Chamilo $_configuration[db_password]: root
@@ -38,13 +38,13 @@ In a Chamilo installation folder located in "/var/www/chamilo"
     Chamilo $_configuration[table_prefix]:
 
     Chamilo database settings:
-    Chamilo setting_current['chamilo_database_version']: 1.9.0.18715
-    Chamilo $_configuration[system_version]: 1.9.6
+    Chamilo setting_current['chamilo_database_version']: 1.11.0.12345
+    Chamilo $_configuration[system_version]: 1.11.26
 
 
-Inside a chamilo folder execute db:sql_cli in order to enter to the SQL client of the Chamilo database:
+Inside a chamilo folder execute `db:sql_cli` (or `dbc` for shorts) in order to enter to the SQL client of the Chamilo database:
 
-    php /path/chash.php db:sql_cli --conf=main/inc/conf/configuration.php
+    php /path/chash.php dbc --conf=main/inc/conf/configuration.php
 
 If you have configured Chash globally (see below), from any Chamilo directory:
 
@@ -56,18 +56,18 @@ Building the chash.phar file
 
 This procedure is only required once, and is generally for developers. If you update chash frequently, you'll have to go through this each time you update, but never more than that.
 
-You need to have curl (in order to download packages required to build chash.phar)
+You need to have curl and PHP-CLI (in order to download packages and build chash.phar)
 
-    apt-get install php-curl
+    apt-get install php-curl php-cli
 
-If you don't have composer installed on your computer, you can just do the following to download and install it and run the command above:
+If you don't have composer installed on your computer, you can just do the following to download and install it and run the command above. Check https://getcomposer.org/download/ for updated versions:
 
     curl -sS https://getcomposer.org/installer | php
     php composer.phar update --no-dev --prefer-dist
 
 In order to generate the executable chash.phar file. You have to set first this php setting (in your cli php configuration file).
 
-For example in Ubuntu /etc/php5/cli/php.ini
+For example in Ubuntu /etc/php/7.4/cli/php.ini
 
     phar.readonly = Off
 
@@ -90,7 +90,7 @@ If you're using php with suhosin, the phar might not be executed. You can try th
 
     php -d suhosin.executor.include.whitelist="phar" chash.phar
 
-or you can change this setting in your /etc/php5/cli/conf.d/suhosin.ini file
+or you can change this setting in your /etc/php/7.4/cli/conf.d/suhosin.ini file
 (look for "executor"), although this might increase the vulnerability of your
 system. The location of the file may vary depending on your operating system.
 
