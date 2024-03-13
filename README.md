@@ -60,10 +60,10 @@ You need to have curl (in order to download packages required to build chash.pha
 
     apt-get install php-curl
 
-If you don't have composer installed on your computer, you can just do the following to download and install it and run the command above (make sure you have PHP5 enabled on the command line):
+If you don't have composer installed on your computer, you can just do the following to download and install it and run the command above:
 
     curl -sS https://getcomposer.org/installer | php
-    php5 composer.phar update --no-dev --prefer-dist
+    php composer.phar update --no-dev --prefer-dist
 
 In order to generate the executable chash.phar file. You have to set first this php setting (in your cli php configuration file).
 
@@ -86,7 +86,7 @@ In detail:
     composer update --no-dev
     php -d phar.readonly=0 createPhar.php
 
-If you're using php 5.3 with suhosin, the phar will not be executed. You can try this:
+If you're using php with suhosin, the phar might not be executed. You can try this:
 
     php -d suhosin.executor.include.whitelist="phar" chash.phar
 
